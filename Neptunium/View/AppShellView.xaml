@@ -1,0 +1,56 @@
+﻿<Page
+    x:Class="Neptunium.View.AppShellView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Neptunium.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wst="using:WindowsStateTriggers"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <SplitView x:Name="RootSplitView" OpenPaneLength="240" CompactPaneLength="48" DisplayMode="CompactOverlay" IsPaneOpen="False">
+            <SplitView.Pane>
+                <StackPanel Margin="0 0 0 0">
+                    <VisualStateManager.VisualStateGroups>
+                        <VisualStateGroup>
+                            <VisualState x:Name="HardwareButtons">
+                                <VisualState.StateTriggers>
+                                    <wst:IsTypePresentStateTrigger TypeName="Windows.Phone.UI.Input.HardwareButtons" />
+                                </VisualState.StateTriggers>
+                                <VisualState.Setters>
+                                    <Setter Target="BackButton" Property="Visibility" Value="Visibility.Collapsed" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateManager.VisualStateGroups>
+                    
+                    <Button x:Name="BackButton" />
+
+                    <ToggleButton x:Name="TogglePaneButton"
+                      TabIndex="1"
+                      Style="{StaticResource SplitViewTogglePaneButtonStyle}"
+                      IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
+                      Unchecked="TogglePaneButton_Checked"
+                      AutomationProperties.Name="Menu"
+                      ToolTipService.ToolTip="Menu" />
+
+
+                    <!-- Static Relativepanel, substitutes nested stackpanel or grid with rows/columns for this simple scenario -->
+                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Home" Tag="" />
+                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Favorites" Tag="" />
+                </StackPanel>
+            </SplitView.Pane>
+
+            <SplitView.Content>
+                <Frame x:Name="inlineFrame" />
+            </SplitView.Content>
+        </SplitView>
+    </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar IsOpen="True" IsSticky="True">
+            <AppBarButton Icon="Play" Content="Play" />
+        </CommandBar>
+    </Page.BottomAppBar>
+</Page>
