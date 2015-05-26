@@ -233,8 +233,6 @@ namespace Neptunium.MediaSourceStream
             MediaStreamSource.MusicProperties.Title = track;
             MediaStreamSource.MusicProperties.Artist = artist;
 
-            Debug.WriteLine("Song Info: " + songInfo);
-
             if (MetadataChanged != null)
             {
                 MetadataChanged(this, new ShoutcastMediaSourceStreamMetadataChangedEventArgs()

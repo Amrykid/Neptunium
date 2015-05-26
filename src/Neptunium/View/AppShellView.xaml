@@ -11,8 +11,8 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <SplitView x:Name="RootSplitView" OpenPaneLength="240" CompactPaneLength="48" DisplayMode="CompactOverlay" IsPaneOpen="False">
             <SplitView.Pane>
-                <StackPanel Margin="0 0 0 0">                    
-                    <Button x:Name="BackButton" />
+                <StackPanel Margin="0 0 0 0">
+                    <RadioButton x:Name="BackButton" Style="{StaticResource NavRadioButtonStyle}" Tag="" />
 
                     <ToggleButton x:Name="TogglePaneButton"
                       TabIndex="1"
