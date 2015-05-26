@@ -132,6 +132,16 @@ namespace Neptunium.MediaSourceStream
 
             request.ReportSampleProgress(25);
 
+            //if metadataPos is less than mp3_sampleSize away from metadataInt
+            if (metadataInt - metadataPos <= mp3_sampleSize)
+            {
+                //skip that frame
+                await socketReader.LoadAsync(metadataInt - metadataPos);
+                socketReader.ReadBytes(new byte[metadataInt - metadataPos]);
+
+                metadataPos += metadataInt - metadataPos;
+            }
+
             if (metadataPos == metadataInt)
             {
                 metadataPos = 0;
@@ -149,6 +159,8 @@ namespace Neptunium.MediaSourceStream
 
                     ParseSongMetadata(metadata);
                 }
+
+                    byteOffset = 0;
             }
 
             request.ReportSampleProgress(50);
