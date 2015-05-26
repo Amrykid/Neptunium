@@ -11,20 +11,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <SplitView x:Name="RootSplitView" OpenPaneLength="240" CompactPaneLength="48" DisplayMode="CompactOverlay" IsPaneOpen="False">
             <SplitView.Pane>
-                <StackPanel Margin="0 0 0 0">
-                    <VisualStateManager.VisualStateGroups>
-                        <VisualStateGroup>
-                            <VisualState x:Name="HardwareButtons">
-                                <VisualState.StateTriggers>
-                                    <wst:IsTypePresentStateTrigger TypeName="Windows.Phone.UI.Input.HardwareButtons" />
-                                </VisualState.StateTriggers>
-                                <VisualState.Setters>
-                                    <Setter Target="BackButton" Property="Visibility" Value="Visibility.Collapsed" />
-                                </VisualState.Setters>
-                            </VisualState>
-                        </VisualStateGroup>
-                    </VisualStateManager.VisualStateGroups>
-                    
+                <StackPanel Margin="0 0 0 0">                    
                     <Button x:Name="BackButton" />
 
                     <ToggleButton x:Name="TogglePaneButton"
