@@ -9,6 +9,7 @@ using Windows.Media.Core;
 using Windows.Media.MediaProperties;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Neptunium.MediaSourceStream
 {
@@ -65,7 +66,7 @@ namespace Neptunium.MediaSourceStream
 
         private void MediaStreamSource_Closed(MediaStreamSource sender, MediaStreamSourceClosedEventArgs args)
         {
-            
+
         }
 
         private void MediaStreamSource_Starting(MediaStreamSource sender, MediaStreamSourceStartingEventArgs args)
@@ -133,15 +134,55 @@ namespace Neptunium.MediaSourceStream
             request.ReportSampleProgress(25);
 
             //if metadataPos is less than mp3_sampleSize away from metadataInt
-            if (metadataInt - metadataPos <= mp3_sampleSize)
+            if (metadataInt - metadataPos <= mp3_sampleSize && metadataInt - metadataPos > 0)
             {
-                //skip that frame
+                //parse part of the frame.
+
+                byte[] partialmp3Frame = new byte[metadataInt - metadataPos];
+
                 await socketReader.LoadAsync(metadataInt - metadataPos);
-                socketReader.ReadBytes(new byte[metadataInt - metadataPos]);
+                socketReader.ReadBytes(partialmp3Frame);
 
                 metadataPos += metadataInt - metadataPos;
+
+                switch (contentType.ToUpper())
+                {
+                    case "AUDIO/MPEG":
+                        {
+                            sample = await ParseMP3SampleAsync(partial: true, partialBytes: partialmp3Frame);
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                await HandleMetadata();
+
+                request.ReportSampleProgress(50);
+
+                switch (contentType.ToUpper())
+                {
+                    case "AUDIO/MPEG":
+                        {
+                            //mp3
+                            sample = await ParseMP3SampleAsync();
+                            //await MediaStreamSample.CreateFromStreamAsync(socket.InputStream, bitRate, new TimeSpan(0, 0, 1));
+                        }
+                        break;
+                }
+
+                metadataPos += sample.Buffer.Length;
             }
 
+            request.Sample = sample;
+
+            request.ReportSampleProgress(100);
+
+            deferral.Complete();
+        }
+
+        private async Task HandleMetadata()
+        {
             if (metadataPos == metadataInt)
             {
                 metadataPos = 0;
@@ -160,29 +201,8 @@ namespace Neptunium.MediaSourceStream
                     ParseSongMetadata(metadata);
                 }
 
-                    byteOffset = 0;
+                byteOffset = 0;
             }
-
-            request.ReportSampleProgress(50);
-
-            switch (contentType.ToUpper())
-            {
-                case "AUDIO/MPEG":
-                    {
-                        //mp3
-                        sample = await ParseMP3SampleAsync();
-                        //await MediaStreamSample.CreateFromStreamAsync(socket.InputStream, bitRate, new TimeSpan(0, 0, 1));
-                    }
-                    break;
-            }
-
-            metadataPos += sample.Buffer.Length;
-
-            request.Sample = sample;
-
-            request.ReportSampleProgress(100);
-
-            deferral.Complete();
         }
 
         private void ParseSongMetadata(string metadata)
@@ -210,7 +230,7 @@ namespace Neptunium.MediaSourceStream
             Debug.WriteLine("Song Info:" + songInfo);
         }
 
-        private async Task<MediaStreamSample> ParseMP3SampleAsync()
+        private async Task<MediaStreamSample> ParseMP3SampleAsync(bool partial = false, byte[] partialBytes = null)
         {
             //http://www.mpgedit.org/mpgedit/mpeg_format/MP3Format.html
 
@@ -226,17 +246,34 @@ namespace Neptunium.MediaSourceStream
 
             //var db = audioVersionID;
 
-            await socketReader.LoadAsync(mp3_sampleSize);
-            var buffer = socketReader.ReadBuffer(mp3_sampleSize);
+            if (partial)
+            {
 
-            var sample = MediaStreamSample.CreateFromBuffer(buffer, timeOffSet);
-            sample.Duration = mp3_sampleDuration;
-            sample.KeyFrame = true;
+                var buffer = partialBytes.AsBuffer();
 
-            timeOffSet = timeOffSet.Add(mp3_sampleDuration);
-            byteOffset += mp3_sampleSize;
+                var sample = MediaStreamSample.CreateFromBuffer(buffer, timeOffSet);
+                sample.Duration = mp3_sampleDuration;
+                sample.KeyFrame = true;
 
-            return sample;
+                timeOffSet = timeOffSet.Add(mp3_sampleDuration);
+                byteOffset += mp3_sampleSize - (ulong)partialBytes.Length;
+
+                return sample;
+            }
+            else
+            {
+                await socketReader.LoadAsync(mp3_sampleSize);
+                var buffer = socketReader.ReadBuffer(mp3_sampleSize);
+
+                var sample = MediaStreamSample.CreateFromBuffer(buffer, timeOffSet);
+                sample.Duration = mp3_sampleDuration;
+                sample.KeyFrame = true;
+
+                timeOffSet = timeOffSet.Add(mp3_sampleDuration);
+                byteOffset += mp3_sampleSize;
+
+                return sample;
+            }
 
             //return null;
         }
