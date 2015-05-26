@@ -1,4 +1,5 @@
 ﻿using Crystal3.Navigation;
+using Neptunium.MediaSourceStream;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,15 +31,32 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
-
-            //AnimeNfo
-            BackgroundMediaPlayer.Current.SetMediaSource()
-            BackgroundMediaPlayer.Current.SetUriSource(new Uri("http://itori.animenfo.com:443/"));
-            BackgroundMediaPlayer.Current.PlaybackMediaMarkerReached += Current_PlaybackMediaMarkerReached;
-            BackgroundMediaPlayer.Current.Play();
-            
+            this.Loaded += AppShellView_Loaded;
 
             BackButton.Visibility = ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons") ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private async void AppShellView_Loaded(object sender, RoutedEventArgs e)
+        {
+
+            //AnimeNfo - http://itori.animenfo.com:443/
+            //JPopsuki - http://213.239.204.252:8000
+            var mss = new ShoutcastMediaSourceStream(new Uri("http://itori.animenfo.com:443/"));
+            await mss.ConnectAsync();
+
+            BackgroundMediaPlayer.Current.MediaFailed += Current_MediaFailed;
+            BackgroundMediaPlayer.Current.SetMediaSource(mss.MediaStreamSource);
+            //BackgroundMediaPlayer.Current.SetUriSource(new Uri("http://itori.animenfo.com:443/"));
+            BackgroundMediaPlayer.Current.PlaybackMediaMarkerReached += Current_PlaybackMediaMarkerReached;
+
+            BackgroundMediaPlayer.Current.Play();
+
+
+        }
+
+        private void Current_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
+        {
+            
         }
 
         private void Current_PlaybackMediaMarkerReached(MediaPlayer sender, PlaybackMediaMarkerReachedEventArgs args)

@@ -27,10 +27,7 @@ namespace Neptunium
     /// </summary>
     sealed partial class App : CrystalApplication
     {
-        /// <summary>
-        /// Allows tracking page views, exceptions and other telemetry through the Microsoft Application Insights service.
-        /// </summary>
-        public static Microsoft.ApplicationInsights.TelemetryClient TelemetryClient;
+
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -38,7 +35,7 @@ namespace Neptunium
         /// </summary>
         public App()
         {
-            TelemetryClient = new Microsoft.ApplicationInsights.TelemetryClient();
+            
         }
 
         public override void OnFreshLaunch(LaunchActivatedEventArgs args)
