@@ -234,6 +234,15 @@ namespace Neptunium.MediaSourceStream
             MediaStreamSource.MusicProperties.Artist = artist;
 
             Debug.WriteLine("Song Info: " + songInfo);
+
+            if (MetadataChanged != null)
+            {
+                MetadataChanged(this, new ShoutcastMediaSourceStreamMetadataChangedEventArgs()
+                {
+                    Title = track,
+                    Artist = artist
+                });
+            }
         }
 
         private async Task<MediaStreamSample> ParseMP3SampleAsync(bool partial = false, byte[] partialBytes = null)
@@ -279,5 +288,7 @@ namespace Neptunium.MediaSourceStream
 
             //return null;
         }
+
+        public event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
     }
 }

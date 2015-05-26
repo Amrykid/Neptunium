@@ -112,6 +112,7 @@
     <Compile Include="ByteExtensions.cs" />
     <Compile Include="ShoutcastMediaSourceStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ShoutcastMediaSourceStreamMetadataChangedEventArgs.cs" />
     <Compile Include="ShoutcastStationInfo.cs" />
   </ItemGroup>
   <ItemGroup>
