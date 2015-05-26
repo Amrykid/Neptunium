@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,8 +24,8 @@ namespace Neptunium.MediaSourceStream
         Uri streamUrl = null;
 
         uint bitRate = 0;
-        int metadataInt = 0;
-        int metadataPos = 0;
+        uint metadataInt = 0;
+        uint metadataPos = 0;
 
         string contentType = "audio/mpeg";
 
@@ -51,16 +52,20 @@ namespace Neptunium.MediaSourceStream
 
         public async Task ConnectAsync()
         {
-
             await HandleConnection();
 
-
-            AudioStreamDescriptor audioDescriptor = new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(16000, 2, bitRate));
+            AudioStreamDescriptor audioDescriptor = new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(44100, 2, bitRate));
 
             MediaStreamSource = new Windows.Media.Core.MediaStreamSource(audioDescriptor);
             MediaStreamSource.SampleRequested += MediaStreamSource_SampleRequested;
             MediaStreamSource.CanSeek = false;
             MediaStreamSource.Starting += MediaStreamSource_Starting;
+            MediaStreamSource.Closed += MediaStreamSource_Closed;
+        }
+
+        private void MediaStreamSource_Closed(MediaStreamSource sender, MediaStreamSourceClosedEventArgs args)
+        {
+            
         }
 
         private void MediaStreamSource_Starting(MediaStreamSource sender, MediaStreamSourceStartingEventArgs args)
@@ -115,7 +120,7 @@ namespace Neptunium.MediaSourceStream
             StationInfo.StationGenre = headers.First(x => x.Key == "ICY-GENRE").Value;
 
             bitRate = uint.Parse(headers.FirstOrDefault(x => x.Key == "ICY-BR").Value);
-            metadataInt = int.Parse(headers.First(x => x.Key == "ICY-METAINT").Value);
+            metadataInt = uint.Parse(headers.First(x => x.Key == "ICY-METAINT").Value);
             contentType = headers.First(x => x.Key == "CONTENT-TYPE").Value;
         }
 
@@ -126,23 +131,6 @@ namespace Neptunium.MediaSourceStream
             MediaStreamSample sample = null;
 
             request.ReportSampleProgress(25);
-
-            switch (contentType.ToUpper())
-            {
-                case "AUDIO/MPEG":
-                    {
-                        //mp3
-                        sample = await ParseMP3SampleAsync();
-                        //await MediaStreamSample.CreateFromStreamAsync(socket.InputStream, bitRate, new TimeSpan(0, 0, 1));
-                    }
-                    break;
-            }
-
-            metadataPos += (int)sample.Buffer.Length;
-
-            request.Sample = sample;
-
-            request.ReportSampleProgress(100);
 
             if (metadataPos == metadataInt)
             {
@@ -162,6 +150,25 @@ namespace Neptunium.MediaSourceStream
                     ParseSongMetadata(metadata);
                 }
             }
+
+            request.ReportSampleProgress(50);
+
+            switch (contentType.ToUpper())
+            {
+                case "AUDIO/MPEG":
+                    {
+                        //mp3
+                        sample = await ParseMP3SampleAsync();
+                        //await MediaStreamSample.CreateFromStreamAsync(socket.InputStream, bitRate, new TimeSpan(0, 0, 1));
+                    }
+                    break;
+            }
+
+            metadataPos += sample.Buffer.Length;
+
+            request.Sample = sample;
+
+            request.ReportSampleProgress(100);
 
             deferral.Complete();
         }
@@ -187,6 +194,8 @@ namespace Neptunium.MediaSourceStream
 
             MediaStreamSource.MusicProperties.Title = track;
             MediaStreamSource.MusicProperties.Artist = artist;
+
+            Debug.WriteLine("Song Info:" + songInfo);
         }
 
         private async Task<MediaStreamSample> ParseMP3SampleAsync()
