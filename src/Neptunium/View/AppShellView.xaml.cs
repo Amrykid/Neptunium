@@ -43,7 +43,7 @@ namespace Neptunium.View
             //BackgroundMediaPlayer.Current.AutoPlay = true;
 
             //AnimeNfo - http://itori.animenfo.com:443/
-            //JPopsuki - http://213.239.204.252:8000
+            //JPopsuki - http://213.239.204.252:8000/
             var mss = new ShoutcastMediaSourceStream(new Uri("http://itori.animenfo.com:443/"));
             await mss.ConnectAsync();
 

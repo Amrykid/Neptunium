@@ -46,6 +46,10 @@ namespace Neptunium.MediaSourceStream
         TimeSpan mp3_sampleDuration = new TimeSpan(0, 0, 0, 0, 70);
         #endregion
 
+        //TODO
+        UInt32 aac_sampleSize = 0;
+        TimeSpan aac_sampleDuration = default(TimeSpan);
+
         public ShoutcastMediaSourceStream(Uri url)
         {
             StationInfo = new ShoutcastStationInfo();
@@ -58,14 +62,71 @@ namespace Neptunium.MediaSourceStream
         public async Task ConnectAsync()
         {
             await HandleConnection();
+            AudioEncodingProperties obtainedProperties = await GetEncodingPropertiesAsync();
 
-            AudioStreamDescriptor audioDescriptor = new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(44100, 2, bitRate));
+            AudioStreamDescriptor audioDescriptor = new AudioStreamDescriptor(obtainedProperties);
 
             MediaStreamSource = new Windows.Media.Core.MediaStreamSource(audioDescriptor);
             MediaStreamSource.SampleRequested += MediaStreamSource_SampleRequested;
             MediaStreamSource.CanSeek = false;
             MediaStreamSource.Starting += MediaStreamSource_Starting;
             MediaStreamSource.Closed += MediaStreamSource_Closed;
+        }
+
+        private async Task<AudioEncodingProperties> GetEncodingPropertiesAsync()
+        {
+            //grab the first frame and strip it for information
+
+            AudioEncodingProperties obtainedProperties = null;
+            IBuffer buffer = null;
+            int sampleRate = 0;
+
+            switch (contentType)
+            {
+                case StreamAudioFormat.MP3:
+                    {
+                        await socketReader.LoadAsync(mp3_sampleSize);
+                        buffer = socketReader.ReadBuffer(mp3_sampleSize);
+                        byteOffset += mp3_sampleSize;
+
+                        byte[] bytesHeader = buffer.ToArray(0, 5); //first four bytes
+
+                        #region Modified version of http://sahanganepola.blogspot.com/2010/07/c-class-to-get-mp3-header-details.html
+                        //I don't like copying code without understanding it but this is a case where i dont fully understand everything going on.
+                        //I need to read up on bitmasking and such.
+
+                        var bithdr = (ulong)(((bytesHeader[0] & 255) << 24) | ((bytesHeader[1] & 255) << 16) | ((bytesHeader[2] & 255) << 8) | ((bytesHeader[3] & 255)));
+
+                        var bitrateIndex = (int)((bithdr >> 12) & 15);
+                        var versionIndex = (int)((bithdr >> 19) & 3);
+
+                        var frequencyIndex = (int)((bithdr >> 10) & 3); //sampleRate
+
+                        int[,] frequencyTable =    {
+                             {32000, 16000,  8000}, // MPEG 2.5
+                             {    0,     0,     0}, // reserved
+                             {22050, 24000, 16000}, // MPEG 2
+                             {44100, 48000, 32000}  // MPEG 1
+                         };
+                        #endregion
+
+                        sampleRate = frequencyTable[versionIndex, frequencyIndex];
+
+                        obtainedProperties = AudioEncodingProperties.CreateMp3((uint)sampleRate, 2, bitRate);
+                        break;
+                    }
+                case StreamAudioFormat.AAC:
+                    {
+                        obtainedProperties = AudioEncodingProperties.CreateAac(0, 2, 0);
+                        throw new Exception();
+                    }
+                default:
+                    break;
+            }
+
+            metadataPos += buffer.Length; //very important or it will throw everything off!
+
+            return obtainedProperties;
         }
 
         private void MediaStreamSource_Closed(MediaStreamSource sender, MediaStreamSourceClosedEventArgs args)
@@ -140,7 +201,7 @@ namespace Neptunium.MediaSourceStream
             request.ReportSampleProgress(25);
 
             //if metadataPos is less than mp3_sampleSize away from metadataInt
-            if (metadataInt - metadataPos <= mp3_sampleSize && metadataInt - metadataPos > 0)
+            if (metadataInt - metadataPos <= (contentType == StreamAudioFormat.MP3 ? mp3_sampleSize : aac_sampleSize) && metadataInt - metadataPos > 0)
             {
                 //parse part of the frame.
 

@@ -38,6 +38,8 @@
     <Page.BottomAppBar>
         <CommandBar IsOpen="True" IsSticky="True">
             <AppBarButton Icon="Play" Content="Play" />
+            
+            
         </CommandBar>
     </Page.BottomAppBar>
 </Page>
