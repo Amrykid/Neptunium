@@ -62,11 +62,21 @@ namespace Neptunium.MediaSourceStream
         public async Task ConnectAsync()
         {
             await HandleConnection();
-            AudioEncodingProperties obtainedProperties = await GetEncodingPropertiesAsync();
+            //AudioEncodingProperties obtainedProperties = await GetEncodingPropertiesAsync();
 
-            AudioStreamDescriptor audioDescriptor = new AudioStreamDescriptor(obtainedProperties);
+            switch (contentType)
+            {
+                case StreamAudioFormat.MP3:
+                    {
+                        MediaStreamSource = new Windows.Media.Core.MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(44100, 2, (uint)bitRate)));
+                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(48000, 2, (uint)bitRate)));
+                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(32000, 2, (uint)bitRate)));
+                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(24000, 2, (uint)bitRate)));
+                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(22050, 2, (uint)bitRate)));
+                    }
+                    break;
+            }
 
-            MediaStreamSource = new Windows.Media.Core.MediaStreamSource(audioDescriptor);
             MediaStreamSource.SampleRequested += MediaStreamSource_SampleRequested;
             MediaStreamSource.CanSeek = false;
             MediaStreamSource.Starting += MediaStreamSource_Starting;
@@ -196,54 +206,60 @@ namespace Neptunium.MediaSourceStream
         {
             var request = args.Request;
             var deferral = request.GetDeferral();
-            MediaStreamSample sample = null;
 
-            request.ReportSampleProgress(25);
-
-            //if metadataPos is less than mp3_sampleSize away from metadataInt
-            if (metadataInt - metadataPos <= (contentType == StreamAudioFormat.MP3 ? mp3_sampleSize : aac_sampleSize) && metadataInt - metadataPos > 0)
+           
+            try
             {
-                //parse part of the frame.
+                MediaStreamSample sample = null;
 
-                byte[] partialmp3Frame = new byte[metadataInt - metadataPos];
+                request.ReportSampleProgress(25);
 
-                await socketReader.LoadAsync(metadataInt - metadataPos);
-                socketReader.ReadBytes(partialmp3Frame);
-
-                metadataPos += metadataInt - metadataPos;
-
-                switch (contentType)
+                //if metadataPos is less than mp3_sampleSize away from metadataInt
+                if (metadataInt - metadataPos <= (contentType == StreamAudioFormat.MP3 ? mp3_sampleSize : aac_sampleSize) && metadataInt - metadataPos > 0)
                 {
-                    case StreamAudioFormat.MP3:
-                        {
-                            sample = await ParseMP3SampleAsync(partial: true, partialBytes: partialmp3Frame);
-                        }
-                        break;
+                    //parse part of the frame.
+
+                    byte[] partialmp3Frame = new byte[metadataInt - metadataPos];
+
+                    await socketReader.LoadAsync(metadataInt - metadataPos);
+                    socketReader.ReadBytes(partialmp3Frame);
+
+                    metadataPos += metadataInt - metadataPos;
+
+                    switch (contentType)
+                    {
+                        case StreamAudioFormat.MP3:
+                            {
+                                sample = await ParseMP3SampleAsync(partial: true, partialBytes: partialmp3Frame);
+                            }
+                            break;
+                    }
                 }
-            }
-            else
-            {
-                await HandleMetadata();
-
-                request.ReportSampleProgress(50);
-
-                switch (contentType)
+                else
                 {
-                    case StreamAudioFormat.MP3:
-                        {
-                            //mp3
-                            sample = await ParseMP3SampleAsync();
-                            //await MediaStreamSample.CreateFromStreamAsync(socket.InputStream, bitRate, new TimeSpan(0, 0, 1));
-                        }
-                        break;
+                    await HandleMetadata();
+
+                    request.ReportSampleProgress(50);
+
+                    switch (contentType)
+                    {
+                        case StreamAudioFormat.MP3:
+                            {
+                                //mp3
+                                sample = await ParseMP3SampleAsync();
+                                //await MediaStreamSample.CreateFromStreamAsync(socket.InputStream, bitRate, new TimeSpan(0, 0, 1));
+                            }
+                            break;
+                    }
+
+                    metadataPos += sample.Buffer.Length;
                 }
 
-                metadataPos += sample.Buffer.Length;
+                request.Sample = sample;
+
+                request.ReportSampleProgress(100);
             }
-
-            request.Sample = sample;
-
-            request.ReportSampleProgress(100);
+            catch (Exception) { }
 
             deferral.Complete();
         }
