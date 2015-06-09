@@ -1,5 +1,6 @@
 ﻿using Crystal3.Navigation;
 using Neptunium.MediaSourceStream;
+using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,6 +18,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -35,16 +37,44 @@ namespace Neptunium.View
 
             this.Loaded += AppShellView_Loaded;
 
-            BackButton.Visibility = ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons") ? Visibility.Collapsed : Visibility.Visible;
+            if (!ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
+            {
+                BackButton.Visibility = inlineFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
+
+                inlineFrame.Navigated += InlineFrame_Navigated;
+            }
+            else
+                BackButton.Visibility = Visibility.Collapsed;
+
+            WindowManager.GetNavigationManagerForCurrentWindow()
+                .RegisterFrameAsNavigationService(inlineFrame, FrameLevel.Two);
+            
+        }
+
+        private void InlineFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            if (!ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
+            {
+                BackButton.Visibility = inlineFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         private async void AppShellView_Loaded(object sender, RoutedEventArgs e)
         {
+            Crystal3.Navigation.WindowManager.GetNavigationManagerForCurrentWindow()
+                .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two)
+                .NavigateTo<StationsViewViewModel>();
+
             //BackgroundMediaPlayer.Current.AutoPlay = true;
+
+            var coverArt = new BitmapImage();
+            coverArt.UriSource = new Uri("http://cdn.marketplaceimages.windowsphone.com/v8/images/dbf3e042-cd31-4d33-9609-f7f956512cf9?imageType=ws_icon_large");
+            stationCoverArt.Source = coverArt;
 
             //AnimeNfo - http://itori.animenfo.com:443/
             //JPopsuki - http://213.239.204.252:8000/
             var mss = new ShoutcastMediaSourceStream(new Uri("http://itori.animenfo.com:443/"));
+            mss.MetadataChanged += Mss_MetadataChanged;
             await mss.ConnectAsync();
 
 
@@ -60,6 +90,16 @@ namespace Neptunium.View
             await Task.Delay(5000);
 
             BackgroundMediaPlayer.Current.Play();
+        }
+
+        private async void Mss_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
+        {
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(() =>
+            {
+                nowPlayingTrackBox.Text = e.Title;
+                nowPlayingArtistBox.Text = e.Artist;
+            }));
+            
         }
 
         private void Current_BufferingEnded(MediaPlayer sender, object args)

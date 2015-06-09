@@ -9,22 +9,42 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <SplitView x:Name="RootSplitView" OpenPaneLength="240" CompactPaneLength="48" DisplayMode="CompactOverlay" IsPaneOpen="False">
-            <SplitView.Pane>
-                <StackPanel Margin="0 0 0 0">
-                    <RadioButton x:Name="BackButton" Style="{StaticResource NavRadioButtonStyle}" Tag="" />
-
-                    <ToggleButton x:Name="TogglePaneButton"
+        <Grid Height="50" VerticalAlignment="Top" Margin="0 0 0 0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="45" />
+                    <ColumnDefinition Width="Auto" MaxWidth="45" />
+                    <ColumnDefinition Width="5*" />
+                    <ColumnDefinition Width="90" />
+                </Grid.ColumnDefinitions>
+                
+                <ToggleButton x:Name="TogglePaneButton"
                       TabIndex="1"
                       Style="{StaticResource SplitViewTogglePaneButtonStyle}"
                       IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
                       Unchecked="TogglePaneButton_Checked"
                       AutomationProperties.Name="Menu"
                       ToolTipService.ToolTip="Menu" />
-
-
+                
+                <RadioButton x:Name="BackButton" Style="{StaticResource NavRadioButtonStyle}" Tag="" 
+                             Command="{Binding GoBackCommand}" Width="1" HorizontalAlignment="Left"
+                             Grid.Column="1" />
+                
+                <RelativePanel Grid.Column="2" x:Name="nowPlayingPanel" HorizontalAlignment="Center">
+                    <Image Height="50" Width="50" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" />
+                    
+                    <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" Text="Track" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" />
+                    <TextBlock x:Name="nowPlayingArtistBox" RelativePanel.RightOf="stationCoverArt" Text="Artist" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20"
+                               RelativePanel.Below="nowPlayingTrackBox" />
+                </RelativePanel>
+            </Grid>
+        </Grid>
+        <SplitView x:Name="RootSplitView" OpenPaneLength="240" CompactPaneLength="48" DisplayMode="CompactOverlay" IsPaneOpen="False" Margin="0 50 0 0">
+            <SplitView.Pane>
+                <StackPanel Margin="0 0 0 0">
                     <!-- Static Relativepanel, substitutes nested stackpanel or grid with rows/columns for this simple scenario -->
-                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Home" Tag="" />
+                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Stations" Tag="" Command="{Binding GoToStationsViewCommand}" IsChecked="True" />
+                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Stations" Tag="" Command="{Binding GoToStationsViewCommand}" IsChecked="True" />
                     <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Favorites" Tag="" />
                 </StackPanel>
             </SplitView.Pane>
@@ -38,8 +58,6 @@
     <Page.BottomAppBar>
         <CommandBar IsOpen="True" IsSticky="True">
             <AppBarButton Icon="Play" Content="Play" />
-            
-            
         </CommandBar>
     </Page.BottomAppBar>
 </Page>

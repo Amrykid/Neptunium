@@ -35,7 +35,8 @@ namespace Neptunium
         /// </summary>
         public App()
         {
-            
+            //var titleBar = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TitleBar;
+            //titleBar.ExtendViewIntoTitleBar();
         }
 
         public override void OnFreshLaunch(LaunchActivatedEventArgs args)

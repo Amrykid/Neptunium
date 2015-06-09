@@ -96,8 +96,12 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AppShellViewModel.cs" />
+    <Compile Include="ViewModel\StationsViewViewModel.cs" />
     <Compile Include="View\AppShellView.xaml.cs">
       <DependentUpon>AppShellView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\StationsView.xaml.cs">
+      <DependentUpon>StationsView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +146,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\AppShellView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\StationsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
