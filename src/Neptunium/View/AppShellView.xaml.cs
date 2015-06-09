@@ -48,7 +48,14 @@ namespace Neptunium.View
 
             WindowManager.GetNavigationManagerForCurrentWindow()
                 .RegisterFrameAsNavigationService(inlineFrame, FrameLevel.Two);
+
+            this.SizeChanged += AppShellView_SizeChanged;
             
+        }
+
+        private void AppShellView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            //Debug.WriteLine(e.NewSize);
         }
 
         private void InlineFrame_Navigated(object sender, NavigationEventArgs e)
@@ -66,7 +73,11 @@ namespace Neptunium.View
                 .NavigateTo<StationsViewViewModel>();
 
             //BackgroundMediaPlayer.Current.AutoPlay = true;
+            //await PlaySomething();
+        }
 
+        private async Task PlaySomething()
+        {
             var coverArt = new BitmapImage();
             coverArt.UriSource = new Uri("http://cdn.marketplaceimages.windowsphone.com/v8/images/dbf3e042-cd31-4d33-9609-f7f956512cf9?imageType=ws_icon_large");
             stationCoverArt.Source = coverArt;
@@ -141,6 +152,11 @@ namespace Neptunium.View
         private void TogglePaneButton_Checked(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void VisualStateGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        {
+            Debug.WriteLine("State Change: " + e.OldState.Name + " -> " + e.NewState.Name);
         }
     }
 }

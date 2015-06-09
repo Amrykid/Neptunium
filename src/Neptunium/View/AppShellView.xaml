@@ -6,18 +6,51 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wst="using:WindowsStateTriggers"
+    x:Name="LayoutRoot"
     mc:Ignorable="d">
 
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid Height="50" VerticalAlignment="Top" Margin="0 0 0 0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup CurrentStateChanged="VisualStateGroup_CurrentStateChanged">
+                <VisualState x:Name="DesktopVisualState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="RootSplitView.DisplayMode" Value="Inline" />
+                        <Setter Target="RootSplitView.IsPaneOpen" Value="True" />
+                        <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
+                        <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="PhoneVisualState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="RootSplitView.DisplayMode" Value="Overlay" />
+                        <Setter Target="RootSplitView.OpenPaneLength" Value="240" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid Height="50" HorizontalAlignment="Stretch" x:Name="TopMenu"
+                  Grid.Row="0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="45" />
                     <ColumnDefinition Width="Auto" MaxWidth="45" />
-                    <ColumnDefinition Width="5*" />
-                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                
+
                 <ToggleButton x:Name="TogglePaneButton"
                       TabIndex="1"
                       Style="{StaticResource SplitViewTogglePaneButtonStyle}"
@@ -25,26 +58,28 @@
                       Unchecked="TogglePaneButton_Checked"
                       AutomationProperties.Name="Menu"
                       ToolTipService.ToolTip="Menu" />
-                
+
                 <RadioButton x:Name="BackButton" Style="{StaticResource NavRadioButtonStyle}" Tag="" 
-                             Command="{Binding GoBackCommand}" Width="1" HorizontalAlignment="Left"
+                             Command="{Binding GoBackCommand}" Width="0" HorizontalAlignment="Left"
                              Grid.Column="1" />
-                
-                <RelativePanel Grid.Column="2" x:Name="nowPlayingPanel" HorizontalAlignment="Center">
+
+                <RelativePanel Grid.Column="2" x:Name="nowPlayingPanel" HorizontalAlignment="Center" Visibility="Visible">
                     <Image Height="50" Width="50" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" />
-                    
+
                     <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" Text="Track" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" />
                     <TextBlock x:Name="nowPlayingArtistBox" RelativePanel.RightOf="stationCoverArt" Text="Artist" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20"
                                RelativePanel.Below="nowPlayingTrackBox" />
                 </RelativePanel>
             </Grid>
         </Grid>
-        <SplitView x:Name="RootSplitView" OpenPaneLength="240" CompactPaneLength="48" DisplayMode="CompactOverlay" IsPaneOpen="False" Margin="0 50 0 0">
+        <SplitView x:Name="RootSplitView" Margin="0 0 0 0" Grid.Row="1">
             <SplitView.Pane>
-                <StackPanel Margin="0 0 0 0">
+                <StackPanel>
                     <!-- Static Relativepanel, substitutes nested stackpanel or grid with rows/columns for this simple scenario -->
-                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Stations" Tag="" Command="{Binding GoToStationsViewCommand}" IsChecked="True" />
-                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Stations" Tag="" Command="{Binding GoToStationsViewCommand}" IsChecked="True" />
+                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Stations" Tag=""
+                                 Command="{Binding GoToStationsViewCommand}" IsChecked="True" />
+                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Now Playing" Tag="" 
+                                 Command="{Binding GoToStationsViewCommand}" />
                     <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Favorites" Tag="" />
                 </StackPanel>
             </SplitView.Pane>
@@ -56,7 +91,7 @@
     </Grid>
 
     <Page.BottomAppBar>
-        <CommandBar IsOpen="True" IsSticky="True">
+        <CommandBar IsSticky="True">
             <AppBarButton Icon="Play" Content="Play" />
         </CommandBar>
     </Page.BottomAppBar>
