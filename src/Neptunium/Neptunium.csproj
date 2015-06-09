@@ -123,13 +123,13 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Downloads\WindowsStateTriggers-master\WindowsStateTriggers-master\src\WindowsStateTriggers\WindowsStateTriggers.csproj">
-      <Project>{52d52f3c-4f64-4957-9fe8-780b7d7f75c3}</Project>
-      <Name>WindowsStateTriggers</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Crystal\src\Crystal3\Crystal3.csproj">
       <Project>{e7ac86be-e1f7-42e4-8da0-7e1ebef1130b}</Project>
       <Name>Crystal3</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\lib\WindowStateTriggers\src\WindowsStateTriggers\WindowsStateTriggers.csproj">
+      <Project>{52d52f3c-4f64-4957-9fe8-780b7d7f75c3}</Project>
+      <Name>WindowsStateTriggers</Name>
     </ProjectReference>
     <ProjectReference Include="..\Neptunium.MediaSourceStream\Neptunium.MediaSourceStream.csproj">
       <Project>{bb954983-e0ad-4fe0-ac9e-9be0016c4590}</Project>

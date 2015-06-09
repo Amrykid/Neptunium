@@ -40,7 +40,7 @@ namespace Neptunium
 
         public override void OnFreshLaunch(LaunchActivatedEventArgs args)
         {
-            NavigationManager.RootNavigationService.NavigateTo<AppShellViewModel>();
+            WindowManager.GetNavigationManagerForCurrentWindow().RootNavigationService.NavigateTo<AppShellViewModel>();
         }
     }
 }
