@@ -12,7 +12,7 @@
         <ListView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" ItemClick="ListView_ItemClick">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <ListViewItem PointerPressed="ListViewItem_PointerPressed" Tapped="ListViewItem_Tapped">
+                    <ListViewItem Tapped="ListViewItem_Tapped">
                         <controls:StationItemControl />
                     </ListViewItem>
                 </DataTemplate>

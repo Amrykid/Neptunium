@@ -1,4 +1,5 @@
-﻿using Neptunium.ViewModel;
+﻿using Neptunium.Data;
+using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -35,14 +36,14 @@ namespace Neptunium.View
             var item = e.ClickedItem;
         }
 
-        private void ListViewItem_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-
-        }
-
         private void ListViewItem_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            //TODO write Event to Command shim
 
+            var item = ((ListViewItem)sender);
+            var station = item.DataContext as StationModel;
+
+            ((StationsViewViewModel)this.DataContext).PlayStationCommand.Execute(station);
         }
     }
 }

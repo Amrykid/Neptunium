@@ -54,16 +54,15 @@
                       TabIndex="1"
                       Style="{StaticResource SplitViewTogglePaneButtonStyle}"
                       IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
-                      Unchecked="TogglePaneButton_Checked"
                       AutomationProperties.Name="Menu"
                       ToolTipService.ToolTip="Menu" />
 
                 <RelativePanel Grid.Column="1" x:Name="nowPlayingPanel" HorizontalAlignment="Center" Visibility="Visible">
-                    <Image Height="50" Width="50" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" />
+                    <Image Height="50" Width="50" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" Text="Track" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" />
-                    <TextBlock x:Name="nowPlayingArtistBox" RelativePanel.RightOf="stationCoverArt" Text="Artist" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20"
-                               RelativePanel.Below="nowPlayingTrackBox" />
+                    <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock x:Name="nowPlayingArtistBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20"
+                               RelativePanel.Below="nowPlayingTrackBox" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" />
                 </RelativePanel>
             </Grid>
         </Grid>

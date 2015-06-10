@@ -1,5 +1,7 @@
 ﻿using Crystal3.Model;
+using Crystal3.UI.Commands;
 using Neptunium.Data;
+using Neptunium.Media;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,6 +14,14 @@ namespace Neptunium.ViewModel
 {
     public class StationsViewViewModel : ViewModelBase
     {
+        public StationsViewViewModel()
+        {
+            PlayStationCommand = new CRelayCommand(async station =>
+            {
+                await ShoutcastStationMediaPlayer.PlayStationAsync((StationModel)station);
+            });
+        }
+
         protected override async void OnNavigatedTo(object sender, NavigationEventArgs e)
         {
             base.OnNavigatedTo(sender, e);
@@ -19,6 +29,8 @@ namespace Neptunium.ViewModel
             await StationDataManager.InitializeAsync();
             Stations = new ObservableCollection<StationModel>(StationDataManager.Stations);
         }
+
+        public CRelayCommand PlayStationCommand { get; private set; }
 
         public ObservableCollection<StationModel> Stations
         {

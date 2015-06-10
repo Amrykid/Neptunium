@@ -87,9 +87,6 @@ namespace Neptunium.View
         private async void AppShellView_Loaded(object sender, RoutedEventArgs e)
         {
             GoHome();
-
-            //BackgroundMediaPlayer.Current.AutoPlay = true;
-            //await PlaySomething();
         }
 
         private void GoHome()
@@ -103,46 +100,6 @@ namespace Neptunium.View
             inlineFrame.Navigated += InlineFrame_Navigated;
         }
 
-        private void Current_BufferingEnded(MediaPlayer sender, object args)
-        {
-
-        }
-
-        private void Current_BufferingStarted(MediaPlayer sender, object args)
-        {
-
-        }
-
-        private void Current_MediaOpened(MediaPlayer sender, object args)
-        {
-
-        }
-
-        private void Current_CurrentStateChanged(MediaPlayer sender, object args)
-        {
-            Debug.WriteLine("BackgroundMediaPlayer.CurrentState: " + Enum.GetName(typeof(MediaPlayerState), sender.CurrentState));
-
-            switch (sender.CurrentState)
-            {
-                default:
-                    break;
-            }
-        }
-
-        private void Current_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
-        {
-
-        }
-
-        private void Current_PlaybackMediaMarkerReached(MediaPlayer sender, PlaybackMediaMarkerReachedEventArgs args)
-        {
-
-        }
-
-        private void TogglePaneButton_Checked(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         private void VisualStateGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
         {
