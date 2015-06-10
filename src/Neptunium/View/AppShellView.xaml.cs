@@ -1,4 +1,5 @@
-﻿using Crystal3.Navigation;
+﻿using Crystal3.Model;
+using Crystal3.Navigation;
 using Neptunium.MediaSourceStream;
 using Neptunium.ViewModel;
 using System;
@@ -12,6 +13,8 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.Media.Playback;
+using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -37,20 +40,19 @@ namespace Neptunium.View
 
             this.Loaded += AppShellView_Loaded;
 
-            if (!ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
-            {
-                BackButton.Visibility = inlineFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
-
-                inlineFrame.Navigated += InlineFrame_Navigated;
-            }
-            else
-                BackButton.Visibility = Visibility.Collapsed;
-
             WindowManager.GetNavigationManagerForCurrentWindow()
                 .RegisterFrameAsNavigationService(inlineFrame, FrameLevel.Two);
 
+            WindowManager.GetNavigationManagerForCurrentWindow()
+                .GetNavigationServiceFromFrameLevel(FrameLevel.Two).NavigationServicePreNavigatedSignaled += AppShellView_NavigationServicePreNavigatedSignaled;
+
             this.SizeChanged += AppShellView_SizeChanged;
-            
+
+        }
+
+        private void AppShellView_NavigationServicePreNavigatedSignaled(object sender, NavigationServicePreNavigatedSignaledEventArgs e)
+        {
+            RefreshNavigationSplitViewState(e.ViewModel);
         }
 
         private void AppShellView_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -60,20 +62,45 @@ namespace Neptunium.View
 
         private void InlineFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            if (!ApiInformation.IsTypePresent("Windows.Phone.UI.Input.HardwareButtons"))
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                ((Frame)sender).CanGoBack ? AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
+        }
+
+        private void RefreshNavigationSplitViewState(ViewModelBase viewModelToGoTo)
+        {
+            //couldn't think of a clever way to do this
+            var viewModelType = viewModelToGoTo.GetType();
+            if (viewModelType == typeof(StationsViewViewModel))
             {
-                BackButton.Visibility = inlineFrame.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
+                stationsNavButton.IsChecked = true;
+            }
+            else if (viewModelType == typeof(ViewModel.NowPlayingViewViewModel))
+            {
+                nowPlayingNavButton.IsChecked = true;
+            }
+            else
+            {
+                Debug.WriteLine("WARNING: Unimplemented navigation case - " + viewModelType.FullName);
             }
         }
 
         private async void AppShellView_Loaded(object sender, RoutedEventArgs e)
         {
-            Crystal3.Navigation.WindowManager.GetNavigationManagerForCurrentWindow()
-                .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two)
-                .NavigateTo<StationsViewViewModel>();
+            GoHome();
 
             //BackgroundMediaPlayer.Current.AutoPlay = true;
             //await PlaySomething();
+        }
+
+        private void GoHome()
+        {
+            WindowManager.GetNavigationManagerForCurrentWindow()
+                            .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two)
+                            .NavigateTo<StationsViewViewModel>();
+
+            inlineFrame.BackStack.Clear();
+
+            inlineFrame.Navigated += InlineFrame_Navigated;
         }
 
         private async Task PlaySomething()
@@ -110,29 +137,29 @@ namespace Neptunium.View
                 nowPlayingTrackBox.Text = e.Title;
                 nowPlayingArtistBox.Text = e.Artist;
             }));
-            
+
         }
 
         private void Current_BufferingEnded(MediaPlayer sender, object args)
         {
-            
+
         }
 
         private void Current_BufferingStarted(MediaPlayer sender, object args)
         {
-            
+
         }
 
         private void Current_MediaOpened(MediaPlayer sender, object args)
         {
-            
+
         }
 
         private void Current_CurrentStateChanged(MediaPlayer sender, object args)
         {
             Debug.WriteLine("BackgroundMediaPlayer.CurrentState: " + Enum.GetName(typeof(MediaPlayerState), sender.CurrentState));
 
-            switch(sender.CurrentState)
+            switch (sender.CurrentState)
             {
                 default:
                     break;
@@ -141,12 +168,12 @@ namespace Neptunium.View
 
         private void Current_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
         {
-            
+
         }
 
         private void Current_PlaybackMediaMarkerReached(MediaPlayer sender, PlaybackMediaMarkerReachedEventArgs args)
         {
-            
+
         }
 
         private void TogglePaneButton_Checked(object sender, RoutedEventArgs e)

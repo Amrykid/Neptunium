@@ -19,21 +19,15 @@ namespace Neptunium.ViewModel
                 .NavigateTo<StationsViewViewModel>();
             });
 
-            GoBackCommand = new CRelayCommand(x =>
+            GoToNowPlayingViewCommand = new CRelayCommand(x =>
             {
                 Crystal3.Navigation.WindowManager.GetNavigationManagerForCurrentWindow()
                 .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two)
-                .GoBack();
-            },
-            x =>
-            {
-                return Crystal3.Navigation.WindowManager.GetNavigationManagerForCurrentWindow()
-                .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two).CanGoBackward;
+                .NavigateTo<NowPlayingViewViewModel>();
             });
         }
 
         public CRelayCommand GoToStationsViewCommand { get; private set; }
-
-        public CRelayCommand GoBackCommand { get; private set; }
+        public CRelayCommand GoToNowPlayingViewCommand { get; private set; }
     }
 }

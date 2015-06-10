@@ -47,7 +47,6 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="45" />
-                    <ColumnDefinition Width="Auto" MaxWidth="45" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
@@ -59,11 +58,7 @@
                       AutomationProperties.Name="Menu"
                       ToolTipService.ToolTip="Menu" />
 
-                <RadioButton x:Name="BackButton" Style="{StaticResource NavRadioButtonStyle}" Tag="" 
-                             Command="{Binding GoBackCommand}" Width="0" HorizontalAlignment="Left"
-                             Grid.Column="1" />
-
-                <RelativePanel Grid.Column="2" x:Name="nowPlayingPanel" HorizontalAlignment="Center" Visibility="Visible">
+                <RelativePanel Grid.Column="1" x:Name="nowPlayingPanel" HorizontalAlignment="Center" Visibility="Visible">
                     <Image Height="50" Width="50" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" />
 
                     <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" Text="Track" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" />
@@ -77,10 +72,10 @@
                 <StackPanel>
                     <!-- Static Relativepanel, substitutes nested stackpanel or grid with rows/columns for this simple scenario -->
                     <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Stations" Tag=""
-                                 Command="{Binding GoToStationsViewCommand}" IsChecked="True" />
+                                 Command="{Binding GoToStationsViewCommand}" IsChecked="True" x:Name="stationsNavButton" />
                     <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Now Playing" Tag="" 
-                                 Command="{Binding GoToStationsViewCommand}" />
-                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Favorites" Tag="" />
+                                 Command="{Binding GoToNowPlayingViewCommand}" x:Name="nowPlayingNavButton" />
+                    <!--<RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Favorites" Tag="" />-->
                 </StackPanel>
             </SplitView.Pane>
 

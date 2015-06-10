@@ -132,10 +132,17 @@
     </Style>
 
     <!--nav radio button style: http://igrali.com/2015/04/12/getting-started-with-splitview-control-in-universal-apps/ -->
+    <!--https://github.com/Windows-XAML/201505-MVA/blob/master/SplitView/SplitView/SplitView-Template10/Styles/SplitViewStyles.xaml & http://blog.jerrynixon.com/2015/04/implementing-hamburger-button-with.html -->
 
-    <SolidColorBrush x:Key="NavButtonPressedBackgroundBrush" Color="White" Opacity="0.3" />
-    <SolidColorBrush x:Key="NavButtonCheckedBackgroundBrush" Color="White" Opacity="0.2" />
-    <SolidColorBrush x:Key="NavButtonHoverBackgroundBrush" Color="White" Opacity="0.1" />
+    <Color x:Key="SystemListAccentLowColor">#FF004780</Color>
+    <Color x:Key="SystemListAccentMediumColor">#FF005FAB</Color>
+    <Color x:Key="SystemListAccentHighColor">#FF006BC0</Color>
+
+    <SolidColorBrush x:Key="NavButtonPressedBackgroundBrush" Color="{ThemeResource SystemListMediumColor}" />
+    <SolidColorBrush x:Key="NavButtonHoverBackgroundBrush" Color="{ThemeResource SystemListLowColor}" />
+    <SolidColorBrush x:Key="NavButtonCheckedBackgroundBrush" Color="{ThemeResource SystemListAccentLowColor}" />
+    <SolidColorBrush x:Key="NavButtonCheckedPressedBackgroundBrush" Color="{ThemeResource SystemListAccentMediumColor}" />
+    <SolidColorBrush x:Key="NavButtonCheckedHoverBackgroundBrush" Color="{ThemeResource SystemListAccentHighColor}" />
 
     <Style x:Key="NavRadioButtonStyle" TargetType="RadioButton">
         <Setter Property="Background" Value="Transparent"/>
