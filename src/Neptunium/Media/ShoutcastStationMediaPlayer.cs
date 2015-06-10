@@ -11,6 +11,13 @@ namespace Neptunium.Media
 {
     public static class ShoutcastStationMediaPlayer
     {
+        static ShoutcastStationMediaPlayer()
+        {
+            var mediaControls = BackgroundMediaPlayer.Current.SystemMediaTransportControls;
+            mediaControls.ButtonPressed += MediaControls_ButtonPressed;
+        }
+
+
         private static StationModel currentStationModel = null;
         private static ShoutcastMediaSourceStream currentStationMSSWrapper = null;
 
@@ -56,6 +63,7 @@ namespace Neptunium.Media
             BackgroundMediaPlayer.Current.Play();
 
             var mediaControls = BackgroundMediaPlayer.Current.SystemMediaTransportControls;
+
             mediaControls.IsChannelDownEnabled = false;
             mediaControls.IsChannelUpEnabled = false;
             mediaControls.IsFastForwardEnabled = false;
@@ -66,6 +74,11 @@ namespace Neptunium.Media
             mediaControls.IsRecordEnabled = false;
             mediaControls.IsRewindEnabled = false;
             mediaControls.IsStopEnabled = false;
+        }
+
+        private static void MediaControls_ButtonPressed(Windows.Media.SystemMediaTransportControls sender, Windows.Media.SystemMediaTransportControlsButtonPressedEventArgs args)
+        {
+            throw new NotImplementedException();
         }
 
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
