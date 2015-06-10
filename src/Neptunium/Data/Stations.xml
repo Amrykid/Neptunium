@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Stations>
+  <Station>
+    <Name>AnimeNfo</Name>
+    <Description>Serving you the best Anime and Doujin music!</Description>
+    <Logo>http://cdn.marketplaceimages.windowsphone.com/v8/images/dbf3e042-cd31-4d33-9609-f7f956512cf9?imageType=ws_icon_large</Logo>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100">http://itori.animenfo.com:443/</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100">http://momori.animenfo.com:8000/</Stream>
+    </Streams>
+  </Station>
+</Stations>

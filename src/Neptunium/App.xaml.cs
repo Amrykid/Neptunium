@@ -1,5 +1,6 @@
 ﻿using Crystal3;
 using Crystal3.Navigation;
+using Neptunium.Data;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;

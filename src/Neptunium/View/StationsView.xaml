@@ -8,8 +8,53 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid Height="100" Width="100" Background="Red">
+        <ListView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="DesktopVisualState">
+                                    <VisualState.StateTriggers>
+                                        <AdaptiveTrigger MinWindowWidth="600" />
+                                    </VisualState.StateTriggers>
 
-        </Grid>
+                                    <VisualState.Setters>
+                                        <Setter Target="stationLogo.Height" Value="100" />
+                                        <Setter Target="stationLogo.Width" Value="100" />
+                                        <Setter Target="stationName.(RelativePanel.Below)" Value="stationLogo" />
+                                        <Setter Target="stationName.FontSize" Value="21" />
+                                        <Setter Target="stationName.Margin" Value="0" />
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="PhoneVisualState">
+                                    <VisualState.StateTriggers>
+                                        <AdaptiveTrigger MinWindowWidth="0" />
+                                    </VisualState.StateTriggers>
+                                    <VisualState.Setters>
+                                        <Setter Target="stationLogo.Height" Value="50" />
+                                        <Setter Target="stationLogo.Width" Value="50" />
+                                        <Setter Target="stationName.(RelativePanel.RightOf)" Value="stationLogo" />
+                                        <Setter Target="stationName.FontSize" Value="18" />
+                                        <Setter Target="stationName.Margin" Value="20 0 0 0" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <RelativePanel>
+                            <Image Source="{Binding Logo}" Height="100" Width="100" x:Name="stationLogo" RelativePanel.AlignTopWithPanel="True" />
+                            <TextBlock Text="{Binding Name}" FontSize="21" x:Name="stationName" />
+                        </RelativePanel>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapGrid />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
     </Grid>
 </Page>
