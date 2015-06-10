@@ -103,43 +103,6 @@ namespace Neptunium.View
             inlineFrame.Navigated += InlineFrame_Navigated;
         }
 
-        private async Task PlaySomething()
-        {
-            var coverArt = new BitmapImage();
-            coverArt.UriSource = new Uri("http://cdn.marketplaceimages.windowsphone.com/v8/images/dbf3e042-cd31-4d33-9609-f7f956512cf9?imageType=ws_icon_large");
-            stationCoverArt.Source = coverArt;
-
-            //AnimeNfo - http://itori.animenfo.com:443/
-            //JPopsuki - http://213.239.204.252:8000/
-            var mss = new ShoutcastMediaSourceStream(new Uri("http://itori.animenfo.com:443/"));
-            mss.MetadataChanged += Mss_MetadataChanged;
-            await mss.ConnectAsync();
-
-
-            BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
-            BackgroundMediaPlayer.Current.MediaFailed += Current_MediaFailed;
-            BackgroundMediaPlayer.Current.MediaOpened += Current_MediaOpened;
-            BackgroundMediaPlayer.Current.BufferingStarted += Current_BufferingStarted;
-            BackgroundMediaPlayer.Current.BufferingEnded += Current_BufferingEnded;
-            BackgroundMediaPlayer.Current.SetMediaSource(mss.MediaStreamSource);
-            //BackgroundMediaPlayer.Current.SetUriSource(new Uri("http://itori.animenfo.com:443/"));
-            BackgroundMediaPlayer.Current.PlaybackMediaMarkerReached += Current_PlaybackMediaMarkerReached;
-
-            await Task.Delay(5000);
-
-            BackgroundMediaPlayer.Current.Play();
-        }
-
-        private async void Mss_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
-        {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(() =>
-            {
-                nowPlayingTrackBox.Text = e.Title;
-                nowPlayingArtistBox.Text = e.Artist;
-            }));
-
-        }
-
         private void Current_BufferingEnded(MediaPlayer sender, object args)
         {
 

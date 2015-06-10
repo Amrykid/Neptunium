@@ -100,6 +100,7 @@
     <Compile Include="Data\StationModel.cs" />
     <Compile Include="Data\StationDataManager.cs" />
     <Compile Include="Data\StationModelStream.cs" />
+    <Compile Include="Media\ShoutcastStationMediaPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AppShellViewModel.cs" />
     <Compile Include="ViewModel\NowPlayingViewViewModel.cs" />

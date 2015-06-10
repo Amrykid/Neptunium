@@ -9,10 +9,12 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ListView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}">
+        <ListView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" ItemClick="ListView_ItemClick">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <controls:StationItemControl />
+                    <ListViewItem PointerPressed="ListViewItem_PointerPressed" Tapped="ListViewItem_Tapped">
+                        <controls:StationItemControl />
+                    </ListViewItem>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.ItemsPanel>

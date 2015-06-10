@@ -29,5 +29,20 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
         }
+
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var item = e.ClickedItem;
+        }
+
+        private void ListViewItem_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+
+        }
+
+        private void ListViewItem_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
+        }
     }
 }

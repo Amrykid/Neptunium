@@ -37,6 +37,21 @@ namespace Neptunium.MediaSourceStream
 
         StreamAudioFormat contentType = StreamAudioFormat.MP3;
 
+        public void Disconnect()
+        {
+            try
+            {
+                MediaStreamSource.SampleRequested -= MediaStreamSource_SampleRequested;
+                MediaStreamSource.Starting -= MediaStreamSource_Starting;
+                MediaStreamSource.Closed -= MediaStreamSource_Closed;
+            }
+            catch (Exception) { }
+
+            socketWriter.Dispose();
+            socketReader.Dispose();
+            socket.Dispose();
+        }
+
         TimeSpan timeOffSet = new TimeSpan();
         private UInt64 byteOffset;
 
@@ -207,7 +222,7 @@ namespace Neptunium.MediaSourceStream
             var request = args.Request;
             var deferral = request.GetDeferral();
 
-           
+
             try
             {
                 MediaStreamSample sample = null;
