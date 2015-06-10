@@ -1,5 +1,4 @@
-﻿using Neptunium.ViewModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -15,19 +14,20 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
+// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Neptunium.View
+namespace Neptunium.Controls
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    [Crystal3.Navigation.NavigationViewModel(typeof(StationsViewViewModel))]
-    public sealed partial class StationsView : Page
+    public sealed partial class StationItemControl : UserControl
     {
-        public StationsView()
+        public StationItemControl()
         {
             this.InitializeComponent();
+        }
+
+        private void StationItemTemplate_VisualStateGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        {
+            Debug.WriteLine("StationItemTemplate - State Change: " + e.OldState.Name + " -> " + e.NewState.Name);
         }
     }
 }

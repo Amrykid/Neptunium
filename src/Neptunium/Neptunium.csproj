@@ -94,6 +94,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\StationItemControl.xaml.cs">
+      <DependentUpon>StationItemControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Data\StationModel.cs" />
     <Compile Include="Data\StationDataManager.cs" />
     <Compile Include="Data\StationModelStream.cs" />
@@ -151,6 +154,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\StationItemControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
