@@ -79,13 +79,17 @@ namespace Neptunium.Media
             }
             catch (Exception) { }
 
-            var mediaDisplay = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater;
+            try
+            {
+                var mediaDisplay = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater;
 
-            mediaDisplay.Type = Windows.Media.MediaPlaybackType.Music;
-            mediaDisplay.MusicProperties.Title = e.Title;
-            mediaDisplay.MusicProperties.Artist = e.Artist;
+                mediaDisplay.Type = Windows.Media.MediaPlaybackType.Music;
+                mediaDisplay.MusicProperties.Title = e.Title;
+                mediaDisplay.MusicProperties.Artist = e.Artist;
 
-            mediaDisplay.Update();
+                mediaDisplay.Update();
+            }
+            catch (Exception) { }
         }
     }
 }

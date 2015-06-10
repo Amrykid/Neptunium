@@ -32,14 +32,14 @@ namespace Neptunium.ViewModel
 
         private async void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
-            await App.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(() =>
+            await App.Dispatcher.RunAsync(() =>
             {
                 CurrentSong = e.Title;
                 CurrentArtist = e.Artist;
 
                 CurrentStation = ShoutcastStationMediaPlayer.CurrentStation.Name;
                 CurrentStationLogo = ShoutcastStationMediaPlayer.CurrentStation.Logo.ToString();
-            }));
+            });
         }
 
         public string CurrentSong { get { return GetPropertyValue<string>("CurrentSong"); } private set { SetPropertyValue<string>("CurrentSong", value); } }
