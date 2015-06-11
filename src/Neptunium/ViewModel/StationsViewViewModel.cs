@@ -19,7 +19,7 @@ namespace Neptunium.ViewModel
             PlayStationCommand = new CRelayCommand(async station =>
             {
                 await ShoutcastStationMediaPlayer.PlayStationAsync((StationModel)station);
-            });
+            }, station => station != null);
         }
 
         protected override async void OnNavigatedTo(object sender, NavigationEventArgs e)

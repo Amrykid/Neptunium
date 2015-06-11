@@ -74,16 +74,16 @@ namespace Neptunium.MediaSourceStream
             socket = new StreamSocket();
         }
 
-        public async Task ConnectAsync()
+        public async Task ConnectAsync(uint sampleRate = 44100, string relativePath = ";")
         {
-            await HandleConnection();
+            await HandleConnection(relativePath);
             //AudioEncodingProperties obtainedProperties = await GetEncodingPropertiesAsync();
 
             switch (contentType)
             {
                 case StreamAudioFormat.MP3:
                     {
-                        MediaStreamSource = new Windows.Media.Core.MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(44100, 2, (uint)bitRate)));
+                        MediaStreamSource = new Windows.Media.Core.MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(sampleRate, 2, (uint)bitRate)));
                         //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(48000, 2, (uint)bitRate)));
                         //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(32000, 2, (uint)bitRate)));
                         //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(24000, 2, (uint)bitRate)));
@@ -167,7 +167,7 @@ namespace Neptunium.MediaSourceStream
             //args.Request.
         }
 
-        private async Task HandleConnection()
+        private async Task HandleConnection(string relativePath)
         {
             //http://www.smackfu.com/stuff/programming/shoutcast.html
             try
@@ -177,8 +177,9 @@ namespace Neptunium.MediaSourceStream
                 socketWriter = new DataWriter(socket.OutputStream);
                 socketReader = new DataReader(socket.InputStream);
 
-                socketWriter.WriteString("GET /; HTTP/1.1" + Environment.NewLine);
+                socketWriter.WriteString("GET /" + relativePath + " HTTP/1.1" + Environment.NewLine);
                 socketWriter.WriteString("Icy-MetaData: 1" + Environment.NewLine);
+                socketWriter.WriteString("User-Agent: Test Audio Player" + Environment.NewLine);
                 socketWriter.WriteString(Environment.NewLine);
                 await socketWriter.StoreAsync();
                 await socketWriter.FlushAsync();
@@ -214,7 +215,7 @@ namespace Neptunium.MediaSourceStream
 
             bitRate = uint.Parse(headers.FirstOrDefault(x => x.Key == "ICY-BR").Value);
             metadataInt = uint.Parse(headers.First(x => x.Key == "ICY-METAINT").Value);
-            contentType = headers.First(x => x.Key == "CONTENT-TYPE").Value.ToUpper() == "AUDIO/MPEG" ? StreamAudioFormat.MP3 : StreamAudioFormat.AAC;
+            contentType = headers.First(x => x.Key == "CONTENT-TYPE").Value.ToUpper().Trim() == "AUDIO/MPEG" ? StreamAudioFormat.MP3 : StreamAudioFormat.AAC;
         }
 
         private async void MediaStreamSource_SampleRequested(Windows.Media.Core.MediaStreamSource sender, Windows.Media.Core.MediaStreamSourceSampleRequestedEventArgs args)

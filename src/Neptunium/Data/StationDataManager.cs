@@ -27,6 +27,8 @@ namespace Neptunium.Data
                 station.Name = stationElement.Element("Name").Value;
                 station.Description = stationElement.Element("Description").Value;
                 station.Logo = new Uri(stationElement.Element("Logo").Value);
+                station.Site = new Uri(stationElement.Element("Site").Value);
+                station.Genres = stationElement.Element("Genres").Value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
                 station.Streams = stationElement.Element("Streams").Elements("Stream").Select<XElement, StationModelStream>(x =>
                 {
@@ -36,6 +38,7 @@ namespace Neptunium.Data
                     stream.Bitrate = int.Parse(x.Attribute("Bitrate").Value);
                     stream.SampleRate = uint.Parse(x.Attribute("SampleRate").Value);
                     stream.Url = x.Value;
+                    stream.RelativePath = x.Attribute("RelativePath").Value;
 
                     return stream;
                 });

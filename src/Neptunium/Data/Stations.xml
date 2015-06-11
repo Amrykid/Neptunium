@@ -7,8 +7,8 @@
     <Site>https://www.animenfo.com/radio/</Site>
     <Genres>Anime; J-Pop</Genres>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100">http://itori.animenfo.com:443/</Stream>
-      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100">http://momori.animenfo.com:8000/</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";">http://itori.animenfo.com:443/</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";">http://momori.animenfo.com:8000/</Stream>
     </Streams>
   </Station>
   <Station>
@@ -18,7 +18,7 @@
     <Site>http://jpopsuki.fm/</Site>
     <Genres>J-Pop; Rock; Electronic </Genres>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100">http://213.239.204.252:8000/stream</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath="stream">http://213.239.204.252:8000/</Stream>
     </Streams>
   </Station>
 </Stations>            

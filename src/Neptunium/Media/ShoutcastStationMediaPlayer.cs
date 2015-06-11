@@ -40,7 +40,7 @@ namespace Neptunium.Media
             if (IsPlaying && currentStationMSSWrapper != null)
             {
                 BackgroundMediaPlayer.Current.Pause();
-                BackgroundMediaPlayer.Shutdown();
+                //BackgroundMediaPlayer.Shutdown();
                 currentStationMSSWrapper.Disconnect();
 
                 currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
@@ -54,7 +54,7 @@ namespace Neptunium.Media
 
             currentStationMSSWrapper.MetadataChanged += CurrentStationMSSWrapper_MetadataChanged;
 
-            await currentStationMSSWrapper.ConnectAsync();
+            await currentStationMSSWrapper.ConnectAsync(stream.SampleRate, stream.RelativePath);
 
             BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
 
