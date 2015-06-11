@@ -78,7 +78,15 @@ namespace Neptunium.Media
 
         private static void MediaControls_ButtonPressed(Windows.Media.SystemMediaTransportControls sender, Windows.Media.SystemMediaTransportControlsButtonPressedEventArgs args)
         {
-            throw new NotImplementedException();
+            switch(args.Button)
+            {
+                case Windows.Media.SystemMediaTransportControlsButton.Play:
+                    BackgroundMediaPlayer.Current.Play();
+                    break;
+                case Windows.Media.SystemMediaTransportControlsButton.Pause:
+                    BackgroundMediaPlayer.Current.Pause();
+                    break;
+            }
         }
 
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
