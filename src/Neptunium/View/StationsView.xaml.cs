@@ -38,10 +38,14 @@ namespace Neptunium.View
 
         private void ListViewItem_Tapped(object sender, TappedRoutedEventArgs e)
         {
+
+        }
+
+        private void ListBox_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
             //TODO write Event to Command shim
 
-            var item = ((ListViewItem)sender);
-            var station = item.DataContext as StationModel;
+            var station = ((ListBox)sender).SelectedItem as StationModel;
 
             ((StationsViewViewModel)this.DataContext).PlayStationCommand.Execute(station);
         }

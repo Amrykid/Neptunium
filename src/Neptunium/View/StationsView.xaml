@@ -9,19 +9,12 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ListView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" ItemClick="ListView_ItemClick">
-            <ListView.ItemTemplate>
+        <ListBox ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" DoubleTapped="ListBox_DoubleTapped">
+            <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <ListViewItem Tapped="ListViewItem_Tapped">
-                        <controls:StationItemControl />
-                    </ListViewItem>
+                    <controls:StationItemControl />
                 </DataTemplate>
-            </ListView.ItemTemplate>
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapGrid />
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-        </ListView>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </Page>

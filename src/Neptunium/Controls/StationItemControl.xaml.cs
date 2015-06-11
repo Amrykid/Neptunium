@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Neptunium.Controls
 {
-    public sealed partial class StationItemControl : UserControl
+    public sealed partial class StationItemControl : ListBoxItem
     {
         public StationItemControl()
         {

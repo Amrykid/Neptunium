@@ -4,9 +4,21 @@
     <Name>AnimeNfo</Name>
     <Description>Serving you the best Anime and Doujin music!</Description>
     <Logo>http://cdn.marketplaceimages.windowsphone.com/v8/images/dbf3e042-cd31-4d33-9609-f7f956512cf9?imageType=ws_icon_large</Logo>
+    <Site>https://www.animenfo.com/radio/</Site>
+    <Genres>Anime; J-Pop</Genres>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100">http://itori.animenfo.com:443/</Stream>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100">http://momori.animenfo.com:8000/</Stream>
     </Streams>
   </Station>
-</Stations>
+  <Station>
+    <Name>JPopsuki</Name>
+    <Description>Official Radio stream for JPopsuki 2.0</Description>
+    <Logo>http://cdn-radiotime-logos.tunein.com/s136422q.png</Logo>
+    <Site>http://jpopsuki.fm/</Site>
+    <Genres>J-Pop; Rock; Electronic </Genres>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100">http://213.239.204.252:8000/stream</Stream>
+    </Streams>
+  </Station>
+</Stations>            
