@@ -57,13 +57,13 @@
                       AutomationProperties.Name="Menu"
                       ToolTipService.ToolTip="Menu" />
 
-                <RelativePanel Grid.Column="1" x:Name="nowPlayingPanel" HorizontalAlignment="Center" Visibility="Visible">
+                <!--<RelativePanel Grid.Column="1" x:Name="nowPlayingPanel" HorizontalAlignment="Center" Visibility="Visible">
                     <Image Height="50" Width="50" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
 
                     <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" />
                     <TextBlock x:Name="nowPlayingArtistBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20"
                                RelativePanel.Below="nowPlayingTrackBox" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" />
-                </RelativePanel>
+                </RelativePanel>-->
             </Grid>
         </Grid>
         <SplitView x:Name="RootSplitView" Margin="0 0 0 0" Grid.Row="1">
@@ -85,8 +85,33 @@
     </Grid>
 
     <Page.BottomAppBar>
-        <CommandBar IsSticky="True">
-            <AppBarButton Icon="Play" Content="Play" />
-        </CommandBar>
+        <AppBar IsSticky="True" IsOpen="True" ClosedDisplayMode="Compact" IsRightTapEnabled="False">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="500" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <AppBarButton Grid.Column="0" Width="500" HorizontalAlignment="Left">
+                    <AppBarButton.Template>
+                        <ControlTemplate>
+                            <RelativePanel x:Name="nowPlayingPanel" HorizontalAlignment="Left" Visibility="Visible" Margin="20 0 0 0" VerticalAlignment="Center">
+                                <Image Height="50" Width="50" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" 
+                                           Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" FontSize="18" FontWeight="Bold" />
+                                <TextBlock x:Name="nowPlayingArtistBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20"
+                                        RelativePanel.Below="nowPlayingTrackBox" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" FontSize="18" />
+                            </RelativePanel>
+                        </ControlTemplate>
+                    </AppBarButton.Template>
+                </AppBarButton>
+
+                <StackPanel Orientation="Horizontal" Grid.Column="2">
+                    <AppBarButton Icon="Play" Content="Play" />
+                    <AppBarButton Icon="Like" Content="Favorite" />
+                </StackPanel>
+            </Grid>
+        </AppBar>
     </Page.BottomAppBar>
 </Page>
