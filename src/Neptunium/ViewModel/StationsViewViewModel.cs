@@ -30,6 +30,11 @@ namespace Neptunium.ViewModel
             Stations = new ObservableCollection<StationModel>(StationDataManager.Stations);
         }
 
+        protected override void OnNavigatedFrom(object sender, NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(sender, e);
+        }
+
         public CRelayCommand PlayStationCommand { get; private set; }
 
         public ObservableCollection<StationModel> Stations

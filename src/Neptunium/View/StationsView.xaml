@@ -8,13 +8,71 @@
     xmlns:controls="using:Neptunium.Controls"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <ItemsPanelTemplate x:Key="ListItemsPanelTemplate">
+            <ItemsStackPanel />
+        </ItemsPanelTemplate>
+        <ItemsPanelTemplate x:Key="WrapItemsPanelTemplate">
+            <ItemsStackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Stretch" />
+        </ItemsPanelTemplate>
+        
+        <DataTemplate x:Key="ListItemTemplate">
+            <StackPanel Orientation="Horizontal" Padding="0" Height="45">
+                <Image Source="{Binding Logo}" Height="50" Width="50" x:Name="stationLogo" />
+                <TextBlock Text="{Binding Name}" FontSize="21" Width="100" x:Name="stationName" Margin="20 0 0 0" VerticalAlignment="Center"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="WrapItemTemplate">
+            <StackPanel Orientation="Vertical" Padding="0" Height="150">
+                <Image Source="{Binding Logo}" Height="100" Width="100" x:Name="stationLogo" />
+                <TextBlock Text="{Binding Name}" FontSize="21" Width="100" x:Name="stationName" Margin="20 0 0 0" VerticalAlignment="Center"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <Style TargetType="ListBox" x:Key="ListBoxListStyle">
+            <Setter Property="ItemTemplate" Value="{StaticResource ListItemTemplate}" />
+            <Setter Property="ItemsPanel" Value="{StaticResource ListItemsPanelTemplate}" />
+        </Style>
+        <Style TargetType="ListBox" x:Key="ListBoxWrapStyle">
+            <Setter Property="ItemTemplate" Value="{StaticResource WrapItemTemplate}" />
+            <Setter Property="ItemsPanel" Value="{StaticResource WrapItemsPanelTemplate}" />
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Height" Value="150" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Page.Resources>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ListBox ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" DoubleTapped="ListBox_DoubleTapped">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <controls:StationItemControl />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="DesktopVisualState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="StationsListBox.Style" Value="{StaticResource ListBoxWrapStyle}" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="PhoneVisualState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="StationsListBox.Style" Value="{StaticResource ListBoxListStyle}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <ListBox ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" 
+                 DoubleTapped="ListBox_DoubleTapped" x:Name="StationsListBox" Style="{StaticResource ListBoxWrapStyle}">
         </ListBox>
     </Grid>
 </Page>
