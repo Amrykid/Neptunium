@@ -6,14 +6,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wst="using:WindowsStateTriggers"
+    xmlns:conv="using:Crystal3.UI.Converters"
     x:Name="LayoutRoot"
     mc:Ignorable="d">
+    
+    <Page.Resources>
+        <conv:NullToVisibilityConverter x:Key="NullToVisConv" />
+    </Page.Resources>
 
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup CurrentStateChanged="VisualStateGroup_CurrentStateChanged">
@@ -27,6 +33,8 @@
                         <Setter Target="RootSplitView.IsPaneOpen" Value="True" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
                         <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
+                        <Setter Target="NowPlayingPanel.(RelativePanel.AlignLeftWithPanel)" Value="True" />
+                        <Setter Target="FakeAppBarCommandPanel.(RelativePanel.AlignRightWithPanel)" Value="True" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -37,6 +45,10 @@
                     <VisualState.Setters>
                         <Setter Target="RootSplitView.DisplayMode" Value="Overlay" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="240" />
+                        <Setter Target="NowPlayingAppBarButton.Width" Value="100" />
+                        <Setter Target="NowPlayingAppBarButton.Margin" Value="20 0 0 0" />
+                        <Setter Target="NowPlayingPanel.(RelativePanel.AlignTopWithPanel)" Value="True" />
+                        <Setter Target="FakeAppBarCommandPanel.(RelativePanel.Below)" Value="NowPlayingPanel" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -56,14 +68,6 @@
                       IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
                       AutomationProperties.Name="Menu"
                       ToolTipService.ToolTip="Menu" />
-
-                <!--<RelativePanel Grid.Column="1" x:Name="nowPlayingPanel" HorizontalAlignment="Center" Visibility="Visible">
-                    <Image Height="50" Width="50" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
-
-                    <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBlock x:Name="nowPlayingArtistBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20"
-                               RelativePanel.Below="nowPlayingTrackBox" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" />
-                </RelativePanel>-->
             </Grid>
         </Grid>
         <SplitView x:Name="RootSplitView" Margin="0 0 0 0" Grid.Row="1">
@@ -82,36 +86,28 @@
                 <Frame x:Name="inlineFrame" />
             </SplitView.Content>
         </SplitView>
-    </Grid>
 
-    <Page.BottomAppBar>
-        <AppBar IsSticky="True" IsOpen="True" ClosedDisplayMode="Compact" IsRightTapEnabled="False">
-            <Grid HorizontalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="500" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <AppBarButton Grid.Column="0" Width="500" HorizontalAlignment="Left">
-                    <AppBarButton.Template>
-                        <ControlTemplate>
-                            <RelativePanel x:Name="nowPlayingPanel" HorizontalAlignment="Left" Visibility="Visible" Margin="20 0 0 0" VerticalAlignment="Center">
-                                <Image Height="50" Width="50" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
+        <RelativePanel HorizontalAlignment="Stretch" Grid.Row="2" x:Name="FakeAppBar">
 
-                                <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" 
+            <RelativePanel x:Name="NowPlayingPanel" RelativePanel.AlignLeftWithPanel="True" Visibility="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
+                <Image Height="50" Width="50" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" 
                                            Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" FontSize="18" FontWeight="Bold" />
-                                <TextBlock x:Name="nowPlayingArtistBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20"
+                <TextBlock x:Name="nowPlayingArtistBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20"
                                         RelativePanel.Below="nowPlayingTrackBox" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" FontSize="18" />
-                            </RelativePanel>
-                        </ControlTemplate>
-                    </AppBarButton.Template>
-                </AppBarButton>
+            </RelativePanel>
 
-                <StackPanel Orientation="Horizontal" Grid.Column="2">
-                    <AppBarButton Icon="Play" Content="Play" />
-                    <AppBarButton Icon="Like" Content="Favorite" />
-                </StackPanel>
-            </Grid>
-        </AppBar>
-    </Page.BottomAppBar>
+            <StackPanel x:Name="FakeAppBarCommandPanel" Orientation="Horizontal" RelativePanel.AlignRightWithPanel="True">
+                <!--<StackPanel.Resources>
+                    <Style TargetType="AppBarButton">
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="Width" Value="50" />
+                    </Style>
+                </StackPanel.Resources>-->
+                <AppBarButton Icon="Play" Content="Play" />
+                <AppBarButton Icon="Like" Content="Favorite" />
+            </StackPanel>
+        </RelativePanel>
+    </Grid>
 </Page>
