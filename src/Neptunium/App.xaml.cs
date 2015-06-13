@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.UI.ViewManagement;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -36,8 +37,7 @@ namespace Neptunium
         /// </summary>
         public App()
         {
-            //var titleBar = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().TitleBar;
-            //titleBar.ExtendViewIntoTitleBar();
+           
         }
 
         public override void OnFreshLaunch(LaunchActivatedEventArgs args)
