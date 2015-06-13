@@ -84,7 +84,7 @@ namespace Neptunium.View
             }
         }
 
-        private async void AppShellView_Loaded(object sender, RoutedEventArgs e)
+        private void AppShellView_Loaded(object sender, RoutedEventArgs e)
         {
             GoHome();
         }

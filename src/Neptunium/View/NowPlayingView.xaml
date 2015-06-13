@@ -8,8 +8,9 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid Height="100" Width="100" Background="Blue">
-            
-        </Grid>
+        <Pivot>
+            <PivotItem Header="Song Info" />
+            <PivotItem Header="Song History" />
+        </Pivot>
     </Grid>
 </Page>
