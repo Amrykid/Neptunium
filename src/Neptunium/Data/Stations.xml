@@ -21,4 +21,14 @@
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath="stream">http://213.239.204.252:8000/</Stream>
     </Streams>
   </Station>
+  <Station>
+    <Name>JPHiP</Name>
+    <Description>Jpop Kpop Cpop HiP HoP Pop Rock Asian Music</Description>
+    <Logo>http://img.photobucket.com/albums/v23/daigong/MY%20Fat%20ASs/jphipradio.jpg</Logo>
+    <Site>http://jphip.com/radio/</Site>
+    <Genres>J-Pop; Rock; Electronic </Genres>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="1128" SampleRate="44100" RelativePath=";">http://radio.jphip.com:8800/</Stream>
+    </Streams>
+  </Station>
 </Stations>            
