@@ -49,8 +49,14 @@ namespace Neptunium.BackgroundAudio
 
             BackgroundMediaPlayer.MessageReceivedFromForeground += BackgroundMediaPlayer_MessageReceivedFromForeground;
             BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
+            BackgroundMediaPlayer.Current.MediaFailed += Current_MediaFailed;
             taskInstance.Canceled += TaskInstance_Canceled;
             taskInstance.Task.Completed += Task_Completed;
+        }
+
+        private void Current_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
+        {
+          
         }
 
         private void Smtc_PropertyChanged(SystemMediaTransportControls sender, SystemMediaTransportControlsPropertyChangedEventArgs args)
@@ -124,13 +130,12 @@ namespace Neptunium.BackgroundAudio
                 {
                     case Messages.PlayStationMessage:
                         {
+                            ShoutcastMediaSourceStream lastStream = null;
                             if (currentStationMSSWrapper != null)
                             {
-                                BackgroundMediaPlayer.Current.Pause();
-
-                                currentStationMSSWrapper.Disconnect();
-
                                 currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
+
+                                lastStream = currentStationMSSWrapper;
                             }
 
                             var psMessage = JsonHelper.FromJson<PlayStationMessage>(message.Value.ToString());
@@ -151,6 +156,8 @@ namespace Neptunium.BackgroundAudio
                             await Task.Delay(500);
 
                             BackgroundMediaPlayer.Current.Play();
+
+                            if (lastStream != null) lastStream.Disconnect();
                         }
                         break;
                 }

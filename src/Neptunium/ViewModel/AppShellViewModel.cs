@@ -2,11 +2,13 @@
 using Crystal3.Navigation;
 using Crystal3.UI.Commands;
 using Neptunium.Media;
+using Neptunium.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation.Collections;
 using Windows.Media.Playback;
 using Windows.UI.Xaml.Navigation;
 
@@ -61,6 +63,24 @@ namespace Neptunium.ViewModel
                 CurrentStation = ShoutcastStationMediaPlayer.CurrentStation.Name;
                 CurrentStationLogo = ShoutcastStationMediaPlayer.CurrentStation.Logo.ToString();
             });
+        }
+
+        protected override Task OnResumingAsync()
+        {
+            var payload = new ValueSet();
+            payload.Add(Messages.AppResume, "");
+            BackgroundMediaPlayer.SendMessageToBackground(payload);
+
+            return base.OnResumingAsync();
+        }
+
+        protected override Task OnSuspendingAsync(object data)
+        {
+            var payload = new ValueSet();
+            payload.Add(Messages.AppSuspend, "");
+            BackgroundMediaPlayer.SendMessageToBackground(payload);
+
+            return base.OnSuspendingAsync(data);
         }
 
         public string CurrentSong { get { return GetPropertyValue<string>("CurrentSong"); } private set { SetPropertyValue<string>("CurrentSong", value); } }
