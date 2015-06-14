@@ -53,6 +53,7 @@
                         <Setter Target="FakeAppBarCommandPanel.(RelativePanel.Below)" Value="NowPlayingPanel" />
                         <Setter Target="nowPlayingTrackBox.FontSize" Value="16" />
                         <Setter Target="nowPlayingArtistBox.FontSize" Value="16" />
+                        <Setter Target="CurrentPaneTitle.FontSize" Value="20" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -72,11 +73,13 @@
                       IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
                       AutomationProperties.Name="Menu"
                       ToolTipService.ToolTip="Menu" />
+                
+                <TextBlock x:Name="CurrentPaneTitle" Grid.Column="1" VerticalAlignment="Center"  />
             </Grid>
         </Grid>
         <SplitView x:Name="RootSplitView" Margin="0 0 0 0" Grid.Row="1">
             <SplitView.Pane>
-                <StackPanel>
+                <StackPanel x:Name="RootSplitViewPaneStackPanel">
                     <!-- Static Relativepanel, substitutes nested stackpanel or grid with rows/columns for this simple scenario -->
                     <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Stations" Tag=""
                                  Command="{Binding GoToStationsViewCommand}" IsChecked="True" x:Name="stationsNavButton" />

@@ -82,11 +82,24 @@ namespace Neptunium.View
             {
                 Debug.WriteLine("WARNING: Unimplemented navigation case - " + viewModelType.FullName);
             }
+
+            CurrentPaneTitle.Text = ((RadioButton)RootSplitViewPaneStackPanel.Children.Where(x => x is RadioButton).First(x => (bool)((RadioButton)x).IsChecked)).Content as string;
         }
 
         private void AppShellView_Loaded(object sender, RoutedEventArgs e)
         {
             GoHome();
+
+            foreach (RadioButton rb in RootSplitViewPaneStackPanel.Children.Where(x => x is RadioButton))
+            {
+                rb.Click += new RoutedEventHandler((sender2, e2) =>
+                {
+                    //dismiss the menu if its open.
+
+                    if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
+                        TogglePaneButton.IsChecked = false;
+                });
+            }
         }
 
         private void GoHome()

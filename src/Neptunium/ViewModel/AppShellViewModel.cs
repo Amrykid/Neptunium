@@ -1,4 +1,5 @@
 ﻿using Crystal3.Model;
+using Crystal3.Navigation;
 using Crystal3.UI.Commands;
 using Neptunium.Media;
 using System;
@@ -6,25 +7,33 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Navigation;
 
 namespace Neptunium.ViewModel
 {
     public class AppShellViewModel: ViewModelBase
     {
+        private NavigationService InlineNavigationService = null;
         public AppShellViewModel()
         {
+
+        }
+
+        protected override void OnNavigatedTo(object sender, NavigationEventArgs e)
+        {
+            InlineNavigationService = Crystal3.Navigation.WindowManager.GetNavigationManagerForCurrentWindow()
+                .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two);
+
             GoToStationsViewCommand = new CRelayCommand(x =>
             {
-                Crystal3.Navigation.WindowManager.GetNavigationManagerForCurrentWindow()
-                .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two)
-                .NavigateTo<StationsViewViewModel>();
+                if (!InlineNavigationService.IsNavigatedTo<StationsViewViewModel>())
+                    InlineNavigationService.NavigateTo<StationsViewViewModel>();
             });
 
             GoToNowPlayingViewCommand = new CRelayCommand(x =>
             {
-                Crystal3.Navigation.WindowManager.GetNavigationManagerForCurrentWindow()
-                .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two)
-                .NavigateTo<NowPlayingViewViewModel>();
+                if (!InlineNavigationService.IsNavigatedTo<NowPlayingViewViewModel>())
+                    InlineNavigationService.NavigateTo<NowPlayingViewViewModel>();
             });
 
             ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
