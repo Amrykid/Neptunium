@@ -1,6 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Stations>
   <Station>
+    <Name>AnimeAmaze</Name>
+    <Description></Description>
+    <Logo>http://media-cache-ak0.pinimg.com/736x/31/49/96/3149969651addc3627b4d360545c6149.jpg</Logo>
+    <Site>http://www.animeamaze.com/#</Site>
+    <Genres>Anime; J-Pop</Genres>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";">http://199.187.121.124:10007/</Stream>
+    </Streams>
+  </Station>
+  <Station>
     <Name>AnimeNfo</Name>
     <Description>Serving you the best Anime and Doujin music!</Description>
     <Logo>http://cdn.marketplaceimages.windowsphone.com/v8/images/dbf3e042-cd31-4d33-9609-f7f956512cf9?imageType=ws_icon_large</Logo>
@@ -28,7 +38,18 @@
     <Site>http://jphip.com/radio/</Site>
     <Genres>J-Pop; Rock; Electronic </Genres>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="1128" SampleRate="44100" RelativePath=";">http://radio.jphip.com:8800/</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath=";">http://radio.jphip.com:8800/</Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>RadioVocaloid</Name>
+    <Description></Description>
+    <Logo>http://4.bp.blogspot.com/-wN_jxmS7poI/VS0FZWHKVOI/AAAAAAAACXA/bM1ZVr3mNWU/s238/radio-vocaloid-logo.png</Logo>
+    <Site>http://www.radiovocaloid.com/</Site>
+    <Genres>Anime; J-Pop</Genres>
+    <Background>http://1.bp.blogspot.com/-Ij-IW-Gpwcw/VUyEgLzhlyI/AAAAAAAACYg/xh7KhIcU6qE/s1600/radio-vocaloid.png</Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="">http://streaming.radionomy.com/RadioVocaloid</Stream>
     </Streams>
   </Station>
 </Stations>            
