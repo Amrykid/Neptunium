@@ -8,9 +8,15 @@ namespace Neptunium.MediaSourceStream
 {
     public class ShoutcastMediaSourceStreamMetadataChangedEventArgs: EventArgs
     {
-        internal ShoutcastMediaSourceStreamMetadataChangedEventArgs()
+        public ShoutcastMediaSourceStreamMetadataChangedEventArgs()
         {
 
+        }
+
+        public ShoutcastMediaSourceStreamMetadataChangedEventArgs(string track, string artist)
+        {
+            Artist = artist;
+            Title = track;
         }
 
         public string Artist { get; internal set; }

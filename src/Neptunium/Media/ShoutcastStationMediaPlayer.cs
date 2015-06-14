@@ -1,10 +1,12 @@
 ﻿using Neptunium.Data;
 using Neptunium.MediaSourceStream;
+using Neptunium.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation.Collections;
 using Windows.Media.Playback;
 
 namespace Neptunium.Media
@@ -13,10 +15,31 @@ namespace Neptunium.Media
     {
         static ShoutcastStationMediaPlayer()
         {
-            var mediaControls = BackgroundMediaPlayer.Current.SystemMediaTransportControls;
-            mediaControls.ButtonPressed += MediaControls_ButtonPressed;
+            BackgroundMediaPlayer.MessageReceivedFromBackground += BackgroundMediaPlayer_MessageReceivedFromBackground;
         }
 
+        private static void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)
+        {
+            foreach (var message in e.Data)
+            {
+                switch(message.Key)
+                {
+                    case Messages.MetadataChangedMessage:
+                        {
+                            var mcMessage = JsonHelper.FromJson<MetadataChangedMessage>(message.Value.ToString());
+
+                            try
+                            {
+                                if (MetadataChanged != null)
+                                    MetadataChanged(sender, new ShoutcastMediaSourceStreamMetadataChangedEventArgs(mcMessage.Track, mcMessage.Artist));
+                            }
+                            catch (Exception) { }
+
+                            break;
+                        }
+                }
+            }
+        }
 
         private static StationModel currentStationModel = null;
         private static ShoutcastMediaSourceStream currentStationMSSWrapper = null;
@@ -37,80 +60,25 @@ namespace Neptunium.Media
 
         public static async Task PlayStationAsync(StationModel station)
         {
-            if (IsPlaying && currentStationMSSWrapper != null)
+            if (IsPlaying)
             {
-                BackgroundMediaPlayer.Current.Pause();
-                //BackgroundMediaPlayer.Shutdown();
-                currentStationMSSWrapper.Disconnect();
+                var pause = new ValueSet();
+                pause.Add(Messages.PauseMessage, "");
 
-                currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
+                BackgroundMediaPlayer.SendMessageToBackground(pause);
             }
 
             currentStationModel = station;
 
             var stream = station.Streams.First();
 
-            currentStationMSSWrapper = new ShoutcastMediaSourceStream(new Uri(stream.Url));
+            var payload = new ValueSet();
+            payload.Add(Messages.PlayStationMessage, JsonHelper.ToJson<PlayStationMessage>(new PlayStationMessage(stream.Url, stream.SampleRate, stream.RelativePath)));
 
-            currentStationMSSWrapper.MetadataChanged += CurrentStationMSSWrapper_MetadataChanged;
+            BackgroundMediaPlayer.SendMessageToBackground(payload);
 
-            await currentStationMSSWrapper.ConnectAsync(stream.SampleRate, stream.RelativePath);
-
-            BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
-
-            await Task.Delay(500);
-
-            BackgroundMediaPlayer.Current.Play();
-
-            var mediaControls = BackgroundMediaPlayer.Current.SystemMediaTransportControls;
-
-            mediaControls.IsChannelDownEnabled = false;
-            mediaControls.IsChannelUpEnabled = false;
-            mediaControls.IsFastForwardEnabled = false;
-            mediaControls.IsNextEnabled = false;
-            mediaControls.IsPauseEnabled = true;
-            mediaControls.IsPlayEnabled = true;
-            mediaControls.IsPreviousEnabled = false;
-            mediaControls.IsRecordEnabled = false;
-            mediaControls.IsRewindEnabled = false;
-            mediaControls.IsStopEnabled = false;
-        }
-
-        private static void MediaControls_ButtonPressed(Windows.Media.SystemMediaTransportControls sender, Windows.Media.SystemMediaTransportControlsButtonPressedEventArgs args)
-        {
-            switch(args.Button)
-            {
-                case Windows.Media.SystemMediaTransportControlsButton.Play:
-                    BackgroundMediaPlayer.Current.Play();
-                    break;
-                case Windows.Media.SystemMediaTransportControlsButton.Pause:
-                    BackgroundMediaPlayer.Current.Pause();
-                    break;
-            }
         }
 
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
-
-        private static void CurrentStationMSSWrapper_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
-        {
-            try
-            {
-                if (MetadataChanged != null)
-                    MetadataChanged(sender, e);
-            }
-            catch (Exception) { }
-
-            try
-            {
-                var mediaDisplay = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater;
-
-                mediaDisplay.Type = Windows.Media.MediaPlaybackType.Music;
-                mediaDisplay.MusicProperties.Title = e.Title;
-                mediaDisplay.MusicProperties.Artist = e.Artist;
-
-                mediaDisplay.Update();
-            }
-            catch (Exception) { }
-        }
     }
 }
