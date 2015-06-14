@@ -106,13 +106,14 @@
             </RelativePanel>
 
             <StackPanel x:Name="FakeAppBarCommandPanel" Orientation="Horizontal" RelativePanel.AlignRightWithPanel="True">
-                <!--<StackPanel.Resources>
+                <StackPanel.Resources>
                     <Style TargetType="AppBarButton">
                         <Setter Property="Margin" Value="0" />
                         <Setter Property="Width" Value="50" />
+                        <Setter Property="Height" Value="50" />
                     </Style>
-                </StackPanel.Resources>-->
-                <AppBarButton Icon="Play" Content="Play" />
+                </StackPanel.Resources>
+                <AppBarButton Icon="Play" Content="Play" x:Name="PlayPauseButton" Command="{Binding PlayCommand}" />
                 <AppBarButton Icon="Like" Content="Favorite" />
             </StackPanel>
         </RelativePanel>

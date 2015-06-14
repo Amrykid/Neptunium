@@ -7,11 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Media.Playback;
 using Windows.UI.Xaml.Navigation;
 
 namespace Neptunium.ViewModel
 {
-    public class AppShellViewModel: ViewModelBase
+    public class AppShellViewModel : ViewModelBase
     {
         private NavigationService InlineNavigationService = null;
         public AppShellViewModel()
@@ -36,6 +37,17 @@ namespace Neptunium.ViewModel
                     InlineNavigationService.NavigateTo<NowPlayingViewViewModel>();
             });
 
+            PlayCommand = new CRelayCommand(x =>
+            {
+                BackgroundMediaPlayer.Current.Play();
+            });
+
+            PauseCommand = new CRelayCommand(x =>
+            {
+                if (BackgroundMediaPlayer.Current.CanPause)
+                    BackgroundMediaPlayer.Current.Pause();
+            });
+
             ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
         }
 
@@ -58,5 +70,8 @@ namespace Neptunium.ViewModel
 
         public CRelayCommand GoToStationsViewCommand { get; private set; }
         public CRelayCommand GoToNowPlayingViewCommand { get; private set; }
+
+        public CRelayCommand PlayCommand { get; private set; }
+        public CRelayCommand PauseCommand { get; private set; }
     }
 }

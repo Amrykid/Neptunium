@@ -48,6 +48,33 @@ namespace Neptunium.View
 
             this.SizeChanged += AppShellView_SizeChanged;
 
+            BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
+
+        }
+
+        private void Current_CurrentStateChanged(MediaPlayer sender, object args)
+        {
+            App.Dispatcher.RunAsync(() =>
+            {
+                switch (sender.CurrentState)
+                {
+                    case MediaPlayerState.Playing:
+                    case MediaPlayerState.Opening:
+                    case MediaPlayerState.Buffering:
+                        PlayPauseButton.Icon = new SymbolIcon(Symbol.Pause);
+                        PlayPauseButton.Content = "Pause";
+                        PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PauseCommand;
+                        break;
+                    case MediaPlayerState.Closed:
+                    case MediaPlayerState.Paused:
+                    case MediaPlayerState.Stopped:
+                        PlayPauseButton.Icon = new SymbolIcon(Symbol.Play);
+                        PlayPauseButton.Content = "Play";
+                        PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PlayCommand;
+                        break;
+                }
+            });
+
         }
 
         private void AppShellView_NavigationServicePreNavigatedSignaled(object sender, NavigationServicePreNavigatedSignaledEventArgs e)
