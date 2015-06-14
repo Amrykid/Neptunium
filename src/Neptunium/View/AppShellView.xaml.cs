@@ -41,10 +41,7 @@ namespace Neptunium.View
             this.Loaded += AppShellView_Loaded;
 
             WindowManager.GetNavigationManagerForCurrentWindow()
-                .RegisterFrameAsNavigationService(inlineFrame, FrameLevel.Two);
-
-            WindowManager.GetNavigationManagerForCurrentWindow()
-                .GetNavigationServiceFromFrameLevel(FrameLevel.Two).NavigationServicePreNavigatedSignaled += AppShellView_NavigationServicePreNavigatedSignaled;
+                .RegisterFrameAsNavigationService(inlineFrame, FrameLevel.Two).NavigationServicePreNavigatedSignaled += AppShellView_NavigationServicePreNavigatedSignaled;
 
             this.SizeChanged += AppShellView_SizeChanged;
 
