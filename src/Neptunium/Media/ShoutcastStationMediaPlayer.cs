@@ -58,8 +58,10 @@ namespace Neptunium.Media
 
         public static ShoutcastStationInfo StationInfoFromStream { get { return currentStationMSSWrapper?.StationInfo; } }
 
-        public static async Task PlayStationAsync(StationModel station)
+        public static void PlayStation(StationModel station)
         {
+            if (station == currentStationModel) return;
+
             if (IsPlaying)
             {
                 var pause = new ValueSet();
@@ -77,8 +79,11 @@ namespace Neptunium.Media
 
             BackgroundMediaPlayer.SendMessageToBackground(payload);
 
+            if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+
         }
 
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
+        public static event EventHandler CurrentStationChanged;
     }
 }

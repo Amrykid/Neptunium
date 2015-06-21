@@ -20,7 +20,7 @@ namespace Neptunium.Data
 
             List<StationModel> stationList = new List<StationModel>();
 
-            foreach(var stationElement in xmlDoc.Element("Stations").Elements("Station"))
+            foreach (var stationElement in xmlDoc.Element("Stations").Elements("Station"))
             {
                 var station = new StationModel();
 
@@ -39,6 +39,13 @@ namespace Neptunium.Data
                     stream.SampleRate = uint.Parse(x.Attribute("SampleRate").Value);
                     stream.Url = x.Value;
                     stream.RelativePath = x.Attribute("RelativePath").Value;
+
+                    try
+                    {
+                        stream.ServerType = (StationModelStreamServerType)Enum.Parse(typeof(StationModelStreamServerType), x.Attribute("ServerType").Value);
+                        stream.HistoryPath = x.Attribute("HistoryPath").Value;
+                    }
+                    catch (Exception) { }
 
                     return stream;
                 });

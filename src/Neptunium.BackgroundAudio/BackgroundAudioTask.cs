@@ -124,43 +124,49 @@ namespace Neptunium.BackgroundAudio
 
         private async void BackgroundMediaPlayer_MessageReceivedFromForeground(object sender, MediaPlayerDataReceivedEventArgs e)
         {
-            foreach (var message in e.Data)
-            {
-                switch (message.Key)
+            try {
+                foreach (var message in e.Data)
                 {
-                    case Messages.PlayStationMessage:
-                        {
-                            ShoutcastMediaSourceStream lastStream = null;
-                            if (currentStationMSSWrapper != null)
+                    switch (message.Key)
+                    {
+                        case Messages.PlayStationMessage:
                             {
-                                currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
+                                ShoutcastMediaSourceStream lastStream = null;
+                                if (currentStationMSSWrapper != null)
+                                {
+                                    currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
-                                lastStream = currentStationMSSWrapper;
+                                    lastStream = currentStationMSSWrapper;
+                                }
+
+                                var psMessage = JsonHelper.FromJson<PlayStationMessage>(message.Value.ToString());
+
+                                var streamUrl = psMessage.StreamUrl;
+
+                                var sampleRate = psMessage.SampleRate;
+                                var relativePath = psMessage.RelativePath;
+
+                                currentStationMSSWrapper = new ShoutcastMediaSourceStream(new Uri(streamUrl));
+
+                                currentStationMSSWrapper.MetadataChanged += CurrentStationMSSWrapper_MetadataChanged;
+
+                                await currentStationMSSWrapper.ConnectAsync(uint.Parse(sampleRate.ToString()), relativePath.ToString());
+
+                                BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
+
+                                await Task.Delay(500);
+
+                                BackgroundMediaPlayer.Current.Play();
+
+                                if (lastStream != null) lastStream.Disconnect();
                             }
-
-                            var psMessage = JsonHelper.FromJson<PlayStationMessage>(message.Value.ToString());
-
-                            var streamUrl = psMessage.StreamUrl;
-
-                            var sampleRate = psMessage.SampleRate;
-                            var relativePath = psMessage.RelativePath;
-
-                            currentStationMSSWrapper = new ShoutcastMediaSourceStream(new Uri(streamUrl));
-
-                            currentStationMSSWrapper.MetadataChanged += CurrentStationMSSWrapper_MetadataChanged;
-
-                            await currentStationMSSWrapper.ConnectAsync(uint.Parse(sampleRate.ToString()), relativePath.ToString());
-
-                            BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
-
-                            await Task.Delay(500);
-
-                            BackgroundMediaPlayer.Current.Play();
-
-                            if (lastStream != null) lastStream.Disconnect();
-                        }
-                        break;
+                            break;
+                    }
                 }
+            }
+            catch (Exception)
+            {
+
             }
         }
 

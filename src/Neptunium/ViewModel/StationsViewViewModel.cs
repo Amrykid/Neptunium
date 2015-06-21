@@ -16,9 +16,9 @@ namespace Neptunium.ViewModel
     {
         public StationsViewViewModel()
         {
-            PlayStationCommand = new CRelayCommand(async station =>
+            PlayStationCommand = new CRelayCommand(station =>
             {
-                await ShoutcastStationMediaPlayer.PlayStationAsync((StationModel)station);
+                ShoutcastStationMediaPlayer.PlayStation((StationModel)station);
             }, station => station != null);
         }
 

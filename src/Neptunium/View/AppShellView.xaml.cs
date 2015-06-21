@@ -45,33 +45,46 @@ namespace Neptunium.View
 
             this.SizeChanged += AppShellView_SizeChanged;
 
-            BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
+            App.Current.Resuming += Current_Resuming;
 
+        }
+
+        private void Current_Resuming(object sender, object e)
+        {
+            App.Dispatcher.RunAsync(() =>
+            {
+                RefreshMediaButtons(BackgroundMediaPlayer.Current);
+            });
         }
 
         private void Current_CurrentStateChanged(MediaPlayer sender, object args)
         {
             App.Dispatcher.RunAsync(() =>
             {
-                switch (sender.CurrentState)
-                {
-                    case MediaPlayerState.Playing:
-                    case MediaPlayerState.Opening:
-                    case MediaPlayerState.Buffering:
-                        PlayPauseButton.Icon = new SymbolIcon(Symbol.Pause);
-                        PlayPauseButton.Content = "Pause";
-                        PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PauseCommand;
-                        break;
-                    case MediaPlayerState.Closed:
-                    case MediaPlayerState.Paused:
-                    case MediaPlayerState.Stopped:
-                        PlayPauseButton.Icon = new SymbolIcon(Symbol.Play);
-                        PlayPauseButton.Content = "Play";
-                        PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PlayCommand;
-                        break;
-                }
+                RefreshMediaButtons(sender);
             });
 
+        }
+
+        private void RefreshMediaButtons(MediaPlayer sender)
+        {
+            switch (sender.CurrentState)
+            {
+                case MediaPlayerState.Playing:
+                case MediaPlayerState.Opening:
+                case MediaPlayerState.Buffering:
+                    PlayPauseButton.Icon = new SymbolIcon(Symbol.Pause);
+                    PlayPauseButton.Content = "Pause";
+                    PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PauseCommand;
+                    break;
+                case MediaPlayerState.Closed:
+                case MediaPlayerState.Paused:
+                case MediaPlayerState.Stopped:
+                    PlayPauseButton.Icon = new SymbolIcon(Symbol.Play);
+                    PlayPauseButton.Content = "Play";
+                    PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PlayCommand;
+                    break;
+            }
         }
 
         private void AppShellView_NavigationServicePreNavigatedSignaled(object sender, NavigationServicePreNavigatedSignaledEventArgs e)
@@ -112,6 +125,8 @@ namespace Neptunium.View
 
         private void AppShellView_Loaded(object sender, RoutedEventArgs e)
         {
+            BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
+
             GoHome();
 
             foreach (RadioButton rb in RootSplitViewPaneStackPanel.Children.Where(x => x is RadioButton))

@@ -7,7 +7,7 @@
     <Site>http://www.animeamaze.com/#</Site>
     <Genres>Anime; J-Pop</Genres>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";">http://199.187.121.124:10007/</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://199.187.121.124:10007/</Stream>
     </Streams>
   </Station>
   <Station>
