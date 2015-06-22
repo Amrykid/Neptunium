@@ -20,19 +20,24 @@ namespace Neptunium.Shared
 
         #region Messages for the UI
         public const string MetadataChangedMessage = "MetadataChangedMessage";
+        public const string StationInfoMessage = "StationInfoMessage";
         #endregion
     }
 
     [DataContractAttribute]
     public class PlayStationMessage
     {
-        public PlayStationMessage(string url, uint sampleRate, string relativePath)
+        public PlayStationMessage(string url, uint sampleRate, string relativePath, string stationName = "")
         {
             StreamUrl = url;
             SampleRate = sampleRate;
             RelativePath = relativePath;
+
+            StationName = stationName;
         }
 
+        [DataMember]
+        public string StationName { get; private set; }
         [DataMember]
         public string RelativePath { get; private set; }
         [DataMember]
@@ -55,5 +60,17 @@ namespace Neptunium.Shared
 
         [DataMember]
         public string Artist { get; private set; }
+    }
+
+    [DataContract]
+    public class StationInfoMessage
+    {
+        public StationInfoMessage(string stationName)
+        {
+            CurrentStation = stationName;
+        }
+
+        [DataMember]
+        public string CurrentStation { get; private set; }
     }
 }

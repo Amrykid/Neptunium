@@ -37,12 +37,22 @@ namespace Neptunium.Media
 
                             break;
                         }
+                    case Messages.StationInfoMessage:
+                        {
+                            var siMessage = JsonHelper.FromJson<StationInfoMessage>(message.Value.ToString());
+
+                            currentStationModel = StationDataManager.Stations.FirstOrDefault(x => x.Name == siMessage.CurrentStation);
+
+                            if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+
+                            break;
+                        }
                 }
             }
         }
 
         private static StationModel currentStationModel = null;
-        private static ShoutcastMediaSourceStream currentStationMSSWrapper = null;
+        //private static ShoutcastMediaSourceStream currentStationMSSWrapper = null;
 
         public static StationModel CurrentStation { get { return currentStationModel; } }
 
@@ -56,7 +66,7 @@ namespace Neptunium.Media
             }
         }
 
-        public static ShoutcastStationInfo StationInfoFromStream { get { return currentStationMSSWrapper?.StationInfo; } }
+        //public static ShoutcastStationInfo StationInfoFromStream { get { return currentStationMSSWrapper?.StationInfo; } }
 
         public static void PlayStation(StationModel station)
         {
@@ -75,7 +85,7 @@ namespace Neptunium.Media
             var stream = station.Streams.First();
 
             var payload = new ValueSet();
-            payload.Add(Messages.PlayStationMessage, JsonHelper.ToJson<PlayStationMessage>(new PlayStationMessage(stream.Url, stream.SampleRate, stream.RelativePath)));
+            payload.Add(Messages.PlayStationMessage, JsonHelper.ToJson<PlayStationMessage>(new PlayStationMessage(stream.Url, stream.SampleRate, stream.RelativePath, station.Name)));
 
             BackgroundMediaPlayer.SendMessageToBackground(payload);
 

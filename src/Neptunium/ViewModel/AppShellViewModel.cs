@@ -1,6 +1,7 @@
 ﻿using Crystal3.Model;
 using Crystal3.Navigation;
 using Crystal3.UI.Commands;
+using Neptunium.Data;
 using Neptunium.Media;
 using Neptunium.Shared;
 using System;
@@ -51,6 +52,35 @@ namespace Neptunium.ViewModel
             });
 
             ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
+            ShoutcastStationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
+
+            if (BackgroundMediaPlayer.Current.CurrentState == MediaPlayerState.Playing)
+            {
+                try
+                {
+                    //var currentStationName = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.AppMediaId;
+
+                    //CurrentStation = currentStationName;
+
+                    //CurrentSong = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.MusicProperties.Title;
+                    //CurrentArtist = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.MusicProperties.Artist;
+
+                    SendResumeMessageToAudioPlayer();
+                }
+                catch (Exception) { }
+            }
+        }
+
+        private async void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)
+        {
+            await App.Dispatcher.RunAsync(() =>
+            {
+                if (ShoutcastStationMediaPlayer.CurrentStation != null)
+                {
+                    CurrentStation = ShoutcastStationMediaPlayer.CurrentStation.Name;
+                    CurrentStationLogo = ShoutcastStationMediaPlayer.CurrentStation.Logo.ToString();
+                }
+            });
         }
 
         private async void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
@@ -60,18 +90,26 @@ namespace Neptunium.ViewModel
                 CurrentSong = e.Title;
                 CurrentArtist = e.Artist;
 
-                CurrentStation = ShoutcastStationMediaPlayer.CurrentStation.Name;
-                CurrentStationLogo = ShoutcastStationMediaPlayer.CurrentStation.Logo.ToString();
+                if (ShoutcastStationMediaPlayer.CurrentStation != null)
+                {
+                    CurrentStation = ShoutcastStationMediaPlayer.CurrentStation.Name;
+                    CurrentStationLogo = ShoutcastStationMediaPlayer.CurrentStation.Logo.ToString();
+                }
             });
         }
 
         protected override Task OnResumingAsync()
         {
+            SendResumeMessageToAudioPlayer();
+
+            return base.OnResumingAsync();
+        }
+
+        private static void SendResumeMessageToAudioPlayer()
+        {
             var payload = new ValueSet();
             payload.Add(Messages.AppResume, "");
             BackgroundMediaPlayer.SendMessageToBackground(payload);
-
-            return base.OnResumingAsync();
         }
 
         protected override Task OnSuspendingAsync(object data)
