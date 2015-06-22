@@ -1,3 +1,6 @@
 [submodule "lib/WindowStateTriggers"]
 	path = lib/WindowStateTriggers
 	url = https://github.com/dotMorten/WindowsStateTriggers.git
+[submodule "lib/winrtxamltoolkit"]
+	path = lib/winrtxamltoolkit
+	url = https://git01.codeplex.com/winrtxamltoolkit
