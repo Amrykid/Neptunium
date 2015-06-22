@@ -35,6 +35,7 @@
                         <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
                         <!--<Setter Target="NowPlayingPanel.(RelativePanel.AlignLeftWithPanel)" Value="True" />
                         <Setter Target="FakeAppBarCommandPanel.(RelativePanel.AlignRightWithPanel)" Value="True" />-->
+                        <Setter Target="NowPlayingPanel.MaxWidth" Value="3000" />
                         <Setter Target="nowPlayingTrackBox.FontSize" Value="18" />
                         <Setter Target="nowPlayingArtistBox.FontSize" Value="18" />
                     </VisualState.Setters>
@@ -51,6 +52,7 @@
                         <Setter Target="NowPlayingAppBarButton.Margin" Value="20 0 0 0" />
                         <!--<Setter Target="NowPlayingPanel.(RelativePanel.AlignTopWithPanel)" Value="True" />
                         <Setter Target="FakeAppBarCommandPanel.(RelativePanel.Below)" Value="NowPlayingPanel" />-->
+                        <Setter Target="NowPlayingPanel.MaxWidth" Value="200" />
                         <Setter Target="nowPlayingTrackBox.FontSize" Value="16" />
                         <Setter Target="nowPlayingArtistBox.FontSize" Value="16" />
                         <Setter Target="CurrentPaneTitle.FontSize" Value="20" />

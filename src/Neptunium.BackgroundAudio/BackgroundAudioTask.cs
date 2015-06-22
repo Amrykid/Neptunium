@@ -24,7 +24,7 @@ namespace Neptunium.BackgroundAudio
 
         public BackgroundAudioTask()
         {
-            
+
         }
 
         public void Run(IBackgroundTaskInstance taskInstance)
@@ -103,11 +103,13 @@ namespace Neptunium.BackgroundAudio
 
         private void TaskInstance_Canceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
-            currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
+            if (currentStationMSSWrapper != null)
+                currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
             BackgroundMediaPlayer.Shutdown();
 
-            currentStationMSSWrapper.Disconnect();
+            if (currentStationMSSWrapper != null)
+                currentStationMSSWrapper.Disconnect();
         }
 
         private void Current_CurrentStateChanged(MediaPlayer sender, object args)
