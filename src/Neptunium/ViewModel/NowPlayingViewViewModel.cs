@@ -16,9 +16,13 @@ namespace Neptunium.ViewModel
         {
             IsBusy = true;
 
-            await LoadSongHistoryAsync();
+            try
+            {
+                await LoadSongHistoryAsync();
 
-            await LoadSongDataAsync();
+                await LoadSongDataAsync();
+            }
+            catch (Exception) { }
 
             IsBusy = false;
         }
@@ -34,7 +38,7 @@ namespace Neptunium.ViewModel
             switch (stream.ServerType)
             {
                 case Data.StationModelStreamServerType.Shoutcast:
-                    var historyItems = await Neptunium.Old_Hanasu.ShoutcastService.GetShoutcastStationSongHistoryAsync(ShoutcastStationMediaPlayer.CurrentStation, streamUrl);    
+                    //var historyItems = await Neptunium.Old_Hanasu.ShoutcastService.GetShoutcastStationSongHistoryAsync(ShoutcastStationMediaPlayer.CurrentStation, streamUrl);
                     break;
 
             }
@@ -44,6 +48,7 @@ namespace Neptunium.ViewModel
         {
 
         }
+
 
         public bool IsBusy { get { return GetPropertyValue<bool>(); } set { SetPropertyValue<bool>(value: value); } }
     }

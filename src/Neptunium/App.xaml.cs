@@ -37,7 +37,6 @@ namespace Neptunium
         /// </summary>
         public App()
         {
-           
         }
 
         public override void OnFreshLaunch(LaunchActivatedEventArgs args)

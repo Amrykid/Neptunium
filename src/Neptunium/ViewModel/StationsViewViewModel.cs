@@ -16,10 +16,7 @@ namespace Neptunium.ViewModel
     {
         public StationsViewViewModel()
         {
-            PlayStationCommand = new CRelayCommand(station =>
-            {
-                ShoutcastStationMediaPlayer.PlayStation((StationModel)station);
-            }, station => station != null);
+            
         }
 
         protected override async void OnNavigatedTo(object sender, NavigationEventArgs e)
@@ -34,8 +31,6 @@ namespace Neptunium.ViewModel
         {
             base.OnNavigatedFrom(sender, e);
         }
-
-        public CRelayCommand PlayStationCommand { get; private set; }
 
         public ObservableCollection<StationModel> Stations
         {

@@ -102,7 +102,11 @@ namespace Neptunium.BackgroundAudio
 
         private void TaskInstance_Canceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
+            currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
+
             BackgroundMediaPlayer.Shutdown();
+
+            currentStationMSSWrapper.Disconnect();
         }
 
         private void Current_CurrentStateChanged(MediaPlayer sender, object args)
