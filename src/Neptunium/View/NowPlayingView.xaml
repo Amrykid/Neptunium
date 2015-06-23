@@ -8,12 +8,28 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Pivot SelectedIndex="1">
+        <Pivot SelectedIndex="1" Title="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged}">
             <PivotItem Header="Song Info">
-                
+                <TextBlock Text="Not Implemented Yet" />
             </PivotItem>
             <PivotItem Header="Song History">
-                <ListView />
+                <ListView ItemsSource="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="300" />
+                                    <ColumnDefinition Width="30" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBlock Text="{Binding Song, Mode=OneTime}" Grid.Column="0" />
+                                
+                                <TextBlock Text="{Binding Time, Mode=OneTime}" Grid.Column="1" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </PivotItem>
         </Pivot>
     </Grid>

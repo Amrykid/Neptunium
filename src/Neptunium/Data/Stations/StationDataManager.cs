@@ -14,7 +14,7 @@ namespace Neptunium.Data
 
         public static async Task InitializeAsync()
         {
-            var file = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(@"Data\Stations.xml");
+            var file = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(@"Data\Stations\Stations.xml");
             var reader = await file.OpenReadAsync();
             XDocument xmlDoc = XDocument.Load(reader.AsStream());
 

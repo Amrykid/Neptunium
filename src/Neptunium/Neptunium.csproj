@@ -98,9 +98,10 @@
     <Compile Include="Controls\StationItemControl.xaml.cs">
       <DependentUpon>StationItemControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Data\StationModel.cs" />
-    <Compile Include="Data\StationDataManager.cs" />
-    <Compile Include="Data\StationModelStream.cs" />
+    <Compile Include="Data\History\HistoryItemModel.cs" />
+    <Compile Include="Data\Stations\StationModel.cs" />
+    <Compile Include="Data\Stations\StationDataManager.cs" />
+    <Compile Include="Data\Stations\StationModelStream.cs" />
     <Compile Include="Media\ShoutcastStationMediaPlayer.cs" />
     <Compile Include="Old-Hanasu\ShoutcastInformationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -126,7 +127,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\Stations.xml">
+    <Content Include="Data\Stations\Stations.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Properties\Default.rd.xml" />
