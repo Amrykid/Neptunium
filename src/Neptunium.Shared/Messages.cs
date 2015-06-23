@@ -15,7 +15,7 @@ namespace Neptunium.Shared
         public const string PlayMessage = "Play";
 
         public const string AppSuspend = "AppSuspend";
-        public const string AppResume = "AppResume";
+        public const string AppLaunchOrResume = "AppLaunchOrResume";
         #endregion
 
         #region Messages for the UI

@@ -19,6 +19,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Neptunium.Shared;
+using Windows.Media.Playback;
+using System.Diagnostics;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -35,12 +38,26 @@ namespace Neptunium
         /// </summary>
         public App()
         {
+#if DEBUG
+            Application.Current.UnhandledException += Current_UnhandledException;
+#endif
+        }
 
+        private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (!Debugger.IsAttached)
+                Debugger.Launch();
+
+            Debugger.Break();
         }
 
         public override void OnFreshLaunch(LaunchActivatedEventArgs args)
         {
             //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+
+            var payload = new ValueSet();
+            payload.Add(Messages.AppLaunchOrResume, "");
+            BackgroundMediaPlayer.SendMessageToBackground(payload);
 
             WindowManager.GetNavigationManagerForCurrentWindow().RootNavigationService.NavigateTo<AppShellViewModel>();
         }

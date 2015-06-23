@@ -172,7 +172,7 @@ namespace Neptunium.BackgroundAudio
                             }
                             break;
 
-                        case Messages.AppResume:
+                        case Messages.AppLaunchOrResume:
                             {
                                 var payload = new ValueSet();
                                 payload.Add(Messages.StationInfoMessage, JsonHelper.ToJson<StationInfoMessage>(new StationInfoMessage(currentStation)));

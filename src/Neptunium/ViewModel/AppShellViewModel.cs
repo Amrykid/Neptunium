@@ -108,7 +108,7 @@ namespace Neptunium.ViewModel
         private static void SendResumeMessageToAudioPlayer()
         {
             var payload = new ValueSet();
-            payload.Add(Messages.AppResume, "");
+            payload.Add(Messages.AppLaunchOrResume, "");
             BackgroundMediaPlayer.SendMessageToBackground(payload);
         }
 

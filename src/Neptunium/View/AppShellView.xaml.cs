@@ -139,6 +139,11 @@ namespace Neptunium.View
                         TogglePaneButton.IsChecked = false;
                 });
             }
+
+            App.Dispatcher.RunAsync(() =>
+            {
+                RefreshMediaButtons(BackgroundMediaPlayer.Current);
+            });
         }
 
         private void GoHome()
