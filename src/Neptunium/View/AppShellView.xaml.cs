@@ -111,7 +111,7 @@ namespace Neptunium.View
             {
                 stationsNavButton.IsChecked = true;
             }
-            else if (viewModelType == typeof(ViewModel.NowPlayingViewViewModel))
+            else if (viewModelType == typeof(NowPlayingViewViewModel))
             {
                 nowPlayingNavButton.IsChecked = true;
             }
