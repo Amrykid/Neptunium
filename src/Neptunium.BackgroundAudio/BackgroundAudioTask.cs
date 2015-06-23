@@ -71,7 +71,14 @@ namespace Neptunium.BackgroundAudio
             {
                 case SystemMediaTransportControlsButton.Play:
                     Debug.WriteLine("UVC play button pressed");
-
+                    try
+                    {
+                        BackgroundMediaPlayer.Current.Play();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.ToString());
+                    }
                     break;
                 case SystemMediaTransportControlsButton.Pause:
                     Debug.WriteLine("UVC pause button pressed");
