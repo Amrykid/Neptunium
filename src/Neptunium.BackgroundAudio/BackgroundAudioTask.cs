@@ -152,6 +152,8 @@ namespace Neptunium.BackgroundAudio
                                     currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
                                     lastStream = currentStationMSSWrapper;
+
+                                    BackgroundMediaPlayer.Current.Pause();
                                 }
 
                                 var psMessage = JsonHelper.FromJson<PlayStationMessage>(message.Value.ToString());
