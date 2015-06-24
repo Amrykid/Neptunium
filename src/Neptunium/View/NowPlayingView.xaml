@@ -5,7 +5,12 @@
     xmlns:local="using:Neptunium.View"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:conv="using:Crystal3.UI.Converters"
     mc:Ignorable="d">
+    
+    <Page.Resources>
+        <conv:InverseNullToVisibilityConverter x:Name="NullToVisConv" />
+    </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Pivot SelectedIndex="1" Title="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged}">
@@ -13,23 +18,31 @@
                 <TextBlock Text="Not Implemented Yet" />
             </PivotItem>
             <PivotItem Header="Song History">
-                <ListView ItemsSource="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="300" />
-                                    <ColumnDefinition Width="30" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                
-                                <TextBlock Text="{Binding Song, Mode=OneTime}" Grid.Column="0" />
-                                
-                                <TextBlock Text="{Binding Time, Mode=OneTime}" Grid.Column="1" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                <Grid>
+
+                    <Grid Visibility="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
+                        <TextBlock Text="Either nothing is playing or we could not retrieve the history for this station."
+                                   VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" />
+                    </Grid>
+
+                    <ListView ItemsSource="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="300" />
+                                        <ColumnDefinition Width="30" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Text="{Binding Song, Mode=OneTime}" Grid.Column="0" />
+
+                                    <TextBlock Text="{Binding Time, Mode=OneTime}" Grid.Column="1" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
             </PivotItem>
         </Pivot>
     </Grid>

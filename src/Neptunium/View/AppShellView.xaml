@@ -8,7 +8,7 @@
     xmlns:wst="using:WindowsStateTriggers"
     xmlns:conv="using:Crystal3.UI.Converters"
     x:Name="LayoutRoot"
-    mc:Ignorable="d">
+    mc:Ignorable="d" RequestedTheme="Dark">
     
     <Page.Resources>
         <conv:NullToVisibilityConverter x:Key="NullToVisConv" />

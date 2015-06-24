@@ -106,12 +106,12 @@ namespace Neptunium.ViewModel
             if (!ShoutcastStationMediaPlayer.IsInitialized)
                 ShoutcastStationMediaPlayer.Initialize();
 
-            try
-            {
-                ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
-                ShoutcastStationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
-            }
-            catch (Exception) { }
+            //try
+            //{
+            //    ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
+            //    ShoutcastStationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
+            //}
+            //catch (Exception) { }
 
             SendResumeMessageToAudioPlayer();
 
@@ -132,8 +132,8 @@ namespace Neptunium.ViewModel
             BackgroundMediaPlayer.SendMessageToBackground(payload);
 
 
-            ShoutcastStationMediaPlayer.MetadataChanged -= ShoutcastStationMediaPlayer_MetadataChanged;
-            ShoutcastStationMediaPlayer.CurrentStationChanged -= ShoutcastStationMediaPlayer_CurrentStationChanged;
+            //ShoutcastStationMediaPlayer.MetadataChanged -= ShoutcastStationMediaPlayer_MetadataChanged;
+            //ShoutcastStationMediaPlayer.CurrentStationChanged -= ShoutcastStationMediaPlayer_CurrentStationChanged;
 
             return base.OnSuspendingAsync(data);
         }

@@ -34,30 +34,34 @@ namespace Neptunium.ViewModel
 
         private async Task LoadSongHistoryAsync()
         {
-
-            var stream = ShoutcastStationMediaPlayer.CurrentStation.Streams.FirstOrDefault(x => x.HistoryPath != null);
-
-            if (stream != null)
+            if (ShoutcastStationMediaPlayer.CurrentStation != null)
             {
-                var streamUrl = stream.Url;
-                var historyUrl = streamUrl.TrimEnd('/') + stream.HistoryPath;
+                var stream = ShoutcastStationMediaPlayer.CurrentStation.Streams.FirstOrDefault(x => x.HistoryPath != null);
 
-
-                switch (stream.ServerType)
+                if (stream != null)
                 {
-                    case Data.StationModelStreamServerType.Shoutcast:
-                        var historyItems = await Neptunium.Old_Hanasu.ShoutcastService.GetShoutcastStationSongHistoryAsync(ShoutcastStationMediaPlayer.CurrentStation, streamUrl);
-                        HistoryItems = new ObservableCollection<HistoryItemModel>(historyItems.Select<Old_Hanasu.ShoutcastSongHistoryItem, HistoryItemModel>(x =>
-                        {
-                            var item = new HistoryItemModel();
+                    var streamUrl = stream.Url;
+                    var historyUrl = streamUrl.TrimEnd('/') + stream.HistoryPath;
 
-                            item.Song = x.Song;
-                            item.Time = x.LocalizedTime;
 
-                            return item;
-                        }));
-                        break;
+                    switch (stream.ServerType)
+                    {
+                        case Data.StationModelStreamServerType.Shoutcast:
+                            var historyItems = await Neptunium.Old_Hanasu.ShoutcastService.GetShoutcastStationSongHistoryAsync(ShoutcastStationMediaPlayer.CurrentStation, streamUrl);
 
+                            HistoryItems = new ObservableCollection<HistoryItemModel>(historyItems.Select<Old_Hanasu.ShoutcastSongHistoryItem, HistoryItemModel>(x =>
+                            {
+                                var item = new HistoryItemModel();
+
+                                item.Song = x.Song;
+                                item.Time = x.LocalizedTime;
+
+                                return item;
+                            }));
+
+                            break;
+
+                    }
                 }
             }
         }
