@@ -91,6 +91,8 @@ namespace Neptunium.Media
 
         public static void PlayStation(StationModel station)
         {
+            //TODO use a combo of events+anon-delegates and TaskCompletionSource to detect play back errors here to seperate connection errors from long-running audio errors.
+
             if (station == currentStationModel) return;
 
             if (IsPlaying)
