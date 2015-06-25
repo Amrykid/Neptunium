@@ -193,8 +193,10 @@ namespace Neptunium.MediaSourceStream
 
                 ParseResponse(response);
             }
-            catch (Exception)
-            { }
+            catch (Exception ex)
+            {
+                throw new Exception("", ex);
+            }
         }
 
         private void ParseResponse(string response)
@@ -275,7 +277,9 @@ namespace Neptunium.MediaSourceStream
 
                 request.ReportSampleProgress(100);
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+            }
 
             deferral.Complete();
         }

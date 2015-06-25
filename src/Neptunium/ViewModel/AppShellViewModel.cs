@@ -1,6 +1,9 @@
-﻿using Crystal3.Model;
+﻿using Crystal3.Core;
+using Crystal3.IOC;
+using Crystal3.Model;
 using Crystal3.Navigation;
 using Crystal3.UI.Commands;
+using Crystal3.UI.MessageDialog;
 using Neptunium.Data;
 using Neptunium.Media;
 using Neptunium.Shared;
@@ -20,7 +23,8 @@ namespace Neptunium.ViewModel
         private NavigationService InlineNavigationService = null;
         public AppShellViewModel()
         {
-
+            if (!IoCManager.IsRegistered<IMessageDialogService>())
+                IoCManager.Register<IMessageDialogService>(new DefaultMessageDialogService());
         }
 
         protected override void OnNavigatedTo(object sender, NavigationEventArgs e)
@@ -56,6 +60,7 @@ namespace Neptunium.ViewModel
 
             ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
             ShoutcastStationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
+            ShoutcastStationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
 
             if (BackgroundMediaPlayer.Current.CurrentState == MediaPlayerState.Playing)
             {
@@ -72,6 +77,23 @@ namespace Neptunium.ViewModel
                 }
                 catch (Exception) { }
             }
+        }
+
+        private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, EventArgs e)
+        {
+            ShoutcastStationMediaPlayer.BackgroundAudioError -= ShoutcastStationMediaPlayer_BackgroundAudioError; //throttle error messages
+
+            await IoCManager.Resolve<IMessageDialogService>().ShowAsync("We are unable to play this station.", "Error while trying to play this station.");
+
+            await Crystal3.CrystalApplication.Dispatcher.RunAsync(() =>
+            {
+                CurrentArtist = "";
+                CurrentSong = "";
+                CurrentStation = null;
+                CurrentStationLogo = null;
+            });
+
+            ShoutcastStationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
         }
 
         private async void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)

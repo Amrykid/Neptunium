@@ -59,6 +59,15 @@ namespace Neptunium.Media
 
                             break;
                         }
+                    case Messages.BackgroundAudioErrorMessage:
+                        {
+                            var baeMessage = JsonHelper.FromJson<BackgroundAudioErrorMessage>(message.Value.ToString());
+
+                            if (BackgroundAudioError != null)
+                                BackgroundAudioError(null, EventArgs.Empty);
+
+                            break;
+                        }
                 }
             }
         }
@@ -107,5 +116,6 @@ namespace Neptunium.Media
 
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
         public static event EventHandler CurrentStationChanged;
+        public static event EventHandler BackgroundAudioError;
     }
 }

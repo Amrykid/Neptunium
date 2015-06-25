@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Media.Playback;
 
 namespace Neptunium.Shared
 {
@@ -21,6 +22,7 @@ namespace Neptunium.Shared
         #region Messages for the UI
         public const string MetadataChangedMessage = "MetadataChangedMessage";
         public const string StationInfoMessage = "StationInfoMessage";
+        public const string BackgroundAudioErrorMessage = "BackgroundAudioErrorMessage";
         #endregion
     }
 
@@ -73,4 +75,21 @@ namespace Neptunium.Shared
         [DataMember]
         public string CurrentStation { get; private set; }
     }
+
+    [DataContract]
+    public class BackgroundAudioErrorMessage
+    {
+        public BackgroundAudioErrorMessage(MediaPlayerFailedEventArgs args)
+        {
+            Error = args.ExtendedErrorCode.ToString();
+        }
+        public BackgroundAudioErrorMessage(Exception error)
+        {
+            Error = error.ToString();
+        }
+
+        [DataMember]
+        public string Error { get; private set; }
+    }
+
 }
