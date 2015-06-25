@@ -15,6 +15,7 @@ using Windows.Foundation.Metadata;
 using Windows.Media.Playback;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -126,6 +127,15 @@ namespace Neptunium.View
         private void AppShellView_Loaded(object sender, RoutedEventArgs e)
         {
             BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
+
+            //https://channel9.msdn.com/Events/Build/2015/3-733
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                //http://stackoverflow.com/questions/30262923/hiding-status-bar-white-bar-at-top-of-windows-10-universal-app-on-phone
+                var statusBar = StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = this.RequestedTheme == ElementTheme.Dark ? Colors.Black : Colors.White;
+                statusBar.ForegroundColor = this.RequestedTheme == ElementTheme.Dark ? Colors.White : Colors.Black;
+            }
 
             GoHome();
 
