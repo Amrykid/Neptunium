@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
 
@@ -63,8 +64,8 @@ namespace Neptunium.Media
                         {
                             var baeMessage = JsonHelper.FromJson<BackgroundAudioErrorMessage>(message.Value.ToString());
 
-                            if (BackgroundAudioError != null)
-                                BackgroundAudioError(null, EventArgs.Empty);
+                            //if (BackgroundAudioError != null)
+                            //    BackgroundAudioError(null, EventArgs.Empty);
 
                             break;
                         }
@@ -89,11 +90,9 @@ namespace Neptunium.Media
 
         //public static ShoutcastStationInfo StationInfoFromStream { get { return currentStationMSSWrapper?.StationInfo; } }
 
-        public static void PlayStation(StationModel station)
+        public static async Task<bool> PlayStationAsync(StationModel station)
         {
-            //TODO use a combo of events+anon-delegates and TaskCompletionSource to detect play back errors here to seperate connection errors from long-running audio errors.
-
-            if (station == currentStationModel) return;
+            if (station == currentStationModel) return true;
 
             if (IsPlaying)
             {
@@ -105,6 +104,32 @@ namespace Neptunium.Media
 
             currentStationModel = station;
 
+            //TODO use a combo of events+anon-delegates and TaskCompletionSource to detect play back errors here to seperate connection errors from long-running audio errors.
+            //handle error when connecting.
+            TaskCompletionSource<object> errorTaskSource = new TaskCompletionSource<object>();
+            TypedEventHandler<MediaPlayer, MediaPlayerFailedEventArgs> errorHandler = null;
+            errorHandler = new TypedEventHandler<MediaPlayer, MediaPlayerFailedEventArgs>((MediaPlayer sender, MediaPlayerFailedEventArgs args) =>
+            {
+                //TODO extend said above magic to handle messages from the background audio player
+                BackgroundMediaPlayer.Current.MediaFailed -= errorHandler;
+                errorTaskSource.TrySetResult(false);
+            });
+            BackgroundMediaPlayer.Current.MediaFailed += errorHandler;
+
+            //handle successful connection
+            TaskCompletionSource<object> successTaskSource = new TaskCompletionSource<object>();
+            TypedEventHandler<MediaPlayer, object> successHandler = null;
+            successHandler = new TypedEventHandler<MediaPlayer, object>((MediaPlayer sender, object args) =>
+            {
+                if (sender.CurrentState == MediaPlayerState.Playing)
+                {
+                    BackgroundMediaPlayer.Current.CurrentStateChanged -= successHandler;
+                    successTaskSource.TrySetResult(true);
+                }
+            });
+            BackgroundMediaPlayer.Current.CurrentStateChanged += successHandler;
+
+
             var stream = station.Streams.First();
 
             var payload = new ValueSet();
@@ -112,8 +137,24 @@ namespace Neptunium.Media
 
             BackgroundMediaPlayer.SendMessageToBackground(payload);
 
-            if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+            if (successTaskSource.Task == await Task.WhenAny(errorTaskSource.Task, successTaskSource.Task))
+            {
+                //successful connection
+                BackgroundMediaPlayer.Current.MediaFailed -= errorHandler;
 
+                if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+
+                return true;
+            }
+            else
+            {
+                //unsuccessful connection
+                BackgroundMediaPlayer.Current.CurrentStateChanged -= successHandler;
+
+                if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
+
+                return false;
+            }
         }
 
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;

@@ -13,9 +13,11 @@ namespace Neptunium
     {
         public ApplicationCommands()
         {
-            PlayStationCommand = new CRelayCommand(station =>
+            PlayStationCommand = new CRelayCommand(async station =>
                 {
-                    ShoutcastStationMediaPlayer.PlayStation((StationModel)station);
+                    var result = await ShoutcastStationMediaPlayer.PlayStationAsync((StationModel)station);
+
+
                 }, station => station != null);
         }
 
