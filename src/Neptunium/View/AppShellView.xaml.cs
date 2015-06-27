@@ -50,9 +50,11 @@ namespace Neptunium.View
 
         }
 
-        private void Current_Resuming(object sender, object e)
+        private async void Current_Resuming(object sender, object e)
         {
-            App.Dispatcher.RunAsync(() =>
+            await Task.Delay(500);
+
+            await App.Dispatcher.RunAsync(() =>
             {
                 RefreshMediaButtons(BackgroundMediaPlayer.Current);
             });

@@ -106,28 +106,31 @@ namespace Neptunium.Media
 
             //TODO use a combo of events+anon-delegates and TaskCompletionSource to detect play back errors here to seperate connection errors from long-running audio errors.
             //handle error when connecting.
+
+            MediaPlayer currentMediaPlayer = BackgroundMediaPlayer.Current;
+
             TaskCompletionSource<object> errorTaskSource = new TaskCompletionSource<object>();
             TypedEventHandler<MediaPlayer, MediaPlayerFailedEventArgs> errorHandler = null;
             errorHandler = new TypedEventHandler<MediaPlayer, MediaPlayerFailedEventArgs>((MediaPlayer sender, MediaPlayerFailedEventArgs args) =>
             {
                 //TODO extend said above magic to handle messages from the background audio player
-                BackgroundMediaPlayer.Current.MediaFailed -= errorHandler;
+                currentMediaPlayer.MediaFailed -= errorHandler;
                 errorTaskSource.TrySetResult(false);
             });
-            BackgroundMediaPlayer.Current.MediaFailed += errorHandler;
+            currentMediaPlayer.MediaFailed += errorHandler;
 
             //handle successful connection
             TaskCompletionSource<object> successTaskSource = new TaskCompletionSource<object>();
             TypedEventHandler<MediaPlayer, object> successHandler = null;
             successHandler = new TypedEventHandler<MediaPlayer, object>((MediaPlayer sender, object args) =>
             {
-                if (sender.CurrentState == MediaPlayerState.Playing)
+                if (currentMediaPlayer.CurrentState == MediaPlayerState.Playing)
                 {
-                    BackgroundMediaPlayer.Current.CurrentStateChanged -= successHandler;
+                    currentMediaPlayer.CurrentStateChanged -= successHandler;
                     successTaskSource.TrySetResult(true);
                 }
             });
-            BackgroundMediaPlayer.Current.CurrentStateChanged += successHandler;
+            currentMediaPlayer.CurrentStateChanged += successHandler;
 
 
             var stream = station.Streams.First();

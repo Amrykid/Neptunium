@@ -47,13 +47,21 @@ namespace Neptunium.ViewModel
             PlayCommand = new CRelayCommand(x =>
             {
                 BackgroundMediaPlayer.Current.Play();
+            }, x =>
+            {
+                var currentPlayerState = BackgroundMediaPlayer.Current.CurrentState;
+
+                return currentPlayerState != MediaPlayerState.Buffering &&
+                currentPlayerState != MediaPlayerState.Opening &&
+                currentPlayerState != MediaPlayerState.Playing &&
+                currentPlayerState != MediaPlayerState.Closed;
             });
 
             PauseCommand = new CRelayCommand(x =>
             {
                 if (BackgroundMediaPlayer.Current.CanPause)
                     BackgroundMediaPlayer.Current.Pause();
-            });
+            }, x => BackgroundMediaPlayer.Current.CanPause);
 
             if (!ShoutcastStationMediaPlayer.IsInitialized)
                 ShoutcastStationMediaPlayer.Initialize();
