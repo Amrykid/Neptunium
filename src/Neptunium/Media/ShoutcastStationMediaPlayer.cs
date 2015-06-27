@@ -143,7 +143,7 @@ namespace Neptunium.Media
             if (successTaskSource.Task == await Task.WhenAny(errorTaskSource.Task, successTaskSource.Task))
             {
                 //successful connection
-                BackgroundMediaPlayer.Current.MediaFailed -= errorHandler;
+                currentMediaPlayer.MediaFailed -= errorHandler;
 
                 if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
 
@@ -152,7 +152,7 @@ namespace Neptunium.Media
             else
             {
                 //unsuccessful connection
-                BackgroundMediaPlayer.Current.CurrentStateChanged -= successHandler;
+                currentMediaPlayer.CurrentStateChanged -= successHandler;
 
                 if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
 
