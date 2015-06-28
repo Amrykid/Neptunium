@@ -40,6 +40,7 @@ namespace Neptunium.View
             this.InitializeComponent();
 
             this.Loaded += AppShellView_Loaded;
+            this.DataContextChanged += AppShellView_DataContextChanged;
 
             WindowManager.GetNavigationManagerForCurrentWindow()
                 .RegisterFrameAsNavigationService(inlineFrame, FrameLevel.Two).NavigationServicePreNavigatedSignaled += AppShellView_NavigationServicePreNavigatedSignaled;
@@ -48,6 +49,16 @@ namespace Neptunium.View
 
             App.Current.Resuming += Current_Resuming;
 
+        }
+
+        private void AppShellView_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            this.DataContextChanged -= AppShellView_DataContextChanged;
+
+            App.Dispatcher.RunAsync(() =>
+            {
+                RefreshMediaButtons(BackgroundMediaPlayer.Current);
+            });
         }
 
         private async void Current_Resuming(object sender, object e)
@@ -151,11 +162,6 @@ namespace Neptunium.View
                         TogglePaneButton.IsChecked = false;
                 });
             }
-
-            App.Dispatcher.RunAsync(() =>
-            {
-                RefreshMediaButtons(BackgroundMediaPlayer.Current);
-            });
         }
 
         private void GoHome()
