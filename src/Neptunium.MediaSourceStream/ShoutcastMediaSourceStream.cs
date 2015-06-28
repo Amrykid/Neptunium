@@ -316,7 +316,7 @@ namespace Neptunium.MediaSourceStream
                 string header = line.Substring(0, line.IndexOf("="));
                 string value = line.Substring(line.IndexOf("=") + 1);
 
-                var pair = new KeyValuePair<string, string>(header.ToUpper(), value.Trim('\''));
+                var pair = new KeyValuePair<string, string>(header.ToUpper(), value.Trim('\'').Trim());
 
                 return pair;
             }).ToArray();
@@ -324,11 +324,19 @@ namespace Neptunium.MediaSourceStream
             string track = "", artist = "";
             string songInfo = headers.First(x => x.Key == "STREAMTITLE").Value;
 
-            artist = songInfo.Split('-')[0].Trim();
-            track = songInfo.Split('-')[1].Trim();
+            if (songInfo.Split('-').Count() >= 2)
+            {
+                artist = songInfo.Split('-')[0].Trim();
+                track = songInfo.Split('-')[1].Trim();
 
-            MediaStreamSource.MusicProperties.Title = track;
-            MediaStreamSource.MusicProperties.Artist = artist;
+                MediaStreamSource.MusicProperties.Title = track;
+                MediaStreamSource.MusicProperties.Artist = artist;
+            }
+            else
+            {
+                track = songInfo.Trim();
+                artist = "Unknown";
+            }
 
             if (MetadataChanged != null)
             {

@@ -191,6 +191,8 @@ namespace Neptunium.BackgroundAudio
                                 if (currentStationServerType == "Direct")
                                 {
                                     BackgroundMediaPlayer.Current.SetUriSource(new Uri(streamUrl));
+
+                                    UpdateNowPlaying("Unknown Song", "Unknown Artist");
                                 }
                                 else if ((currentStationServerType == "Shoutcast" || currentStationServerType == "Icecast"))
                                 {
@@ -262,18 +264,24 @@ namespace Neptunium.BackgroundAudio
             }
         }
 
-        private string track = "", artist = "";
+
 
         private void CurrentStationMSSWrapper_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
-        {
-            track = e.Title;
-            artist = e.Artist;
+        {        
+            string track = e.Title;
+            string artist = e.Artist;
 
+            UpdateNowPlaying(track, artist);
+
+        }
+
+        private void UpdateNowPlaying(string track, string artist)
+        {
             try
             {
                 smtc.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
-                smtc.DisplayUpdater.MusicProperties.Title = e.Title;
-                smtc.DisplayUpdater.MusicProperties.Artist = e.Artist;
+                smtc.DisplayUpdater.MusicProperties.Title = track;
+                smtc.DisplayUpdater.MusicProperties.Artist = artist;
 
                 smtc.DisplayUpdater.AppMediaId = currentStation;
 
@@ -282,10 +290,9 @@ namespace Neptunium.BackgroundAudio
             catch (Exception) { }
 
             var payload = new ValueSet();
-            payload.Add(Messages.MetadataChangedMessage, JsonHelper.ToJson<MetadataChangedMessage>(new MetadataChangedMessage(e.Title, e.Artist)));
+            payload.Add(Messages.MetadataChangedMessage, JsonHelper.ToJson<MetadataChangedMessage>(new MetadataChangedMessage(track, artist)));
 
             BackgroundMediaPlayer.SendMessageToForeground(payload);
-
         }
     }
 }
