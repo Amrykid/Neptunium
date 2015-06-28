@@ -61,7 +61,7 @@ namespace Neptunium.ViewModel
             {
                 if (BackgroundMediaPlayer.Current.CanPause)
                     BackgroundMediaPlayer.Current.Pause();
-            }, x => BackgroundMediaPlayer.Current.CanPause);
+            }, x => { try { return BackgroundMediaPlayer.Current.CanPause; } catch (Exception) { return true; } });
 
             if (!ShoutcastStationMediaPlayer.IsInitialized)
                 ShoutcastStationMediaPlayer.Initialize();

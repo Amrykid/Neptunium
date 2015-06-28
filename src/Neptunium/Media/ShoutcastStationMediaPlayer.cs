@@ -136,7 +136,7 @@ namespace Neptunium.Media
             var stream = station.Streams.First();
 
             var payload = new ValueSet();
-            payload.Add(Messages.PlayStationMessage, JsonHelper.ToJson<PlayStationMessage>(new PlayStationMessage(stream.Url, stream.SampleRate, stream.RelativePath, station.Name)));
+            payload.Add(Messages.PlayStationMessage, JsonHelper.ToJson<PlayStationMessage>(new PlayStationMessage(stream.Url, stream.SampleRate, stream.RelativePath, station.Name, Enum.GetName(typeof(StationModelStreamServerType), stream.ServerType))));
 
             BackgroundMediaPlayer.SendMessageToBackground(payload);
 

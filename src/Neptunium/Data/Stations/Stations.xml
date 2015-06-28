@@ -17,8 +17,18 @@
     <Site>https://www.animenfo.com/radio/</Site>
     <Genres>Anime; J-Pop</Genres>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";">http://itori.animenfo.com:443/</Stream>
-      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";">http://momori.animenfo.com:8000/</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://itori.animenfo.com:443/</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://momori.animenfo.com:8000/</Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>Japan-A-Radio</Name>
+    <Description></Description>
+    <Logo>http://www.japanaradio.com/images/logo02.png</Logo>
+    <Site>http://www.japanaradio.com/index.php</Site>
+    <Genres>J-Pop; Anime</Genres>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="48" SampleRate="44100" RelativePath="" ServerType="Icecast">http://audio.misproductions.com/japan48k</Stream>
     </Streams>
   </Station>
   <Station>
@@ -26,9 +36,9 @@
     <Description>Official Radio stream for JPopsuki 2.0</Description>
     <Logo>http://cdn-radiotime-logos.tunein.com/s136422q.png</Logo>
     <Site>http://jpopsuki.fm/</Site>
-    <Genres>J-Pop; Rock; Electronic </Genres>
+    <Genres>J-Pop; Rock; Electronic</Genres>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath="stream">http://213.239.204.252:8000/</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath="stream" ServerType="Icecast">http://213.239.204.252:8000/</Stream>
     </Streams>
   </Station>
   <Station>
@@ -38,7 +48,18 @@
     <Site>http://jphip.com/radio/</Site>
     <Genres>J-Pop; Rock; Electronic </Genres>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath=";">http://radio.jphip.com:8800/</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://radio.jphip.com:8800/</Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>Radio Hayama</Name>
+    <Description></Description>
+    <Logo>http://cdn-radiotime-logos.tunein.com/s155398q.png</Logo>
+    <Site>http://www.radiohayama.com/</Site>
+    <Genres>Pop; Ambient; Alternative Rock</Genres>
+    <Background>http://www.radiohayama.com/sites/default/files/vegas/fullmoon1.jpg</Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="" ServerType="Shoutcast" HistoryPath="/played.html?sid=1">http://199.195.194.140:8085/</Stream>
     </Streams>
   </Station>
   <Station>

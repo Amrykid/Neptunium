@@ -18,8 +18,9 @@
 
     public enum StationModelStreamServerType
     {
-        Shoutcast,
-        ICEcast,
+        Direct = 0,
+        Shoutcast = 1,
+        Icecast,
         Other
     }
 }

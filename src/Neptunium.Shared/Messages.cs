@@ -29,13 +29,15 @@ namespace Neptunium.Shared
     [DataContractAttribute]
     public class PlayStationMessage
     {
-        public PlayStationMessage(string url, uint sampleRate, string relativePath, string stationName = "")
+        public PlayStationMessage(string url, uint sampleRate, string relativePath, string stationName = "", string serverType = "Shoutcast")
         {
             StreamUrl = url;
             SampleRate = sampleRate;
             RelativePath = relativePath;
 
             StationName = stationName;
+
+            ServerType = serverType;
         }
 
         [DataMember]
@@ -46,6 +48,8 @@ namespace Neptunium.Shared
         public uint SampleRate { get; private set; }
         [DataMember]
         public string StreamUrl { get; private set; }
+        [DataMember]
+        public string ServerType { get; private set; }
     }
 
     [DataContract]

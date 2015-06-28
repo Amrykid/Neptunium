@@ -20,6 +20,7 @@ namespace Neptunium.BackgroundAudio
         private BackgroundTaskDeferral deferral;
         private SystemMediaTransportControls smtc;
         private ShoutcastMediaSourceStream currentStationMSSWrapper = null;
+        private string currentStationServerType = null;
         private string currentStation = null;
 
         public BackgroundAudioTask()
@@ -130,12 +131,12 @@ namespace Neptunium.BackgroundAudio
 
         private void FullStop()
         {
-            if (currentStationMSSWrapper != null)
+            if (currentStationMSSWrapper != null && (currentStationServerType == "Shoutcast" || currentStationServerType == "Icecast"))
                 currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
             BackgroundMediaPlayer.Shutdown();
 
-            if (currentStationMSSWrapper != null)
+            if (currentStationMSSWrapper != null && (currentStationServerType == "Shoutcast" || currentStationServerType == "Icecast"))
                 currentStationMSSWrapper.Disconnect();
         }
 
@@ -167,7 +168,7 @@ namespace Neptunium.BackgroundAudio
                         case Messages.PlayStationMessage:
                             {
                                 ShoutcastMediaSourceStream lastStream = null;
-                                if (currentStationMSSWrapper != null)
+                                if (currentStationMSSWrapper != null && (currentStationServerType == "Shoutcast" || currentStationServerType == "Icecast"))
                                 {
                                     currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
@@ -185,35 +186,44 @@ namespace Neptunium.BackgroundAudio
 
                                 currentStation = psMessage.StationName;
 
-                                currentStationMSSWrapper = new ShoutcastMediaSourceStream(new Uri(streamUrl));
+                                currentStationServerType = psMessage.ServerType;
 
-                                currentStationMSSWrapper.MetadataChanged += CurrentStationMSSWrapper_MetadataChanged;
-
-                                try
+                                if (currentStationServerType == "Direct")
                                 {
-                                    await currentStationMSSWrapper.ConnectAsync(uint.Parse(sampleRate.ToString()), relativePath.ToString());
-
-                                    BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
-
-                                    await Task.Delay(500);
-
-                                    BackgroundMediaPlayer.Current.Play();
-
-                                    if (lastStream != null) lastStream.Disconnect();
+                                    BackgroundMediaPlayer.Current.SetUriSource(new Uri(streamUrl));
                                 }
-                                catch (Exception ex)
+                                else if ((currentStationServerType == "Shoutcast" || currentStationServerType == "Icecast"))
                                 {
-                                    if (currentStationMSSWrapper != null)
+                                    currentStationMSSWrapper = new ShoutcastMediaSourceStream(new Uri(streamUrl));
+
+                                    currentStationMSSWrapper.MetadataChanged += CurrentStationMSSWrapper_MetadataChanged;
+
+                                    try
                                     {
-                                        currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
+                                        await currentStationMSSWrapper.ConnectAsync(uint.Parse(sampleRate.ToString()), relativePath.ToString());
 
-                                        currentStationMSSWrapper = null;
+                                        BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
+
+                                        await Task.Delay(500);
+
+                                        BackgroundMediaPlayer.Current.Play();
+
+                                        if (lastStream != null) lastStream.Disconnect();
                                     }
+                                    catch (Exception ex)
+                                    {
+                                        if (currentStationMSSWrapper != null)
+                                        {
+                                            currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
-                                    var payload = new ValueSet();
-                                    payload.Add(Messages.BackgroundAudioErrorMessage, JsonHelper.ToJson<BackgroundAudioErrorMessage>(new BackgroundAudioErrorMessage(ex)));
+                                            currentStationMSSWrapper = null;
+                                        }
 
-                                    BackgroundMediaPlayer.SendMessageToForeground(payload);
+                                        var payload = new ValueSet();
+                                        payload.Add(Messages.BackgroundAudioErrorMessage, JsonHelper.ToJson<BackgroundAudioErrorMessage>(new BackgroundAudioErrorMessage(ex)));
+
+                                        BackgroundMediaPlayer.SendMessageToForeground(payload);
+                                    }
                                 }
                             }
                             break;
@@ -238,7 +248,7 @@ namespace Neptunium.BackgroundAudio
             }
             catch (Exception ex)
             {
-                if (currentStationMSSWrapper != null)
+                if (currentStationMSSWrapper != null && (currentStationServerType == "Shoutcast" || currentStationServerType == "Icecast"))
                 {
                     currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
