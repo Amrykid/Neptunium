@@ -174,5 +174,10 @@ namespace Neptunium.View
         {
             Debug.WriteLine("State Change: " + e.OldState.Name + " -> " + e.NewState.Name);
         }
+
+        private void NowPlayingPanel_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            (this.DataContext as AppShellViewModel).GoToNowPlayingViewCommand.Execute(null);
+        }
     }
 }

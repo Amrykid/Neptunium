@@ -99,7 +99,8 @@
         <RelativePanel HorizontalAlignment="Stretch" Grid.Row="2" x:Name="FakeAppBar">
 
             <RelativePanel x:Name="NowPlayingPanel" RelativePanel.AlignLeftWithPanel="True" 
-                           Visibility="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
+                           Visibility="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
+                           Tapped="NowPlayingPanel_Tapped">
                 <Image Height="50" Width="50" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" 
