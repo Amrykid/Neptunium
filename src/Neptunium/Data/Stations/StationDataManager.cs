@@ -10,10 +10,14 @@ namespace Neptunium.Data
 {
     public static class StationDataManager
     {
+        public static bool IsInitialized { get; private set; }
+
         public static IEnumerable<StationModel> Stations { get; private set; }
 
         public static async Task InitializeAsync()
         {
+            if (IsInitialized) return;
+
             var file = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(@"Data\Stations\Stations.xml");
             var reader = await file.OpenReadAsync();
             XDocument xmlDoc = XDocument.Load(reader.AsStream());
@@ -54,6 +58,8 @@ namespace Neptunium.Data
             }
 
             Stations = stationList.ToArray();
+
+            IsInitialized = true;
         }
     }
 }

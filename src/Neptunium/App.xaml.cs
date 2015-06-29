@@ -42,6 +42,7 @@ namespace Neptunium
 #if DEBUG
             Application.Current.UnhandledException += Current_UnhandledException;
 #endif
+            ShoutcastStationMediaPlayer.Initialize();
         }
 
         private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)

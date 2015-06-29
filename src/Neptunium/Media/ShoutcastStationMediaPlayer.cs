@@ -31,7 +31,7 @@ namespace Neptunium.Media
             IsInitialized = false;
         }
 
-        private static void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)
+        private static async void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)
         {
             foreach (var message in e.Data)
             {
@@ -54,9 +54,16 @@ namespace Neptunium.Media
                         {
                             var siMessage = JsonHelper.FromJson<StationInfoMessage>(message.Value.ToString());
 
-                            currentStationModel = StationDataManager.Stations.FirstOrDefault(x => x.Name == siMessage.CurrentStation);
 
-                            if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+                            if (!StationDataManager.IsInitialized)
+                                await StationDataManager.InitializeAsync();
+
+                            if (!string.IsNullOrWhiteSpace(siMessage.CurrentStation))
+                            {
+                                currentStationModel = StationDataManager.Stations.FirstOrDefault(x => x.Name == siMessage.CurrentStation);
+
+                                if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+                            }
 
                             break;
                         }

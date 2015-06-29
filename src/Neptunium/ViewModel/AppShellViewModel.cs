@@ -70,21 +70,14 @@ namespace Neptunium.ViewModel
             ShoutcastStationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
             ShoutcastStationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
 
-            if (BackgroundMediaPlayer.Current.CurrentState == MediaPlayerState.Playing)
-            {
-                try
-                {
-                    //var currentStationName = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.AppMediaId;
+            //var currentStationName = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.AppMediaId;
 
-                    //CurrentStation = currentStationName;
+            //CurrentStation = currentStationName;
 
-                    //CurrentSong = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.MusicProperties.Title;
-                    //CurrentArtist = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.MusicProperties.Artist;
+            //CurrentSong = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.MusicProperties.Title;
+            //CurrentArtist = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.MusicProperties.Artist;
 
-                    SendResumeMessageToAudioPlayer();
-                }
-                catch (Exception) { }
-            }
+            SendLaunchOrResumeMessageToAudioPlayer();
         }
 
         private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, EventArgs e)
@@ -143,12 +136,12 @@ namespace Neptunium.ViewModel
             //}
             //catch (Exception) { }
 
-            SendResumeMessageToAudioPlayer();
+            SendLaunchOrResumeMessageToAudioPlayer();
 
             return base.OnResumingAsync();
         }
 
-        private static void SendResumeMessageToAudioPlayer()
+        private static void SendLaunchOrResumeMessageToAudioPlayer()
         {
             var payload = new ValueSet();
             payload.Add(Messages.AppLaunchOrResume, "");

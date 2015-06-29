@@ -9,10 +9,16 @@
     xmlns:conv="using:Crystal3.UI.Converters"
     x:Name="LayoutRoot"
     mc:Ignorable="d" RequestedTheme="Dark">
-    
+
     <Page.Resources>
         <conv:NullToVisibilityConverter x:Key="NullToVisConv" />
     </Page.Resources>
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition />
+        </TransitionCollection>
+    </Page.Transitions>
 
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -75,7 +81,7 @@
                       IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
                       AutomationProperties.Name="Menu"
                       ToolTipService.ToolTip="Menu" />
-                
+
                 <TextBlock x:Name="CurrentPaneTitle" Grid.Column="1" VerticalAlignment="Center"  />
             </Grid>
         </Grid>
