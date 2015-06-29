@@ -28,7 +28,7 @@ namespace Neptunium.Media
 
             BackgroundMediaPlayer.MessageReceivedFromBackground += BackgroundMediaPlayer_MessageReceivedFromBackground;
 
-            IsInitialized = false;
+            IsInitialized = true;
         }
 
         private static async void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)
