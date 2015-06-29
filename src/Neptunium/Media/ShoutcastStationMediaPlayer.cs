@@ -14,21 +14,31 @@ namespace Neptunium.Media
 {
     public static class ShoutcastStationMediaPlayer
     {
-        static ShoutcastStationMediaPlayer()
-        {
-            if (!IsInitialized)
-                Initialize();
-        }
-
         public static bool IsInitialized { get; private set; }
 
-        public static void Initialize()
+        public static async Task InitializeAsync()
         {
             if (IsInitialized) return;
 
             BackgroundMediaPlayer.MessageReceivedFromBackground += BackgroundMediaPlayer_MessageReceivedFromBackground;
 
+            //sends a dummy message to get the background audio task started
+            var hello = new ValueSet();
+            hello.Add(new KeyValuePair<string, object>("Hello", 0));
+            BackgroundMediaPlayer.SendMessageToBackground(hello);
+
+            await Task.Delay(1000);
+
             IsInitialized = true;
+        }
+
+        public static void Deinitialize()
+        {
+            if (!IsInitialized) return;
+
+            BackgroundMediaPlayer.MessageReceivedFromBackground -= BackgroundMediaPlayer_MessageReceivedFromBackground;
+
+            IsInitialized = false;
         }
 
         private static async void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)

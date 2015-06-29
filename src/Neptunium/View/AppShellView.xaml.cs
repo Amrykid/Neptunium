@@ -1,4 +1,5 @@
-﻿using Crystal3.Model;
+﻿using Crystal3.IOC;
+using Crystal3.Model;
 using Crystal3.Navigation;
 using Neptunium.MediaSourceStream;
 using Neptunium.ViewModel;
@@ -39,26 +40,13 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
-            this.Loaded += AppShellView_Loaded;
-            this.DataContextChanged += AppShellView_DataContextChanged;
-
             WindowManager.GetNavigationManagerForCurrentWindow()
                 .RegisterFrameAsNavigationService(inlineFrame, FrameLevel.Two).NavigationServicePreNavigatedSignaled += AppShellView_NavigationServicePreNavigatedSignaled;
 
-            this.SizeChanged += AppShellView_SizeChanged;
+            this.Loaded += AppShellView_Loaded;
 
-            App.Current.Resuming += Current_Resuming;
+            //this.NavigationCacheMode = NavigationCacheMode.Required;
 
-        }
-
-        private void AppShellView_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
-        {
-            this.DataContextChanged -= AppShellView_DataContextChanged;
-
-            App.Dispatcher.RunAsync(() =>
-            {
-                RefreshMediaButtons(BackgroundMediaPlayer.Current);
-            });
         }
 
         private async void Current_Resuming(object sender, object e)
@@ -120,25 +108,32 @@ namespace Neptunium.View
         private void RefreshNavigationSplitViewState(ViewModelBase viewModelToGoTo)
         {
             //couldn't think of a clever way to do this
-            var viewModelType = viewModelToGoTo.GetType();
-            if (viewModelType == typeof(StationsViewViewModel))
+            App.Dispatcher.RunAsync(() =>
             {
-                stationsNavButton.IsChecked = true;
-            }
-            else if (viewModelType == typeof(NowPlayingViewViewModel))
-            {
-                nowPlayingNavButton.IsChecked = true;
-            }
-            else
-            {
-                Debug.WriteLine("WARNING: Unimplemented navigation case - " + viewModelType.FullName);
-            }
+                var viewModelType = viewModelToGoTo.GetType();
+                if (viewModelType == typeof(StationsViewViewModel))
+                {
+                    stationsNavButton.IsChecked = true;
+                }
+                else if (viewModelType == typeof(NowPlayingViewViewModel))
+                {
+                    nowPlayingNavButton.IsChecked = true;
+                }
+                else
+                {
+                    Debug.WriteLine("WARNING: Unimplemented navigation case - " + viewModelType.FullName);
+                }
 
-            CurrentPaneTitle.Text = ((RadioButton)RootSplitViewPaneStackPanel.Children.Where(x => x is RadioButton).First(x => (bool)((RadioButton)x).IsChecked)).Content as string;
+                CurrentPaneTitle.Text = ((RadioButton)RootSplitViewPaneStackPanel.Children.Where(x => x is RadioButton).First(x => (bool)((RadioButton)x).IsChecked)).Content as string;
+            });
         }
 
         private void AppShellView_Loaded(object sender, RoutedEventArgs e)
         {
+            this.SizeChanged += AppShellView_SizeChanged;
+
+            App.Current.Resuming += Current_Resuming;
+
             BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
 
             //https://channel9.msdn.com/Events/Build/2015/3-733
@@ -162,6 +157,12 @@ namespace Neptunium.View
                         TogglePaneButton.IsChecked = false;
                 });
             }
+
+
+            App.Dispatcher.RunAsync(() =>
+            {
+                RefreshMediaButtons(BackgroundMediaPlayer.Current);
+            });
         }
 
         private void GoHome()

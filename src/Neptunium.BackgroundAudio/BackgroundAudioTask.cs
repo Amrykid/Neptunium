@@ -23,6 +23,9 @@ namespace Neptunium.BackgroundAudio
         private string currentStationServerType = null;
         private string currentStation = null;
         private IBackgroundTaskInstance thisTaskInstance = null;
+        private string currentTrack = "Title";
+        private string currentArtist = "Artist";
+        private volatile bool appIsInForeground = false;
 
         public BackgroundAudioTask()
         {
@@ -96,7 +99,11 @@ namespace Neptunium.BackgroundAudio
 
         private void Smtc_PropertyChanged(SystemMediaTransportControls sender, SystemMediaTransportControlsPropertyChangedEventArgs args)
         {
-
+            switch (args.Property)
+            {
+                case SystemMediaTransportControlsProperty.SoundLevel:
+                    break;
+            }
         }
 
         private void Smtc_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
@@ -216,7 +223,10 @@ namespace Neptunium.BackgroundAudio
                                 {
                                     BackgroundMediaPlayer.Current.SetUriSource(new Uri(streamUrl));
 
-                                    UpdateNowPlaying("Unknown Song", "Unknown Artist");
+                                    currentTrack = "Unknown Song";
+                                    currentArtist = "Unknown Artist";
+
+                                    UpdateNowPlaying(currentTrack, currentArtist);
                                 }
                                 else if ((currentStationServerType == "Shoutcast" || currentStationServerType == "Icecast"))
                                 {
@@ -241,16 +251,23 @@ namespace Neptunium.BackgroundAudio
 
                         case Messages.AppLaunchOrResume:
                             {
+                                appIsInForeground = true;
+
                                 var payload = new ValueSet();
                                 payload.Add(Messages.StationInfoMessage, JsonHelper.ToJson<StationInfoMessage>(new StationInfoMessage(currentStation)));
 
-                                try
-                                {
-                                    payload.Add(Messages.MetadataChangedMessage, JsonHelper.ToJson<MetadataChangedMessage>(new MetadataChangedMessage(smtc.DisplayUpdater.MusicProperties.Title, smtc.DisplayUpdater.MusicProperties.Artist)));
-                                }
-                                catch (Exception) { }
+
+                                payload.Add(Messages.MetadataChangedMessage, JsonHelper.ToJson<MetadataChangedMessage>(
+                                    new MetadataChangedMessage(currentTrack, currentArtist)));
+
 
                                 BackgroundMediaPlayer.SendMessageToForeground(payload);
+
+                                break;
+                            }
+                        case Messages.AppSuspend:
+                            {
+                                appIsInForeground = false;
 
                                 break;
                             }
@@ -270,8 +287,6 @@ namespace Neptunium.BackgroundAudio
                 payload.Add(Messages.BackgroundAudioErrorMessage, JsonHelper.ToJson<BackgroundAudioErrorMessage>(new BackgroundAudioErrorMessage(ex)));
 
                 BackgroundMediaPlayer.SendMessageToForeground(payload);
-
-
             }
         }
 
@@ -279,10 +294,16 @@ namespace Neptunium.BackgroundAudio
 
         private void CurrentStationMSSWrapper_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
-            string track = e.Title;
-            string artist = e.Artist;
+            lock (currentTrack)
+            {
+                lock (currentArtist)
+                {
+                    currentTrack = e.Title;
+                    currentArtist = e.Artist;
+                }
+            }
 
-            UpdateNowPlaying(track, artist);
+            UpdateNowPlaying(currentTrack, currentArtist);
 
         }
 

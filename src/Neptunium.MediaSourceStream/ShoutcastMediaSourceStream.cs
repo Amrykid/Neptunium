@@ -202,7 +202,7 @@ namespace Neptunium.MediaSourceStream
             }
             catch (Exception ex)
             {
-                throw new Exception("", ex);
+                MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.FailedToConnectToServer);
             }
         }
 
@@ -231,7 +231,6 @@ namespace Neptunium.MediaSourceStream
         {
             var request = args.Request;
             var deferral = request.GetDeferral();
-
 
             try
             {
@@ -296,6 +295,7 @@ namespace Neptunium.MediaSourceStream
             }
             catch (Exception)
             {
+                MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.Other);
             }
 
             deferral.Complete();

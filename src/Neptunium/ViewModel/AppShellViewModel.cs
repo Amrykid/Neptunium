@@ -25,12 +25,6 @@ namespace Neptunium.ViewModel
         {
             if (!IoCManager.IsRegistered<IMessageDialogService>())
                 IoCManager.Register<IMessageDialogService>(new DefaultMessageDialogService());
-        }
-
-        protected override void OnNavigatedTo(object sender, NavigationEventArgs e)
-        {
-            InlineNavigationService = Crystal3.Navigation.WindowManager.GetNavigationManagerForCurrentWindow()
-                .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two);
 
             GoToStationsViewCommand = new CRelayCommand(x =>
             {
@@ -62,9 +56,15 @@ namespace Neptunium.ViewModel
                 if (BackgroundMediaPlayer.Current.CanPause)
                     BackgroundMediaPlayer.Current.Pause();
             }, x => { try { return BackgroundMediaPlayer.Current.CanPause; } catch (Exception) { return true; } });
+        }
+
+        protected override async void OnNavigatedTo(object sender, NavigationEventArgs e)
+        {
+            InlineNavigationService = Crystal3.Navigation.WindowManager.GetNavigationManagerForCurrentWindow()
+                .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two);
 
             if (!ShoutcastStationMediaPlayer.IsInitialized)
-                ShoutcastStationMediaPlayer.Initialize();
+                await ShoutcastStationMediaPlayer.InitializeAsync();
 
             ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
             ShoutcastStationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
@@ -124,21 +124,17 @@ namespace Neptunium.ViewModel
             });
         }
 
-        protected override Task OnResumingAsync()
+        protected override async Task OnResumingAsync()
         {
-            if (!ShoutcastStationMediaPlayer.IsInitialized)
-                ShoutcastStationMediaPlayer.Initialize();
+            ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
+            ShoutcastStationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
 
-            try
-            {
-                ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
-                ShoutcastStationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
-            }
-            catch (Exception) { }
+            if (!ShoutcastStationMediaPlayer.IsInitialized)
+                await ShoutcastStationMediaPlayer.InitializeAsync();
 
             SendLaunchOrResumeMessageToAudioPlayer();
 
-            return base.OnResumingAsync();
+            await base.OnResumingAsync(); //only so that I can fake await the above method call.
         }
 
         private static void SendLaunchOrResumeMessageToAudioPlayer()
@@ -157,6 +153,8 @@ namespace Neptunium.ViewModel
 
             ShoutcastStationMediaPlayer.MetadataChanged -= ShoutcastStationMediaPlayer_MetadataChanged;
             ShoutcastStationMediaPlayer.CurrentStationChanged -= ShoutcastStationMediaPlayer_CurrentStationChanged;
+
+            ShoutcastStationMediaPlayer.Deinitialize();
 
             return base.OnSuspendingAsync(data);
         }

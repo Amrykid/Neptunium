@@ -42,15 +42,15 @@ namespace Neptunium
 #if DEBUG
             Application.Current.UnhandledException += Current_UnhandledException;
 #endif
-            ShoutcastStationMediaPlayer.Initialize();
+            ShoutcastStationMediaPlayer.InitializeAsync();
         }
 
         private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (!Debugger.IsAttached)
-                Debugger.Launch();
+            //if (!Debugger.IsAttached)
+            //    Debugger.Launch();
 
-            Debugger.Break();
+            //Debugger.Break();
         }
 
         public override void OnFreshLaunch(LaunchActivatedEventArgs args)
