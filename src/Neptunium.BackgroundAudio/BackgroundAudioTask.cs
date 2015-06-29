@@ -63,7 +63,11 @@ namespace Neptunium.BackgroundAudio
             smtc.ButtonPressed -= Smtc_ButtonPressed;
             smtc.PropertyChanged -= Smtc_PropertyChanged;
 
-            BackgroundMediaPlayer.MessageReceivedFromForeground -= BackgroundMediaPlayer_MessageReceivedFromForeground;
+            try
+            {
+                BackgroundMediaPlayer.MessageReceivedFromForeground -= BackgroundMediaPlayer_MessageReceivedFromForeground;
+            }
+            catch (Exception) { }
             BackgroundMediaPlayer.Current.CurrentStateChanged -= Current_CurrentStateChanged;
             //BackgroundMediaPlayer.Current.MediaFailed -= Current_MediaFailed;
             thisTaskInstance.Canceled -= TaskInstance_Canceled;
@@ -220,32 +224,17 @@ namespace Neptunium.BackgroundAudio
 
                                     currentStationMSSWrapper.MetadataChanged += CurrentStationMSSWrapper_MetadataChanged;
 
-                                    try
-                                    {
-                                        await currentStationMSSWrapper.ConnectAsync(uint.Parse(sampleRate.ToString()), relativePath.ToString());
 
-                                        BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
+                                    await currentStationMSSWrapper.ConnectAsync(uint.Parse(sampleRate.ToString()), relativePath.ToString());
 
-                                        await Task.Delay(500);
+                                    BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
 
-                                        BackgroundMediaPlayer.Current.Play();
+                                    await Task.Delay(500);
 
-                                        if (lastStream != null) lastStream.Disconnect();
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        if (currentStationMSSWrapper != null)
-                                        {
-                                            currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
+                                    BackgroundMediaPlayer.Current.Play();
 
-                                            currentStationMSSWrapper = null;
-                                        }
+                                    if (lastStream != null) lastStream.Disconnect();
 
-                                        var payload = new ValueSet();
-                                        payload.Add(Messages.BackgroundAudioErrorMessage, JsonHelper.ToJson<BackgroundAudioErrorMessage>(new BackgroundAudioErrorMessage(ex)));
-
-                                        BackgroundMediaPlayer.SendMessageToForeground(payload);
-                                    }
                                 }
                             }
                             break;
@@ -281,13 +270,15 @@ namespace Neptunium.BackgroundAudio
                 payload.Add(Messages.BackgroundAudioErrorMessage, JsonHelper.ToJson<BackgroundAudioErrorMessage>(new BackgroundAudioErrorMessage(ex)));
 
                 BackgroundMediaPlayer.SendMessageToForeground(payload);
+
+
             }
         }
 
 
 
         private void CurrentStationMSSWrapper_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
-        {        
+        {
             string track = e.Title;
             string artist = e.Artist;
 

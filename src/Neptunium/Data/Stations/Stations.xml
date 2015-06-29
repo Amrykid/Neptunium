@@ -28,7 +28,7 @@
     <Site>http://www.japanaradio.com/index.php</Site>
     <Genres>J-Pop; Anime</Genres>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="48" SampleRate="44100" RelativePath="" ServerType="Icecast">http://audio.misproductions.com/japan48k</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="japan128k" ServerType="Icecast">http://audio.misproductions.com/</Stream>
     </Streams>
   </Station>
   <Station>

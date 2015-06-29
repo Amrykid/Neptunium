@@ -52,6 +52,8 @@ namespace Neptunium.MediaSourceStream
             socket.Dispose();
         }
 
+        //http://stackoverflow.com/questions/6294807/calculate-mpeg-frame-length-ms
+
         TimeSpan timeOffSet = new TimeSpan();
         private UInt64 byteOffset;
 
@@ -62,8 +64,8 @@ namespace Neptunium.MediaSourceStream
         #endregion
 
         //TODO
-        UInt32 aac_sampleSize = 0;
-        TimeSpan aac_sampleDuration = default(TimeSpan);
+        UInt32 aac_sampleSize = 16;
+        TimeSpan aac_sampleDuration = new TimeSpan(0, 0, 0, 0, 70);
 
         public ShoutcastMediaSourceStream(Uri url)
         {
@@ -88,6 +90,11 @@ namespace Neptunium.MediaSourceStream
                         //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(32000, 2, (uint)bitRate)));
                         //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(24000, 2, (uint)bitRate)));
                         //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(22050, 2, (uint)bitRate)));
+                    }
+                    break;
+                case StreamAudioFormat.AAC:
+                    {
+                        MediaStreamSource = new MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateAac(sampleRate, 2, (uint)bitRate)));
                     }
                     break;
             }
@@ -237,10 +244,10 @@ namespace Neptunium.MediaSourceStream
                 {
                     //parse part of the frame.
 
-                    byte[] partialmp3Frame = new byte[metadataInt - metadataPos];
+                    byte[] partialFrame = new byte[metadataInt - metadataPos];
 
                     await socketReader.LoadAsync(metadataInt - metadataPos);
-                    socketReader.ReadBytes(partialmp3Frame);
+                    socketReader.ReadBytes(partialFrame);
 
                     metadataPos += metadataInt - metadataPos;
 
@@ -248,7 +255,12 @@ namespace Neptunium.MediaSourceStream
                     {
                         case StreamAudioFormat.MP3:
                             {
-                                sample = await ParseMP3SampleAsync(partial: true, partialBytes: partialmp3Frame);
+                                sample = await ParseMP3SampleAsync(partial: true, partialBytes: partialFrame);
+                            }
+                            break;
+                        case StreamAudioFormat.AAC:
+                            {
+                                sample = await ParseAACSampleAsync(partial: true, partialBytes: partialFrame);
                             }
                             break;
                     }
@@ -266,6 +278,11 @@ namespace Neptunium.MediaSourceStream
                                 //mp3
                                 sample = await ParseMP3SampleAsync();
                                 //await MediaStreamSample.CreateFromStreamAsync(socket.InputStream, bitRate, new TimeSpan(0, 0, 1));
+                            }
+                            break;
+                        case StreamAudioFormat.AAC:
+                            {
+                                sample = await ParseAACSampleAsync();
                             }
                             break;
                     }
@@ -390,6 +407,35 @@ namespace Neptunium.MediaSourceStream
             return sample;
 
             //return null;
+        }
+
+        private async Task<MediaStreamSample> ParseAACSampleAsync(bool partial = false, byte[] partialBytes = null)
+        {
+            
+            IBuffer buffer = null;
+            MediaStreamSample sample = null;
+
+            if (partial)
+            {
+                buffer = partialBytes.AsBuffer();
+                byteOffset += aac_sampleSize - (ulong)partialBytes.Length;
+            }
+            else
+            {
+                await socketReader.LoadAsync(aac_sampleSize);
+                buffer = socketReader.ReadBuffer(aac_sampleSize);
+
+                byteOffset += aac_sampleSize;
+            }
+
+            sample = MediaStreamSample.CreateFromBuffer(buffer, timeOffSet);
+            sample.Duration = aac_sampleDuration;
+            sample.KeyFrame = true;
+
+            timeOffSet = timeOffSet.Add(aac_sampleDuration);
+
+
+            return sample;
         }
 
         public event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
