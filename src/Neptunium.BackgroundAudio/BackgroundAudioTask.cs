@@ -22,6 +22,7 @@ namespace Neptunium.BackgroundAudio
         private ShoutcastMediaSourceStream currentStationMSSWrapper = null;
         private string currentStationServerType = null;
         private string currentStation = null;
+        private IBackgroundTaskInstance thisTaskInstance = null;
 
         public BackgroundAudioTask()
         {
@@ -31,6 +32,7 @@ namespace Neptunium.BackgroundAudio
         public void Run(IBackgroundTaskInstance taskInstance)
         {
             deferral = taskInstance.GetDeferral();
+            thisTaskInstance = taskInstance;
 
             smtc = BackgroundMediaPlayer.Current.SystemMediaTransportControls;
             smtc.ButtonPressed += Smtc_ButtonPressed;
@@ -51,30 +53,42 @@ namespace Neptunium.BackgroundAudio
 
             BackgroundMediaPlayer.MessageReceivedFromForeground += BackgroundMediaPlayer_MessageReceivedFromForeground;
             BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
-            BackgroundMediaPlayer.Current.MediaFailed += Current_MediaFailed;
+            //BackgroundMediaPlayer.Current.MediaFailed += Current_MediaFailed;
             taskInstance.Canceled += TaskInstance_Canceled;
             taskInstance.Task.Completed += Task_Completed;
         }
 
-        private void Current_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
+        private void DetachAllHandlers()
         {
-            try
-            {
-                var payload = new ValueSet();
-                payload.Add(Messages.BackgroundAudioErrorMessage, JsonHelper.ToJson<BackgroundAudioErrorMessage>(new BackgroundAudioErrorMessage(args)));
+            smtc.ButtonPressed -= Smtc_ButtonPressed;
+            smtc.PropertyChanged -= Smtc_PropertyChanged;
 
-                BackgroundMediaPlayer.SendMessageToForeground(payload);
-            }
-            catch (Exception)
-            { }
-            finally
-            {
-                FullStop();
-
-                currentStationMSSWrapper = null;
-            }
-
+            BackgroundMediaPlayer.MessageReceivedFromForeground -= BackgroundMediaPlayer_MessageReceivedFromForeground;
+            BackgroundMediaPlayer.Current.CurrentStateChanged -= Current_CurrentStateChanged;
+            //BackgroundMediaPlayer.Current.MediaFailed -= Current_MediaFailed;
+            thisTaskInstance.Canceled -= TaskInstance_Canceled;
+            thisTaskInstance.Task.Completed -= Task_Completed;
         }
+
+        //private void Current_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
+        //{
+        //    try
+        //    {
+        //        var payload = new ValueSet();
+        //        payload.Add(Messages.BackgroundAudioErrorMessage, JsonHelper.ToJson<BackgroundAudioErrorMessage>(new BackgroundAudioErrorMessage(args)));
+
+        //        BackgroundMediaPlayer.SendMessageToForeground(payload);
+        //    }
+        //    catch (Exception)
+        //    { }
+        //    finally
+        //    {
+        //        FullStop();
+
+        //        currentStationMSSWrapper = null;
+        //    }
+
+        //}
 
         private void Smtc_PropertyChanged(SystemMediaTransportControls sender, SystemMediaTransportControlsPropertyChangedEventArgs args)
         {
@@ -121,12 +135,18 @@ namespace Neptunium.BackgroundAudio
 
         private void Task_Completed(BackgroundTaskRegistration sender, BackgroundTaskCompletedEventArgs args)
         {
+            DetachAllHandlers();
+
             deferral.Complete();
         }
 
         private void TaskInstance_Canceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
             FullStop();
+
+            DetachAllHandlers();
+
+            deferral.Complete();
         }
 
         private void FullStop()
