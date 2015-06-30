@@ -71,7 +71,11 @@ namespace Neptunium.BackgroundAudio
                 BackgroundMediaPlayer.MessageReceivedFromForeground -= BackgroundMediaPlayer_MessageReceivedFromForeground;
             }
             catch (Exception) { }
-            BackgroundMediaPlayer.Current.CurrentStateChanged -= Current_CurrentStateChanged;
+            try
+            {
+                BackgroundMediaPlayer.Current.CurrentStateChanged -= Current_CurrentStateChanged;
+            }
+            catch (Exception) { }
             //BackgroundMediaPlayer.Current.MediaFailed -= Current_MediaFailed;
             thisTaskInstance.Canceled -= TaskInstance_Canceled;
             thisTaskInstance.Task.Completed -= Task_Completed;

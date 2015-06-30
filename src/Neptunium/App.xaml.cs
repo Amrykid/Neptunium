@@ -23,6 +23,9 @@ using Neptunium.Shared;
 using Windows.Media.Playback;
 using System.Diagnostics;
 using Neptunium.Media;
+using Neptunium.Logging;
+using System.Threading.Tasks;
+using Windows.ApplicationModel.Email;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -42,26 +45,62 @@ namespace Neptunium
 #if DEBUG
             Application.Current.UnhandledException += Current_UnhandledException;
 #endif
-            ShoutcastStationMediaPlayer.InitializeAsync();
+            CoreInit();
+
         }
 
-        private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private static async void CoreInit()
         {
-            //if (!Debugger.IsAttached)
-            //    Debugger.Launch();
-
-            //Debugger.Break();
+            await LogManager.InitializeAsync();
+            await ShoutcastStationMediaPlayer.InitializeAsync();
         }
 
-        public override void OnFreshLaunch(LaunchActivatedEventArgs args)
+        private async void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+
+            await LogManager.LogAsync(typeof(App), "BEGIN Unhandled Exception");
+            await LogManager.ErrorAsync(typeof(App), e.Exception.ToString());
+            await LogManager.ErrorAsync(typeof(App), e.Exception.StackTrace);
+
+            if (e.Exception.InnerException != null)
+                await LogManager.ErrorAsync(typeof(App), e.Exception.InnerException.ToString());
+
+            await LogManager.ErrorAsync(typeof(App), e.Message);
+            await LogManager.LogAsync(typeof(App), "END Unhandled Exception");
+
+            await Task.Delay(50);
+
+            //Application.Current.Exit();
+        }
+
+        public override async void OnFreshLaunch(LaunchActivatedEventArgs args)
         {
             //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+            await LogManager.InfoAsync(typeof(App), "Application Launching");
+
 
             var payload = new ValueSet();
             payload.Add(Messages.AppLaunchOrResume, "");
             BackgroundMediaPlayer.SendMessageToBackground(payload);
 
             WindowManager.GetNavigationManagerForCurrentWindow().RootNavigationService.NavigateTo<AppShellViewModel>();
+        }
+
+        public override async Task OnSuspendingAsync()
+        {
+            await LogManager.InfoAsync(typeof(App), "Application Suspending");
+
+            await base.OnSuspendingAsync();
+        }
+
+        public override async Task OnResumingAsync()
+        {
+            await LogManager.InitializeAsync();
+
+            await LogManager.InfoAsync(typeof(App), "Application Resuming");
+
+            await base.OnResumingAsync();
         }
     }
 }

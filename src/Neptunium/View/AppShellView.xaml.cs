@@ -1,6 +1,7 @@
 ﻿using Crystal3.IOC;
 using Crystal3.Model;
 using Crystal3.Navigation;
+using Neptunium.Logging;
 using Neptunium.MediaSourceStream;
 using Neptunium.ViewModel;
 using System;
@@ -38,6 +39,8 @@ namespace Neptunium.View
     {
         public AppShellView()
         {
+            LogManager.InfoAsync(typeof(AppShellView), "AppShellView ctor");
+
             this.InitializeComponent();
 
             WindowManager.GetNavigationManagerForCurrentWindow()
@@ -45,15 +48,22 @@ namespace Neptunium.View
 
             this.Loaded += AppShellView_Loaded;
 
-            //this.NavigationCacheMode = NavigationCacheMode.Required;
+            this.DataContextChanged += AppShellView_DataContextChanged;
 
+            this.NavigationCacheMode = NavigationCacheMode.Required;
+
+        }
+
+        private async void AppShellView_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            await LogManager.InfoAsync(typeof(AppShellView), "DataContextChanged: " + (args.NewValue == null ? "null" : args.NewValue.GetType().FullName));
         }
 
         private async void Current_Resuming(object sender, object e)
         {
             await Task.Delay(500);
 
-            await App.Dispatcher.RunAsync(() =>
+            await App.Dispatcher.RunAsync(Crystal3.Core.IUIDispatcherPriority.Low, () =>
             {
                 RefreshMediaButtons(BackgroundMediaPlayer.Current);
             });
@@ -61,7 +71,7 @@ namespace Neptunium.View
 
         private void Current_CurrentStateChanged(MediaPlayer sender, object args)
         {
-            App.Dispatcher.RunAsync(() =>
+            App.Dispatcher.RunAsync(Crystal3.Core.IUIDispatcherPriority.Low, () =>
             {
                 RefreshMediaButtons(sender);
             });
@@ -70,22 +80,25 @@ namespace Neptunium.View
 
         private void RefreshMediaButtons(MediaPlayer sender)
         {
-            switch (sender.CurrentState)
+            if (this.DataContext != null)
             {
-                case MediaPlayerState.Playing:
-                case MediaPlayerState.Opening:
-                case MediaPlayerState.Buffering:
-                    PlayPauseButton.Icon = new SymbolIcon(Symbol.Pause);
-                    PlayPauseButton.Content = "Pause";
-                    PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PauseCommand;
-                    break;
-                case MediaPlayerState.Closed:
-                case MediaPlayerState.Paused:
-                case MediaPlayerState.Stopped:
-                    PlayPauseButton.Icon = new SymbolIcon(Symbol.Play);
-                    PlayPauseButton.Content = "Play";
-                    PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PlayCommand;
-                    break;
+                switch (sender.CurrentState)
+                {
+                    case MediaPlayerState.Playing:
+                    case MediaPlayerState.Opening:
+                    case MediaPlayerState.Buffering:
+                        PlayPauseButton.Icon = new SymbolIcon(Symbol.Pause);
+                        PlayPauseButton.Content = "Pause";
+                        PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PauseCommand;
+                        break;
+                    case MediaPlayerState.Closed:
+                    case MediaPlayerState.Paused:
+                    case MediaPlayerState.Stopped:
+                        PlayPauseButton.Icon = new SymbolIcon(Symbol.Play);
+                        PlayPauseButton.Content = "Play";
+                        PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PlayCommand;
+                        break;
+                }
             }
         }
 
@@ -159,10 +172,10 @@ namespace Neptunium.View
             }
 
 
-            App.Dispatcher.RunAsync(() =>
-            {
-                RefreshMediaButtons(BackgroundMediaPlayer.Current);
-            });
+            //App.Dispatcher.RunAsync(() =>
+            //{
+            //    RefreshMediaButtons(BackgroundMediaPlayer.Current);
+            //});
         }
 
         private void GoHome()
