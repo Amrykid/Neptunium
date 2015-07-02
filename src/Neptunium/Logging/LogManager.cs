@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Storage;
@@ -14,15 +15,18 @@ namespace Neptunium.Logging
     {
         private static StorageFile logFile = null;
         private const string logFormat = "{3} | [{0}]: {1} - {2}";
+        private static ManualResetEvent logFileMutex = null;
 
         public static bool IsInitialized { get; private set; }
         public static async Task InitializeAsync()
         {
-            // if (IsInitialized) return;
+            if (IsInitialized) return;
 
             try
             {
 #if DEBUG
+                logFileMutex = new ManualResetEvent(true);
+
                 logFile = await DownloadsFolder.CreateFileAsync("NeptuniumLog.log", CreationCollisionOption.GenerateUniqueName);
 #endif
 
@@ -40,32 +44,36 @@ namespace Neptunium.Logging
             return await FileIO.ReadTextAsync(logFile);
         }
 
-        public static async Task InfoAsync(Type callingType, string message)
+        public static void Info(Type callingType, string message)
         {
-            await WriteLineAsync(string.Format(logFormat, callingType.Name, "INFO", message, DateTime.Now));
+            WriteLine(string.Format(logFormat, callingType.Name, "INFO", message, DateTime.Now));
         }
 
-        public static async Task WarningAsync(Type callingType, string message)
+        public static void Warning(Type callingType, string message)
         {
-            await WriteLineAsync(string.Format(logFormat, callingType.Name, "WARN", message, DateTime.Now));
+            WriteLine(string.Format(logFormat, callingType.Name, "WARN", message, DateTime.Now));
         }
-        public static async Task ErrorAsync(Type callingType, string message)
+        public static void Error(Type callingType, string message)
         {
-            await WriteLineAsync(string.Format(logFormat, callingType.Name, "ERROR", message, DateTime.Now));
+            WriteLine(string.Format(logFormat, callingType.Name, "ERROR", message, DateTime.Now));
         }
-        public static async Task LogAsync(Type callingType, string message)
+        public static void Log(Type callingType, string message)
         {
-            await WriteLineAsync(string.Format(logFormat, callingType.Name, "LOG", message, DateTime.Now));
+            WriteLine(string.Format(logFormat, callingType.Name, "LOG", message, DateTime.Now));
         }
 
-        private static async Task WriteLineAsync(string line)
+        private static void WriteLine(string line)
         {
 #if DEBUG
             try
             {
-                await FileIO.AppendTextAsync(logFile, line + Environment.NewLine);
+                logFileMutex.WaitOne();
+
+                FileIO.AppendTextAsync(logFile, line + Environment.NewLine).AsTask().Wait();
+
+                logFileMutex.Set();
             }
-            catch (UnauthorizedAccessException)
+            catch (Exception)
             {
                 
             }

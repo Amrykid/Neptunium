@@ -10,12 +10,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Navigation;
 using Neptunium.Data;
+using Crystal3.Navigation;
 
 namespace Neptunium.ViewModel
 {
     public class NowPlayingViewViewModel : ViewModelBase
     {
-        protected override async void OnNavigatedTo(object sender, NavigationEventArgs e)
+        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             IsBusy = true;
 

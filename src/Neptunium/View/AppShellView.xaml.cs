@@ -39,7 +39,7 @@ namespace Neptunium.View
     {
         public AppShellView()
         {
-            LogManager.InfoAsync(typeof(AppShellView), "AppShellView ctor");
+            LogManager.Info(typeof(AppShellView), "AppShellView ctor");
 
             this.InitializeComponent();
 
@@ -56,7 +56,7 @@ namespace Neptunium.View
 
         private async void AppShellView_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            await LogManager.InfoAsync(typeof(AppShellView), "DataContextChanged: " + (args.NewValue == null ? "null" : args.NewValue.GetType().FullName));
+            LogManager.Info(typeof(AppShellView), "DataContextChanged: " + (args.NewValue == null ? "null" : args.NewValue.GetType().FullName));
         }
 
         private async void Current_Resuming(object sender, object e)
@@ -104,6 +104,8 @@ namespace Neptunium.View
 
         private void AppShellView_NavigationServicePreNavigatedSignaled(object sender, NavigationServicePreNavigatedSignaledEventArgs e)
         {
+            LogManager.Info(typeof(AppShellView), "AppShellView_NavigationServicePreNavigatedSignaled");
+
             RefreshNavigationSplitViewState(e.ViewModel);
         }
 

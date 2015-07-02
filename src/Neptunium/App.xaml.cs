@@ -59,25 +59,25 @@ namespace Neptunium
         {
             e.Handled = true;
 
-            await LogManager.LogAsync(typeof(App), "BEGIN Unhandled Exception");
-            await LogManager.ErrorAsync(typeof(App), e.Exception.ToString());
-            await LogManager.ErrorAsync(typeof(App), e.Exception.StackTrace);
+            LogManager.Log(typeof(App), "BEGIN Unhandled Exception");
+            LogManager.Error(typeof(App), e.Exception.ToString());
+            LogManager.Error(typeof(App), e.Exception.StackTrace);
 
             if (e.Exception.InnerException != null)
-                await LogManager.ErrorAsync(typeof(App), e.Exception.InnerException.ToString());
+                LogManager.Error(typeof(App), e.Exception.InnerException.ToString());
 
-            await LogManager.ErrorAsync(typeof(App), e.Message);
-            await LogManager.LogAsync(typeof(App), "END Unhandled Exception");
+            LogManager.Error(typeof(App), e.Message);
+            LogManager.Log(typeof(App), "END Unhandled Exception");
 
             await Task.Delay(50);
 
             //Application.Current.Exit();
         }
 
-        public override async void OnFreshLaunch(LaunchActivatedEventArgs args)
+        public override void OnFreshLaunch(LaunchActivatedEventArgs args)
         {
             //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-            await LogManager.InfoAsync(typeof(App), "Application Launching");
+            LogManager.Info(typeof(App), "Application Launching");
 
 
             var payload = new ValueSet();
@@ -89,16 +89,16 @@ namespace Neptunium
 
         public override async Task OnSuspendingAsync()
         {
-            await LogManager.InfoAsync(typeof(App), "Application Suspending");
+            LogManager.Info(typeof(App), "Application Suspending");
 
             await base.OnSuspendingAsync();
         }
 
         public override async Task OnResumingAsync()
         {
-            await LogManager.InitializeAsync();
+            //await LogManager.InitializeAsync();
 
-            await LogManager.InfoAsync(typeof(App), "Application Resuming");
+            LogManager.Info(typeof(App), "Application Resuming");
 
             await base.OnResumingAsync();
         }

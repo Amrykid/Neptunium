@@ -24,7 +24,7 @@ namespace Neptunium.ViewModel
         private NavigationService InlineNavigationService = null;
         public AppShellViewModel()
         {
-            LogManager.InfoAsync(typeof(AppShellViewModel), "AppShellViewModel .ctor");
+            LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel .ctor");
 
             if (!IoCManager.IsRegistered<IMessageDialogService>())
                 IoCManager.Register<IMessageDialogService>(new DefaultMessageDialogService());
@@ -61,9 +61,9 @@ namespace Neptunium.ViewModel
             }, x => { try { return BackgroundMediaPlayer.Current.CanPause; } catch (Exception) { return true; } });
         }
 
-        protected override async void OnNavigatedTo(object sender, NavigationEventArgs e)
+        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            LogManager.InfoAsync(typeof(AppShellViewModel), "AppShellViewModel OnNavigatedTo");
+            LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel OnNavigatedTo");
 
             InlineNavigationService = Crystal3.Navigation.WindowManager.GetNavigationManagerForCurrentWindow()
                 .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two);
@@ -104,11 +104,11 @@ namespace Neptunium.ViewModel
 
         private async void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)
         {
-            await LogManager.InfoAsync(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_CurrentStationChanged");
+            LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_CurrentStationChanged");
 
             await App.Dispatcher.RunAsync(() =>
             {
-                LogManager.InfoAsync(typeof(AppShellViewModel),
+                LogManager.Info(typeof(AppShellViewModel),
                     "AppShellViewModel ShoutcastStationMediaPlayer_CurrentStationChanged || Dispatcher_Delegate { CurrentStation: " +
                     (ShoutcastStationMediaPlayer.CurrentStation == null ? "null" : ShoutcastStationMediaPlayer.CurrentStation.Name) + " }");
 
@@ -122,11 +122,11 @@ namespace Neptunium.ViewModel
 
         private async void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
-            await LogManager.InfoAsync(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged");
+            LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged");
 
             await App.Dispatcher.RunAsync(() =>
             {
-                LogManager.InfoAsync(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged || Dispatcher_Delegate { CurrentStation: " +
+                LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged || Dispatcher_Delegate { CurrentStation: " +
                     (ShoutcastStationMediaPlayer.CurrentStation == null ? "null" : ShoutcastStationMediaPlayer.CurrentStation.Name) + " || CurrentSong: " + e.Title + " || CurrentArtist: " + e.Artist + " }"); 
 
                 CurrentSong = e.Title;
