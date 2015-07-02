@@ -46,13 +46,14 @@ namespace Neptunium
             Application.Current.UnhandledException += Current_UnhandledException;
 #endif
             CoreInit();
-
         }
 
         private static async void CoreInit()
         {
             await LogManager.InitializeAsync();
             await ShoutcastStationMediaPlayer.InitializeAsync();
+
+            LogManager.Info(typeof(App), "CoreInitialization Complete");
         }
 
         private async void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
