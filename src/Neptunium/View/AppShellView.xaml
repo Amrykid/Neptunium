@@ -81,12 +81,13 @@
         <SplitView x:Name="RootSplitView" Margin="0 0 0 0" Grid.Row="1">
             <SplitView.Pane>
                 <StackPanel x:Name="RootSplitViewPaneStackPanel">
-                    <!-- Static Relativepanel, substitutes nested stackpanel or grid with rows/columns for this simple scenario -->
+                    <!-- font family = Segoe MDL2 Assets -->
                     <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Stations" Tag=""
                                  Command="{Binding GoToStationsViewCommand}" IsChecked="True" x:Name="stationsNavButton" />
                     <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Now Playing" Tag="" 
                                  Command="{Binding GoToNowPlayingViewCommand}" x:Name="nowPlayingNavButton" />
-                    <!--<RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Favorites" Tag="" />-->
+                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Settings" Tag="" 
+                                 Command="{Binding GoToSettingsViewCommand}" x:Name="settingsNavButton" />
                 </StackPanel>
             </SplitView.Pane>
 

@@ -110,12 +110,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AppShellViewModel.cs" />
     <Compile Include="ViewModel\NowPlayingViewViewModel.cs" />
+    <Compile Include="ViewModel\SettingsViewViewModel.cs" />
     <Compile Include="ViewModel\StationsViewViewModel.cs" />
     <Compile Include="View\AppShellView.xaml.cs">
       <DependentUpon>AppShellView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\NowPlayingView.xaml.cs">
       <DependentUpon>NowPlayingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\StationsView.xaml.cs">
       <DependentUpon>StationsView.xaml</DependentUpon>
@@ -182,6 +186,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\NowPlayingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

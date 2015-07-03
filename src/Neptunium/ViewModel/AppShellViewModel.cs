@@ -41,6 +41,12 @@ namespace Neptunium.ViewModel
                     InlineNavigationService.NavigateTo<NowPlayingViewViewModel>();
             });
 
+            GoToSettingsViewCommand = new CRelayCommand(x =>
+            {
+                if (!InlineNavigationService.IsNavigatedTo<SettingsViewViewModel>())
+                    InlineNavigationService.NavigateTo<SettingsViewViewModel>();
+            });
+
             PlayCommand = new CRelayCommand(x =>
             {
                 BackgroundMediaPlayer.Current.Play();
@@ -182,6 +188,7 @@ namespace Neptunium.ViewModel
 
         public CRelayCommand GoToStationsViewCommand { get; private set; }
         public CRelayCommand GoToNowPlayingViewCommand { get; private set; }
+        public CRelayCommand GoToSettingsViewCommand { get; private set; }
 
         public CRelayCommand PlayCommand { get; private set; }
         public CRelayCommand PauseCommand { get; private set; }
