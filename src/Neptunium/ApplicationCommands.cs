@@ -15,8 +15,20 @@ namespace Neptunium
         {
             PlayStationCommand = new CRelayCommand(async station =>
                 {
-                    var result = await ShoutcastStationMediaPlayer.PlayStationAsync((StationModel)station);
+                    if (Windows.Networking.Connectivity.NetworkInformation.GetInternetConnectionProfile() != null)
+                    {
+                        var result = await ShoutcastStationMediaPlayer.PlayStationAsync((StationModel)station);
+                    }
+                    else
+                    {
+                        var dialogService = Crystal3.IOC.IoCManager.Resolve<Crystal3.Core.IMessageDialogService>();
 
+                        if (dialogService != null)
+                        {
+                            await dialogService.ShowAsync(
+                                string.Format("We are unable to connect to {0}. You do not have a suitable internet connection.", ((StationModel)station).Name), "No Internet Connection");
+                        }
+                    }
 
                 }, station => station != null);
         }
