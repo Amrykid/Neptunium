@@ -15,7 +15,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Pivot SelectedIndex="1" Title="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged}">
             <PivotItem Header="Song Info">
-                <TextBlock Text="Not Implemented Yet" />
+                <TextBlock Text="Not Implemented Yet" VerticalAlignment="Center" HorizontalAlignment="Center" />
             </PivotItem>
             <PivotItem Header="Song History">
                 <Grid>
