@@ -20,7 +20,7 @@
     {
         Direct = 0,
         Shoutcast = 1,
-        Icecast,
-        Other
+        Icecast = 1,
+        Other = 2
     }
 }
