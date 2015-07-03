@@ -11,9 +11,9 @@ namespace Neptunium.Data
     {
         public string Description { get; internal set; }
         public string[] Genres { get; internal set; }
-        public Uri Logo { get; internal set; }
+        public string Logo { get; internal set; }
         public string Name { get; internal set; }
-        public Uri Site { get; internal set; }
+        public string Site { get; internal set; }
         public IEnumerable<StationModelStream> Streams { get; internal set; }
     }
 }

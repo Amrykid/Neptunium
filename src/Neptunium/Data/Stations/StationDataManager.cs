@@ -30,8 +30,8 @@ namespace Neptunium.Data
 
                 station.Name = stationElement.Element("Name").Value;
                 station.Description = stationElement.Element("Description").Value;
-                station.Logo = new Uri(stationElement.Element("Logo").Value);
-                station.Site = new Uri(stationElement.Element("Site").Value);
+                station.Logo = stationElement.Element("Logo").Value;
+                station.Site = stationElement.Element("Site").Value;
                 station.Genres = stationElement.Element("Genres").Value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
                 station.Streams = stationElement.Element("Streams").Elements("Stream").Select<XElement, StationModelStream>(x =>
@@ -52,7 +52,7 @@ namespace Neptunium.Data
                     catch (Exception) { }
 
                     return stream;
-                });
+                }).ToArray();
 
                 stationList.Add(station);
             }
@@ -60,6 +60,12 @@ namespace Neptunium.Data
             Stations = stationList.ToArray();
 
             IsInitialized = true;
+
+            stationList = null;
+
+            xmlDoc = null;
+
+            reader.Dispose();
         }
     }
 }

@@ -41,7 +41,11 @@ namespace Neptunium.Logging
 
         public static async Task<string> ReadLogAsync()
         {
+#if DEBUG
             return await FileIO.ReadTextAsync(logFile);
+#else
+            return Task.FromResult<object>(null);
+#endif
         }
 
         public static void Info(Type callingType, string message)

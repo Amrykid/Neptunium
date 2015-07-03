@@ -174,10 +174,10 @@ namespace Neptunium.View
             }
 
 
-            //App.Dispatcher.RunAsync(() =>
-            //{
-            //    RefreshMediaButtons(BackgroundMediaPlayer.Current);
-            //});
+            App.Dispatcher.RunAsync(() =>
+            {
+                RefreshMediaButtons(BackgroundMediaPlayer.Current);
+            });
         }
 
         private void GoHome()
