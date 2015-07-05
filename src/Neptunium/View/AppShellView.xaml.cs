@@ -174,8 +174,8 @@ namespace Neptunium.View
                 {
                     //dismiss the menu if its open.
 
-                    //if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
-                        //TogglePaneButton.IsChecked = false;
+                    if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
+                        TogglePaneButton.IsChecked = false;
                 });
 
             }

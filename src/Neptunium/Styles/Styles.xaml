@@ -129,8 +129,8 @@
         <Setter Property="IsPaneOpen" Value="False" />
         <Setter Property="OpenPaneLength" Value="320" />
         <Setter Property="CompactPaneLength" Value="48" />
-        <Setter Property="PaneBackground" Value="{ThemeResource SplitViewBackgroundBrush}" />
-        <Setter Property="DisplayMode" Value="CompactOverlay" />
+        <!--<Setter Property="PaneBackground" Value="{ThemeResource SplitViewBackgroundBrush}" />-->
+        <!--<Setter Property="DisplayMode" Value="CompactOverlay" />-->
         <Setter Property="RequestedTheme" Value="Dark" />
     </Style>
 
