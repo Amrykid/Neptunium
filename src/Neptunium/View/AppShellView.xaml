@@ -11,7 +11,13 @@
     mc:Ignorable="d" RequestedTheme="Dark">
 
     <Page.Resources>
-        <conv:NullToVisibilityConverter x:Key="NullToVisConv" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <conv:NullToVisibilityConverter x:Key="NullToVisConv" />
+        </ResourceDictionary>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -79,15 +85,32 @@
             </Grid>
         </Grid>
         <SplitView x:Name="RootSplitView" Margin="0 0 0 0" Grid.Row="1">
+            <SplitView.Resources>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource SplitViewTextBlockStyle}" />
+                <Style TargetType="RadioButton" BasedOn="{StaticResource SplitViewRadioButtonStyle}" />
+            </SplitView.Resources>
+            
             <SplitView.Pane>
                 <StackPanel x:Name="RootSplitViewPaneStackPanel">
                     <!-- font family = Segoe MDL2 Assets -->
-                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Stations" Tag=""
-                                 Command="{Binding GoToStationsViewCommand}" IsChecked="True" x:Name="stationsNavButton" />
-                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Now Playing" Tag="" 
-                                 Command="{Binding GoToNowPlayingViewCommand}" x:Name="nowPlayingNavButton" />
-                    <RadioButton GroupName="Navigation" Style="{StaticResource NavRadioButtonStyle}" Content="Settings" Tag="" 
-                                 Command="{Binding GoToSettingsViewCommand}" x:Name="settingsNavButton" />
+                    <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Stations"
+                                 Command="{Binding GoToStationsViewCommand}" x:Name="stationsNavButton">
+                        <RadioButton.Tag>
+                            <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                        </RadioButton.Tag>
+                    </RadioButton>
+                    <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Now Playing"
+                                 Command="{Binding GoToNowPlayingViewCommand}" x:Name="nowPlayingNavButton">
+                        <RadioButton.Tag>
+                            <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                        </RadioButton.Tag>
+                    </RadioButton>
+                    <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Settings"
+                                 Command="{Binding GoToSettingsViewCommand}" x:Name="settingsNavButton">
+                        <RadioButton.Tag>
+                            <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                        </RadioButton.Tag>
+                    </RadioButton>
                 </StackPanel>
             </SplitView.Pane>
 

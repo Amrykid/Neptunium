@@ -136,6 +136,10 @@ namespace Neptunium.View
                 {
                     nowPlayingNavButton.IsChecked = true;
                 }
+                else if (viewModelType == typeof(SettingsViewViewModel))
+                {
+                    settingsNavButton.IsChecked = true;
+                }
                 else
                 {
                     Debug.WriteLine("WARNING: Unimplemented navigation case - " + viewModelType.FullName);
@@ -170,9 +174,10 @@ namespace Neptunium.View
                 {
                     //dismiss the menu if its open.
 
-                    if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
-                        TogglePaneButton.IsChecked = false;
+                    //if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
+                        //TogglePaneButton.IsChecked = false;
                 });
+
             }
 
 

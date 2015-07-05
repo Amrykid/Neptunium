@@ -38,16 +38,20 @@ namespace Neptunium.Data
                 {
                     var stream = new StationModelStream();
 
-                    stream.ContentType = x.Attribute("ContentType").Value;
-                    stream.Bitrate = int.Parse(x.Attribute("Bitrate").Value);
-                    stream.SampleRate = uint.Parse(x.Attribute("SampleRate").Value);
+                    stream.ContentType = x.Attribute("ContentType")?.Value;
+                    stream.Bitrate = int.Parse(x.Attribute("Bitrate")?.Value);
+                    stream.SampleRate = uint.Parse(x.Attribute("SampleRate")?.Value);
                     stream.Url = x.Value;
-                    stream.RelativePath = x.Attribute("RelativePath").Value;
+                    stream.RelativePath = x.Attribute("RelativePath")?.Value;
 
                     try
                     {
-                        stream.ServerType = (StationModelStreamServerType)Enum.Parse(typeof(StationModelStreamServerType), x.Attribute("ServerType").Value);
-                        stream.HistoryPath = x.Attribute("HistoryPath").Value;
+                        if (x.Attribute("ServerType") != null)
+                        {
+                            stream.ServerType = (StationModelStreamServerType)Enum.Parse(typeof(StationModelStreamServerType), x.Attribute("ServerType").Value);
+
+                            stream.HistoryPath = x.Attribute("HistoryPath")?.Value;
+                        }
                     }
                     catch (Exception) { }
 

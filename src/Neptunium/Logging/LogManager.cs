@@ -20,6 +20,8 @@ namespace Neptunium.Logging
         public static bool IsInitialized { get; private set; }
         public static async Task InitializeAsync()
         {
+            return;
+
             if (IsInitialized) return;
 
             try
@@ -34,7 +36,7 @@ namespace Neptunium.Logging
             }
             catch (Exception)
             {
-
+                IsInitialized = false;
             }
         }
 
@@ -69,17 +71,23 @@ namespace Neptunium.Logging
         private static void WriteLine(string line)
         {
 #if DEBUG
-            try
+            if (IsInitialized)
             {
-                logFileMutex.WaitOne();
+                try
+                {
+                    if (logFile != null)
+                    {
+                        logFileMutex.WaitOne();
 
-                FileIO.AppendTextAsync(logFile, line + Environment.NewLine).AsTask().Wait();
+                        FileIO.AppendTextAsync(logFile, line + Environment.NewLine).AsTask().Wait();
 
-                logFileMutex.Set();
-            }
-            catch (Exception)
-            {
-                
+                        logFileMutex.Set();
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
             }
 #endif
         }

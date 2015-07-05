@@ -109,7 +109,7 @@ namespace Neptunium.Media
 
         public static async Task<bool> PlayStationAsync(StationModel station)
         {
-            if (station == currentStationModel) return true;
+            if (station == currentStationModel && IsPlaying) return true;
 
             if (IsPlaying)
             {

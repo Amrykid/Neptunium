@@ -8,10 +8,6 @@
 
     <Application.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles/Styles.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-            
             <local:ApplicationCommands x:Key="AppCommands" />
         </ResourceDictionary>
     </Application.Resources>
