@@ -194,7 +194,7 @@ namespace Neptunium.View
 
         private void VisualStateGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
         {
-            Debug.WriteLine("State Change: " + e.OldState.Name + " -> " + e.NewState.Name);
+            Debug.WriteLine("State Change: " + (e.OldState == null ? "null" : e.OldState.Name) + " -> " + e.NewState.Name);
         }
 
         private void NowPlayingPanel_Tapped(object sender, TappedRoutedEventArgs e)
