@@ -37,14 +37,16 @@ namespace Neptunium.View
     [NavigationViewModel(typeof(ViewModel.AppShellViewModel))]
     public sealed partial class AppShellView : Page
     {
+        private NavigationService inlineNavService = null;
         public AppShellView()
         {
             LogManager.Info(typeof(AppShellView), "AppShellView ctor");
 
             this.InitializeComponent();
 
-            WindowManager.GetNavigationManagerForCurrentWindow()
-                .RegisterFrameAsNavigationService(inlineFrame, FrameLevel.Two).NavigationServicePreNavigatedSignaled += AppShellView_NavigationServicePreNavigatedSignaled;
+            inlineNavService = WindowManager.GetNavigationManagerForCurrentWindow()
+                .RegisterFrameAsNavigationService(inlineFrame, FrameLevel.Two);
+            inlineNavService.NavigationServicePreNavigatedSignaled += AppShellView_NavigationServicePreNavigatedSignaled;
 
             this.Loaded += AppShellView_Loaded;
 
