@@ -7,43 +7,89 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:conv="using:Crystal3.UI.Converters"
     mc:Ignorable="d">
-    
+
     <Page.Resources>
-        <conv:InverseNullToVisibilityConverter x:Name="NullToVisConv" />
+        <conv:NullToVisibilityConverter x:Name="NullToVisConv" />
+        <conv:InverseNullToVisibilityConverter x:Name="InvNullToVisConv" />
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Pivot SelectedIndex="1" Title="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged}">
-            <PivotItem Header="Song Info">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup CurrentStateChanged="VisualStateGroup_CurrentStateChanged">
+                <VisualState x:Name="DesktopVisualState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="SongInfoPanel.(RelativePanel.Below)" Value="StationInfoPanel" />
+                        <Setter Target="SongInfoPanel.(RelativePanel.AlignLeftWithPanel)" Value="True" />
+                        <Setter Target="SongHistoryPanel.(RelativePanel.Below)" Value="StationInfoPanel" />
+                        <Setter Target="SongHistoryPanel.(RelativePanel.RightOf)" Value="SongInfoPanel" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="PhoneVisualState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="SongInfoPanel.(RelativePanel.Below)" Value="StationInfoPanel" />
+                        <Setter Target="SongInfoPanel.(RelativePanel.AlignLeftWithPanel)" Value="True" />
+                        <Setter Target="SongHistoryPanel.(RelativePanel.Below)" Value="SongInfoPanel" />
+                        <Setter Target="SongHistoryPanel.(RelativePanel.AlignLeftWithPanel)" Value="True" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}"
+              VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black">
+            <TextBlock Text="No station was selected." VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" />
+        </Grid>
+
+
+        <RelativePanel Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
+            <Grid RelativePanel.AlignTopWithPanel="True" x:Name="StationInfoPanel">
+                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentStation.Title, UpdateSourceTrigger=PropertyChanged}" />
+                <Image Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
+                   HorizontalAlignment="Stretch" Height="300" Stretch="Uniform" />
+                
+            </Grid>
+
+            <StackPanel x:Name="SongInfoPanel" Width="600" RelativePanel.Below="StationInfoPanel" RelativePanel.AlignLeftWithPanel="True">
+                <TextBlock FontSize="18" Margin="20 10 0 0">Song Info</TextBlock>
                 <TextBlock Text="Not Implemented Yet" VerticalAlignment="Center" HorizontalAlignment="Center" />
-            </PivotItem>
-            <PivotItem Header="Song History">
-                <Grid>
+            </StackPanel>
 
-                    <Grid Visibility="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
-                        <TextBlock Text="Either nothing is playing or we could not retrieve the history for this station."
-                                   VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" />
-                    </Grid>
+            <Grid x:Name="SongHistoryPanel" Width="600" RelativePanel.Below="StationInfoPanel" RelativePanel.RightOf="SongInfoPanel">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                    <ListView ItemsSource="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="300" />
-                                        <ColumnDefinition Width="30" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" FontSize="18" Margin="20 10 0 0">Song History</TextBlock>
 
-                                    <TextBlock Text="{Binding Song, Mode=OneTime}" Grid.Column="0" />
+                <ListView ItemsSource="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Margin="20 10 0 0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="300" />
+                                    <ColumnDefinition Width="30" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                                    <TextBlock Text="{Binding Time, Mode=OneTime}" Grid.Column="1" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </Grid>
-            </PivotItem>
-        </Pivot>
+                                <TextBlock Text="{Binding Song, Mode=OneTime}" Grid.Column="0" />
+
+                                <TextBlock Text="{Binding Time, Mode=OneTime}" Grid.Column="1" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+
+        </RelativePanel>
     </Grid>
 </Page>

@@ -27,5 +27,10 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
         }
+
+        private void VisualStateGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        {
+
+        }
     }
 }

@@ -20,7 +20,7 @@ namespace Neptunium.ViewModel
         {
             IsBusy = true;
 
-            CurrentStation = ShoutcastStationMediaPlayer.CurrentStation != null ? ShoutcastStationMediaPlayer.CurrentStation.Name : "Not Playing Anything";
+            CurrentStation = ShoutcastStationMediaPlayer.CurrentStation;
 
             try
             {
@@ -81,6 +81,6 @@ namespace Neptunium.ViewModel
             set { SetPropertyValue<ObservableCollection<HistoryItemModel>>(value: value); }
         }
 
-        public string CurrentStation { get { return GetPropertyValue<string>(); } private set { SetPropertyValue<string>(value: value); } }
+        public StationModel CurrentStation { get { return GetPropertyValue<StationModel>(); } private set { SetPropertyValue<StationModel>(value: value); } }
     }
 }
