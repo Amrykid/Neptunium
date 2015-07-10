@@ -50,46 +50,48 @@
         </Grid>
 
 
-        <RelativePanel Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
-            <Grid RelativePanel.AlignTopWithPanel="True" x:Name="StationInfoPanel">
-                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentStation.Title, UpdateSourceTrigger=PropertyChanged}" />
-                <Image Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
+        <ScrollViewer>
+            <RelativePanel Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
+                <Grid RelativePanel.AlignTopWithPanel="True" x:Name="StationInfoPanel">
+                    <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentStation.Title, UpdateSourceTrigger=PropertyChanged}" />
+                    <Image Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
                    HorizontalAlignment="Stretch" Height="300" Stretch="Uniform" />
-                
-            </Grid>
 
-            <StackPanel x:Name="SongInfoPanel" Width="600" RelativePanel.Below="StationInfoPanel" RelativePanel.AlignLeftWithPanel="True">
-                <TextBlock FontSize="18" Margin="20 10 0 0">Song Info</TextBlock>
-                <TextBlock Text="Not Implemented Yet" VerticalAlignment="Center" HorizontalAlignment="Center" />
-            </StackPanel>
+                </Grid>
 
-            <Grid x:Name="SongHistoryPanel" Width="600" RelativePanel.Below="StationInfoPanel" RelativePanel.RightOf="SongInfoPanel">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+                <StackPanel x:Name="SongInfoPanel" Width="600" RelativePanel.Below="StationInfoPanel" RelativePanel.AlignLeftWithPanel="True">
+                    <TextBlock FontSize="18" Margin="20 10 0 0">Song Info</TextBlock>
+                    <TextBlock Text="Not Implemented Yet" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                </StackPanel>
 
-                <TextBlock Grid.Row="0" FontSize="18" Margin="20 10 0 0">Song History</TextBlock>
+                <Grid x:Name="SongHistoryPanel" Width="600" RelativePanel.Below="StationInfoPanel" RelativePanel.RightOf="SongInfoPanel">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                <ListView ItemsSource="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Margin="20 10 0 0">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="300" />
-                                    <ColumnDefinition Width="30" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" FontSize="18" Margin="20 10 0 0">Song History</TextBlock>
 
-                                <TextBlock Text="{Binding Song, Mode=OneTime}" Grid.Column="0" />
+                    <ListView ItemsSource="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Margin="20 10 0 0">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="300" />
+                                        <ColumnDefinition Width="30" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="{Binding Time, Mode=OneTime}" Grid.Column="1" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
+                                    <TextBlock Text="{Binding Song, Mode=OneTime}" Grid.Column="0" />
 
-        </RelativePanel>
+                                    <TextBlock Text="{Binding Time, Mode=OneTime}" Grid.Column="1" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+
+            </RelativePanel>
+        </ScrollViewer>
     </Grid>
 </Page>
