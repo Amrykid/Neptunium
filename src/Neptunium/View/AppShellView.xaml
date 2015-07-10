@@ -67,7 +67,7 @@
         </VisualStateManager.VisualStateGroups>
 
         <Grid Height="50" HorizontalAlignment="Stretch" x:Name="TopMenu"
-                  Grid.Row="0">
+              Grid.Row="0" Background="{StaticResource AppThemeBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="45" />
@@ -75,13 +75,14 @@
                 </Grid.ColumnDefinitions>
 
                 <ToggleButton x:Name="TogglePaneButton"
-                      TabIndex="1"
-                      Style="{StaticResource SplitViewTogglePaneButtonStyle}"
-                      IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
-                      AutomationProperties.Name="Menu"
-                      ToolTipService.ToolTip="Menu" />
+                              TabIndex="1"
+                              Foreground="White"
+                              Style="{StaticResource SplitViewTogglePaneButtonStyle}"
+                              IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
+                              AutomationProperties.Name="Menu"
+                              ToolTipService.ToolTip="Menu" />
 
-                <TextBlock x:Name="CurrentPaneTitle" Grid.Column="1" VerticalAlignment="Center"  />
+                <TextBlock x:Name="CurrentPaneTitle" Grid.Column="1" VerticalAlignment="Center" Foreground="White" />
             </Grid>
         </Grid>
         <SplitView x:Name="RootSplitView" Margin="0 0 0 0" Grid.Row="1">            

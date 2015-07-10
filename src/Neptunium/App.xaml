@@ -9,6 +9,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <local:ApplicationCommands x:Key="AppCommands" />
+
+            <SolidColorBrush x:Key="AppThemeBrush" Color="#7F00FF" />
         </ResourceDictionary>
     </Application.Resources>
 
