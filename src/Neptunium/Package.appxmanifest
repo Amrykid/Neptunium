@@ -38,7 +38,7 @@
         Description="Neptunium"
         BackgroundColor="#7F00FF">
         <!-- Default color: "#464646" / Color site: http://www.december.com/html/spec/color4.html -->
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#7F00FF" />
       </uap:VisualElements>
       <Extensions>
         <Extension Category="windows.backgroundTasks" EntryPoint="Neptunium.BackgroundAudio.BackgroundAudioTask">
