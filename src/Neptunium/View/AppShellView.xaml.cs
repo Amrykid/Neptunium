@@ -165,7 +165,8 @@ namespace Neptunium.View
                 {
                     //dismiss the menu if its open.
 
-                    if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
+                    //if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
+                    if (RootSplitView.DisplayMode == SplitViewDisplayMode.Overlay)
                         TogglePaneButton.IsChecked = false;
                 });
 
@@ -186,7 +187,7 @@ namespace Neptunium.View
                     var statusBar = StatusBar.GetForCurrentView();
                     statusBar.BackgroundColor = (Application.Current.Resources["AppThemeBrush"] as SolidColorBrush).Color;
                     statusBar.ForegroundColor = Colors.White;
-                    statusBar.ShowAsync();
+                    statusBar.BackgroundOpacity = 1.0;
                 }
             });
         }
