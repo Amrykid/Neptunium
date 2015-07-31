@@ -343,8 +343,8 @@ namespace Neptunium.MediaSourceStream
 
             if (songInfo.Split('-').Count() >= 2)
             {
-                artist = songInfo.Split('-')[0].Trim();
-                track = songInfo.Split('-')[1].Trim();
+                artist = songInfo.Split(new string[] { " - " }, StringSplitOptions.None)[0].Trim();
+                track = songInfo.Split(new string[] { " - " }, StringSplitOptions.None)[1].Trim();
 
                 MediaStreamSource.MusicProperties.Title = track;
                 MediaStreamSource.MusicProperties.Artist = artist;

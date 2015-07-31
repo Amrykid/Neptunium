@@ -92,7 +92,8 @@ namespace Neptunium
 
             }
 
-            WindowManager.GetNavigationManagerForCurrentWindow().RootNavigationService.NavigateTo<AppShellViewModel>();
+            WindowManager.GetNavigationManagerForCurrentWindow()
+                .RootNavigationService.NavigateTo<AppShellViewModel>();
         }
 
         public override async Task OnSuspendingAsync()
