@@ -81,9 +81,16 @@ namespace Neptunium
             LogManager.Info(typeof(App), "Application Launching");
 
 
-            var payload = new ValueSet();
-            payload.Add(Messages.AppLaunchOrResume, "");
-            BackgroundMediaPlayer.SendMessageToBackground(payload);
+            try
+            {
+                var payload = new ValueSet();
+                payload.Add(Messages.AppLaunchOrResume, "");
+                BackgroundMediaPlayer.SendMessageToBackground(payload);
+            }
+            catch (Exception)
+            {
+
+            }
 
             WindowManager.GetNavigationManagerForCurrentWindow().RootNavigationService.NavigateTo<AppShellViewModel>();
         }
