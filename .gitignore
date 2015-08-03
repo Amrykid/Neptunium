@@ -156,3 +156,6 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+src/Neptunium/AppPackages/
+src/Neptunium/_pkginfo.txt
+src/Neptunium/BundleArtifacts/

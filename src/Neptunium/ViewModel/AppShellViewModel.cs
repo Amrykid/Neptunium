@@ -65,6 +65,8 @@ namespace Neptunium.ViewModel
                 if (BackgroundMediaPlayer.Current.CanPause)
                     BackgroundMediaPlayer.Current.Pause();
             }, x => { try { return BackgroundMediaPlayer.Current.CanPause; } catch (Exception) { return true; } });
+
+            WindowManager.GetStatusManagerForCurrentWindow().NormalStatusText = "Neptunium/Hanasu Alpha";
         }
 
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
