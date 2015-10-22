@@ -78,11 +78,12 @@ namespace Neptunium
             //Application.Current.Exit();
         }
 
-        public override void OnFreshLaunch(LaunchActivatedEventArgs args)
+        public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
             //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
             LogManager.Info(typeof(App), "Application Launching");
 
+            await Task.Delay(0);
 
             try
             {
