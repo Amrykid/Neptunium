@@ -15,14 +15,15 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
+
             <conv:NullToVisibilityConverter x:Key="NullToVisConv" />
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="RootGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="50" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -30,19 +31,41 @@
             <VisualStateGroup CurrentStateChanged="VisualStateGroup_CurrentStateChanged">
                 <VisualState x:Name="DesktopVisualState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="600" />
+                        <AdaptiveTrigger MinWindowWidth="1080" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="RootSplitView.DisplayMode" Value="Inline" />
+                        <Setter Target="RootSplitView.DisplayMode" Value="CompactInline" />
                         <Setter Target="RootSplitView.IsPaneOpen" Value="True" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
                         <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
-                        <!--<Setter Target="NowPlayingPanel.(RelativePanel.AlignLeftWithPanel)" Value="True" />
-                        <Setter Target="FakeAppBarCommandPanel.(RelativePanel.AlignRightWithPanel)" Value="True" />-->
-                        <Setter Target="NowPlayingPanel.MaxWidth" Value="3000" />
-                        <Setter Target="nowPlayingTrackBox.FontSize" Value="18" />
-                        <Setter Target="nowPlayingArtistBox.FontSize" Value="18" />
+
+                        <Setter Target="SplitViewContentGrid.Background" Value="Transparent" />
+                        
+                        <Setter Target="MobileTogglePaneButton.Visibility" Value="Collapsed" />
+                        <Setter Target="CurrentPaneTitle.Margin" Value="20 0" />
+                        <Setter Target="CurrentPaneTitle.Style" Value="{ThemeResource SubheaderTextBlockStyle}" />
+                        <Setter Target="CurrentPaneTitleRow.Height" Value="45" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="TabletVisualState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="RootSplitView.DisplayMode" Value="CompactInline" />
+                        <Setter Target="RootSplitView.IsPaneOpen" Value="False" />
+                        <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
+                        <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
+
+                        <Setter Target="SplitViewContentGrid.Background" Value="Transparent" />
+                        
+                        <Setter Target="MobileTogglePaneButton.Visibility" Value="Collapsed" />
+                        <Setter Target="CurrentPaneTitle.Margin" Value="20 0" />
+                        <Setter Target="CurrentPaneTitle.Style" Value="{ThemeResource SubheaderTextBlockStyle}" />
+                        <Setter Target="CurrentPaneTitleRow.Height" Value="45" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -53,28 +76,27 @@
                     <VisualState.Setters>
                         <Setter Target="RootSplitView.DisplayMode" Value="Overlay" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="240" />
-                        <Setter Target="NowPlayingAppBarButton.Width" Value="100" />
-                        <Setter Target="NowPlayingAppBarButton.Margin" Value="20 0 0 0" />
-                        <!--<Setter Target="NowPlayingPanel.(RelativePanel.AlignTopWithPanel)" Value="True" />
-                        <Setter Target="FakeAppBarCommandPanel.(RelativePanel.Below)" Value="NowPlayingPanel" />-->
-                        <Setter Target="NowPlayingPanel.MaxWidth" Value="200" />
-                        <Setter Target="nowPlayingTrackBox.FontSize" Value="16" />
-                        <Setter Target="nowPlayingArtistBox.FontSize" Value="16" />
-                        <Setter Target="CurrentPaneTitle.FontSize" Value="20" />
+
+                        <Setter Target="SplitViewContentGrid.Background" Value="{Binding ElementName=RootSplitView, Path=PaneBackground, UpdateSourceTrigger=PropertyChanged}" />
+                        
+                        <Setter Target="MobileTogglePaneButton.Visibility" Value="Visible" />
+                        <Setter Target="CurrentPaneTitle.Margin" Value="15 5" />
+                        <Setter Target="CurrentPaneTitle.FontSize" Value="24" />
+                        <Setter Target="CurrentPaneTitleRow.Height" Value="50" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid Height="50" HorizontalAlignment="Stretch" x:Name="TopMenu"
-              Grid.Row="0" Background="{StaticResource AppThemeBrush}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="45" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+        <SplitView x:Name="RootSplitView" Margin="0 0 0 0" DisplayMode="CompactInline">
+            <SplitView.Pane>
+                <StackPanel x:Name="RootSplitViewPaneStackPanel">
+                    <StackPanel.Resources>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource SplitViewTextBlockStyle}" />
+                        <Style TargetType="RadioButton" BasedOn="{StaticResource SplitViewRadioButtonStyle}" />
+                    </StackPanel.Resources>
 
-                <ToggleButton x:Name="TogglePaneButton"
+                    <ToggleButton x:Name="TogglePaneButton"
                               TabIndex="1"
                               Foreground="White"
                               Style="{StaticResource SplitViewTogglePaneButtonStyle}"
@@ -82,17 +104,6 @@
                               AutomationProperties.Name="Menu"
                               ToolTipService.ToolTip="Menu" />
 
-                <TextBlock x:Name="CurrentPaneTitle" Grid.Column="1" VerticalAlignment="Center" Foreground="White" />
-            </Grid>
-        </Grid>
-        <SplitView x:Name="RootSplitView" Margin="0 0 0 0" Grid.Row="1">            
-            <SplitView.Pane>
-                <StackPanel x:Name="RootSplitViewPaneStackPanel">
-                    <StackPanel.Resources>
-                        <Style TargetType="TextBlock" BasedOn="{StaticResource SplitViewTextBlockStyle}" />
-                        <Style TargetType="RadioButton" BasedOn="{StaticResource SplitViewRadioButtonStyle}" />
-                    </StackPanel.Resources>
-                    
                     <!-- font family = Segoe MDL2 Assets -->
                     <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Stations"
                                  Command="{Binding GoToStationsViewCommand}" x:Name="stationsNavButton">
@@ -116,11 +127,37 @@
             </SplitView.Pane>
 
             <SplitView.Content>
-                <Frame x:Name="inlineFrame" />
+                <Grid x:Name="SplitViewContentGrid" Background="{Binding ElementName=RootSplitView, Path=PaneBackground, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition x:Name="CurrentPaneTitleRow" Height="75" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <ToggleButton x:Name="MobileTogglePaneButton"
+                                    TabIndex="1"
+                                    Foreground="White"
+                                    Style="{StaticResource SplitViewTogglePaneButtonStyle}"
+                                    IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
+                                    Visibility="Collapsed"
+                                    Grid.Column="0"
+                                    AutomationProperties.Name="Menu"
+                                    ToolTipService.ToolTip="Menu" />
+
+                        <TextBlock x:Name="CurrentPaneTitle" Grid.Column="1" Style="{ThemeResource SubheaderTextBlockStyle}" />
+                    </Grid>
+
+                    <Frame x:Name="inlineFrame" Grid.Row="1" />
+                </Grid>
             </SplitView.Content>
         </SplitView>
 
-        <RelativePanel HorizontalAlignment="Stretch" Grid.Row="2" x:Name="FakeAppBar">
+        <RelativePanel HorizontalAlignment="Stretch" Grid.Row="1" x:Name="FakeAppBar" Background="{StaticResource SystemControlBackgroundAccentBrush}">
 
             <RelativePanel x:Name="NowPlayingPanel" RelativePanel.AlignLeftWithPanel="True" 
                            Visibility="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"

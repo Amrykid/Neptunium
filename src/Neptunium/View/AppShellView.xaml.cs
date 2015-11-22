@@ -156,6 +156,7 @@ namespace Neptunium.View
             App.Current.Resuming += Current_Resuming;
 
             BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
+            HandleUI();
 
             GoHome();
 
@@ -190,6 +191,23 @@ namespace Neptunium.View
                     statusBar.BackgroundOpacity = 1.0;
                 }
             });
+        }
+
+        private void  HandleUI()
+        {
+            var stateGroup = VisualStateManager.GetVisualStateGroups(RootGrid).FirstOrDefault();
+
+            if (stateGroup != null)
+            {
+                VisualState appropriateState = stateGroup.States.First(x => 
+                {
+                    var trigger = x.StateTriggers.FirstOrDefault() as AdaptiveTrigger;
+
+                    return trigger.MinWindowWidth <= Window.Current.Bounds.Width;
+                });
+
+                VisualStateManager.GoToState(this, appropriateState.Name, false);
+            }
         }
 
         private void GoHome()
