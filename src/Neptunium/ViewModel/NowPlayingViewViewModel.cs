@@ -22,6 +22,11 @@ namespace Neptunium.ViewModel
 
             CurrentStation = ShoutcastStationMediaPlayer.CurrentStation;
 
+            ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
+
+            if (ShoutcastStationMediaPlayer.SongMetadata != null)
+                SongMetadata = ShoutcastStationMediaPlayer.SongMetadata.Track + " by " + ShoutcastStationMediaPlayer.SongMetadata.Artist;
+
             try
             {
                 await LoadSongHistoryAsync();
@@ -31,6 +36,16 @@ namespace Neptunium.ViewModel
             catch (Exception) { }
 
             IsBusy = false;
+        }
+
+        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
+        {
+            ShoutcastStationMediaPlayer.MetadataChanged -= ShoutcastStationMediaPlayer_MetadataChanged;
+        }
+
+        private void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
+        {
+            SongMetadata = e.Title + " by " + e.Artist;
         }
 
         private async Task LoadSongHistoryAsync()
@@ -74,6 +89,12 @@ namespace Neptunium.ViewModel
 
 
         public bool IsBusy { get { return GetPropertyValue<bool>(); } set { SetPropertyValue<bool>(value: value); } }
+
+        public string SongMetadata
+        {
+            get { return GetPropertyValue<string>(); }
+            set { SetPropertyValue<string>(value: value); }
+        }
 
         public ObservableCollection<HistoryItemModel> HistoryItems
         {

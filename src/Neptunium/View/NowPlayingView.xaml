@@ -52,16 +52,16 @@
 
         <ScrollViewer>
             <RelativePanel Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
-                <Grid RelativePanel.AlignTopWithPanel="True" x:Name="StationInfoPanel">
+                <Grid RelativePanel.AlignTopWithPanel="True" x:Name="StationInfoPanel" Margin="20 5">
                     <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentStation.Title, UpdateSourceTrigger=PropertyChanged}" />
                     <Image Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
-                   HorizontalAlignment="Stretch" Height="300" Stretch="Uniform" />
+                        HorizontalAlignment="Stretch" Height="150" Stretch="Uniform" />
 
                 </Grid>
 
                 <StackPanel x:Name="SongInfoPanel" Width="600" RelativePanel.Below="StationInfoPanel" RelativePanel.AlignLeftWithPanel="True">
-                    <TextBlock FontSize="18" Margin="20 10 0 0">Song Info</TextBlock>
-                    <TextBlock Text="Not Implemented Yet" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                    <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Margin="20 10 0 0">Song Info</TextBlock>
+                    <TextBlock Text="{Binding SongMetadata, UpdateSourceTrigger=PropertyChanged}" Margin="20 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
                 </StackPanel>
 
                 <Grid x:Name="SongHistoryPanel" Width="600" RelativePanel.Below="StationInfoPanel" RelativePanel.RightOf="SongInfoPanel">
@@ -70,9 +70,9 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" FontSize="18" Margin="20 10 0 0">Song History</TextBlock>
+                    <TextBlock Grid.Row="0" Style="{ThemeResource TitleTextBlockStyle}" Margin="20 10 0 0">Song History</TextBlock>
 
-                    <ListView ItemsSource="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Margin="20 10 0 0">
+                    <ListView ItemsSource="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Margin="10 10 0 0">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid>

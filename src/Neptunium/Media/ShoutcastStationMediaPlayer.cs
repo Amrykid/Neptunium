@@ -55,6 +55,8 @@ namespace Neptunium.Media
                             {
                                 if (MetadataChanged != null)
                                     MetadataChanged(sender, new ShoutcastMediaSourceStreamMetadataChangedEventArgs(mcMessage.Track, mcMessage.Artist));
+
+                                SongMetadata = new ShoutcastSongInfo() { Track = mcMessage.Track, Artist = mcMessage.Artist };
                             }
                             catch (Exception) { }
 
@@ -89,6 +91,8 @@ namespace Neptunium.Media
                 }
             }
         }
+
+        public static ShoutcastSongInfo SongMetadata { get; private set; }
 
         private static StationModel currentStationModel = null;
         //private static ShoutcastMediaSourceStream currentStationMSSWrapper = null;

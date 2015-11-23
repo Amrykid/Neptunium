@@ -80,8 +80,9 @@
                         <Setter Target="SplitViewContentGrid.Background" Value="{Binding ElementName=RootSplitView, Path=PaneBackground, UpdateSourceTrigger=PropertyChanged}" />
                         
                         <Setter Target="MobileTogglePaneButton.Visibility" Value="Visible" />
-                        <Setter Target="CurrentPaneTitle.Margin" Value="15 5" />
-                        <Setter Target="CurrentPaneTitle.FontSize" Value="24" />
+                        <Setter Target="CurrentPaneTitle.Margin" Value="15 12.5" />
+                        <Setter Target="CurrentPaneTitle.FontSize" Value="18" />
+                        <Setter Target="CurrentPaneTitle.FontWeight" Value="Bold" />
                         <Setter Target="CurrentPaneTitleRow.Height" Value="50" />
                     </VisualState.Setters>
                 </VisualState>
@@ -157,20 +158,20 @@
             </SplitView.Content>
         </SplitView>
 
-        <RelativePanel HorizontalAlignment="Stretch" Grid.Row="1" x:Name="FakeAppBar" Background="{StaticResource SystemControlBackgroundAccentBrush}">
+        <RelativePanel HorizontalAlignment="Stretch" Grid.Row="1" x:Name="FakeAppBar" Background="{ThemeResource SystemListAccentMediumColor}" Height="64.5">
 
             <RelativePanel x:Name="NowPlayingPanel" RelativePanel.AlignLeftWithPanel="True" 
                            Visibility="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
-                           Tapped="NowPlayingPanel_Tapped">
-                <Image Height="50" Width="50" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
+                           Tapped="NowPlayingPanel_Tapped" Margin="0 10">
+                <Image Height="50" Width="50" Margin="7 0" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
 
                 <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" 
-                                           Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" FontSize="18" FontWeight="Bold" Margin="20 0 0 0" />
+                                           Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Margin="10 0 0 0" />
                 <TextBlock x:Name="nowPlayingArtistBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20"
-                                        RelativePanel.Below="nowPlayingTrackBox" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" FontSize="18" Margin="20 0 0 0" />
+                                        RelativePanel.Below="nowPlayingTrackBox" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" FontSize="15" Margin="10 0 0 0" />
             </RelativePanel>
 
-            <StackPanel x:Name="FakeAppBarCommandPanel" Orientation="Horizontal" RelativePanel.AlignRightWithPanel="True" Width="Auto">
+            <StackPanel x:Name="FakeAppBarCommandPanel" Orientation="Horizontal" RelativePanel.AlignRightWithPanel="True" Width="Auto" Margin="0 10">
                 <StackPanel.Resources>
                     <Style TargetType="AppBarButton">
                         <Setter Property="Margin" Value="0" />
