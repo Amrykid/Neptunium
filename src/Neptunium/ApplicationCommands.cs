@@ -13,7 +13,7 @@ namespace Neptunium
     {
         public ApplicationCommands()
         {
-            PlayStationCommand = new CRelayCommand(async station =>
+            PlayStationCommand = new RelayCommand(async station =>
                 {
                     if (Windows.Networking.Connectivity.NetworkInformation.GetInternetConnectionProfile() != null)
                     {
@@ -33,6 +33,6 @@ namespace Neptunium
                 }, station => station != null);
         }
 
-        public CRelayCommand PlayStationCommand { get; private set; }
+        public RelayCommand PlayStationCommand { get; private set; }
     }
 }

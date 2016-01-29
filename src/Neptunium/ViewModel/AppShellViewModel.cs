@@ -29,25 +29,25 @@ namespace Neptunium.ViewModel
             if (!IoCManager.IsRegistered<IMessageDialogService>())
                 IoCManager.Register<IMessageDialogService>(new DefaultMessageDialogService());
 
-            GoToStationsViewCommand = new CRelayCommand(x =>
+            GoToStationsViewCommand = new RelayCommand(x =>
             {
                 if (!InlineNavigationService.IsNavigatedTo<StationsViewViewModel>())
                     InlineNavigationService.NavigateTo<StationsViewViewModel>();
             });
 
-            GoToNowPlayingViewCommand = new CRelayCommand(x =>
+            GoToNowPlayingViewCommand = new RelayCommand(x =>
             {
                 if (!InlineNavigationService.IsNavigatedTo<NowPlayingViewViewModel>())
                     InlineNavigationService.NavigateTo<NowPlayingViewViewModel>();
             });
 
-            GoToSettingsViewCommand = new CRelayCommand(x =>
+            GoToSettingsViewCommand = new RelayCommand(x =>
             {
                 if (!InlineNavigationService.IsNavigatedTo<SettingsViewViewModel>())
                     InlineNavigationService.NavigateTo<SettingsViewViewModel>();
             });
 
-            PlayCommand = new CRelayCommand(x =>
+            PlayCommand = new RelayCommand(x =>
             {
                 BackgroundMediaPlayer.Current.Play();
             }, x =>
@@ -60,7 +60,7 @@ namespace Neptunium.ViewModel
                 currentPlayerState != MediaPlayerState.Closed;
             });
 
-            PauseCommand = new CRelayCommand(x =>
+            PauseCommand = new RelayCommand(x =>
             {
                 if (BackgroundMediaPlayer.Current.CanPause)
                     BackgroundMediaPlayer.Current.Pause();
@@ -188,11 +188,11 @@ namespace Neptunium.ViewModel
         public string CurrentStation { get { return GetPropertyValue<string>("CurrentStation"); } private set { SetPropertyValue<string>("CurrentStation", value); } }
         public string CurrentStationLogo { get { return GetPropertyValue<string>("CurrentStationLogo"); } private set { SetPropertyValue<string>("CurrentStationLogo", value); } }
 
-        public CRelayCommand GoToStationsViewCommand { get; private set; }
-        public CRelayCommand GoToNowPlayingViewCommand { get; private set; }
-        public CRelayCommand GoToSettingsViewCommand { get; private set; }
+        public RelayCommand GoToStationsViewCommand { get; private set; }
+        public RelayCommand GoToNowPlayingViewCommand { get; private set; }
+        public RelayCommand GoToSettingsViewCommand { get; private set; }
 
-        public CRelayCommand PlayCommand { get; private set; }
-        public CRelayCommand PauseCommand { get; private set; }
+        public RelayCommand PlayCommand { get; private set; }
+        public RelayCommand PauseCommand { get; private set; }
     }
 }
