@@ -168,7 +168,7 @@ namespace Neptunium.ViewModel
             BackgroundMediaPlayer.SendMessageToBackground(payload);
         }
 
-        protected override Task OnSuspendingAsync(object data)
+        protected override Task OnSuspendingAsync(IDictionary<string, object> data)
         {
             var payload = new ValueSet();
             payload.Add(Messages.AppSuspend, "");
