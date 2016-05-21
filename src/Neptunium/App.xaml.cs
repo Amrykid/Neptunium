@@ -46,9 +46,6 @@ namespace Neptunium
             Application.Current.UnhandledException += Current_UnhandledException;
 #endif
             CoreInit();
-
-            System.Numerics.Vector2 v = new System.Numerics.Vector2();
-            float vf = v.Y;
         }
 
         private static async void CoreInit()
