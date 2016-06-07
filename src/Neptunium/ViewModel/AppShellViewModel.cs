@@ -1,5 +1,5 @@
 ﻿using Crystal3.Core;
-using Crystal3.IOC;
+using Crystal3.InversionOfControl;
 using Crystal3.Model;
 using Crystal3.Navigation;
 using Crystal3.UI.Commands;
@@ -26,8 +26,8 @@ namespace Neptunium.ViewModel
         {
             LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel .ctor");
 
-            if (!IoCManager.IsRegistered<IMessageDialogService>())
-                IoCManager.Register<IMessageDialogService>(new DefaultMessageDialogService());
+            if (!IoC.Current.IsRegistered<IMessageDialogService>())
+                IoC.Current.Register<IMessageDialogService>(new DefaultMessageDialogService());
 
             GoToStationsViewCommand = new RelayCommand(x =>
             {
@@ -97,7 +97,7 @@ namespace Neptunium.ViewModel
         {
             ShoutcastStationMediaPlayer.BackgroundAudioError -= ShoutcastStationMediaPlayer_BackgroundAudioError; //throttle error messages
 
-            await IoCManager.Resolve<IMessageDialogService>().ShowAsync("We are unable to play this station.", "Error while trying to play this station.");
+            await IoC.Current.Resolve<IMessageDialogService>().ShowAsync("We are unable to play this station.", "Error while trying to play this station.");
 
             await Crystal3.CrystalApplication.Dispatcher.RunAsync(() =>
             {

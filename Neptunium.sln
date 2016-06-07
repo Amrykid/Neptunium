@@ -1,19 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crystal3", "..\Crystal\src\Crystal3\Crystal3.csproj", "{E7AC86BE-E1F7-42E4-8DA0-7E1EBEF1130B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "References", "References", "{F6BEB515-FBD7-48BD-B69A-6C6FBA875A68}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsStateTriggers", "lib\WindowStateTriggers\src\WindowsStateTriggers\WindowsStateTriggers.csproj", "{52D52F3C-4F64-4957-9FE8-780B7D7F75C3}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "WinRTXamlToolkit.Shared", "lib\winrtxamltoolkit\WinRTXamlToolkit\WinRTXamlToolkit.Shared\WinRTXamlToolkit.Shared.shproj", "{952BD2B0-E12A-4BFC-BCE7-F4EE9F7461B6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptunium", "src\Neptunium\Neptunium.csproj", "{32CDACB4-5993-4892-AAA5-BC71C819E253}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptunium.BackgroundAudio", "src\Neptunium.BackgroundAudio\Neptunium.BackgroundAudio.csproj", "{375E258C-44CA-4BEC-92C4-061C9E1DD9E5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptunium.MediaSourceStream", "src\Neptunium.MediaSourceStream\Neptunium.MediaSourceStream.csproj", "{6CBB529C-D32A-48B0-90D7-073D7AE2CB41}"
 EndProject
@@ -45,18 +41,6 @@ Global
 		{E7AC86BE-E1F7-42E4-8DA0-7E1EBEF1130B}.Release|x64.Build.0 = Release|x64
 		{E7AC86BE-E1F7-42E4-8DA0-7E1EBEF1130B}.Release|x86.ActiveCfg = Release|x86
 		{E7AC86BE-E1F7-42E4-8DA0-7E1EBEF1130B}.Release|x86.Build.0 = Release|x86
-		{52D52F3C-4F64-4957-9FE8-780B7D7F75C3}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{52D52F3C-4F64-4957-9FE8-780B7D7F75C3}.Debug|ARM.Build.0 = Debug|Any CPU
-		{52D52F3C-4F64-4957-9FE8-780B7D7F75C3}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{52D52F3C-4F64-4957-9FE8-780B7D7F75C3}.Debug|x64.Build.0 = Debug|Any CPU
-		{52D52F3C-4F64-4957-9FE8-780B7D7F75C3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{52D52F3C-4F64-4957-9FE8-780B7D7F75C3}.Debug|x86.Build.0 = Debug|Any CPU
-		{52D52F3C-4F64-4957-9FE8-780B7D7F75C3}.Release|ARM.ActiveCfg = Release|Any CPU
-		{52D52F3C-4F64-4957-9FE8-780B7D7F75C3}.Release|ARM.Build.0 = Release|Any CPU
-		{52D52F3C-4F64-4957-9FE8-780B7D7F75C3}.Release|x64.ActiveCfg = Release|Any CPU
-		{52D52F3C-4F64-4957-9FE8-780B7D7F75C3}.Release|x64.Build.0 = Release|Any CPU
-		{52D52F3C-4F64-4957-9FE8-780B7D7F75C3}.Release|x86.ActiveCfg = Release|Any CPU
-		{52D52F3C-4F64-4957-9FE8-780B7D7F75C3}.Release|x86.Build.0 = Release|Any CPU
 		{32CDACB4-5993-4892-AAA5-BC71C819E253}.Debug|ARM.ActiveCfg = Debug|ARM
 		{32CDACB4-5993-4892-AAA5-BC71C819E253}.Debug|ARM.Build.0 = Debug|ARM
 		{32CDACB4-5993-4892-AAA5-BC71C819E253}.Debug|ARM.Deploy.0 = Debug|ARM
@@ -75,18 +59,6 @@ Global
 		{32CDACB4-5993-4892-AAA5-BC71C819E253}.Release|x86.ActiveCfg = Release|x86
 		{32CDACB4-5993-4892-AAA5-BC71C819E253}.Release|x86.Build.0 = Release|x86
 		{32CDACB4-5993-4892-AAA5-BC71C819E253}.Release|x86.Deploy.0 = Release|x86
-		{375E258C-44CA-4BEC-92C4-061C9E1DD9E5}.Debug|ARM.ActiveCfg = Debug|ARM
-		{375E258C-44CA-4BEC-92C4-061C9E1DD9E5}.Debug|ARM.Build.0 = Debug|ARM
-		{375E258C-44CA-4BEC-92C4-061C9E1DD9E5}.Debug|x64.ActiveCfg = Debug|x64
-		{375E258C-44CA-4BEC-92C4-061C9E1DD9E5}.Debug|x64.Build.0 = Debug|x64
-		{375E258C-44CA-4BEC-92C4-061C9E1DD9E5}.Debug|x86.ActiveCfg = Debug|x86
-		{375E258C-44CA-4BEC-92C4-061C9E1DD9E5}.Debug|x86.Build.0 = Debug|x86
-		{375E258C-44CA-4BEC-92C4-061C9E1DD9E5}.Release|ARM.ActiveCfg = Release|ARM
-		{375E258C-44CA-4BEC-92C4-061C9E1DD9E5}.Release|ARM.Build.0 = Release|ARM
-		{375E258C-44CA-4BEC-92C4-061C9E1DD9E5}.Release|x64.ActiveCfg = Release|x64
-		{375E258C-44CA-4BEC-92C4-061C9E1DD9E5}.Release|x64.Build.0 = Release|x64
-		{375E258C-44CA-4BEC-92C4-061C9E1DD9E5}.Release|x86.ActiveCfg = Release|x86
-		{375E258C-44CA-4BEC-92C4-061C9E1DD9E5}.Release|x86.Build.0 = Release|x86
 		{6CBB529C-D32A-48B0-90D7-073D7AE2CB41}.Debug|ARM.ActiveCfg = Debug|ARM
 		{6CBB529C-D32A-48B0-90D7-073D7AE2CB41}.Debug|ARM.Build.0 = Debug|ARM
 		{6CBB529C-D32A-48B0-90D7-073D7AE2CB41}.Debug|x64.ActiveCfg = Debug|x64
@@ -117,7 +89,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E7AC86BE-E1F7-42E4-8DA0-7E1EBEF1130B} = {F6BEB515-FBD7-48BD-B69A-6C6FBA875A68}
-		{52D52F3C-4F64-4957-9FE8-780B7D7F75C3} = {F6BEB515-FBD7-48BD-B69A-6C6FBA875A68}
 		{952BD2B0-E12A-4BFC-BCE7-F4EE9F7461B6} = {F6BEB515-FBD7-48BD-B69A-6C6FBA875A68}
 	EndGlobalSection
 EndGlobal

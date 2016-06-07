@@ -1,4 +1,4 @@
-﻿using Crystal3.IOC;
+﻿using Crystal3.InversionOfControl;
 using Crystal3.Model;
 using Crystal3.Navigation;
 using Neptunium.Logging;

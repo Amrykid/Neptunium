@@ -11,8 +11,8 @@
     <AssemblyName>Neptunium</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.10586.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.14332.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.14332.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <FileAlignment>512</FileAlignment>
@@ -168,10 +168,6 @@
       <Project>{e7ac86be-e1f7-42e4-8da0-7e1ebef1130b}</Project>
       <Name>Crystal3</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Neptunium.BackgroundAudio\Neptunium.BackgroundAudio.csproj">
-      <Project>{375e258c-44ca-4bec-92c4-061c9e1dd9e5}</Project>
-      <Name>Neptunium.BackgroundAudio</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Neptunium.MediaSourceStream\Neptunium.MediaSourceStream.csproj">
       <Project>{6cbb529c-d32a-48b0-90d7-073d7ae2cb41}</Project>
       <Name>Neptunium.MediaSourceStream</Name>
@@ -211,8 +207,8 @@
     <Folder Include="External\" />
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="WindowsMobile, Version=10.0.10240.0">
-      <Name>Windows Mobile Extensions for the UWP</Name>
+    <SDKReference Include="WindowsMobile, Version=10.0.14332.0">
+      <Name>Windows Mobile Extensions for the UWP %28WindowsMobile, Version=10.0.14332.0%29</Name>
     </SDKReference>
   </ItemGroup>
   <Import Project="..\..\lib\winrtxamltoolkit\WinRTXamlToolkit\WinRTXamlToolkit.Shared\WinRTXamlToolkit.Shared.projitems" Label="Shared" />

@@ -1,4 +1,5 @@
-﻿using Crystal3.UI.Commands;
+﻿using Crystal3.InversionOfControl;
+using Crystal3.UI.Commands;
 using Neptunium.Data;
 using Neptunium.Media;
 using System;
@@ -21,7 +22,7 @@ namespace Neptunium
                     }
                     else
                     {
-                        var dialogService = Crystal3.IOC.IoCManager.Resolve<Crystal3.Core.IMessageDialogService>();
+                        var dialogService = IoC.Current.Resolve<Crystal3.Core.IMessageDialogService>();
 
                         if (dialogService != null)
                         {

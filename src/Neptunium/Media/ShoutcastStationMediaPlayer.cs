@@ -9,25 +9,45 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
+using Windows.Media;
+using System.Diagnostics;
 
 namespace Neptunium.Media
 {
     public static class ShoutcastStationMediaPlayer
     {
+        private static ShoutcastMediaSourceStream currentStationMSSWrapper = null;
+        private static string currentTrack = "Title";
+        private static string currentArtist = "Artist";
+        private static StationModelStreamServerType currentStationServerType;
+
+        private static StationModel currentStationModel = null;
+        private static SystemMediaTransportControls smtc;
+
+
         public static bool IsInitialized { get; private set; }
 
         public static async Task InitializeAsync()
         {
             if (IsInitialized) return;
 
-            BackgroundMediaPlayer.MessageReceivedFromBackground += BackgroundMediaPlayer_MessageReceivedFromBackground;
+            // BackgroundMediaPlayer.Current.
 
-            //sends a dummy message to get the background audio task started
-            var hello = new ValueSet();
-            hello.Add(new KeyValuePair<string, object>("Hello", 0));
-            BackgroundMediaPlayer.SendMessageToBackground(hello);
+            smtc = BackgroundMediaPlayer.Current.SystemMediaTransportControls;
+            smtc.ButtonPressed += Smtc_ButtonPressed;
+            smtc.PropertyChanged += Smtc_PropertyChanged;
 
-            await Task.Delay(1000);
+
+            smtc.IsChannelDownEnabled = false;
+            smtc.IsChannelUpEnabled = false;
+            smtc.IsFastForwardEnabled = false;
+            smtc.IsNextEnabled = false;
+            smtc.IsPauseEnabled = true;
+            smtc.IsPlayEnabled = true;
+            smtc.IsPreviousEnabled = false;
+            smtc.IsRecordEnabled = false;
+            smtc.IsRewindEnabled = false;
+            smtc.IsStopEnabled = false;
 
             IsInitialized = true;
         }
@@ -36,66 +56,59 @@ namespace Neptunium.Media
         {
             if (!IsInitialized) return;
 
-            BackgroundMediaPlayer.MessageReceivedFromBackground -= BackgroundMediaPlayer_MessageReceivedFromBackground;
+            smtc.ButtonPressed -= Smtc_ButtonPressed;
+            smtc.PropertyChanged -= Smtc_PropertyChanged;
 
             IsInitialized = false;
         }
 
-        private static async void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)
+        private static void Smtc_PropertyChanged(SystemMediaTransportControls sender, SystemMediaTransportControlsPropertyChangedEventArgs args)
         {
-            foreach (var message in e.Data)
+            switch (args.Property)
             {
-                switch(message.Key)
-                {
-                    case Messages.MetadataChangedMessage:
-                        {
-                            var mcMessage = JsonHelper.FromJson<MetadataChangedMessage>(message.Value.ToString());
+                case SystemMediaTransportControlsProperty.SoundLevel:
+                    break;
+            }
+        }
 
-                            try
-                            {
-                                if (MetadataChanged != null)
-                                    MetadataChanged(sender, new ShoutcastMediaSourceStreamMetadataChangedEventArgs(mcMessage.Track, mcMessage.Artist));
+        private static void Smtc_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
+        {
+            switch (args.Button)
+            {
+                case SystemMediaTransportControlsButton.Play:
+                    Debug.WriteLine("UVC play button pressed");
+                    try
+                    {
+                        BackgroundMediaPlayer.Current.Play();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.ToString());
+                    }
+                    break;
+                case SystemMediaTransportControlsButton.Pause:
+                    Debug.WriteLine("UVC pause button pressed");
+                    try
+                    {
+                        BackgroundMediaPlayer.Current.Pause();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.ToString());
+                    }
+                    break;
+                case SystemMediaTransportControlsButton.Next:
+                    Debug.WriteLine("UVC next button pressed");
 
-                                SongMetadata = new ShoutcastSongInfo() { Track = mcMessage.Track, Artist = mcMessage.Artist };
-                            }
-                            catch (Exception) { }
+                    break;
+                case SystemMediaTransportControlsButton.Previous:
+                    Debug.WriteLine("UVC previous button pressed");
 
-                            break;
-                        }
-                    case Messages.StationInfoMessage:
-                        {
-                            var siMessage = JsonHelper.FromJson<StationInfoMessage>(message.Value.ToString());
-
-
-                            if (!StationDataManager.IsInitialized)
-                                await StationDataManager.InitializeAsync();
-
-                            if (!string.IsNullOrWhiteSpace(siMessage.CurrentStation))
-                            {
-                                currentStationModel = StationDataManager.Stations.FirstOrDefault(x => x.Name == siMessage.CurrentStation);
-
-                                if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
-                            }
-
-                            break;
-                        }
-                    case Messages.BackgroundAudioErrorMessage:
-                        {
-                            var baeMessage = JsonHelper.FromJson<BackgroundAudioErrorMessage>(message.Value.ToString());
-
-                            //if (BackgroundAudioError != null)
-                            //    BackgroundAudioError(null, EventArgs.Empty);
-
-                            break;
-                        }
-                }
+                    break;
             }
         }
 
         public static ShoutcastSongInfo SongMetadata { get; private set; }
-
-        private static StationModel currentStationModel = null;
-        //private static ShoutcastMediaSourceStream currentStationMSSWrapper = null;
 
         public static StationModel CurrentStation { get { return currentStationModel; } }
 
@@ -115,12 +128,16 @@ namespace Neptunium.Media
         {
             if (station == currentStationModel && IsPlaying) return true;
 
+            ShoutcastMediaSourceStream lastStream = null;
+
             if (IsPlaying)
             {
-                var pause = new ValueSet();
-                pause.Add(Messages.PauseMessage, "");
+                if (currentStationMSSWrapper != null && (currentStationServerType == StationModelStreamServerType.Shoutcast || currentStationServerType == StationModelStreamServerType.Icecast))
+                {
+                    currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
-                BackgroundMediaPlayer.SendMessageToBackground(pause);
+                    BackgroundMediaPlayer.Current.Pause();
+                }
             }
 
             currentStationModel = station;
@@ -128,57 +145,84 @@ namespace Neptunium.Media
             //TODO use a combo of events+anon-delegates and TaskCompletionSource to detect play back errors here to seperate connection errors from long-running audio errors.
             //handle error when connecting.
 
-            MediaPlayer currentMediaPlayer = BackgroundMediaPlayer.Current;
-
-            TaskCompletionSource<object> errorTaskSource = new TaskCompletionSource<object>();
-            TypedEventHandler<MediaPlayer, MediaPlayerFailedEventArgs> errorHandler = null;
-            errorHandler = new TypedEventHandler<MediaPlayer, MediaPlayerFailedEventArgs>((MediaPlayer sender, MediaPlayerFailedEventArgs args) =>
-            {
-                //TODO extend said above magic to handle messages from the background audio player
-                currentMediaPlayer.MediaFailed -= errorHandler;
-                errorTaskSource.TrySetResult(false);
-            });
-            currentMediaPlayer.MediaFailed += errorHandler;
-
-            //handle successful connection
-            TaskCompletionSource<object> successTaskSource = new TaskCompletionSource<object>();
-            TypedEventHandler<MediaPlayer, object> successHandler = null;
-            successHandler = new TypedEventHandler<MediaPlayer, object>((MediaPlayer sender, object args) =>
-            {
-                if (currentMediaPlayer.CurrentState == MediaPlayerState.Playing)
-                {
-                    currentMediaPlayer.CurrentStateChanged -= successHandler;
-                    successTaskSource.TrySetResult(true);
-                }
-            });
-            currentMediaPlayer.CurrentStateChanged += successHandler;
-
-
             var stream = station.Streams.First();
 
-            var payload = new ValueSet();
-            payload.Add(Messages.PlayStationMessage, JsonHelper.ToJson<PlayStationMessage>(new PlayStationMessage(stream.Url, stream.SampleRate, stream.RelativePath, station.Name, Enum.GetName(typeof(StationModelStreamServerType), stream.ServerType))));
+            currentStationServerType = stream.ServerType;
 
-            BackgroundMediaPlayer.SendMessageToBackground(payload);
-
-            if (successTaskSource.Task == await Task.WhenAny(errorTaskSource.Task, successTaskSource.Task))
+            if (currentStationServerType == StationModelStreamServerType.Direct)
             {
-                //successful connection
-                currentMediaPlayer.MediaFailed -= errorHandler;
+                try
+                {
+                    BackgroundMediaPlayer.Current.SetUriSource(new Uri(stream.Url));
 
-                if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+                    BackgroundMediaPlayer.Current.Play();
 
-                return true;
+                    currentTrack = "Unknown Song";
+                    currentArtist = "Unknown Artist";
+
+                    UpdateNowPlaying(currentTrack, currentArtist);
+
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
-            else
+            else if ((currentStationServerType == StationModelStreamServerType.Shoutcast || currentStationServerType == StationModelStreamServerType.Icecast))
             {
-                //unsuccessful connection
-                currentMediaPlayer.CurrentStateChanged -= successHandler;
+                currentStationMSSWrapper = new ShoutcastMediaSourceStream(new Uri(stream.Url));
 
-                if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
+                currentStationMSSWrapper.MetadataChanged += CurrentStationMSSWrapper_MetadataChanged;
 
-                return false;
+
+                try
+                {
+                    await currentStationMSSWrapper.ConnectAsync(stream.SampleRate, stream.RelativePath);
+
+                    BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
+
+                    await Task.Delay(500);
+
+                    BackgroundMediaPlayer.Current.Play();
+
+                    if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+                }
+                catch (Exception)
+                {
+                    if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
+                }
+
+                if (lastStream != null) lastStream.Disconnect();
+
+                return IsPlaying;
             }
+
+
+            return false;
+        }
+        private static void CurrentStationMSSWrapper_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
+        {
+            currentArtist = e.Artist;
+            currentTrack = e.Title;
+
+            UpdateNowPlaying(e.Title, e.Artist);
+        }
+
+        private static void UpdateNowPlaying(string currentTrack, string currentArtist)
+        {
+            if (MetadataChanged != null)
+                MetadataChanged(null, new ShoutcastMediaSourceStreamMetadataChangedEventArgs(currentTrack, currentArtist));
+
+            SongMetadata = new ShoutcastSongInfo() { Track = currentTrack, Artist = currentArtist };
+
+            smtc.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
+            smtc.DisplayUpdater.MusicProperties.Title = currentTrack;
+            smtc.DisplayUpdater.MusicProperties.Artist = currentArtist;
+
+            smtc.DisplayUpdater.AppMediaId = currentStationModel.Name;
+
+            smtc.DisplayUpdater.Update();
         }
 
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
