@@ -90,7 +90,7 @@ namespace Neptunium.ViewModel
             //CurrentSong = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.MusicProperties.Title;
             //CurrentArtist = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.MusicProperties.Artist;
 
-            SendLaunchOrResumeMessageToAudioPlayer();
+            
         }
 
         private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, EventArgs e)
@@ -146,41 +146,6 @@ namespace Neptunium.ViewModel
                     CurrentStationLogo = ShoutcastStationMediaPlayer.CurrentStation.Logo.ToString();
                 }
             });
-        }
-
-        protected override async Task OnResumingAsync()
-        {
-            ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
-            ShoutcastStationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
-
-            if (!ShoutcastStationMediaPlayer.IsInitialized)
-                await ShoutcastStationMediaPlayer.InitializeAsync();
-
-            SendLaunchOrResumeMessageToAudioPlayer();
-
-            await base.OnResumingAsync(); //only so that I can fake await the above method call.
-        }
-
-        private static void SendLaunchOrResumeMessageToAudioPlayer()
-        {
-            var payload = new ValueSet();
-            payload.Add(Messages.AppLaunchOrResume, "");
-            BackgroundMediaPlayer.SendMessageToBackground(payload);
-        }
-
-        protected override Task OnSuspendingAsync(IDictionary<string, object> data)
-        {
-            var payload = new ValueSet();
-            payload.Add(Messages.AppSuspend, "");
-            BackgroundMediaPlayer.SendMessageToBackground(payload);
-
-
-            ShoutcastStationMediaPlayer.MetadataChanged -= ShoutcastStationMediaPlayer_MetadataChanged;
-            ShoutcastStationMediaPlayer.CurrentStationChanged -= ShoutcastStationMediaPlayer_CurrentStationChanged;
-
-            ShoutcastStationMediaPlayer.Deinitialize();
-
-            return base.OnSuspendingAsync(data);
         }
 
         public string CurrentSong { get { return GetPropertyValue<string>("CurrentSong"); } private set { SetPropertyValue<string>("CurrentSong", value); } }
