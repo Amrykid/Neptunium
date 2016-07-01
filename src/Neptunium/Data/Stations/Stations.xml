@@ -73,4 +73,19 @@
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="">http://streaming.radionomy.com/RadioVocaloid</Stream>
     </Streams>
   </Station>
+  <Station>
+    <Name>J1 Radio</Name>
+    <Description>Japan's Hottest Hits</Description>
+    <Logo>
+      <![CDATA[https://scontent-dfw1-1.xx.fbcdn.net/v/t1.0-9/10897867_10153650152509386_7707399943066538257_n.jpg?oh=ea2b44d0aa0a54ef316bbc1d4fb21f3d&oe=57F1D14C]]>
+    </Logo>
+    <Site>http://en.j1fm.com/</Site>
+    <Genres>J-Pop;J-Rock</Genres>
+    <Background><![CDATA[https://scontent-dfw1-1.xx.fbcdn.net/v/t1.0-9/10858627_10153592863194386_7716539785810170138_n.jpg?oh=35a826ffca40f5d4bff542a2dc04428d&oe=58045ACB]]></Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="">
+        http://cabhs30.sonixcast.com:9774/
+      </Stream>
+    </Streams>
+  </Station>
 </Stations>            
