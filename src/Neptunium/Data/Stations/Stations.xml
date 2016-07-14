@@ -88,4 +88,34 @@
       </Stream>
     </Streams>
   </Station>
+  <Station>
+    <Name>70s-90s J-pop Stream</Name>
+    <Description></Description>
+    <Logo>
+      <![CDATA[https://pbs.twimg.com/profile_images/1887887294/Twitter_Icon.jpg]]>
+    </Logo>
+    <Site>http://www.breeze-crew.net/shoutcast/player/70s90s.php</Site>
+    <Genres>J-Pop;J-Rock</Genres>
+    <Background></Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="64" SampleRate="44100" RelativePath="">
+        http://198.178.123.14:7002
+      </Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>J-Jams</Name>
+    <Description><![CDATA[Modern J-POP and R&B]]></Description>
+    <Logo>
+      <![CDATA[http://static.radioforest.net/templates/desktop/images/default-thumb.jpg]]>
+    </Logo>
+    <Site>http://jjamsradio.weebly.com</Site>
+    <Genres>J-Pop;R&B</Genres>
+    <Background></Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="">
+        http://216.126.195.37:8078/
+      </Stream>
+    </Streams>
+  </Station>
 </Stations>            
