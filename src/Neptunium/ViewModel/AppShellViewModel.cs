@@ -5,6 +5,7 @@ using Crystal3.Navigation;
 using Crystal3.UI.Commands;
 using Crystal3.UI.MessageDialog;
 using Neptunium.Data;
+using Neptunium.Fragments;
 using Neptunium.Logging;
 using Neptunium.Media;
 using Neptunium.Shared;
@@ -37,8 +38,8 @@ namespace Neptunium.ViewModel
 
             GoToNowPlayingViewCommand = new RelayCommand(x =>
             {
-                if (!InlineNavigationService.IsNavigatedTo<NowPlayingViewViewModel>())
-                    InlineNavigationService.NavigateTo<NowPlayingViewViewModel>();
+                if (!InlineNavigationService.IsNavigatedTo<NowPlayingViewFragment>())
+                    InlineNavigationService.NavigateTo<NowPlayingViewFragment>();
             });
 
             GoToSettingsViewCommand = new RelayCommand(x =>
@@ -66,7 +67,9 @@ namespace Neptunium.ViewModel
                     BackgroundMediaPlayer.Current.Pause();
             }, x => { try { return BackgroundMediaPlayer.Current.CanPause; } catch (Exception) { return true; } });
 
-            //WindowManager.GetStatusManagerForCurrentWindow().NormalStatusText = "Neptunium/Hanasu Alpha";
+            NowPlayingView = new NowPlayingViewFragment();
+
+            WindowManager.GetStatusManagerForCurrentWindow().NormalStatusText = "Hanasu Alpha";
         }
 
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
@@ -99,59 +102,20 @@ namespace Neptunium.ViewModel
 
             await IoC.Current.Resolve<IMessageDialogService>().ShowAsync("We are unable to play this station.", "Error while trying to play this station.");
 
-            await Crystal3.CrystalApplication.Dispatcher.RunAsync(() =>
-            {
-                CurrentArtist = "";
-                CurrentSong = "";
-                CurrentStation = null;
-                CurrentStationLogo = null;
-            });
-
             ShoutcastStationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
         }
 
-        private async void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)
+        private void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)
         {
             LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_CurrentStationChanged");
 
-            await App.Dispatcher.RunAsync(() =>
-            {
-                LogManager.Info(typeof(AppShellViewModel),
-                    "AppShellViewModel ShoutcastStationMediaPlayer_CurrentStationChanged || Dispatcher_Delegate { CurrentStation: " +
-                    (ShoutcastStationMediaPlayer.CurrentStation == null ? "null" : ShoutcastStationMediaPlayer.CurrentStation.Name) + " }");
-
-                if (ShoutcastStationMediaPlayer.CurrentStation != null)
-                {
-                    CurrentStation = ShoutcastStationMediaPlayer.CurrentStation.Name;
-                    CurrentStationLogo = ShoutcastStationMediaPlayer.CurrentStation.Logo.ToString();
-                }
-            });
+            
         }
 
-        private async void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
+        private void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
-            LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged");
-
-            await App.Dispatcher.RunAsync(() =>
-            {
-                LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged || Dispatcher_Delegate { CurrentStation: " +
-                    (ShoutcastStationMediaPlayer.CurrentStation == null ? "null" : ShoutcastStationMediaPlayer.CurrentStation.Name) + " || CurrentSong: " + e.Title + " || CurrentArtist: " + e.Artist + " }"); 
-
-                CurrentSong = e.Title;
-                CurrentArtist = e.Artist;
-
-                if (ShoutcastStationMediaPlayer.CurrentStation != null)
-                {
-                    CurrentStation = ShoutcastStationMediaPlayer.CurrentStation.Name;
-                    CurrentStationLogo = ShoutcastStationMediaPlayer.CurrentStation.Logo.ToString();
-                }
-            });
-        }
-
-        public string CurrentSong { get { return GetPropertyValue<string>("CurrentSong"); } private set { SetPropertyValue<string>("CurrentSong", value); } }
-        public string CurrentArtist { get { return GetPropertyValue<string>("CurrentArtist"); } private set { SetPropertyValue<string>("CurrentArtist", value); } }
-        public string CurrentStation { get { return GetPropertyValue<string>("CurrentStation"); } private set { SetPropertyValue<string>("CurrentStation", value); } }
-        public string CurrentStationLogo { get { return GetPropertyValue<string>("CurrentStationLogo"); } private set { SetPropertyValue<string>("CurrentStationLogo", value); } }
+            LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged");   
+        }      
 
         public RelayCommand GoToStationsViewCommand { get; private set; }
         public RelayCommand GoToNowPlayingViewCommand { get; private set; }
@@ -159,5 +123,7 @@ namespace Neptunium.ViewModel
 
         public RelayCommand PlayCommand { get; private set; }
         public RelayCommand PauseCommand { get; private set; }
+
+        public ViewModelFragment NowPlayingView { get; private set; }
     }
 }

@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wst="using:WindowsStateTriggers"
     xmlns:conv="using:Crystal3.UI.Converters"
+    xmlns:ki="using:Kimono.Controls"
     x:Name="LayoutRoot"
     mc:Ignorable="d" RequestedTheme="Dark">
 
@@ -17,6 +18,66 @@
             </ResourceDictionary.MergedDictionaries>
 
             <conv:NullToVisibilityConverter x:Key="NullToVisConv" />
+            <conv:InverseNullToVisibilityConverter x:Key="InvNullToVisConv" />
+
+
+            <DataTemplate x:Name="NowPlayingPanelTemplate">
+                <Grid DataContext="{Binding NowPlayingView, UpdateSourceTrigger=PropertyChanged}">
+                    <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}"
+                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black">
+                        <TextBlock Text="No station was selected." VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" />
+                    </Grid>
+
+
+                    <ScrollViewer>
+                        <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" x:Name="StationInfoPanel" Margin="20 5">
+                                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentStation.Title, UpdateSourceTrigger=PropertyChanged}" />
+                                <Image Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
+                                    HorizontalAlignment="Stretch" Height="150" Stretch="Uniform" />
+                            </Grid>
+
+                            <StackPanel x:Name="SongInfoPanel" Width="600" Grid.Row="1">
+                                <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Margin="20 10 0 0">Song Info</TextBlock>
+                                <TextBlock Text="{Binding SongMetadata, UpdateSourceTrigger=PropertyChanged}" Margin="20 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                            </StackPanel>
+
+                            <Grid x:Name="SongHistoryPanel" Width="600" Grid.Row="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Style="{ThemeResource TitleTextBlockStyle}" Margin="20 10 0 0">Song History</TextBlock>
+
+                                <ListView ItemsSource="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Margin="10 10 0 0">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="300" />
+                                                    <ColumnDefinition Width="30" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Text="{Binding Song, Mode=OneTime}" Grid.Column="0" />
+
+                                                <TextBlock Text="{Binding Time, Mode=OneTime}" Grid.Column="1" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+
+                        </Grid>
+                    </ScrollViewer>
+                </Grid>
+            </DataTemplate>
         </ResourceDictionary>
     </Page.Resources>
 
@@ -41,11 +102,14 @@
                         <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
 
                         <Setter Target="SplitViewContentGrid.Background" Value="Transparent" />
-                        
+
                         <Setter Target="MobileTogglePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="CurrentPaneTitle.Margin" Value="20 0" />
                         <Setter Target="CurrentPaneTitle.Style" Value="{ThemeResource SubheaderTextBlockStyle}" />
                         <Setter Target="CurrentPaneTitleRow.Height" Value="45" />
+
+                        <Setter Target="DesktopNowPlayingPanel.Visibility" Value="Visible" />
+                        <Setter Target="MobileNowPlayingPanel.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -61,11 +125,14 @@
                         <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
 
                         <Setter Target="SplitViewContentGrid.Background" Value="Transparent" />
-                        
+
                         <Setter Target="MobileTogglePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="CurrentPaneTitle.Margin" Value="20 0" />
                         <Setter Target="CurrentPaneTitle.Style" Value="{ThemeResource SubheaderTextBlockStyle}" />
                         <Setter Target="CurrentPaneTitleRow.Height" Value="45" />
+
+                        <Setter Target="DesktopNowPlayingPanel.Visibility" Value="Visible" />
+                        <Setter Target="MobileNowPlayingPanel.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -78,12 +145,15 @@
                         <Setter Target="RootSplitView.OpenPaneLength" Value="240" />
 
                         <Setter Target="SplitViewContentGrid.Background" Value="{Binding ElementName=RootSplitView, Path=PaneBackground, UpdateSourceTrigger=PropertyChanged}" />
-                        
+
                         <Setter Target="MobileTogglePaneButton.Visibility" Value="Visible" />
                         <Setter Target="CurrentPaneTitle.Margin" Value="15 12.5" />
                         <Setter Target="CurrentPaneTitle.FontSize" Value="18" />
                         <Setter Target="CurrentPaneTitle.FontWeight" Value="Bold" />
                         <Setter Target="CurrentPaneTitleRow.Height" Value="50" />
+
+                        <Setter Target="DesktopNowPlayingPanel.Visibility" Value="Collapsed" />
+                        <Setter Target="MobileNowPlayingPanel.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -110,12 +180,6 @@
                                  Command="{Binding GoToStationsViewCommand}" x:Name="stationsNavButton">
                         <RadioButton.Tag>
                             <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
-                        </RadioButton.Tag>
-                    </RadioButton>
-                    <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Now Playing"
-                                 Command="{Binding GoToNowPlayingViewCommand}" x:Name="nowPlayingNavButton">
-                        <RadioButton.Tag>
-                            <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
                         </RadioButton.Tag>
                     </RadioButton>
                     <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Settings"
@@ -153,12 +217,28 @@
                         <TextBlock x:Name="CurrentPaneTitle" Grid.Column="1" Style="{ThemeResource SubheaderTextBlockStyle}" />
                     </Grid>
 
-                    <Frame x:Name="inlineFrame" Grid.Row="1" />
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Frame x:Name="inlineFrame" Grid.Column="0" />
+
+                        <ki:GripperPanel x:Name="MobileNowPlayingPanel" Visibility="Visible" Grid.Column="0" Grid.ColumnSpan="2" CollapsedHeight="20">
+                            <ki:GripperPanel.PanelContent>
+                                <ContentPresenter ContentTemplate="{StaticResource NowPlayingPanelTemplate}" />
+                            </ki:GripperPanel.PanelContent>
+                        </ki:GripperPanel>
+
+                        <ContentPresenter x:Name="DesktopNowPlayingPanel" Width="500" Grid.Column="1" Visibility="Collapsed" ContentTemplate="{StaticResource NowPlayingPanelTemplate}" />
+                    </Grid>
                 </Grid>
             </SplitView.Content>
         </SplitView>
 
-        <RelativePanel HorizontalAlignment="Stretch" Grid.Row="1" x:Name="FakeAppBar" Background="{ThemeResource SystemListAccentMediumColor}" Height="64.5">
+        <RelativePanel HorizontalAlignment="Stretch" Grid.Row="1" x:Name="FakeAppBar" Background="{ThemeResource SystemListAccentMediumColor}" Height="64.5"
+                       DataContext="{Binding NowPlayingView, UpdateSourceTrigger=PropertyChanged}">
 
             <RelativePanel x:Name="NowPlayingPanel" RelativePanel.AlignLeftWithPanel="True" 
                            Visibility="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"

@@ -118,14 +118,11 @@
     <Compile Include="Old-Hanasu\ShoutcastInformationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AppShellViewModel.cs" />
-    <Compile Include="ViewModel\NowPlayingViewViewModel.cs" />
+    <Compile Include="Fragments\NowPlayingViewFragment.cs" />
     <Compile Include="ViewModel\SettingsViewViewModel.cs" />
     <Compile Include="ViewModel\StationsViewViewModel.cs" />
     <Compile Include="View\AppShellView.xaml.cs">
       <DependentUpon>AppShellView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\NowPlayingView.xaml.cs">
-      <DependentUpon>NowPlayingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
@@ -168,6 +165,10 @@
       <Project>{e7ac86be-e1f7-42e4-8da0-7e1ebef1130b}</Project>
       <Name>Crystal3</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Kimono\src\Kimono\Kimono.csproj">
+      <Project>{329833b1-79b7-4724-b9a2-0629d735bea1}</Project>
+      <Name>Kimono</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Neptunium.MediaSourceStream\Neptunium.MediaSourceStream.csproj">
       <Project>{6cbb529c-d32a-48b0-90d7-073d7ae2cb41}</Project>
       <Name>Neptunium.MediaSourceStream</Name>
@@ -187,10 +188,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\AppShellView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\NowPlayingView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
