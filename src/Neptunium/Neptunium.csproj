@@ -11,7 +11,7 @@
     <AssemblyName>Neptunium</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14366.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.14383.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
@@ -143,7 +143,9 @@
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\StoreLogo.scale-100.png" />
     <Content Include="Assets\WideLogo.scale-100.png" />
-    <Content Include="Data\Stations\Stations.xml" />
+    <Content Include="Data\Stations\Stations.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -204,7 +206,7 @@
     <Folder Include="External\" />
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="WindowsMobile, Version=10.0.14366.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.14383.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>

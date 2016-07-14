@@ -110,7 +110,7 @@
       <![CDATA[http://static.radioforest.net/templates/desktop/images/default-thumb.jpg]]>
     </Logo>
     <Site>http://jjamsradio.weebly.com</Site>
-    <Genres>J-Pop;R&B</Genres>
+    <Genres><![CDATA[J-Pop;R&B]]></Genres>
     <Background></Background>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="">
