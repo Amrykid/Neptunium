@@ -202,7 +202,10 @@ namespace Neptunium.MediaSourceStream
             }
             catch (Exception ex)
             {
-                MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.FailedToConnectToServer);
+                if (MediaStreamSource != null)
+                    MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.FailedToConnectToServer);
+                else
+                    throw new Exception("Inner exception", ex);
             }
         }
 
@@ -411,7 +414,7 @@ namespace Neptunium.MediaSourceStream
 
         private async Task<MediaStreamSample> ParseAACSampleAsync(bool partial = false, byte[] partialBytes = null)
         {
-            
+
             IBuffer buffer = null;
             MediaStreamSample sample = null;
 
