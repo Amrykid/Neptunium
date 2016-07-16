@@ -83,7 +83,7 @@
     <Genres>J-Pop;J-Rock</Genres>
     <Background><![CDATA[https://scontent-dfw1-1.xx.fbcdn.net/v/t1.0-9/10858627_10153592863194386_7716539785810170138_n.jpg?oh=35a826ffca40f5d4bff542a2dc04428d&oe=58045ACB]]></Background>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="">
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html?sid=1">
         http://cabhs30.sonixcast.com:9774/
       </Stream>
     </Streams>
@@ -98,7 +98,7 @@
     <Genres>J-Pop;J-Rock</Genres>
     <Background></Background>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="64" SampleRate="44100" RelativePath="">
+      <Stream ContentType="audio/mpeg" Bitrate="64" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html?sid=1">
         http://198.178.123.14:7002
       </Stream>
     </Streams>
@@ -113,7 +113,7 @@
     <Genres><![CDATA[J-Pop;R&B]]></Genres>
     <Background></Background>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="">
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html?sid=1">
         http://216.126.195.37:8078/
       </Stream>
     </Streams>
