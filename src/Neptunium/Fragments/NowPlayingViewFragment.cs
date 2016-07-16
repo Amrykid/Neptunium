@@ -70,6 +70,8 @@ namespace Neptunium.Fragments
                     CurrentStation = ShoutcastStationMediaPlayer.CurrentStation;
                     CurrentStationLogo = ShoutcastStationMediaPlayer.CurrentStation.Logo.ToString();
                 }
+
+                HistoryItems?.Clear();
             });
 
             try
