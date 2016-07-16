@@ -106,17 +106,17 @@ namespace Neptunium.Fragments
                     switch (stream.ServerType)
                     {
                         case Data.StationModelStreamServerType.Shoutcast:
-                            var historyItems = await Neptunium.Old_Hanasu.ShoutcastService.GetShoutcastStationSongHistoryAsync(ShoutcastStationMediaPlayer.CurrentStation, streamUrl);
+                            //var historyItems = await Neptunium.Old_Hanasu.ShoutcastService.GetShoutcastStationSongHistoryAsync(ShoutcastStationMediaPlayer.CurrentStation, streamUrl);
 
-                            HistoryItems = new ObservableCollection<HistoryItemModel>(historyItems.Select<Old_Hanasu.ShoutcastSongHistoryItem, HistoryItemModel>(x =>
-                            {
-                                var item = new HistoryItemModel();
+                            //HistoryItems = new ObservableCollection<HistoryItemModel>(historyItems.Select<Old_Hanasu.ShoutcastSongHistoryItem, HistoryItemModel>(x =>
+                            //{
+                            //    var item = new HistoryItemModel();
 
-                                item.Song = x.Song;
-                                item.Time = x.LocalizedTime;
+                            //    item.Song = x.Song;
+                            //    item.Time = x.LocalizedTime;
 
-                                return item;
-                            }));
+                            //    return item;
+                            //}));
 
                             break;
 
