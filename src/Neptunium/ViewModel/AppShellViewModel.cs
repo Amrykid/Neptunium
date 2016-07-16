@@ -56,19 +56,18 @@ namespace Neptunium.ViewModel
                 BackgroundMediaPlayer.Current.Play();
             }, x =>
             {
-                var currentPlayerState = BackgroundMediaPlayer.Current.CurrentState;
+                var currentPlayerState = BackgroundMediaPlayer.Current.PlaybackSession.PlaybackState;
 
-                return currentPlayerState != MediaPlayerState.Buffering &&
-                currentPlayerState != MediaPlayerState.Opening &&
-                currentPlayerState != MediaPlayerState.Playing &&
-                currentPlayerState != MediaPlayerState.Closed;
+                return currentPlayerState != MediaPlaybackState.Buffering &&
+                currentPlayerState != MediaPlaybackState.Opening &&
+                currentPlayerState != MediaPlaybackState.Playing;
             });
 
             PauseCommand = new RelayCommand(x =>
             {
-                if (BackgroundMediaPlayer.Current.CanPause)
+                if (BackgroundMediaPlayer.Current.PlaybackSession.CanPause)
                     BackgroundMediaPlayer.Current.Pause();
-            }, x => { try { return BackgroundMediaPlayer.Current.CanPause; } catch (Exception) { return true; } });
+            }, x => { try { return BackgroundMediaPlayer.Current.PlaybackSession.CanPause; } catch (Exception) { return true; } });
 
             NowPlayingView = new NowPlayingViewFragment();
 
@@ -89,16 +88,7 @@ namespace Neptunium.ViewModel
 
             ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
             ShoutcastStationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
-            ShoutcastStationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
-
-            //var currentStationName = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.AppMediaId;
-
-            //CurrentStation = currentStationName;
-
-            //CurrentSong = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.MusicProperties.Title;
-            //CurrentArtist = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater.MusicProperties.Artist;
-
-            
+            ShoutcastStationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;            
         }
 
         private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, EventArgs e)

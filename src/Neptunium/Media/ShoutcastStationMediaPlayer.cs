@@ -116,9 +116,9 @@ namespace Neptunium.Media
         {
             get
             {
-                var state = BackgroundMediaPlayer.Current.CurrentState;
+                var state = BackgroundMediaPlayer.Current.PlaybackSession.PlaybackState;
 
-                return state == MediaPlayerState.Opening || state == MediaPlayerState.Playing || state == MediaPlayerState.Buffering;
+                return state == MediaPlaybackState.Opening || state == MediaPlaybackState.Playing || state == MediaPlaybackState.Buffering;
             }
         }
 
