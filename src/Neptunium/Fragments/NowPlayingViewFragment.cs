@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Navigation;
 using Neptunium.Data;
 using Crystal3.Navigation;
+using Neptunium.ViewModel;
 
 namespace Neptunium.Fragments
 {
@@ -55,6 +56,8 @@ namespace Neptunium.Fragments
                     CurrentStation = ShoutcastStationMediaPlayer.CurrentStation;
                     CurrentStationLogo = ShoutcastStationMediaPlayer.CurrentStation.Logo.ToString();
                 }
+
+                AppShellViewModel.UpdateLiveTile();
             });
         }
 

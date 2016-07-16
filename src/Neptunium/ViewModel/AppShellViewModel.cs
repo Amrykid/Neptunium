@@ -114,18 +114,23 @@ namespace Neptunium.ViewModel
             UpdateLiveTile();
         }
 
-        private void UpdateLiveTile()
+        internal static void UpdateLiveTile()
         {
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
 
             TileBindingContentAdaptive bindingContent = null;
 
-            if (ShoutcastStationMediaPlayer.IsPlaying)
+            if (ShoutcastStationMediaPlayer.IsPlaying && ShoutcastStationMediaPlayer.SongMetadata != null)
             {
                 var nowPlaying = ShoutcastStationMediaPlayer.SongMetadata;
 
                 bindingContent = new TileBindingContentAdaptive()
                 {
+                    PeekImage = new TilePeekImage()
+                    {
+                        Source = ShoutcastStationMediaPlayer.CurrentStation?.Logo,
+                        AlternateText = ShoutcastStationMediaPlayer.CurrentStation?.Name
+                    },
                     Children =
                     {
                         new AdaptiveText()
@@ -139,12 +144,6 @@ namespace Neptunium.ViewModel
                             Text = nowPlaying.Artist,
                             HintWrap = true,
                             HintStyle = AdaptiveTextStyle.CaptionSubtle
-                        },
-
-                        new AdaptiveImage()
-                        {
-                            Source = ShoutcastStationMediaPlayer.CurrentStation?.Logo,
-                            AlternateText = ShoutcastStationMediaPlayer.CurrentStation?.Name
                         }
                     }
                 };
@@ -166,12 +165,6 @@ namespace Neptunium.ViewModel
                             Text = "Tap to get started.",
                             HintWrap = true,
                             HintStyle = AdaptiveTextStyle.CaptionSubtle
-                        },
-
-                        new AdaptiveImage()
-                        {
-                            Source = ShoutcastStationMediaPlayer.CurrentStation?.Logo,
-                            AlternateText = ShoutcastStationMediaPlayer.CurrentStation?.Name
                         }
                     }
                 };
