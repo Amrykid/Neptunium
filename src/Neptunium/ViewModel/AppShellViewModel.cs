@@ -73,6 +73,8 @@ namespace Neptunium.ViewModel
             NowPlayingView = new NowPlayingViewFragment();
 
             WindowManager.GetStatusManagerForCurrentWindow().NormalStatusText = "Hanasu Alpha";
+
+            UpdateLiveTile();
         }
 
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
