@@ -76,6 +76,7 @@
         <ListBox ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" x:Name="StationsListBox" 
                  Visibility="Visible" ItemTemplate="{StaticResource ListItemTemplate}" 
                  Background="Transparent"
+                 Margin="0 0 0 20"
                  ItemsPanel="{StaticResource ListItemsPanelTemplate}" />
 
         <GridView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" x:Name="StationsGridView" 
