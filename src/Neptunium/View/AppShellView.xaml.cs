@@ -84,18 +84,18 @@ namespace Neptunium.View
         {
             if (this.DataContext != null)
             {
-                switch (sender.CurrentState)
+                switch (sender.PlaybackSession.PlaybackState)
                 {
-                    case MediaPlayerState.Playing:
-                    case MediaPlayerState.Opening:
-                    case MediaPlayerState.Buffering:
+                    case MediaPlaybackState.Playing:
+                    case MediaPlaybackState.Opening:
+                    case MediaPlaybackState.Buffering:
                         PlayPauseButton.Icon = new SymbolIcon(Symbol.Pause);
                         PlayPauseButton.Content = "Pause";
                         PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PauseCommand;
                         break;
-                    case MediaPlayerState.Closed:
-                    case MediaPlayerState.Paused:
-                    case MediaPlayerState.Stopped:
+                    case MediaPlaybackState.Paused:
+                    case MediaPlaybackState.None:
+                    default:
                         PlayPauseButton.Icon = new SymbolIcon(Symbol.Play);
                         PlayPauseButton.Content = "Play";
                         PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PlayCommand;
