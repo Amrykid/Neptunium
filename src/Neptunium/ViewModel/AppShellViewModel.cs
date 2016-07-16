@@ -9,6 +9,8 @@ using Neptunium.Fragments;
 using Neptunium.Logging;
 using Neptunium.Media;
 using Neptunium.Shared;
+using NotificationsExtensions;
+using NotificationsExtensions.Tiles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
+using Windows.UI.Notifications;
 using Windows.UI.Xaml.Navigation;
 
 namespace Neptunium.ViewModel
@@ -114,8 +117,97 @@ namespace Neptunium.ViewModel
 
         private void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
-            LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged");   
-        }      
+            LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged");
+
+            UpdateLiveTile();
+        }
+
+        private void UpdateLiveTile()
+        {
+            var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
+
+            TileBindingContentAdaptive bindingContent = null;
+
+            if (ShoutcastStationMediaPlayer.IsPlaying)
+            {
+                var nowPlaying = ShoutcastStationMediaPlayer.SongMetadata;
+
+                bindingContent = new TileBindingContentAdaptive()
+                {
+                    Children =
+                    {
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Track,
+                            HintStyle = AdaptiveTextStyle.Body
+                        },
+
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Artist,
+                            HintWrap = true,
+                            HintStyle = AdaptiveTextStyle.CaptionSubtle
+                        },
+
+                        new AdaptiveImage()
+                        {
+                            Source = ShoutcastStationMediaPlayer.CurrentStation?.Logo,
+                            AlternateText = ShoutcastStationMediaPlayer.CurrentStation?.Name
+                        }
+                    }
+                };
+            }
+            else
+            {
+                bindingContent = new TileBindingContentAdaptive()
+                {
+                    Children =
+                    {
+                        new AdaptiveText()
+                        {
+                            Text = "Ready to stream",
+                            HintStyle = AdaptiveTextStyle.Body
+                        },
+
+                        new AdaptiveText()
+                        {
+                            Text = "Tap to get started.",
+                            HintWrap = true,
+                            HintStyle = AdaptiveTextStyle.CaptionSubtle
+                        },
+
+                        new AdaptiveImage()
+                        {
+                            Source = ShoutcastStationMediaPlayer.CurrentStation?.Logo,
+                            AlternateText = ShoutcastStationMediaPlayer.CurrentStation?.Name
+                        }
+                    }
+                };
+            }
+
+            TileBinding binding = new TileBinding()
+            {
+                Branding = TileBranding.NameAndLogo,
+
+                DisplayName = ShoutcastStationMediaPlayer.IsPlaying ? "Now Playing" : "Neptunium",
+
+                Content = bindingContent
+            };
+
+            TileContent content = new TileContent()
+            {
+                Visual = new TileVisual()
+                {
+                    TileMedium = binding,
+                    TileWide = binding,
+                    TileLarge = binding
+                }
+            };
+
+            var tile = new TileNotification(content.GetXml());
+            tiler.Update(tile);
+
+        }
 
         public RelayCommand GoToStationsViewCommand { get; private set; }
         public RelayCommand GoToNowPlayingViewCommand { get; private set; }
