@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Neptunium.ViewModel
 {
-    public class AppShellViewModel : ViewModelBase
+    public class AppShellViewModel : UIViewModelBase
     {
         private NavigationService InlineNavigationService = null;
         public AppShellViewModel()
@@ -83,28 +83,42 @@ namespace Neptunium.ViewModel
             InlineNavigationService = Crystal3.Navigation.WindowManager.GetNavigationManagerForCurrentWindow()
                 .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two);
 
-            if (!ShoutcastStationMediaPlayer.IsInitialized)
-                await ShoutcastStationMediaPlayer.InitializeAsync();
+            if (!StationMediaPlayer.IsInitialized)
+                await StationMediaPlayer.InitializeAsync();
 
-            ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
-            ShoutcastStationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
-            ShoutcastStationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;            
+            StationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
+            StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
+            StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
+
+
+            StationMediaPlayer.ConnectingStatusChanged += StationMediaPlayer_ConnectingStatusChanged;
+        }
+
+        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
+        {
+            StationMediaPlayer.ConnectingStatusChanged -= StationMediaPlayer_ConnectingStatusChanged;
+
+            base.OnNavigatedFrom(sender, e);
+        }
+
+
+        private void StationMediaPlayer_ConnectingStatusChanged(object sender, StationMediaPlayerConnectingStatusChangedEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() => IsBusy = e.IsConnecting);
         }
 
         private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, EventArgs e)
         {
-            ShoutcastStationMediaPlayer.BackgroundAudioError -= ShoutcastStationMediaPlayer_BackgroundAudioError; //throttle error messages
+            StationMediaPlayer.BackgroundAudioError -= ShoutcastStationMediaPlayer_BackgroundAudioError; //throttle error messages
 
             await IoC.Current.Resolve<IMessageDialogService>().ShowAsync("We are unable to play this station.", "Error while trying to play this station.");
 
-            ShoutcastStationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
+            StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
         }
 
         private void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)
         {
             LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_CurrentStationChanged");
-
-            
         }
 
         private void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
@@ -120,16 +134,16 @@ namespace Neptunium.ViewModel
 
             TileBindingContentAdaptive bindingContent = null;
 
-            if (ShoutcastStationMediaPlayer.IsPlaying && ShoutcastStationMediaPlayer.SongMetadata != null)
+            if (StationMediaPlayer.IsPlaying && StationMediaPlayer.SongMetadata != null)
             {
-                var nowPlaying = ShoutcastStationMediaPlayer.SongMetadata;
+                var nowPlaying = StationMediaPlayer.SongMetadata;
 
                 bindingContent = new TileBindingContentAdaptive()
                 {
                     PeekImage = new TilePeekImage()
                     {
-                        Source = ShoutcastStationMediaPlayer.CurrentStation?.Logo,
-                        AlternateText = ShoutcastStationMediaPlayer.CurrentStation?.Name
+                        Source = StationMediaPlayer.CurrentStation?.Logo,
+                        AlternateText = StationMediaPlayer.CurrentStation?.Name
                     },
                     Children =
                     {
@@ -174,7 +188,7 @@ namespace Neptunium.ViewModel
             {
                 Branding = TileBranding.NameAndLogo,
 
-                DisplayName = ShoutcastStationMediaPlayer.IsPlaying ? "Now Playing" : "Neptunium",
+                DisplayName = StationMediaPlayer.IsPlaying ? "Now Playing" : "Neptunium",
 
                 Content = bindingContent
             };

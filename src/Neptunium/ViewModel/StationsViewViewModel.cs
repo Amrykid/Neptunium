@@ -13,11 +13,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Neptunium.ViewModel
 {
-    public class StationsViewViewModel : ViewModelBase
+    public class StationsViewViewModel : UIViewModelBase
     {
         public StationsViewViewModel()
         {
-            
+
         }
 
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)

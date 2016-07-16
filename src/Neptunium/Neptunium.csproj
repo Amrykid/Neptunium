@@ -114,7 +114,8 @@
     <Compile Include="Data\Stations\StationModelStream.cs" />
     <Compile Include="Logging\LogManager.cs" />
     <Compile Include="Media\ShoutcastSongInfo.cs" />
-    <Compile Include="Media\ShoutcastStationMediaPlayer.cs" />
+    <Compile Include="Media\StationMediaPlayer.cs" />
+    <Compile Include="Media\StationMediaPlayerConnectingStatusChangedEventArgs.cs" />
     <Compile Include="Old-Hanasu\ShoutcastInformationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AppShellViewModel.cs" />

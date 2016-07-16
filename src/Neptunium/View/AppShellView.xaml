@@ -19,6 +19,7 @@
 
             <conv:NullToVisibilityConverter x:Key="NullToVisConv" />
             <conv:InverseNullToVisibilityConverter x:Key="InvNullToVisConv" />
+            <conv:BooleanToVisibilityConverter x:Key="BoolToVisConv" />
 
 
             <DataTemplate x:Name="NowPlayingPanelTemplate">
@@ -263,5 +264,15 @@
                 <AppBarButton Icon="Like" Content="Favorite" />
             </StackPanel>
         </RelativePanel>
+
+        <Grid Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisConv}, UpdateSourceTrigger=PropertyChanged}" 
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Opacity=".9" x:Name="ConnectingStatusGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Connecting..." />
+                <ProgressRing Height="50" Width="50"  IsActive="True"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>

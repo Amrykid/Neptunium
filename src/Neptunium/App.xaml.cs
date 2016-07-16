@@ -51,7 +51,7 @@ namespace Neptunium
         private static async void CoreInit()
         {
             await LogManager.InitializeAsync();
-            await ShoutcastStationMediaPlayer.InitializeAsync();
+            await StationMediaPlayer.InitializeAsync();
 
             LogManager.Info(typeof(App), "CoreInitialization Complete");
         }

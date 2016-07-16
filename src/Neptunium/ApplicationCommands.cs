@@ -18,7 +18,7 @@ namespace Neptunium
                 {
                     if (Windows.Networking.Connectivity.NetworkInformation.GetInternetConnectionProfile() != null)
                     {
-                        var result = await ShoutcastStationMediaPlayer.PlayStationAsync((StationModel)station);
+                        var result = await StationMediaPlayer.PlayStationAsync((StationModel)station);
                     }
                     else
                     {

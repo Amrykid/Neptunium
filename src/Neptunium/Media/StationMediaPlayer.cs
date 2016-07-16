@@ -11,10 +11,11 @@ using Windows.Foundation.Collections;
 using Windows.Media.Playback;
 using Windows.Media;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Neptunium.Media
 {
-    public static class ShoutcastStationMediaPlayer
+    public static class StationMediaPlayer
     {
         private static ShoutcastMediaSourceStream currentStationMSSWrapper = null;
         private static string currentTrack = "Title";
@@ -23,6 +24,8 @@ namespace Neptunium.Media
 
         private static StationModel currentStationModel = null;
         private static SystemMediaTransportControls smtc;
+
+        private static SemaphoreSlim playStationResetEvent = new SemaphoreSlim(1);
 
 
         public static bool IsInitialized { get; private set; }
@@ -50,6 +53,8 @@ namespace Neptunium.Media
             smtc.IsStopEnabled = false;
 
             IsInitialized = true;
+
+            await Task.CompletedTask;
         }
 
         public static void Deinitialize()
@@ -128,6 +133,8 @@ namespace Neptunium.Media
         {
             if (station == currentStationModel && IsPlaying) return true;
 
+            await playStationResetEvent.WaitAsync();
+
             ShoutcastMediaSourceStream lastStream = null;
 
             if (IsPlaying)
@@ -139,6 +146,9 @@ namespace Neptunium.Media
                     BackgroundMediaPlayer.Current.Pause();
                 }
             }
+
+            if (ConnectingStatusChanged != null)
+                ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(true));
 
             currentStationModel = station;
 
@@ -178,28 +188,35 @@ namespace Neptunium.Media
 
                 try
                 {
-                    await currentStationMSSWrapper.ConnectAsync(stream.SampleRate, stream.RelativePath);
+                    if (await currentStationMSSWrapper.ConnectAsync(stream.SampleRate, stream.RelativePath) != null)
+                    {
+                        BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
 
-                    BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
+                        BackgroundMediaPlayer.Current.Play();
 
-                    await Task.Delay(500);
-
-                    BackgroundMediaPlayer.Current.Play();
-
-                    if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+                        if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+                    }
+                    else
+                    {
+                        currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
+                    }
                 }
                 catch (Exception)
                 {
+                    currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
+
                     if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
                 }
 
                 if (lastStream != null) lastStream.Disconnect();
-
-                return IsPlaying;
             }
 
+            if (ConnectingStatusChanged != null)
+                ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
 
-            return false;
+            playStationResetEvent.Release();
+
+            return IsPlaying;
         }
         private static void CurrentStationMSSWrapper_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
@@ -228,5 +245,6 @@ namespace Neptunium.Media
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
         public static event EventHandler CurrentStationChanged;
         public static event EventHandler BackgroundAudioError;
+        public static event EventHandler<StationMediaPlayerConnectingStatusChangedEventArgs> ConnectingStatusChanged;
     }
 }

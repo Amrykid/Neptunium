@@ -76,33 +76,42 @@ namespace Neptunium.MediaSourceStream
             socket = new StreamSocket();
         }
 
-        public async Task ConnectAsync(uint sampleRate = 44100, string relativePath = ";")
+        public async Task<MediaStreamSource> ConnectAsync(uint sampleRate = 44100, string relativePath = ";")
         {
-            await HandleConnection(relativePath);
-            //AudioEncodingProperties obtainedProperties = await GetEncodingPropertiesAsync();
-
-            switch (contentType)
+            try
             {
-                case StreamAudioFormat.MP3:
-                    {
-                        MediaStreamSource = new Windows.Media.Core.MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(sampleRate, 2, (uint)bitRate)));
-                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(48000, 2, (uint)bitRate)));
-                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(32000, 2, (uint)bitRate)));
-                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(24000, 2, (uint)bitRate)));
-                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(22050, 2, (uint)bitRate)));
-                    }
-                    break;
-                case StreamAudioFormat.AAC:
-                    {
-                        MediaStreamSource = new MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateAac(sampleRate, 2, (uint)bitRate)));
-                    }
-                    break;
-            }
+                await HandleConnection(relativePath);
+                //AudioEncodingProperties obtainedProperties = await GetEncodingPropertiesAsync();
 
-            MediaStreamSource.SampleRequested += MediaStreamSource_SampleRequested;
-            MediaStreamSource.CanSeek = false;
-            MediaStreamSource.Starting += MediaStreamSource_Starting;
-            MediaStreamSource.Closed += MediaStreamSource_Closed;
+                switch (contentType)
+                {
+                    case StreamAudioFormat.MP3:
+                        {
+                            MediaStreamSource = new Windows.Media.Core.MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(sampleRate, 2, (uint)bitRate)));
+                            //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(48000, 2, (uint)bitRate)));
+                            //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(32000, 2, (uint)bitRate)));
+                            //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(24000, 2, (uint)bitRate)));
+                            //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(22050, 2, (uint)bitRate)));
+                        }
+                        break;
+                    case StreamAudioFormat.AAC:
+                        {
+                            MediaStreamSource = new MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateAac(sampleRate, 2, (uint)bitRate)));
+                        }
+                        break;
+                }
+
+                MediaStreamSource.SampleRequested += MediaStreamSource_SampleRequested;
+                MediaStreamSource.CanSeek = false;
+                MediaStreamSource.Starting += MediaStreamSource_Starting;
+                MediaStreamSource.Closed += MediaStreamSource_Closed;
+
+                return MediaStreamSource;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private async Task<AudioEncodingProperties> GetEncodingPropertiesAsync()
@@ -166,6 +175,12 @@ namespace Neptunium.MediaSourceStream
             MediaStreamSource.Starting -= MediaStreamSource_Starting;
             MediaStreamSource.Closed -= MediaStreamSource_Closed;
             MediaStreamSource.SampleRequested -= MediaStreamSource_SampleRequested;
+
+            try
+            {
+                Disconnect();
+            }
+            catch (Exception) { }
         }
 
         private void MediaStreamSource_Starting(MediaStreamSource sender, MediaStreamSourceStartingEventArgs args)
@@ -248,7 +263,15 @@ namespace Neptunium.MediaSourceStream
 
                     byte[] partialFrame = new byte[metadataInt - metadataPos];
 
-                    await socketReader.LoadAsync(metadataInt - metadataPos);
+                    var read = await socketReader.LoadAsync(metadataInt - metadataPos);
+
+                    if (read == 0)
+                    {
+                        Disconnect();
+                        MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.ConnectionToServerLost);
+                        return;
+                    }
+
                     socketReader.ReadBytes(partialFrame);
 
                     metadataPos += metadataInt - metadataPos;
@@ -292,7 +315,8 @@ namespace Neptunium.MediaSourceStream
                     metadataPos += sample.Buffer.Length;
                 }
 
-                request.Sample = sample;
+                if (sample != null)
+                    request.Sample = sample;
 
                 request.ReportSampleProgress(100);
             }
@@ -394,7 +418,15 @@ namespace Neptunium.MediaSourceStream
             }
             else
             {
-                await socketReader.LoadAsync(mp3_sampleSize);
+                var read = await socketReader.LoadAsync(mp3_sampleSize);
+
+                if (read == 0)
+                {
+                    Disconnect();
+                    MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.ConnectionToServerLost);
+                    return await Task.FromResult<MediaStreamSample>(null);
+                }
+
                 buffer = socketReader.ReadBuffer(mp3_sampleSize);
 
                 byteOffset += mp3_sampleSize;

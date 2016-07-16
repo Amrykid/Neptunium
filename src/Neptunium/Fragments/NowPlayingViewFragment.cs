@@ -19,14 +19,14 @@ namespace Neptunium.Fragments
     {
         public NowPlayingViewFragment()
         {
-            CurrentStation = ShoutcastStationMediaPlayer.CurrentStation;
+            CurrentStation = StationMediaPlayer.CurrentStation;
 
-            ShoutcastStationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
-            ShoutcastStationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
-            ShoutcastStationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
+            StationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
+            StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
+            StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
 
-            if (ShoutcastStationMediaPlayer.SongMetadata != null)
-                SongMetadata = ShoutcastStationMediaPlayer.SongMetadata.Track + " by " + ShoutcastStationMediaPlayer.SongMetadata.Artist;
+            if (StationMediaPlayer.SongMetadata != null)
+                SongMetadata = StationMediaPlayer.SongMetadata.Track + " by " + StationMediaPlayer.SongMetadata.Artist;
         }
 
         private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, EventArgs e)
@@ -51,10 +51,10 @@ namespace Neptunium.Fragments
                 CurrentSong = e.Title;
                 CurrentArtist = e.Artist;
 
-                if (ShoutcastStationMediaPlayer.CurrentStation != null)
+                if (StationMediaPlayer.CurrentStation != null)
                 {
-                    CurrentStation = ShoutcastStationMediaPlayer.CurrentStation;
-                    CurrentStationLogo = ShoutcastStationMediaPlayer.CurrentStation.Logo.ToString();
+                    CurrentStation = StationMediaPlayer.CurrentStation;
+                    CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo.ToString();
                 }
 
                 AppShellViewModel.UpdateLiveTile();
@@ -68,10 +68,10 @@ namespace Neptunium.Fragments
             {
                 IsBusy = true;
 
-                if (ShoutcastStationMediaPlayer.CurrentStation != null)
+                if (StationMediaPlayer.CurrentStation != null)
                 {
-                    CurrentStation = ShoutcastStationMediaPlayer.CurrentStation;
-                    CurrentStationLogo = ShoutcastStationMediaPlayer.CurrentStation.Logo.ToString();
+                    CurrentStation = StationMediaPlayer.CurrentStation;
+                    CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo.ToString();
                 }
 
                 HistoryItems?.Clear();
@@ -93,9 +93,9 @@ namespace Neptunium.Fragments
 
         private async Task LoadSongHistoryAsync()
         {
-            if (ShoutcastStationMediaPlayer.CurrentStation != null)
+            if (StationMediaPlayer.CurrentStation != null)
             {
-                var stream = ShoutcastStationMediaPlayer.CurrentStation.Streams.FirstOrDefault(x => x.HistoryPath != null);
+                var stream = StationMediaPlayer.CurrentStation.Streams.FirstOrDefault(x => x.HistoryPath != null);
 
                 if (stream != null)
                 {
@@ -137,9 +137,9 @@ namespace Neptunium.Fragments
 
         public override void Dispose()
         {
-            ShoutcastStationMediaPlayer.MetadataChanged -= ShoutcastStationMediaPlayer_MetadataChanged;
-            ShoutcastStationMediaPlayer.CurrentStationChanged -= ShoutcastStationMediaPlayer_CurrentStationChanged;
-            ShoutcastStationMediaPlayer.BackgroundAudioError -= ShoutcastStationMediaPlayer_BackgroundAudioError;
+            StationMediaPlayer.MetadataChanged -= ShoutcastStationMediaPlayer_MetadataChanged;
+            StationMediaPlayer.CurrentStationChanged -= ShoutcastStationMediaPlayer_CurrentStationChanged;
+            StationMediaPlayer.BackgroundAudioError -= ShoutcastStationMediaPlayer_BackgroundAudioError;
         }
 
         public bool IsBusy { get { return GetPropertyValue<bool>(); } set { SetPropertyValue<bool>(value: value); } }
