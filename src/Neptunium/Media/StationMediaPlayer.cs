@@ -143,6 +143,9 @@ namespace Neptunium.Media
                 {
                     currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
+                    if (currentStationMSSWrapper.MediaStreamSource != null)
+                        currentStationMSSWrapper.MediaStreamSource.Closed -= MediaStreamSource_Closed;
+
                     BackgroundMediaPlayer.Current.Pause();
                 }
             }
@@ -194,16 +197,24 @@ namespace Neptunium.Media
 
                         BackgroundMediaPlayer.Current.Play();
 
+                        currentStationMSSWrapper.MediaStreamSource.Closed += MediaStreamSource_Closed;
+
                         if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
                     }
                     else
                     {
                         currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
+
+                        if (currentStationMSSWrapper.MediaStreamSource != null)
+                            currentStationMSSWrapper.MediaStreamSource.Closed -= MediaStreamSource_Closed;
                     }
                 }
                 catch (Exception)
                 {
                     currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
+
+                    if (currentStationMSSWrapper.MediaStreamSource != null)
+                        currentStationMSSWrapper.MediaStreamSource.Closed -= MediaStreamSource_Closed;
 
                     if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
                 }
@@ -218,6 +229,19 @@ namespace Neptunium.Media
 
             return IsPlaying;
         }
+
+        private static void MediaStreamSource_Closed(Windows.Media.Core.MediaStreamSource sender, Windows.Media.Core.MediaStreamSourceClosedEventArgs args)
+        {
+            switch(args.Request.Reason)
+            {
+                case Windows.Media.Core.MediaStreamSourceClosedReason.Done:
+                    return;
+                default:
+                    if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
+                    break;
+            }
+        }
+
         private static void CurrentStationMSSWrapper_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
             currentArtist = e.Artist;

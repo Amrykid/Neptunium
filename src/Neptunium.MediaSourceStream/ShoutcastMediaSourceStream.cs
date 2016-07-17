@@ -312,7 +312,14 @@ namespace Neptunium.MediaSourceStream
                             break;
                     }
 
-                    metadataPos += sample.Buffer.Length;
+                    if (sample.Buffer == null)
+                    {
+                        MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.DecodeError);
+                        deferral.Complete();
+                        return;
+                    }
+                    else
+                        metadataPos += sample.Buffer.Length;
                 }
 
                 if (sample != null)
@@ -426,10 +433,18 @@ namespace Neptunium.MediaSourceStream
                     MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.ConnectionToServerLost);
                     return await Task.FromResult<MediaStreamSample>(null);
                 }
+                else if (read < mp3_sampleSize)
+                {
+                    buffer = socketReader.ReadBuffer(read);
 
-                buffer = socketReader.ReadBuffer(mp3_sampleSize);
+                    byteOffset += mp3_sampleSize;
+                }
+                else
+                {
+                    buffer = socketReader.ReadBuffer(mp3_sampleSize);
 
-                byteOffset += mp3_sampleSize;
+                    byteOffset += mp3_sampleSize;
+                }
             }
 
             sample = MediaStreamSample.CreateFromBuffer(buffer, timeOffSet);
