@@ -11,11 +11,13 @@ using Neptunium.Media;
 using Neptunium.Shared;
 using NotificationsExtensions;
 using NotificationsExtensions.Tiles;
+using NotificationsExtensions.Toasts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Data.Xml.Dom;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
 using Windows.UI.Notifications;
@@ -126,6 +128,68 @@ namespace Neptunium.ViewModel
             LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged");
 
             UpdateLiveTile();
+
+            if (true) //todo placerholder for a settings check
+            {
+                ShowSongNotification();
+            }
+        }
+
+        internal static void ShowSongNotification()
+        {
+            try
+            {
+                if (StationMediaPlayer.IsPlaying && StationMediaPlayer.SongMetadata != null)
+                {
+                    var nowPlaying = StationMediaPlayer.SongMetadata;
+
+                    ToastContent content = new ToastContent()
+                    {
+                        Launch = "nowPlaying",
+                        Scenario = ToastScenario.Reminder,
+                        Audio = new ToastAudio()
+                        {
+                            Silent = true,
+                        },
+                        Visual = new ToastVisual()
+                        {
+                            BindingGeneric = new ToastBindingGeneric()
+                            {
+                                Children =
+                                {
+                                    new AdaptiveText()
+                                    {
+                                        Text = nowPlaying.Track,
+                                        HintStyle = AdaptiveTextStyle.Title
+                                    },
+                                    new AdaptiveText()
+                                    {
+                                        Text = nowPlaying.Artist,
+                                        HintStyle = AdaptiveTextStyle.Body
+                                    }
+                                },
+                                HeroImage = new ToastGenericHeroImage()
+                                {
+                                    Source = StationMediaPlayer.CurrentStation.Logo,
+                                    AlternateText = StationMediaPlayer.CurrentStation.Name
+                                }
+                            }
+                        }
+                    };
+
+                    XmlDocument doc = content.GetXml();
+                    ToastNotification notification = new ToastNotification(doc);
+                    notification.NotificationMirroring = NotificationMirroring.Disabled;
+                    notification.Tag = "nowPlaying";
+                    notification.ExpirationTime = DateTime.Now.AddMinutes(5); //songs usually aren't this long.
+
+                    ToastNotificationManager.CreateToastNotifier().Show(notification);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         internal static void UpdateLiveTile()
