@@ -121,15 +121,23 @@ namespace Neptunium.ViewModel
         private void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)
         {
             LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_CurrentStationChanged");
+
+            UpdateLiveTile();
+
+            if (true) //todo placeholder for a settings check
+            {
+                ShowSongNotification();
+            }
         }
 
         private void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
             LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged");
 
+
             UpdateLiveTile();
 
-            if (true) //todo placerholder for a settings check
+            if (true) //todo placeholder for a settings check
             {
                 ShowSongNotification();
             }
@@ -143,14 +151,28 @@ namespace Neptunium.ViewModel
                 {
                     var nowPlaying = StationMediaPlayer.SongMetadata;
 
+                    var toastHistory = ToastNotificationManager.History.GetHistory();
+
+                    if (toastHistory.Count > 0)
+                    {
+                        var latestToast = toastHistory.FirstOrDefault();
+
+                        if (latestToast != null)
+                        {
+                            var track = latestToast.Content.LastChild.FirstChild.FirstChild.FirstChild.LastChild.InnerText as string;
+
+                            if (track == nowPlaying.Track) return;
+                        }
+                    }
+
                     ToastContent content = new ToastContent()
                     {
                         Launch = "nowPlaying",
-                        Scenario = ToastScenario.Reminder,
                         Audio = new ToastAudio()
                         {
                             Silent = true,
                         },
+                        Duration = ToastDuration.Long,
                         Visual = new ToastVisual()
                         {
                             BindingGeneric = new ToastBindingGeneric()
@@ -170,8 +192,8 @@ namespace Neptunium.ViewModel
                                 },
                                 HeroImage = new ToastGenericHeroImage()
                                 {
-                                    Source = StationMediaPlayer.CurrentStation.Logo,
-                                    AlternateText = StationMediaPlayer.CurrentStation.Name
+                                    Source = StationMediaPlayer.CurrentStation?.Logo,
+                                    AlternateText = StationMediaPlayer.CurrentStation?.Name
                                 }
                             }
                         }

@@ -56,8 +56,6 @@ namespace Neptunium.Fragments
                     CurrentStation = StationMediaPlayer.CurrentStation;
                     CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo.ToString();
                 }
-
-                AppShellViewModel.UpdateLiveTile();
             });
         }
 
