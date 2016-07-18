@@ -312,7 +312,7 @@ namespace Neptunium.MediaSourceStream
                             break;
                     }
 
-                    if (sample.Buffer == null)
+                    if (sample == null || sample.Buffer == null)
                     {
                         MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.DecodeError);
                         deferral.Complete();
