@@ -118,4 +118,19 @@
       </Stream>
     </Streams>
   </Station>
+  <Station>
+    <Name>J-Pop Project Radio</Name>
+    <Description><![CDATA[J-POP]]></Description>
+    <Logo>
+      <![CDATA[https://i3.radionomy.com/radios/400/f8bdd477-4c7b-4581-8f18-f72a196d6fe2.jpg]]>
+    </Logo>
+    <Site>http://www.j-popprojectradio.com/</Site>
+    <Genres><![CDATA[J-Pop]]></Genres>
+    <Background></Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="" ServerType="Shoutcast">
+        http://streaming.radionomy.com/J-PopProjectRadio?lang=en-US%2cen%3bq%3d0.7%2cja%3bq%3d0.3
+      </Stream>
+    </Streams>
+  </Station>
 </Stations>            
