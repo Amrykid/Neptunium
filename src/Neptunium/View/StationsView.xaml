@@ -16,7 +16,8 @@
         </ItemsPanelTemplate>
 
         <DataTemplate x:Key="ListItemTemplate">
-            <winrt:ListItemButton Command="{Binding Source={StaticResource AppCommands}, Path=PlayStationCommand}" CommandParameter="{Binding}">
+            <winrt:ListItemButton Command="{Binding Source={StaticResource AppCommands}, Path=PlayStationCommand}" 
+                                  CommandParameter="{Binding}">
                 <StackPanel Orientation="Horizontal" Padding="0" Height="45">
                     <Image Source="{Binding Logo}" Height="50" Width="50" x:Name="stationLogo" />
                     <TextBlock Text="{Binding Name}" FontSize="21" HorizontalAlignment="Stretch"
@@ -25,7 +26,8 @@
             </winrt:ListItemButton>
         </DataTemplate>
         <DataTemplate x:Key="WrapItemTemplate">
-            <winrt:ListItemButton Command="{Binding Source={StaticResource AppCommands}, Path=PlayStationCommand}" CommandParameter="{Binding}"
+            <winrt:ListItemButton Command="{Binding Source={StaticResource AppCommands}, Path=PlayStationCommand}" 
+                                  CommandParameter="{Binding}"
                                   Margin="10 10">
                 <StackPanel Orientation="Vertical" Padding="0" Height="150" Width="100">
                     <Image Source="{Binding Logo}" Height="100" Width="100" x:Name="stationLogo" />
@@ -77,9 +79,21 @@
                  Visibility="Visible" ItemTemplate="{StaticResource ListItemTemplate}" 
                  Background="Transparent"
                  Margin="0 0 0 20"
-                 ItemsPanel="{StaticResource ListItemsPanelTemplate}" />
+                 ItemsPanel="{StaticResource ListItemsPanelTemplate}">
+            <ListBox.Transitions>
+                <TransitionCollection>
+                    <AddDeleteThemeTransition />
+                </TransitionCollection>
+            </ListBox.Transitions>
+        </ListBox>
 
         <GridView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" x:Name="StationsGridView" 
-                  Visibility="Collapsed" ItemTemplate="{StaticResource WrapItemTemplate}"  Margin="20 0" />
+                  Visibility="Collapsed" ItemTemplate="{StaticResource WrapItemTemplate}"  Margin="20 0">
+            <GridView.Transitions>
+                <TransitionCollection>
+                    <AddDeleteThemeTransition />
+                </TransitionCollection>
+            </GridView.Transitions>
+        </GridView>
     </Grid>
 </Page>

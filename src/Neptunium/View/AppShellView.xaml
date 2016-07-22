@@ -45,7 +45,8 @@
 
                             <StackPanel x:Name="SongInfoPanel" Width="600" Grid.Row="1">
                                 <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Margin="20 10 0 0">Song Info</TextBlock>
-                                <TextBlock Text="{Binding SongMetadata, UpdateSourceTrigger=PropertyChanged}" Margin="20 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                                <TextBlock Text="{Binding SongMetadata, UpdateSourceTrigger=PropertyChanged}" 
+                                           Margin="20 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
                             </StackPanel>
 
                             <Grid x:Name="SongHistoryPanel" Width="600" Grid.Row="2">
@@ -242,7 +243,7 @@
                             </ki:GripperPanel.PanelContent>
                         </ki:GripperPanel>
 
-                        <ContentPresenter x:Name="DesktopNowPlayingPanel" Width="500" Grid.Column="1" Visibility="Collapsed" ContentTemplate="{StaticResource NowPlayingPanelTemplate}" />
+                        <ContentPresenter x:Name="DesktopNowPlayingPanel" Width="400" Grid.Column="1" Visibility="Collapsed" ContentTemplate="{StaticResource NowPlayingPanelTemplate}" />
                     </Grid>
                 </Grid>
             </SplitView.Content>
@@ -271,7 +272,6 @@
                     </Style>
                 </StackPanel.Resources>
                 <AppBarButton Icon="Play" Content="Play" x:Name="PlayPauseButton" Command="{Binding PlayCommand}" />
-                <AppBarButton Icon="Like" Content="Favorite" />
             </StackPanel>
         </RelativePanel>
 

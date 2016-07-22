@@ -1,6 +1,8 @@
 ﻿using Crystal3.Model;
 using Crystal3.Navigation;
 using Crystal3.UI.Commands;
+using Crystal3.UI;
+using Crystal3.Utilities;
 using Neptunium.Data;
 using Neptunium.Media;
 using System;
@@ -17,15 +19,20 @@ namespace Neptunium.ViewModel
     {
         public StationsViewViewModel()
         {
-
+            Stations = new ObservableCollection<StationModel>();
         }
 
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             base.OnNavigatedTo(sender, e);
 
-            await StationDataManager.InitializeAsync();
-            Stations = new ObservableCollection<StationModel>(StationDataManager.Stations);
+            if (!StationDataManager.IsInitialized)
+            {
+                await StationDataManager.InitializeAsync();
+
+                Stations.Clear();
+                Stations.AddRange(StationDataManager.Stations);
+            }
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)

@@ -79,20 +79,6 @@ namespace Neptunium
         {
             //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
             LogManager.Info(typeof(App), "Application Launching");
-
-            await Task.Delay(0);
-
-            try
-            {
-                var payload = new ValueSet();
-                payload.Add(Messages.AppLaunchOrResume, "");
-                BackgroundMediaPlayer.SendMessageToBackground(payload);
-            }
-            catch (Exception)
-            {
-
-            }
-
             WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.NavigateTo<AppShellViewModel>();
         }
