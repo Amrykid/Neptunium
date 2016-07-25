@@ -136,6 +136,8 @@ namespace Neptunium.MediaSourceStream
                         //I don't like copying code without understanding it but this is a case where i dont fully understand everything going on.
                         //I need to read up on bitmasking and such.
 
+                        //EDIT FROM FUTURE: Found this -> http://www.cprogramming.com/tutorial/bitwise_operators.html
+
                         var bithdr = (ulong)(((bytesHeader[0] & 255) << 24) | ((bytesHeader[1] & 255) << 16) | ((bytesHeader[2] & 255) << 8) | ((bytesHeader[3] & 255)));
 
                         var bitrateIndex = (int)((bithdr >> 12) & 15);
