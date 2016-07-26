@@ -108,9 +108,9 @@ namespace Neptunium.MediaSourceStream
 
                 return MediaStreamSource;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                throw new Exception("Connection error.", ex);
             }
         }
 
