@@ -12,6 +12,8 @@ using Windows.Media.Playback;
 using Windows.Media;
 using System.Diagnostics;
 using System.Threading;
+using Windows.Web.Http;
+using Windows.Storage.Streams;
 
 namespace Neptunium.Media
 {
@@ -199,6 +201,12 @@ namespace Neptunium.Media
 
                         currentStationMSSWrapper.MediaStreamSource.Closed += MediaStreamSource_Closed;
 
+                        currentTrack = "Unknown Song";
+                        currentArtist = "Unknown Artist";
+
+                        //UpdateNowPlaying(currentTrack, currentArtist);
+                        SongMetadata = null;
+
                         if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
                     }
                     else
@@ -227,12 +235,28 @@ namespace Neptunium.Media
 
             playStationResetEvent.Release();
 
+            if (IsPlaying)
+                UpdateThumbnail(station);
+
             return IsPlaying;
+        }
+
+        private static void UpdateThumbnail(StationModel station)
+        {
+            if (!string.IsNullOrWhiteSpace(station.Logo))
+            {
+                try
+                {
+                    smtc.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(station.Logo));
+                    smtc.DisplayUpdater.Update();
+                }
+                catch (Exception) { }
+            }
         }
 
         private static void MediaStreamSource_Closed(Windows.Media.Core.MediaStreamSource sender, Windows.Media.Core.MediaStreamSourceClosedEventArgs args)
         {
-            switch(args.Request.Reason)
+            switch (args.Request.Reason)
             {
                 case Windows.Media.Core.MediaStreamSourceClosedReason.Done:
                     return;
@@ -252,18 +276,22 @@ namespace Neptunium.Media
 
         private static void UpdateNowPlaying(string currentTrack, string currentArtist)
         {
-            if (MetadataChanged != null)
-                MetadataChanged(null, new ShoutcastMediaSourceStreamMetadataChangedEventArgs(currentTrack, currentArtist));
-
             SongMetadata = new ShoutcastSongInfo() { Track = currentTrack, Artist = currentArtist };
 
-            smtc.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
-            smtc.DisplayUpdater.MusicProperties.Title = currentTrack;
-            smtc.DisplayUpdater.MusicProperties.Artist = currentArtist;
+            try
+            {
+                smtc.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
+                smtc.DisplayUpdater.MusicProperties.Title = currentTrack;
+                smtc.DisplayUpdater.MusicProperties.Artist = currentArtist;
 
-            smtc.DisplayUpdater.AppMediaId = currentStationModel.Name;
+                smtc.DisplayUpdater.AppMediaId = currentStationModel.Name;
 
-            smtc.DisplayUpdater.Update();
+                smtc.DisplayUpdater.Update();
+            }
+            catch (Exception) { }
+
+            if (MetadataChanged != null)
+                MetadataChanged(null, new ShoutcastMediaSourceStreamMetadataChangedEventArgs(currentTrack, currentArtist));
         }
 
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;

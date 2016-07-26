@@ -1,4 +1,5 @@
-﻿using Crystal3.Core;
+﻿using Crystal3;
+using Crystal3.Core;
 using Crystal3.InversionOfControl;
 using Crystal3.Model;
 using Crystal3.Navigation;
@@ -123,11 +124,6 @@ namespace Neptunium.ViewModel
             LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_CurrentStationChanged");
 
             UpdateLiveTile();
-
-            if (true) //todo placeholder for a settings check
-            {
-                ShowSongNotification();
-            }
         }
 
         private void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
@@ -172,7 +168,7 @@ namespace Neptunium.ViewModel
                         {
                             Silent = true,
                         },
-                        Duration = ToastDuration.Long,
+                        Duration = CrystalApplication.GetDevicePlatform() == Platform.Mobile ? ToastDuration.Short : ToastDuration.Long,
                         Visual = new ToastVisual()
                         {
                             BindingGeneric = new ToastBindingGeneric()
@@ -193,8 +189,8 @@ namespace Neptunium.ViewModel
                                 HeroImage = new ToastGenericHeroImage()
                                 {
                                     Source = StationMediaPlayer.CurrentStation?.Logo,
-                                    AlternateText = StationMediaPlayer.CurrentStation?.Name
-                                }
+                                    AlternateText = StationMediaPlayer.CurrentStation?.Name,
+                                },
                             }
                         }
                     };
@@ -229,7 +225,8 @@ namespace Neptunium.ViewModel
                     PeekImage = new TilePeekImage()
                     {
                         Source = StationMediaPlayer.CurrentStation?.Logo,
-                        AlternateText = StationMediaPlayer.CurrentStation?.Name
+                        AlternateText = StationMediaPlayer.CurrentStation?.Name,
+                        HintCrop = TilePeekImageCrop.None
                     },
                     Children =
                     {
