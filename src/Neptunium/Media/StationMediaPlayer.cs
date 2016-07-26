@@ -195,7 +195,9 @@ namespace Neptunium.Media
                 {
                     if (await currentStationMSSWrapper.ConnectAsync(stream.SampleRate, stream.RelativePath) != null)
                     {
+#pragma warning disable CS0618 // Type or member is obsolete
                         BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
+#pragma warning restore CS0618 // Type or member is obsolete
 
                         BackgroundMediaPlayer.Current.Play();
 
