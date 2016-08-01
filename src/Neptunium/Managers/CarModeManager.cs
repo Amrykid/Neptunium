@@ -59,7 +59,19 @@ namespace Neptunium.Managers
                 var deviceID = ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] as string;
 
                 if (!string.IsNullOrWhiteSpace(deviceID))
-                    SelectedDevice = await DeviceInformation.CreateFromIdAsync(deviceID);
+                {
+                    SelectedDevice = await DeviceInformation.CreateFromIdAsync(deviceID, new List<string> { "System.Devices.Aep.IsConnected" }, DeviceInformationKind.Device);
+
+                    if (SelectedDevice != null)
+                    {
+                        try
+                        {
+                            bool isConnected = (bool)SelectedDevice.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
+                            SetCarModeStatus(isConnected);
+                        }
+                        catch (Exception) { }
+                    }
+                }
             }
             //Create a settings entry for the selected bluetooth device if it doesn't exist
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(CarModeAnnounceSongs))
