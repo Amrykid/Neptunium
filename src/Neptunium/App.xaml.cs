@@ -65,7 +65,10 @@ namespace Neptunium
             await LogManager.InitializeAsync();
             await StationMediaPlayer.InitializeAsync();
 
-            CarModeManager.Initialize();
+#if RELEASE
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+#endif
+                CarModeManager.Initialize();
 
             LogManager.Info(typeof(App), "CoreInitialization Complete");
         }

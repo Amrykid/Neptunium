@@ -1,4 +1,5 @@
-﻿using Neptunium.ViewModel;
+﻿using Crystal3;
+using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +28,12 @@ namespace Neptunium.View
         public SettingsView()
         {
             this.InitializeComponent();
+
+#if RELEASE
+            carModePivot.Visibility = CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile ? Visibility.Visible : Visibility.Collapsed;
+#else
+            carModePivot.Visibility = Visibility.Visible;
+#endif
         }
     }
 }

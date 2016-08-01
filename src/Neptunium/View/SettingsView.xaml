@@ -15,7 +15,7 @@
                     <CheckBox Content="Show Song Nofitications" IsChecked="{Binding ShouldShowSongNofitications, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </PivotItem>
-            <PivotItem Header="Car Mode" Visibility="Visible">
+            <PivotItem Header="Car Mode" x:Name="carModePivot" Visibility="Collapsed">
                 <StackPanel>
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Activation" />
                     <TextBlock>
