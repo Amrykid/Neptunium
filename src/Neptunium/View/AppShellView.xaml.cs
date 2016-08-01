@@ -136,6 +136,10 @@ namespace Neptunium.View
                 {
                     settingsNavButton.IsChecked = true;
                 }
+                else if (viewModelType == typeof(SongHistoryViewModel))
+                {
+                    songHistoryNavButton.IsChecked = true;
+                }
                 else
                 {
                     Debug.WriteLine("WARNING: Unimplemented navigation case - " + viewModelType.FullName);

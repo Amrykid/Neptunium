@@ -29,10 +29,10 @@ namespace Neptunium.ViewModel
             if (!StationDataManager.IsInitialized)
             {
                 await StationDataManager.InitializeAsync();
-
-                Stations.Clear();
-                Stations.AddRange(StationDataManager.Stations);
             }
+
+            if (Stations.Count == 0)
+                Stations.AddRange(StationDataManager.Stations);
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
