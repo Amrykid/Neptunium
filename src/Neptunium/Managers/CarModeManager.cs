@@ -95,7 +95,7 @@ namespace Neptunium.Managers
             if (ShouldAnnounceSongs && IsInCarMode)
             {
                 double initialVolume = StationMediaPlayer.Volume;
-                await FadeVolumeDownToAsync(.1); //lower the volume of the song so that the announcement can be heard.
+                await StationMediaPlayer.FadeVolumeDownToAsync(.1); //lower the volume of the song so that the announcement can be heard.
 
                 if (japaneseFemaleVoice != null)
                     speechSynth.Voice = japaneseFemaleVoice;
@@ -115,7 +115,7 @@ namespace Neptunium.Managers
 
                     stream.Dispose();
 
-                    await FadeVolumeUpToAsync(initialVolume); //raise the volume back up
+                    await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume); //raise the volume back up
                 });
 
 
@@ -134,25 +134,6 @@ namespace Neptunium.Managers
             var index = randomizer.Next(0, phrases.Length - 1);
 
             return phrases[index];
-        }
-
-        private static async Task FadeVolumeDownToAsync(double value)
-        {
-            var initial = StationMediaPlayer.Volume;
-            for (double x = initial; x > value; x -= .1)
-            {
-                await Task.Delay(50);
-                StationMediaPlayer.Volume = x;
-            }
-        }
-        private static async Task FadeVolumeUpToAsync(double value)
-        {
-            var initial = StationMediaPlayer.Volume;
-            for (double x = initial; x < value; x += .1)
-            {
-                await Task.Delay(50);
-                StationMediaPlayer.Volume = x;
-            }
         }
 
         private static void SetCarModeStatus(bool isConnected)

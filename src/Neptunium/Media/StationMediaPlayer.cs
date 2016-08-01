@@ -135,6 +135,29 @@ namespace Neptunium.Media
             set { BackgroundMediaPlayer.Current.Volume = value; }
         }
 
+        public static async Task FadeVolumeDownToAsync(double value)
+        {
+            if (value >= StationMediaPlayer.Volume) throw new ArgumentOutOfRangeException(nameof(value));
+
+            var initial = StationMediaPlayer.Volume;
+            for (double x = initial; x > value; x -= .1)
+            {
+                await Task.Delay(50);
+                StationMediaPlayer.Volume = x;
+            }
+        }
+        public static async Task FadeVolumeUpToAsync(double value)
+        {
+            if (value <= StationMediaPlayer.Volume) throw new ArgumentOutOfRangeException(nameof(value));
+
+            var initial = StationMediaPlayer.Volume;
+            for (double x = initial; x < value; x += .1)
+            {
+                await Task.Delay(50);
+                StationMediaPlayer.Volume = x;
+            }
+        }
+
         //public static ShoutcastStationInfo StationInfoFromStream { get { return currentStationMSSWrapper?.StationInfo; } }
 
         public static async Task<bool> PlayStationAsync(StationModel station)
