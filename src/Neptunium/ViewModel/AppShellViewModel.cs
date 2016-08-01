@@ -54,6 +54,12 @@ namespace Neptunium.ViewModel
                     InlineNavigationService.NavigateTo<SettingsViewViewModel>();
             });
 
+            GoToSongHistoryViewCommand = new RelayCommand(x =>
+            {
+                if (!InlineNavigationService.IsNavigatedTo<SongHistoryViewModel>())
+                    InlineNavigationService.NavigateTo<SongHistoryViewModel>();
+            });
+
             PlayCommand = new RelayCommand(x =>
             {
                 BackgroundMediaPlayer.Current.Play();
@@ -294,6 +300,7 @@ namespace Neptunium.ViewModel
         public RelayCommand GoToStationsViewCommand { get; private set; }
         public RelayCommand GoToNowPlayingViewCommand { get; private set; }
         public RelayCommand GoToSettingsViewCommand { get; private set; }
+        public RelayCommand GoToSongHistoryViewCommand { get; private set; }
 
         public RelayCommand PlayCommand { get; private set; }
         public RelayCommand PauseCommand { get; private set; }

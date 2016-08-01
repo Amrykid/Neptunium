@@ -184,6 +184,12 @@
                             <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
                         </RadioButton.Tag>
                     </RadioButton>
+                    <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Song History"
+                                 Command="{Binding GoToSongHistoryViewCommand}" x:Name="songHistoryNavButton">
+                        <RadioButton.Tag>
+                            <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                        </RadioButton.Tag>
+                    </RadioButton>
                     <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Settings"
                                  Command="{Binding GoToSettingsViewCommand}" x:Name="settingsNavButton">
                         <RadioButton.Tag>
