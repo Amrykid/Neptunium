@@ -16,23 +16,28 @@ namespace Neptunium.ViewModel
     {
         public SettingsViewViewModel()
         {
-            PickDeviceCommand = new RelayCommand(async x =>
+            PickCarModeDeviceCommand = new RelayCommand(async x =>
             {
 #if RELEASE
                 if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
                 {
 #endif
                     await CarModeManager.SelectDeviceAsync(Windows.UI.Xaml.Window.Current.Bounds);
-                    SelectedBluetoothDevice = CarModeManager.SelectedDevice.Name;
+                    SelectedBluetoothDevice = CarModeManager.SelectedDevice?.Name;
 
-                    //todo add a way to clear the selected bluetooth device for car mode.
+                    ClearCarModeDeviceCommand.SetCanExecute(CarModeManager.SelectedDevice != null);
 #if RELEASE
                 }
 #endif
             });
-        }
 
-        public RelayCommand PickDeviceCommand { get; private set; }
+            ClearCarModeDeviceCommand = new ManualRelayCommand(x =>
+            {
+                CarModeManager.ClearDevice();
+
+                SelectedBluetoothDevice = "None";
+            });
+        }
 
         public bool ShouldShowSongNofitications
         {
@@ -40,7 +45,11 @@ namespace Neptunium.ViewModel
             set { SetPropertyValue<bool>(value: value); }
         }
 
-#region Car Mode Settings
+        #region Car Mode Settings
+
+        public RelayCommand PickCarModeDeviceCommand { get; private set; }
+        public ManualRelayCommand ClearCarModeDeviceCommand { get; private set; }
+
         public bool CarModeAnnounceSongs
         {
             get { return GetPropertyValue<bool>(); }
@@ -62,7 +71,9 @@ namespace Neptunium.ViewModel
 #endif
                 CarModeAnnounceSongs = CarModeManager.ShouldAnnounceSongs;
 
-                SelectedBluetoothDevice = CarModeManager.SelectedDevice?.Name;
+                SelectedBluetoothDevice = CarModeManager.SelectedDevice?.Name ?? "None";
+
+                ClearCarModeDeviceCommand.SetCanExecute(CarModeManager.SelectedDevice != null);
 #if RELEASE
             }
 #endif

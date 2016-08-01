@@ -176,6 +176,15 @@ namespace Neptunium.Managers
             }
         }
 
+        public static void ClearDevice()
+        {
+            if (!IsInitialized) throw new InvalidOperationException();
+
+            SelectedDevice = null;
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
+                ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] = string.Empty;
+        }
+
         public static event EventHandler<CarModeManagerCarModeStatusChangedEventArgs> CarModeManagerCarModeStatusChanged;
 
         #region Device Watcher Stuff

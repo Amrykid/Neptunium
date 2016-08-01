@@ -24,8 +24,11 @@
                             <Run Text="{Binding SelectedBluetoothDevice, UpdateSourceTrigger=PropertyChanged}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
                         </Span>
                     </TextBlock>
-                    <Button Content="Pick Bluetooth Device" Command="{Binding PickDeviceCommand}" />
-                    
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Pick Bluetooth Device" Command="{Binding PickCarModeDeviceCommand}" Margin="0 0 5 0" />
+                        <Button Content="Clear Device" Command="{Binding ClearCarModeDeviceCommand}" Margin="0 0 5 0" />
+                    </StackPanel>
+
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Options" />
                     <CheckBox Content="Announce Songs" IsChecked="{Binding CarModeAnnounceSongs, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
