@@ -50,7 +50,7 @@ namespace Neptunium.ViewModel
         {
             CarModeAnnounceSongs = CarModeManager.ShouldAnnounceSongs;
 
-            SelectedBluetoothDevice = CarModeManager.SelectedDevice.Name;
+            SelectedBluetoothDevice = CarModeManager.SelectedDevice?.Name;
 
             ShouldShowSongNofitications = (bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications];
         }
