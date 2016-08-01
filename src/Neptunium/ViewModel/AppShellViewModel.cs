@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
+using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Navigation;
 
@@ -139,7 +140,7 @@ namespace Neptunium.ViewModel
 
             UpdateLiveTile();
 
-            if (true) //todo placeholder for a settings check
+            if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] == true)
             {
                 ShowSongNotification();
             }

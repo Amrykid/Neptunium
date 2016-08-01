@@ -9,7 +9,12 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Pivot>
-            <PivotItem Header="General" />
+            <PivotItem Header="General">
+                <StackPanel>
+                    <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Notifications" />
+                    <CheckBox Content="Show Song Nofitications" IsChecked="{Binding ShouldShowSongNofitications, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                </StackPanel>
+            </PivotItem>
             <PivotItem Header="Car Mode" Visibility="Visible">
                 <StackPanel>
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Activation" />

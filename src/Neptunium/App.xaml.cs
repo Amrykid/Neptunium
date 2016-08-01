@@ -27,6 +27,7 @@ using Neptunium.Logging;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Email;
 using Neptunium.Managers;
+using Windows.Storage;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -51,6 +52,16 @@ namespace Neptunium
 
         private static async void CoreInit()
         {
+            //initialize app settings
+            //todo add all settings
+
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.ShowSongNotifications))
+#if RELEASE
+                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.ShowSongNotifications, false);
+#else
+                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.ShowSongNotifications, true);
+#endif
+
             await LogManager.InitializeAsync();
             await StationMediaPlayer.InitializeAsync();
 
