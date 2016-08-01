@@ -8,6 +8,23 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+        <Pivot>
+            <PivotItem Header="General" />
+            <PivotItem Header="Car Mode" Visibility="Visible">
+                <StackPanel>
+                    <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Activation" />
+                    <TextBlock>
+                        <Span>
+                            <Run Text="Selected Device:" />
+                            <Run Text="{Binding SelectedBluetoothDevice, UpdateSourceTrigger=PropertyChanged}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
+                        </Span>
+                    </TextBlock>
+                    <Button Content="Pick Bluetooth Device" Command="{Binding PickDeviceCommand}" />
+                    
+                    <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Options" />
+                    <CheckBox Content="Announce Songs" IsChecked="{Binding CarModeAnnounceSongs, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                </StackPanel>
+            </PivotItem>
+        </Pivot>
     </Grid>
 </Page>

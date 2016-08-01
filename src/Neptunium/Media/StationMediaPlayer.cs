@@ -129,6 +129,12 @@ namespace Neptunium.Media
             }
         }
 
+        public static double Volume
+        {
+            get { return BackgroundMediaPlayer.Current.Volume; }
+            set { BackgroundMediaPlayer.Current.Volume = value; }
+        }
+
         //public static ShoutcastStationInfo StationInfoFromStream { get { return currentStationMSSWrapper?.StationInfo; } }
 
         public static async Task<bool> PlayStationAsync(StationModel station)

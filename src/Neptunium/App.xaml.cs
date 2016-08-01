@@ -26,6 +26,7 @@ using Neptunium.Media;
 using Neptunium.Logging;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Email;
+using Neptunium.Managers;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -52,6 +53,8 @@ namespace Neptunium
         {
             await LogManager.InitializeAsync();
             await StationMediaPlayer.InitializeAsync();
+
+            CarModeManager.Initialize();
 
             LogManager.Info(typeof(App), "CoreInitialization Complete");
         }

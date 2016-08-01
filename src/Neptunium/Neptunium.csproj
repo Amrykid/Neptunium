@@ -113,6 +113,8 @@
     <Compile Include="Data\Stations\StationModel.cs" />
     <Compile Include="Data\Stations\StationModelStream.cs" />
     <Compile Include="Logging\LogManager.cs" />
+    <Compile Include="Managers\CarModeManager.cs" />
+    <Compile Include="Managers\CarModeManagerCarModeStatusChangedEventArgs.cs" />
     <Compile Include="Media\ShoutcastSongInfo.cs" />
     <Compile Include="Media\StationMediaPlayer.cs" />
     <Compile Include="Media\StationMediaPlayerConnectingStatusChangedEventArgs.cs" />
