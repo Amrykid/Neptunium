@@ -20,6 +20,12 @@ using Windows.Storage;
 using Crystal3.Core;
 using Windows.Data.Xml.Dom;
 using NotificationsExtensions.Tiles;
+using Hqub.MusicBrainz.API.Entities;
+using Hqub.MusicBrainz.API;
+using Windows.Media.Playback;
+using Windows.Storage.Streams;
+using Crystal3.UI.Commands;
+using Windows.System;
 
 namespace Neptunium.Fragments
 {
@@ -35,6 +41,11 @@ namespace Neptunium.Fragments
 
             if (StationMediaPlayer.SongMetadata != null)
                 SongMetadata = StationMediaPlayer.SongMetadata.Track + " by " + StationMediaPlayer.SongMetadata.Artist;
+
+            ViewAlbumOnMusicBrainzCommand = new ManualRelayCommand(async x =>
+            {
+                await Launcher.LaunchUriAsync(new Uri("https://musicbrainz.org/release/" + CurrentSongAlbumData.AlbumID));
+            });
         }
 
         internal void ShowSongNotification()
@@ -86,7 +97,7 @@ namespace Neptunium.Fragments
                                 },
                                 HeroImage = new ToastGenericHeroImage()
                                 {
-                                    Source = StationMediaPlayer.CurrentStation?.Logo,
+                                    Source = CurrentSongAlbumData != null ? CurrentSongAlbumData.AlbumCoverUrl : StationMediaPlayer.CurrentStation?.Logo,
                                     AlternateText = StationMediaPlayer.CurrentStation?.Name,
                                 },
                             }
@@ -122,7 +133,7 @@ namespace Neptunium.Fragments
                 {
                     PeekImage = new TilePeekImage()
                     {
-                        Source = StationMediaPlayer.CurrentStation?.Logo,
+                        Source = CurrentSongAlbumData != null ? CurrentSongAlbumData.AlbumCoverUrl : StationMediaPlayer.CurrentStation?.Logo,
                         AlternateText = StationMediaPlayer.CurrentStation?.Name,
                         HintCrop = TilePeekImageCrop.None
                     },
@@ -202,9 +213,9 @@ namespace Neptunium.Fragments
 
         }
 
-        private void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
+        private async void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
-            App.Dispatcher.RunWhenIdleAsync(() =>
+            await App.Dispatcher.RunWhenIdleAsync(() =>
             {
                 SongMetadata = e.Title + " by " + e.Artist;
 
@@ -217,27 +228,112 @@ namespace Neptunium.Fragments
                     CurrentStation = StationMediaPlayer.CurrentStation;
                     CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo.ToString();
                 }
+
+                UpdateLiveTile();
             });
 
+            var timeOut = Task.Delay(2000);
+
+            var albumDataTask = TryFindArtistOnMusicBrainzAsync(e.Title, e.Artist);
+
+            Task resultTask = null;
+
+            if ((resultTask = await Task.WhenAny(albumDataTask, timeOut)) != timeOut)
+            {
+                //update immediately since we didn't timeout
+                await UpdateAlbumDataFromTaskAsync(albumDataTask);
+            }
 
             if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] == true)
             {
-                //var artistSearch = await Hqub.MusicBrainz.API.Entities.Artist.SearchAsync(e.Artist, 5, 0);
-                //foreach(var potentialArtist in artistSearch.Items.Where(x => x.Country.ToLower().Contains("japan")))
-                //{
-                //    var x = potentialArtist;
-                //}
-
-                App.Dispatcher.RunWhenIdleAsync(() =>
+                await App.Dispatcher.RunWhenIdleAsync(() =>
                 {
                     if (!Windows.UI.Xaml.Window.Current.Visible)
                         ShowSongNotification();
                 });
             }
 
-            UpdateLiveTile();
+            if (resultTask == timeOut)
+            {
+                //second chance to update data after the fact.
+                await UpdateAlbumDataFromTaskAsync(albumDataTask);
+            }
         }
 
+        private async Task UpdateAlbumDataFromTaskAsync(Task<AlbumData> albumDataTask)
+        {
+            await App.Dispatcher.RunAsync(async () =>
+            {
+                try
+                {
+                    CurrentSongAlbumData = await albumDataTask;
+
+                    var displayUp = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater;
+
+                    if (CurrentSongAlbumData != null)
+                    {
+                        displayUp.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentSongAlbumData.AlbumCoverUrl));
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrWhiteSpace(CurrentStationLogo))
+                            displayUp.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentStationLogo));
+                        else
+                            displayUp.Thumbnail = null;
+                    }
+
+                    ViewAlbumOnMusicBrainzCommand.SetCanExecute(CurrentSongAlbumData != null);
+
+                    displayUp.Update();
+                }
+                catch (Exception) { }
+            });
+        }
+
+        private async Task<AlbumData> TryFindArtistOnMusicBrainzAsync(string track, string artist)
+        {
+            AlbumData data = new AlbumData();
+            try
+            {
+                var recordingQuery = new Hqub.MusicBrainz.API.QueryParameters<Hqub.MusicBrainz.API.Entities.Recording>();
+                recordingQuery.Add("artistname", artist);
+                recordingQuery.Add("country", "JP");
+                recordingQuery.Add("recording", track);
+
+                var recordings = await Recording.SearchAsync(recordingQuery);
+
+                foreach (var potentialRecording in recordings?.Items)
+                {
+                    if (potentialRecording.Title.ToLower().StartsWith(track.ToLower()))
+                    {
+                        var firstRelease = potentialRecording.Releases.Items.FirstOrDefault();
+
+                        if (firstRelease != null)
+                        {
+                            try
+                            {
+                                data.AlbumCoverUrl = CoverArtArchive.GetCoverArtUri(firstRelease.Id)?.ToString();
+                            }
+                            catch (Exception) { }
+
+                            data.Artist = potentialRecording.Credits.First().Artist.Name;
+                            data.ArtistID = potentialRecording.Credits.First().Artist.Id;
+                            data.Album = firstRelease.Title;
+                            data.AlbumID = firstRelease.Id;
+
+                            return data;
+                        }
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return null;
+        }
 
         private async void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)
         {
@@ -256,57 +352,10 @@ namespace Neptunium.Fragments
 
             UpdateLiveTile();
 
-            try
-            {
-                await LoadSongHistoryAsync();
-
-                await LoadSongDataAsync();
-            }
-            catch (Exception) { }
-
             await App.Dispatcher.RunWhenIdleAsync(() =>
             {
                 IsBusy = false;
             });
-        }
-
-        private async Task LoadSongHistoryAsync()
-        {
-            if (StationMediaPlayer.CurrentStation != null)
-            {
-                var stream = StationMediaPlayer.CurrentStation.Streams.FirstOrDefault(x => x.HistoryPath != null);
-
-                if (stream != null)
-                {
-                    var streamUrl = stream.Url;
-                    var historyUrl = streamUrl.TrimEnd('/') + stream.HistoryPath;
-
-
-                    switch (stream.ServerType)
-                    {
-                        case Data.StationModelStreamServerType.Shoutcast:
-                            //var historyItems = await Neptunium.Old_Hanasu.ShoutcastService.GetShoutcastStationSongHistoryAsync(ShoutcastStationMediaPlayer.CurrentStation, streamUrl);
-
-                            //HistoryItems = new ObservableCollection<HistoryItemModel>(historyItems.Select<Old_Hanasu.ShoutcastSongHistoryItem, HistoryItemModel>(x =>
-                            //{
-                            //    var item = new HistoryItemModel();
-
-                            //    item.Song = x.Song;
-                            //    item.Time = x.LocalizedTime;
-
-                            //    return item;
-                            //}));
-
-                            break;
-
-                    }
-                }
-            }
-        }
-
-        private async Task LoadSongDataAsync()
-        {
-
         }
 
         public override void Invoke(ViewModelBase viewModel, object data)
@@ -321,7 +370,7 @@ namespace Neptunium.Fragments
             StationMediaPlayer.BackgroundAudioError -= ShoutcastStationMediaPlayer_BackgroundAudioError;
         }
 
-        public bool IsBusy { get { return GetPropertyValue<bool>(); } set { SetPropertyValue<bool>(value: value); } }
+        public ManualRelayCommand ViewAlbumOnMusicBrainzCommand { get; private set; }
 
         public string SongMetadata
         {
@@ -340,5 +389,7 @@ namespace Neptunium.Fragments
         public string CurrentSong { get { return GetPropertyValue<string>("CurrentSong"); } private set { SetPropertyValue<string>("CurrentSong", value); } }
         public string CurrentArtist { get { return GetPropertyValue<string>("CurrentArtist"); } private set { SetPropertyValue<string>("CurrentArtist", value); } }
         public string CurrentStationLogo { get { return GetPropertyValue<string>("CurrentStationLogo"); } private set { SetPropertyValue<string>("CurrentStationLogo", value); } }
+
+        public AlbumData CurrentSongAlbumData { get { return GetPropertyValue<AlbumData>(); } set { SetPropertyValue<AlbumData>(value: value); } }
     }
 }

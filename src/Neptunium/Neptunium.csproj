@@ -109,6 +109,7 @@
     <Compile Include="Controls\StationItemControl.xaml.cs">
       <DependentUpon>StationItemControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\AlbumData.cs" />
     <Compile Include="Data\History\HistoryItemModel.cs" />
     <Compile Include="Data\Stations\StationDataManager.cs" />
     <Compile Include="Data\Stations\StationModel.cs" />

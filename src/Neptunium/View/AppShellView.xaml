@@ -20,6 +20,7 @@
             <conv:NullToVisibilityConverter x:Key="NullToVisConv" />
             <conv:InverseNullToVisibilityConverter x:Key="InvNullToVisConv" />
             <conv:BooleanToVisibilityConverter x:Key="BoolToVisConv" />
+            <conv:StringToUriConverter x:Key="StrUriConv" />
 
 
             <DataTemplate x:Name="NowPlayingPanelTemplate">
@@ -47,9 +48,31 @@
                                 <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Margin="20 10 0 0">Song Info</TextBlock>
                                 <TextBlock Text="{Binding SongMetadata, UpdateSourceTrigger=PropertyChanged}" 
                                            Margin="20 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+
+                                <Grid x:Name="extendedSongInfoGrid"
+                                      Margin="20 10 0 0"
+                                      Visibility="{Binding CurrentSongAlbumData, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" MaxHeight="250" />
+                                        <RowDefinition Height="50" />
+                                        <RowDefinition Height="50" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Text="Album Info" Style="{ThemeResource TitleTextBlockStyle}" />
+                                    <Image Grid.Row="1" 
+                                           Stretch="Uniform"
+                                           MaxHeight="250"
+                                           HorizontalAlignment="Center"
+                                           Source="{Binding CurrentSongAlbumData.AlbumCoverUrl, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StrUriConv}}" />
+                                    <TextBlock Grid.Row="2" Text="{Binding CurrentSongAlbumData.Album, UpdateSourceTrigger=PropertyChanged}" Style="{ThemeResource TitleTextBlockStyle}" />
+                                    <TextBlock Grid.Row="3" Text="{Binding CurrentSongAlbumData.Artist, UpdateSourceTrigger=PropertyChanged}" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                                    <Button Grid.Row="4" Content="View on MusicBrainz" Command="{Binding ViewAlbumOnMusicBrainzCommand}" />
+                                </Grid>
                             </StackPanel>
 
-                            <Grid x:Name="SongHistoryPanel" Width="600" Grid.Row="2">
+                            <Grid x:Name="SongHistoryPanel" Width="600" Grid.Row="2" Visibility="Collapsed">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="*" />
