@@ -14,5 +14,6 @@ namespace Neptunium.Data
         public string AlbumID { get; internal set; }
         public string Artist { get; internal set; }
         public string ArtistID { get; internal set; }
+        public DateTime ReleaseDate { get; internal set; }
     }
 }

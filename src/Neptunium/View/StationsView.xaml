@@ -32,16 +32,19 @@
         <DataTemplate x:Key="WrapItemTemplate">
             <winrt:ListItemButton Command="{Binding Source={StaticResource AppCommands}, Path=PlayStationCommand}" 
                                   CommandParameter="{Binding}"
-                                  Margin="5 5">
-                <StackPanel Orientation="Vertical" Padding="0" Height="150" Width="150">
-                    <Image Height="100" Width="100" x:Name="stationLogo" Stretch="Uniform">
-                        <Image.Source>
-                            <BitmapImage UriSource="{Binding Logo}" DecodePixelWidth="100" DecodePixelHeight="100" />
-                        </Image.Source>
-                    </Image>
-                    <TextBlock Text="{Binding Name}" FontSize="18" Width="100" x:Name="stationName"
-                           Margin="0 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Stretch" TextWrapping="WrapWholeWords" />
-                </StackPanel>
+                                  Margin="5 5" Height="150" Width="150">
+                <Grid>
+                    <Grid.Background>
+                        <ImageBrush Opacity=".5">
+                            <ImageBrush.ImageSource>
+                                <BitmapImage UriSource="{Binding Logo}" />
+                            </ImageBrush.ImageSource>
+                        </ImageBrush>
+                    </Grid.Background>
+
+                    <TextBlock Text="{Binding Name}" FontSize="18" Width="150" x:Name="stationName" Grid.Row="1"
+                           Margin="0 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" />
+                </Grid>
             </winrt:ListItemButton>
         </DataTemplate>
 

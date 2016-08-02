@@ -320,6 +320,8 @@ namespace Neptunium.Fragments
                             data.ArtistID = potentialRecording.Credits.First().Artist.Id;
                             data.Album = firstRelease.Title;
                             data.AlbumID = firstRelease.Id;
+                            if (!string.IsNullOrWhiteSpace(firstRelease.Date))
+                                data.ReleaseDate = DateTime.Parse(firstRelease.Date);
 
                             return data;
                         }
