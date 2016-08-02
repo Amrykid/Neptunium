@@ -47,6 +47,7 @@ namespace Neptunium
 #if DEBUG
             Application.Current.UnhandledException += Current_UnhandledException;
 #endif
+
             CoreInit();
         }
 
@@ -95,9 +96,16 @@ namespace Neptunium
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
             //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+                Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
+                    .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+
             LogManager.Info(typeof(App), "Application Launching");
             WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.NavigateTo<AppShellViewModel>();
+
+            await Task.CompletedTask;
         }
 
         public override async Task OnSuspendingAsync()
