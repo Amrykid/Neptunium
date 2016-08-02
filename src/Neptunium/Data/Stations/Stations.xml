@@ -117,6 +117,9 @@
         http://216.126.195.37:8078/
       </Stream>
     </Streams>
+    <StationMessages>
+      <Message><![CDATA[Modern Japanese J-POP and R&B]]></Message>
+    </StationMessages>
   </Station>
   <Station>
     <Name>J-Pop Project Radio</Name>
