@@ -17,7 +17,14 @@
             </PivotItem>
             <PivotItem Header="Car Mode" x:Name="carModePivot" Visibility="Collapsed">
                 <StackPanel>
-                    <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Activation" />
+                    <TextBlock FontSize="26" FontFamily="{ThemeResource SymbolThemeFontFamily}" Margin="5 0 0 5">
+                            <Span>
+                                <Run Text=" " />
+                                <Run x:Name="carModeStatusIndicatorRun" Text="" />
+                                <Run Text=" " Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                            </Span>
+                        </TextBlock>
+                        <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Activation" />
                     <TextBlock>
                         <Span>
                             <Run Text="Selected Device:" />

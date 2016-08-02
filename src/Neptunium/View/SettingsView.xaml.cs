@@ -1,4 +1,5 @@
 ﻿using Crystal3;
+using Neptunium.Managers;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,43 @@ namespace Neptunium.View
 #else
             carModePivot.Visibility = Visibility.Visible;
 #endif
+
+#if RELEASE
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            {
+#endif
+                UpdateCarModeStatusIndicator(CarModeManager.IsInCarMode);
+
+                CarModeManager.CarModeManagerCarModeStatusChanged += CarModeManager_CarModeManagerCarModeStatusChanged;
+#if RELEASE
+            }
+#endif
+        }
+
+        private void UpdateCarModeStatusIndicator(bool isInCarMode)
+        {
+            carModeStatusIndicatorRun.Text = isInCarMode ? "" : "";
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+#if RELEASE
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            {
+#endif
+                CarModeManager.CarModeManagerCarModeStatusChanged -= CarModeManager_CarModeManagerCarModeStatusChanged;
+#if RELEASE
+            }
+#endif
+            base.OnNavigatingFrom(e);
+        }
+
+        private void CarModeManager_CarModeManagerCarModeStatusChanged(object sender, CarModeManagerCarModeStatusChangedEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                UpdateCarModeStatusIndicator(e.IsInCarMode);
+            });
         }
     }
 }
