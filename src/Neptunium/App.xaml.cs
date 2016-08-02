@@ -81,6 +81,8 @@ namespace Neptunium
 #endif
                 CarModeManager.Initialize();
 
+            Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/0.1 ( amrykid@gmail.com )";
+
             LogManager.Info(typeof(App), "CoreInitialization Complete");
         }
 

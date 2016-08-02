@@ -133,7 +133,7 @@ namespace Neptunium.ViewModel
             UpdateLiveTile();
         }
 
-        private void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
+        private async void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
             LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged");
 
@@ -142,6 +142,12 @@ namespace Neptunium.ViewModel
 
             if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] == true)
             {
+                //var artistSearch = await Hqub.MusicBrainz.API.Entities.Artist.SearchAsync(e.Artist, 5, 0);
+                //foreach(var potentialArtist in artistSearch.Items.Where(x => x.Country.ToLower().Contains("japan")))
+                //{
+                //    var x = potentialArtist;
+                //}
+
                 ShowSongNotification();
             }
         }

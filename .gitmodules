@@ -4,3 +4,6 @@
 [submodule "lib/winrtxamltoolkit"]
 	path = lib/winrtxamltoolkit
 	url = https://git01.codeplex.com/winrtxamltoolkit
+[submodule "lib/MusicBrainz"]
+	path = lib/MusicBrainz
+	url = https://github.com/avatar29A/MusicBrainz.git
