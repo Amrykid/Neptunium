@@ -206,7 +206,7 @@ namespace Neptunium.Media
 
                     UpdateNowPlaying(currentTrack, currentArtist);
 
-                    return true;
+                    if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
                 }
                 catch (Exception)
                 {
