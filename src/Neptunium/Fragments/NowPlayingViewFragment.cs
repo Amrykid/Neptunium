@@ -228,7 +228,11 @@ namespace Neptunium.Fragments
                 //    var x = potentialArtist;
                 //}
 
-                ShowSongNotification();
+                App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    if (!Windows.UI.Xaml.Window.Current.Visible)
+                        ShowSongNotification();
+                });
             }
 
             UpdateLiveTile();
