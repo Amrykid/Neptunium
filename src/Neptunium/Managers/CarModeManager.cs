@@ -60,7 +60,7 @@ namespace Neptunium.Managers
 
                 if (!string.IsNullOrWhiteSpace(deviceID))
                 {
-                    SelectedDevice = await DeviceInformation.CreateFromIdAsync(deviceID, new List<string> { "System.Devices.Aep.IsConnected" }, DeviceInformationKind.Device);
+                    SelectedDevice = await DeviceInformation.CreateFromIdAsync(deviceID, new List<string> { "System.Devices.Aep.IsConnected" });
 
                     if (SelectedDevice != null)
                     {
