@@ -138,6 +138,9 @@
     <Compile Include="View\StationsView.xaml.cs">
       <DependentUpon>StationsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\XboxShellView.xaml.cs">
+      <DependentUpon>XboxShellView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -212,6 +215,10 @@
     <Page Include="View\StationsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\XboxShellView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

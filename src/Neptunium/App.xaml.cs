@@ -48,7 +48,17 @@ namespace Neptunium
             Application.Current.UnhandledException += Current_UnhandledException;
 #endif
 
+            //For Xbox One
+            this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
+
             CoreInit();
+        }
+
+        protected override void OnConfigure()
+        {
+           base.OnConfigure();
+
+           this.Options.HandleSystemBackNavigation = CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox;
         }
 
         private static async void CoreInit()

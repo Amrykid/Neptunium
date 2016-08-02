@@ -16,7 +16,7 @@
         </ItemsPanelTemplate>
 
         <DataTemplate x:Key="ListItemTemplate">
-            <winrt:ListItemButton Command="{Binding Source={StaticResource AppCommands}, Path=PlayStationCommand}" 
+            <winrt:ListItemButton Command="{Binding Source={StaticResource AppCommands}, Path=PlayStationCommand}"
                                   CommandParameter="{Binding}">
                 <StackPanel Orientation="Horizontal" Padding="0" Height="45">
                     <Image Source="{Binding Logo}" Height="50" Width="50" x:Name="stationLogo" />
