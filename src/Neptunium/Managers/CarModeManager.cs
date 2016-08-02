@@ -108,6 +108,7 @@ namespace Neptunium.Managers
                     var media = new MediaElement();
 
                     media.Volume = 1.0;
+                    media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Speech;
                     media.SetSource(stream, "");
                     media.Play();
 
