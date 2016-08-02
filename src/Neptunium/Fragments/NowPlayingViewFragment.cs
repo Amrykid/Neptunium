@@ -12,6 +12,14 @@ using Windows.UI.Xaml.Navigation;
 using Neptunium.Data;
 using Crystal3.Navigation;
 using Neptunium.ViewModel;
+using Windows.UI.Notifications;
+using NotificationsExtensions.Toasts;
+using Crystal3;
+using NotificationsExtensions;
+using Windows.Storage;
+using Crystal3.Core;
+using Windows.Data.Xml.Dom;
+using NotificationsExtensions.Tiles;
 
 namespace Neptunium.Fragments
 {
@@ -28,6 +36,159 @@ namespace Neptunium.Fragments
             if (StationMediaPlayer.SongMetadata != null)
                 SongMetadata = StationMediaPlayer.SongMetadata.Track + " by " + StationMediaPlayer.SongMetadata.Artist;
         }
+
+        internal void ShowSongNotification()
+        {
+            try
+            {
+                if (StationMediaPlayer.IsPlaying && StationMediaPlayer.SongMetadata != null)
+                {
+                    var nowPlaying = StationMediaPlayer.SongMetadata;
+
+                    var toastHistory = ToastNotificationManager.History.GetHistory();
+
+                    if (toastHistory.Count > 0)
+                    {
+                        var latestToast = toastHistory.FirstOrDefault();
+
+                        if (latestToast != null)
+                        {
+                            var track = latestToast.Content.LastChild.FirstChild.FirstChild.FirstChild.LastChild.InnerText as string;
+
+                            if (track == nowPlaying.Track) return;
+                        }
+                    }
+
+                    ToastContent content = new ToastContent()
+                    {
+                        Launch = "nowPlaying",
+                        Audio = new ToastAudio()
+                        {
+                            Silent = true,
+                        },
+                        Duration = CrystalApplication.GetDevicePlatform() == Platform.Mobile ? ToastDuration.Short : ToastDuration.Long,
+                        Visual = new ToastVisual()
+                        {
+                            BindingGeneric = new ToastBindingGeneric()
+                            {
+                                Children =
+                                {
+                                    new AdaptiveText()
+                                    {
+                                        Text = nowPlaying.Track,
+                                        HintStyle = AdaptiveTextStyle.Title
+                                    },
+                                    new AdaptiveText()
+                                    {
+                                        Text = nowPlaying.Artist,
+                                        HintStyle = AdaptiveTextStyle.Body
+                                    }
+                                },
+                                HeroImage = new ToastGenericHeroImage()
+                                {
+                                    Source = StationMediaPlayer.CurrentStation?.Logo,
+                                    AlternateText = StationMediaPlayer.CurrentStation?.Name,
+                                },
+                            }
+                        }
+                    };
+
+                    XmlDocument doc = content.GetXml();
+                    ToastNotification notification = new ToastNotification(doc);
+                    notification.NotificationMirroring = NotificationMirroring.Disabled;
+                    notification.Tag = "nowPlaying";
+                    notification.ExpirationTime = DateTime.Now.AddMinutes(5); //songs usually aren't this long.
+
+                    ToastNotificationManager.CreateToastNotifier().Show(notification);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        public void UpdateLiveTile()
+        {
+            var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
+
+            TileBindingContentAdaptive bindingContent = null;
+
+            if (StationMediaPlayer.IsPlaying && StationMediaPlayer.SongMetadata != null)
+            {
+                var nowPlaying = StationMediaPlayer.SongMetadata;
+
+                bindingContent = new TileBindingContentAdaptive()
+                {
+                    PeekImage = new TilePeekImage()
+                    {
+                        Source = StationMediaPlayer.CurrentStation?.Logo,
+                        AlternateText = StationMediaPlayer.CurrentStation?.Name,
+                        HintCrop = TilePeekImageCrop.None
+                    },
+                    Children =
+                    {
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Track,
+                            HintStyle = AdaptiveTextStyle.Body
+                        },
+
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Artist,
+                            HintWrap = true,
+                            HintStyle = AdaptiveTextStyle.CaptionSubtle
+                        }
+                    }
+                };
+            }
+            else
+            {
+                bindingContent = new TileBindingContentAdaptive()
+                {
+                    Children =
+                    {
+                        new AdaptiveText()
+                        {
+                            Text = "Ready to stream",
+                            HintStyle = AdaptiveTextStyle.Body
+                        },
+
+                        new AdaptiveText()
+                        {
+                            Text = "Tap to get started.",
+                            HintWrap = true,
+                            HintStyle = AdaptiveTextStyle.CaptionSubtle
+                        }
+                    }
+                };
+            }
+
+            TileBinding binding = new TileBinding()
+            {
+                Branding = TileBranding.NameAndLogo,
+
+                DisplayName = StationMediaPlayer.IsPlaying ? "Now Playing" : "Neptunium",
+
+                Content = bindingContent
+            };
+
+            TileContent content = new TileContent()
+            {
+                Visual = new TileVisual()
+                {
+                    TileMedium = binding,
+                    TileWide = binding,
+                    TileLarge = binding
+                }
+            };
+
+            var tile = new TileNotification(content.GetXml());
+            tiler.Update(tile);
+
+        }
+
 
         private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, EventArgs e)
         {
@@ -57,6 +218,20 @@ namespace Neptunium.Fragments
                     CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo.ToString();
                 }
             });
+
+
+            if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] == true)
+            {
+                //var artistSearch = await Hqub.MusicBrainz.API.Entities.Artist.SearchAsync(e.Artist, 5, 0);
+                //foreach(var potentialArtist in artistSearch.Items.Where(x => x.Country.ToLower().Contains("japan")))
+                //{
+                //    var x = potentialArtist;
+                //}
+
+                ShowSongNotification();
+            }
+
+            UpdateLiveTile();
         }
 
 
@@ -74,6 +249,8 @@ namespace Neptunium.Fragments
 
                 HistoryItems?.Clear();
             });
+
+            UpdateLiveTile();
 
             try
             {
