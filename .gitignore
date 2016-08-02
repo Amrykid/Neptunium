@@ -159,3 +159,4 @@ pip-log.txt
 src/Neptunium/AppPackages/
 src/Neptunium/_pkginfo.txt
 src/Neptunium/BundleArtifacts/
+.vs/config/applicationhost.config
