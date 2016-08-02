@@ -182,6 +182,10 @@
       <Project>{329833b1-79b7-4724-b9a2-0629d735bea1}</Project>
       <Name>Kimono</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\lib\winrtxamltoolkit\WinRTXamlToolkit\WinRTXamlToolkit.csproj">
+      <Project>{ffb67e2d-f098-48d9-8bf6-b4355c18cd80}</Project>
+      <Name>WinRTXamlToolkit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Neptunium.MediaSourceStream\Neptunium.MediaSourceStream.csproj">
       <Project>{6cbb529c-d32a-48b0-90d7-073d7ae2cb41}</Project>
       <Name>Neptunium.MediaSourceStream</Name>
@@ -229,7 +233,6 @@
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
-  <Import Project="..\..\lib\winrtxamltoolkit\WinRTXamlToolkit\WinRTXamlToolkit.Shared\WinRTXamlToolkit.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
