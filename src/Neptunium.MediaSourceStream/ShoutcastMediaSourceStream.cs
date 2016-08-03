@@ -203,7 +203,7 @@ namespace Neptunium.MediaSourceStream
 
                 socketWriter.WriteString("GET /" + relativePath + " HTTP/1.1" + Environment.NewLine);
                 socketWriter.WriteString("Icy-MetaData: 1" + Environment.NewLine);
-                socketWriter.WriteString("User-Agent: Test Audio Player" + Environment.NewLine);
+                socketWriter.WriteString("User-Agent: Neptunium (http://github.com/Amrykid)" + Environment.NewLine);
                 socketWriter.WriteString(Environment.NewLine);
                 await socketWriter.StoreAsync();
                 await socketWriter.FlushAsync();
