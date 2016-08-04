@@ -56,9 +56,9 @@ namespace Neptunium
 
         protected override void OnConfigure()
         {
-           base.OnConfigure();
+            base.OnConfigure();
 
-           this.Options.HandleSystemBackNavigation = CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox;
+            this.Options.HandleSystemBackNavigation = CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox;
         }
 
         private static async void CoreInit()
@@ -79,7 +79,8 @@ namespace Neptunium
 #if RELEASE
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
 #endif
-                CarModeManager.Initialize();
+                if (!CarModeManager.IsInitialized)
+                    CarModeManager.Initialize();
 
             Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/0.1 ( amrykid@gmail.com )";
 

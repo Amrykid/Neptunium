@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
+using Windows.Foundation;
 using Windows.Media.SpeechSynthesis;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -44,7 +45,7 @@ namespace Neptunium.Managers
             //creates a AQS filter string for watching for PAIRED bluetooth devices.
             var selector = BluetoothDevice.GetDeviceSelectorFromPairingState(true);
             //creates a device watcher which will detect paired bluetooth devices and watches their connection status,
-            watcher = DeviceInformation.CreateWatcher(selector, new List<string> { "System.Devices.Aep.IsConnected" }, DeviceInformationKind.Device);
+            watcher = DeviceInformation.CreateWatcher(selector, GetWantedProperties());
 
             watcher.Added += Watcher_Added;
             watcher.Removed += Watcher_Removed;
@@ -60,16 +61,15 @@ namespace Neptunium.Managers
 
                 if (!string.IsNullOrWhiteSpace(deviceID))
                 {
-                    SelectedDevice = await DeviceInformation.CreateFromIdAsync(deviceID, new List<string> { "System.Devices.Aep.IsConnected" });
+                    SelectedDevice = await DeviceInformation.CreateFromIdAsync(deviceID, GetWantedProperties());
 
                     if (SelectedDevice != null)
                     {
-                        try
-                        {
-                            bool isConnected = (bool)SelectedDevice.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
-                            SetCarModeStatus(isConnected);
-                        }
-                        catch (Exception) { }
+                        if (watcher.Status == DeviceWatcherStatus.Stopped || watcher.Status == DeviceWatcherStatus.Created)
+                            watcher.Start();
+
+                        bool isConnected = (bool)SelectedDevice.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
+                        SetCarModeStatus(isConnected);
                     }
                 }
             }
@@ -81,13 +81,16 @@ namespace Neptunium.Managers
 
             StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
 
-            japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x => 
+            japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
                 x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female);
 
 
-            watcher.Start();
-
             IsInitialized = true;
+        }
+
+        private static IEnumerable<string> GetWantedProperties()
+        {
+            return new List<string> { "System.Devices.Connected", "System.Devices.Aep.IsConnected" };
         }
 
         private static async void StationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
@@ -139,14 +142,19 @@ namespace Neptunium.Managers
 
         private static void SetCarModeStatus(bool isConnected)
         {
-            IsInCarMode = isConnected;
+            if (isConnected != IsInCarMode)
+            {
+                IsInCarMode = isConnected;
 
-            if (CarModeManagerCarModeStatusChanged != null)
-                CarModeManagerCarModeStatusChanged(null, new CarModeManagerCarModeStatusChangedEventArgs(isConnected));
+                if (CarModeManagerCarModeStatusChanged != null)
+                    CarModeManagerCarModeStatusChanged(null, new CarModeManagerCarModeStatusChangedEventArgs(isConnected));
+            }
         }
 
         public static void SetShouldAnnounceSongs(bool value)
         {
+            if (!IsInitialized) throw new InvalidOperationException();
+
             ShouldAnnounceSongs = value;
 
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(CarModeAnnounceSongs))
@@ -160,6 +168,10 @@ namespace Neptunium.Managers
             if (!IsInitialized) throw new InvalidOperationException();
 
             DevicePicker picker = new DevicePicker();
+
+            foreach (var prop in GetWantedProperties())
+                picker.RequestedProperties.Add(prop);
+
             picker.Filter.SupportedDeviceClasses.Add(DeviceClass.AudioRender);
             picker.Filter.SupportedDeviceSelectors.Add(BluetoothDevice.GetDeviceSelectorFromPairingState(true));
 
@@ -174,6 +186,29 @@ namespace Neptunium.Managers
                     ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] = SelectedDevice.Id;
                 else
                     ApplicationData.Current.LocalSettings.Values.Add(SelectedCarDevice, SelectedDevice.Id);
+
+                if (watcher.Status == DeviceWatcherStatus.Stopped || watcher.Status == DeviceWatcherStatus.Stopping || watcher.Status == DeviceWatcherStatus.Created)
+                {
+                    if (watcher.Status == DeviceWatcherStatus.Stopping)
+                    {
+                        TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+                        TypedEventHandler<DeviceWatcher, object> handler = null;
+                        handler = new TypedEventHandler<DeviceWatcher, object>((w, o) =>
+                        {
+                            watcher.Stopped -= handler;
+                            tcs.SetResult(null);
+                        });
+                        watcher.Stopped += handler;
+
+                        await tcs.Task;
+                    }
+
+                    if (watcher.Status == DeviceWatcherStatus.Stopped || watcher.Status == DeviceWatcherStatus.Created)
+                        watcher.Start();
+                }
+
+                bool isConnected = (bool)SelectedDevice.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
+                SetCarModeStatus(isConnected);
             }
         }
 
@@ -184,6 +219,11 @@ namespace Neptunium.Managers
             SelectedDevice = null;
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
                 ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] = string.Empty;
+
+            if (watcher.Status != DeviceWatcherStatus.Stopped && watcher.Status != DeviceWatcherStatus.Stopping)
+                watcher.Stop();
+
+            SetCarModeStatus(false);
         }
 
         public static event EventHandler<CarModeManagerCarModeStatusChangedEventArgs> CarModeManagerCarModeStatusChanged;
@@ -193,13 +233,21 @@ namespace Neptunium.Managers
         {
             if (detectedDevices.Any(x => x.Id == args.Id))
             {
-                var device = detectedDevices.First(x => x.Id == args.Id);
-                device.Update(args);
-
-                if (device.Id == SelectedDevice?.Id)
+                var device = detectedDevices.FirstOrDefault(x => x.Id == args.Id);
+                if (device != null)
                 {
-                    bool isConnected = (bool)device.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
-                    SetCarModeStatus(isConnected);
+                    device.Update(args);
+
+                    if (device.Id == SelectedDevice?.Id)
+                    {
+                        SelectedDevice.Update(args);
+                        try
+                        {
+                            bool isConnected = (bool)device.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
+                            SetCarModeStatus(isConnected);
+                        }
+                        catch (Exception) { }
+                    }
                 }
             }
         }
