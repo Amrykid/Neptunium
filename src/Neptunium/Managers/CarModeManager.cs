@@ -20,19 +20,55 @@ namespace Neptunium.Managers
     {
         public const string SelectedCarDevice = "SelectedCarDevice";
         public const string CarModeAnnounceSongs = "CarModeAnnounceSongs";
+        public const string UseJapaneseVoiceForAnnouncements = "UseJapaneseVoiceForAnnouncements";
 
         public static bool IsInitialized { get; private set; }
 
         public static bool IsInCarMode { get; private set; }
 
         public static ReadOnlyObservableCollection<DeviceInformation> DetectedBluetoothDevices { get; private set; }
-        public static DeviceInformation SelectedDevice { get; private set; }
-        public static bool ShouldAnnounceSongs { get; private set; }
 
         private static DeviceWatcher watcher = null;
         private static ObservableCollection<DeviceInformation> detectedDevices = new ObservableCollection<DeviceInformation>();
         private static SpeechSynthesizer speechSynth = new SpeechSynthesizer();
         private static VoiceInformation japaneseFemaleVoice = null;
+
+        #region Options
+        public static DeviceInformation SelectedDevice { get; private set; }
+        public static bool ShouldAnnounceSongs { get; private set; }
+        public static bool ShouldUseJapaneseVoice { get; private set; }
+
+        private static void CreateSettings()
+        {
+            //Create settings entries
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(CarModeAnnounceSongs))
+                ApplicationData.Current.LocalSettings.Values.Add(CarModeAnnounceSongs, false);
+
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
+                ApplicationData.Current.LocalSettings.Values.Add(SelectedCarDevice, string.Empty);
+
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(UseJapaneseVoiceForAnnouncements))
+                ApplicationData.Current.LocalSettings.Values.Add(UseJapaneseVoiceForAnnouncements, false);
+        }
+
+        public static void SetShouldAnnounceSongs(bool value)
+        {
+            if (!IsInitialized) throw new InvalidOperationException();
+
+            ShouldAnnounceSongs = value;
+
+            ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs] = value;
+        }
+
+        public static void SetShouldUseJapaneseVoice(bool value)
+        {
+            if (!IsInitialized) throw new InvalidOperationException();
+
+            ShouldUseJapaneseVoice = value;
+
+            ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements] = value;
+        }
+        #endregion
 
         public static async void Initialize()
         {
@@ -73,11 +109,11 @@ namespace Neptunium.Managers
                     }
                 }
             }
-            //Create a settings entry for the selected bluetooth device if it doesn't exist
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(CarModeAnnounceSongs))
-                ApplicationData.Current.LocalSettings.Values.Add(CarModeAnnounceSongs, false);
+
+            CreateSettings();
 
             ShouldAnnounceSongs = (bool)ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs];
+            ShouldUseJapaneseVoice = (bool)ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements];
 
             StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
 
@@ -98,10 +134,12 @@ namespace Neptunium.Managers
             if (ShouldAnnounceSongs && IsInCarMode)
             {
                 double initialVolume = StationMediaPlayer.Volume;
-                await StationMediaPlayer.FadeVolumeDownToAsync(.1); //lower the volume of the song so that the announcement can be heard.
+                await StationMediaPlayer.FadeVolumeDownToAsync(.05); //lower the volume of the song so that the announcement can be heard.
 
-                if (japaneseFemaleVoice != null)
+                if (japaneseFemaleVoice != null && ShouldUseJapaneseVoice)
                     speechSynth.Voice = japaneseFemaleVoice;
+                else
+                    speechSynth.Voice = SpeechSynthesizer.DefaultVoice;
 
                 var nowPlayingSpeech = string.Format(GetRandomNowPlayingText(), e.Artist, e.Title);
                 var stream = await speechSynth.SynthesizeTextToStreamAsync(nowPlayingSpeech);
@@ -112,7 +150,7 @@ namespace Neptunium.Managers
 
                     media.Volume = 1.0;
                     media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Speech;
-                    media.SetSource(stream, "");
+                    media.SetSource(stream, stream.ContentType);
                     media.Play();
 
                     await Task.Delay(nowPlayingSpeech.Length * 155);
@@ -123,6 +161,18 @@ namespace Neptunium.Managers
                 });
 
 
+            }
+        }
+
+
+        private static void SetCarModeStatus(bool isConnected)
+        {
+            if (isConnected != IsInCarMode)
+            {
+                IsInCarMode = isConnected;
+
+                if (CarModeManagerCarModeStatusChanged != null)
+                    CarModeManagerCarModeStatusChanged(null, new CarModeManagerCarModeStatusChangedEventArgs(isConnected));
             }
         }
 
@@ -138,29 +188,6 @@ namespace Neptunium.Managers
             var index = randomizer.Next(0, phrases.Length - 1);
 
             return phrases[index];
-        }
-
-        private static void SetCarModeStatus(bool isConnected)
-        {
-            if (isConnected != IsInCarMode)
-            {
-                IsInCarMode = isConnected;
-
-                if (CarModeManagerCarModeStatusChanged != null)
-                    CarModeManagerCarModeStatusChanged(null, new CarModeManagerCarModeStatusChangedEventArgs(isConnected));
-            }
-        }
-
-        public static void SetShouldAnnounceSongs(bool value)
-        {
-            if (!IsInitialized) throw new InvalidOperationException();
-
-            ShouldAnnounceSongs = value;
-
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(CarModeAnnounceSongs))
-                ApplicationData.Current.LocalSettings.Values.Add(CarModeAnnounceSongs, value);
-            else
-                ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs] = value;
         }
 
         public static async Task SelectDeviceAsync(Windows.Foundation.Rect uiArea)
@@ -184,8 +211,6 @@ namespace Neptunium.Managers
             {
                 if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
                     ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] = SelectedDevice.Id;
-                else
-                    ApplicationData.Current.LocalSettings.Values.Add(SelectedCarDevice, SelectedDevice.Id);
 
                 if (watcher.Status == DeviceWatcherStatus.Stopped || watcher.Status == DeviceWatcherStatus.Stopping || watcher.Status == DeviceWatcherStatus.Created)
                 {

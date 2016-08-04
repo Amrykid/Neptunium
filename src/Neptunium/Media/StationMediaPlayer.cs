@@ -36,8 +36,6 @@ namespace Neptunium.Media
         {
             if (IsInitialized) return;
 
-            // BackgroundMediaPlayer.Current.
-
             smtc = BackgroundMediaPlayer.Current.SystemMediaTransportControls;
             smtc.ButtonPressed += Smtc_ButtonPressed;
             smtc.PropertyChanged += Smtc_PropertyChanged;
@@ -140,9 +138,9 @@ namespace Neptunium.Media
             if (value >= StationMediaPlayer.Volume) throw new ArgumentOutOfRangeException(nameof(value));
 
             var initial = StationMediaPlayer.Volume;
-            for (double x = initial; x > value; x -= .1)
+            for (double x = initial; x > value; x -= .01)
             {
-                await Task.Delay(50);
+                await Task.Delay(25);
                 StationMediaPlayer.Volume = x;
             }
         }
@@ -151,9 +149,9 @@ namespace Neptunium.Media
             if (value <= StationMediaPlayer.Volume) throw new ArgumentOutOfRangeException(nameof(value));
 
             var initial = StationMediaPlayer.Volume;
-            for (double x = initial; x < value; x += .1)
+            for (double x = initial; x < value; x += .01)
             {
-                await Task.Delay(50);
+                await Task.Delay(25);
                 StationMediaPlayer.Volume = x;
             }
         }

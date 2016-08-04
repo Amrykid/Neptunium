@@ -61,6 +61,12 @@ namespace Neptunium.ViewModel
             get { return GetPropertyValue<string>(); }
             private set { SetPropertyValue<string>(value: value); }
         }
+
+        public bool JapaneseVoiceForSongAnnouncements
+        {
+            get { return GetPropertyValue<bool>(); }
+            set { SetPropertyValue<bool>(value: value); }
+        }
 #endregion
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
@@ -70,10 +76,9 @@ namespace Neptunium.ViewModel
             {
 #endif
                 CarModeAnnounceSongs = CarModeManager.ShouldAnnounceSongs;
-
                 SelectedBluetoothDevice = CarModeManager.SelectedDevice?.Name ?? "None";
-
                 ClearCarModeDeviceCommand.SetCanExecute(CarModeManager.SelectedDevice != null);
+                JapaneseVoiceForSongAnnouncements = CarModeManager.ShouldUseJapaneseVoice;
 #if RELEASE
             }
 #endif
@@ -85,8 +90,13 @@ namespace Neptunium.ViewModel
         {
 #if RELEASE
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            {
 #endif
                 CarModeManager.SetShouldAnnounceSongs(CarModeAnnounceSongs);
+                CarModeManager.SetShouldUseJapaneseVoice(JapaneseVoiceForSongAnnouncements);
+#if RELEASE
+            }
+#endif
 
             ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] = ShouldShowSongNofitications;
         }

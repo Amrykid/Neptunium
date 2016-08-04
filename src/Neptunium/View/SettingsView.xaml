@@ -38,6 +38,7 @@
 
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Options" />
                     <CheckBox Content="Announce Songs" IsChecked="{Binding CarModeAnnounceSongs, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <CheckBox Content="Use Japanese Voice" IsChecked="{Binding JapaneseVoiceForSongAnnouncements, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </PivotItem>
         </Pivot>
