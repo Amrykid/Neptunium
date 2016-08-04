@@ -314,14 +314,18 @@ namespace Neptunium.MediaSourceStream
                             break;
                     }
 
-                    if (sample == null || sample.Buffer == null)
+                    try
                     {
-                        MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.DecodeError);
-                        deferral.Complete();
-                        return;
+                        if (sample == null || sample.Buffer == null) //bug: on RELEASE builds, sample.Buffer causes the app to die due to a possible .NET Native bug
+                        {
+                            MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.DecodeError);
+                            deferral.Complete();
+                            return;
+                        }
+                        else
+                            metadataPos += sample.Buffer.Length;
                     }
-                    else
-                        metadataPos += sample.Buffer.Length;
+                    catch (Exception) { }
                 }
 
                 if (sample != null)
