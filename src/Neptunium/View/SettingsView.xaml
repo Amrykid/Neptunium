@@ -37,8 +37,9 @@
                     </StackPanel>
 
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Options" />
-                    <CheckBox Content="Announce Songs" IsChecked="{Binding CarModeAnnounceSongs, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                    <CheckBox Content="Use Japanese Voice" IsChecked="{Binding JapaneseVoiceForSongAnnouncements, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <CheckBox Content="Announce Songs" x:Name="announcedSongsCb" IsChecked="{Binding CarModeAnnounceSongs, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <CheckBox Content="Use Japanese Voice" IsEnabled="{Binding ElementName=announcedSongsCb, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" 
+                              IsChecked="{Binding JapaneseVoiceForSongAnnouncements, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </PivotItem>
         </Pivot>
