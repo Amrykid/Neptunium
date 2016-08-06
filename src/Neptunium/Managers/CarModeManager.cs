@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
+using Windows.Devices.Radios;
 using Windows.Foundation;
 using Windows.Media.SpeechSynthesis;
 using Windows.Storage;
@@ -105,7 +106,7 @@ namespace Neptunium.Managers
                             watcher.Start();
 
                         bool isConnected = (bool)SelectedDevice.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
-                        SetCarModeStatus(isConnected);
+                        SetCarModeStatus(isConnected && await GetIfBluetoothIsOnAsync());
                     }
                 }
             }
@@ -122,6 +123,18 @@ namespace Neptunium.Managers
 
 
             IsInitialized = true;
+        }
+
+        private static async Task<bool> GetIfBluetoothIsOnAsync()
+        {
+            if ((await Radio.RequestAccessAsync()) == RadioAccessStatus.Allowed)
+            {
+                var BTradios = (await Radio.GetRadiosAsync()).Where(x => x.Kind == RadioKind.Bluetooth);
+
+                return BTradios.Any(x => x.State == RadioState.On);
+            }
+
+            return false;
         }
 
         private static IEnumerable<string> GetWantedProperties()
@@ -233,7 +246,7 @@ namespace Neptunium.Managers
                 }
 
                 bool isConnected = (bool)SelectedDevice.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
-                SetCarModeStatus(isConnected);
+                SetCarModeStatus(isConnected && await GetIfBluetoothIsOnAsync());
             }
         }
 
@@ -254,7 +267,7 @@ namespace Neptunium.Managers
         public static event EventHandler<CarModeManagerCarModeStatusChangedEventArgs> CarModeManagerCarModeStatusChanged;
 
         #region Device Watcher Stuff
-        private static void Watcher_Updated(DeviceWatcher sender, DeviceInformationUpdate args)
+        private static async void Watcher_Updated(DeviceWatcher sender, DeviceInformationUpdate args)
         {
             if (detectedDevices.Any(x => x.Id == args.Id))
             {
@@ -269,7 +282,7 @@ namespace Neptunium.Managers
                         try
                         {
                             bool isConnected = (bool)device.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
-                            SetCarModeStatus(isConnected);
+                            SetCarModeStatus(isConnected && await GetIfBluetoothIsOnAsync());
                         }
                         catch (Exception) { }
                     }
