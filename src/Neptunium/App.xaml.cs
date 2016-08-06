@@ -76,12 +76,6 @@ namespace Neptunium
             await LogManager.InitializeAsync();
             await StationMediaPlayer.InitializeAsync();
 
-#if RELEASE
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-#endif
-                if (!CarModeManager.IsInitialized)
-                    CarModeManager.Initialize();
-
             Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/0.1 ( amrykid@gmail.com )";
 
             LogManager.Info(typeof(App), "CoreInitialization Complete");
@@ -106,6 +100,15 @@ namespace Neptunium
             //Application.Current.Exit();
         }
 
+        private void PostUIInit()
+        {
+#if RELEASE
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+#endif
+            if (!CarModeManager.IsInitialized)
+                CarModeManager.Initialize();
+        }
+
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
             //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
@@ -113,6 +116,8 @@ namespace Neptunium
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
                 Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+
+            PostUIInit();
 
             LogManager.Info(typeof(App), "Application Launching");
             WindowManager.GetNavigationManagerForCurrentWindow()

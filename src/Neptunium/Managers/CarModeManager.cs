@@ -33,6 +33,7 @@ namespace Neptunium.Managers
         private static ObservableCollection<DeviceInformation> detectedDevices = new ObservableCollection<DeviceInformation>();
         private static SpeechSynthesizer speechSynth = new SpeechSynthesizer();
         private static VoiceInformation japaneseFemaleVoice = null;
+        private static RadioAccessStatus radioAccess = RadioAccessStatus.Unspecified;
 
         #region Options
         public static DeviceInformation SelectedDevice { get; private set; }
@@ -91,8 +92,21 @@ namespace Neptunium.Managers
 
             DetectedBluetoothDevices = new ReadOnlyObservableCollection<DeviceInformation>(detectedDevices);
 
-            //Pull the selected bluetooth device from settings if it exists
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
+            radioAccess = await await App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                return Radio.RequestAccessAsync();
+            });
+
+            if (radioAccess == RadioAccessStatus.Allowed)
+            {
+                var BTradios = (await Radio.GetRadiosAsync()).Where(x => x.Kind == RadioKind.Bluetooth);
+                foreach(var btRadio in BTradios)
+                    btRadio.StateChanged += BtRadio_StateChanged;
+            }
+
+
+                //Pull the selected bluetooth device from settings if it exists
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
             {
                 var deviceID = ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] as string;
 
@@ -125,9 +139,18 @@ namespace Neptunium.Managers
             IsInitialized = true;
         }
 
+        private static async void BtRadio_StateChanged(Radio sender, object args)
+        {
+            if (SelectedDevice != null)
+            {
+                bool isConnected = (bool)SelectedDevice.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
+                SetCarModeStatus(isConnected && await GetIfBluetoothIsOnAsync());
+            }
+        }
+
         private static async Task<bool> GetIfBluetoothIsOnAsync()
         {
-            if ((await Radio.RequestAccessAsync()) == RadioAccessStatus.Allowed)
+            if (radioAccess == RadioAccessStatus.Allowed)
             {
                 var BTradios = (await Radio.GetRadiosAsync()).Where(x => x.Kind == RadioKind.Bluetooth);
 
@@ -278,7 +301,7 @@ namespace Neptunium.Managers
 
                     if (device.Id == SelectedDevice?.Id)
                     {
-                        SelectedDevice.Update(args);
+                        SelectedDevice = device;
                         try
                         {
                             bool isConnected = (bool)device.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
