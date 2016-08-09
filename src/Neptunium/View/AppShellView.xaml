@@ -291,32 +291,6 @@
             </SplitView.Content>
         </SplitView>
 
-        <RelativePanel HorizontalAlignment="Stretch" Grid.Row="1" x:Name="FakeAppBar" Background="{ThemeResource SystemListAccentMediumColor}" Height="64.5"
-                       DataContext="{Binding NowPlayingView, UpdateSourceTrigger=PropertyChanged}">
-
-            <RelativePanel x:Name="NowPlayingPanel" RelativePanel.AlignLeftWithPanel="True" 
-                           Visibility="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
-                           Tapped="NowPlayingPanel_Tapped" Margin="0 10">
-                <Image Height="50" Width="50" Margin="7 0" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
-
-                <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" 
-                                           Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Margin="10 0 0 0" />
-                <TextBlock x:Name="nowPlayingArtistBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20"
-                                        RelativePanel.Below="nowPlayingTrackBox" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" FontSize="15" Margin="10 0 0 0" />
-            </RelativePanel>
-
-            <StackPanel x:Name="FakeAppBarCommandPanel" Orientation="Horizontal" RelativePanel.AlignRightWithPanel="True" Width="Auto" Margin="0 10">
-                <StackPanel.Resources>
-                    <Style TargetType="AppBarButton">
-                        <Setter Property="Margin" Value="0" />
-                        <Setter Property="Width" Value="50" />
-                        <Setter Property="Height" Value="50" />
-                    </Style>
-                </StackPanel.Resources>
-                <AppBarButton Icon="Play" Content="Play" x:Name="PlayPauseButton" Command="{Binding PlayCommand}" />
-            </StackPanel>
-        </RelativePanel>
-
         <Grid Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisConv}, UpdateSourceTrigger=PropertyChanged}" 
               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
               Opacity=".9" x:Name="ConnectingStatusGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -327,4 +301,35 @@
             </StackPanel>
         </Grid>
     </Grid>
+
+    <Page.BottomAppBar>
+        <AppBar x:Name="bottomAppBar" IsSticky="True" Background="{ThemeResource SystemListAccentMediumColor}"
+                ClosedDisplayMode="Compact">
+            <RelativePanel HorizontalAlignment="Stretch" VerticalAlignment="Top" x:Name="FakeAppBar" Background="{ThemeResource SystemListAccentMediumColor}" Height="64.5"
+                       DataContext="{Binding NowPlayingView, UpdateSourceTrigger=PropertyChanged}">
+
+                <RelativePanel x:Name="NowPlayingPanel" RelativePanel.AlignLeftWithPanel="True" 
+                           Visibility="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
+                           Tapped="NowPlayingPanel_Tapped" Margin="0">
+                    <Image Height="50" Width="50" Margin="7 0" RelativePanel.AlignLeftWithPanel="True" x:Name="stationCoverArt" Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock x:Name="nowPlayingTrackBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20" 
+                                           Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" FontSize="16" Margin="10 0 0 0" />
+                    <TextBlock x:Name="nowPlayingArtistBox" RelativePanel.RightOf="stationCoverArt" RelativePanel.AlignHorizontalCenterWithPanel="True" Height="20"
+                                        RelativePanel.Below="nowPlayingTrackBox" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" FontSize="15" Margin="10 0 0 0" />
+                </RelativePanel>
+
+                <StackPanel x:Name="FakeAppBarCommandPanel" Orientation="Horizontal" RelativePanel.AlignRightWithPanel="True" Width="Auto" Margin="0">
+                    <StackPanel.Resources>
+                        <Style TargetType="AppBarButton">
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="Width" Value="50" />
+                            <Setter Property="Height" Value="50" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <AppBarButton Icon="Play" Content="Play" x:Name="PlayPauseButton" Command="{Binding PlayCommand}" />
+                </StackPanel>
+            </RelativePanel>
+        </AppBar>
+    </Page.BottomAppBar>
 </Page>
