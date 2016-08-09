@@ -79,6 +79,11 @@ namespace Neptunium.ViewModel
                     BackgroundMediaPlayer.Current.Pause();
             }, x => { try { return BackgroundMediaPlayer.Current.PlaybackSession.CanPause; } catch (Exception) { return true; } });
 
+            HandoffStationCommand = new ManualRelayCommand(x =>
+            {
+
+            });
+
             NowPlayingView = new NowPlayingViewFragment();
 
             WindowManager.GetStatusManagerForCurrentWindow().NormalStatusText = "Hanasu Alpha";
@@ -102,6 +107,13 @@ namespace Neptunium.ViewModel
 
 
             StationMediaPlayer.ConnectingStatusChanged += StationMediaPlayer_ConnectingStatusChanged;
+
+            BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
+        }
+
+        private void Current_CurrentStateChanged(MediaPlayer sender, object args)
+        {
+            HandoffStationCommand.SetCanExecute(sender.PlaybackSession.PlaybackState == MediaPlaybackState.Playing);
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
@@ -145,6 +157,8 @@ namespace Neptunium.ViewModel
 
         public RelayCommand PlayCommand { get; private set; }
         public RelayCommand PauseCommand { get; private set; }
+
+        public ManualRelayCommand HandoffStationCommand { get; private set; }
 
         public NowPlayingViewFragment NowPlayingView { get; private set; }
     }

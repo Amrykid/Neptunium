@@ -330,6 +330,12 @@
                     <AppBarButton Icon="Play" Content="Play" x:Name="PlayPauseButton" Command="{Binding PlayCommand}" />
                 </StackPanel>
             </RelativePanel>
+            <AppBar.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem Text="Handoff To Another Device" Command="{Binding HandoffStationCommand}">
+                    </MenuFlyoutItem>
+                </MenuFlyout>
+            </AppBar.ContextFlyout>
         </AppBar>
     </Page.BottomAppBar>
 </Page>
