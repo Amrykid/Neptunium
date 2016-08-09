@@ -182,7 +182,7 @@ namespace Neptunium.View
 #if DEBUG
             //NOTE: Keep commands in sync so that this code won't crash the app. Crashing the app/breaking the debugger helps me enforce that I should keep the commands the same.
 
-            if (lowerAppBar.PrimaryCommands.Count != upperAppBar.PrimaryCommands.Count || lowerAppBar.SecondaryCommands.Count != upperAppBar.SecondaryCommands.Count)
+            if ((lowerAppBar.PrimaryCommands.Count + lowerAppBar.SecondaryCommands.Count) != (upperAppBar.PrimaryCommands.Count + upperAppBar.SecondaryCommands.Count))
                 if (Debugger.IsAttached)
                     Debugger.Break();
                 else
