@@ -28,6 +28,9 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Email;
 using Neptunium.Managers;
 using Windows.Storage;
+using Windows.ApplicationModel.AppService;
+using Windows.ApplicationModel.Background;
+using Windows.System.RemoteSystems;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -38,6 +41,8 @@ namespace Neptunium
     /// </summary>
     sealed partial class App : CrystalApplication
     {
+        public static BackgroundAccessStatus BackgroundAccess { get; private set; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -63,6 +68,9 @@ namespace Neptunium
 
         private static async void CoreInit()
         {
+            if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
+                BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
+
             //initialize app settings
             //todo add all settings
 
@@ -107,6 +115,9 @@ namespace Neptunium
 #endif
             if (!CarModeManager.IsInitialized)
                 CarModeManager.Initialize();
+
+            if (!ContinuedAppExperienceManager.IsInitialized)
+                ContinuedAppExperienceManager.InitializeAsync();
         }
 
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
@@ -130,6 +141,8 @@ namespace Neptunium
         {
             LogManager.Info(typeof(App), "Application Suspending");
 
+            ContinuedAppExperienceManager.StopWatchingForRemoteSystems();
+
             await base.OnSuspendingAsync();
         }
 
@@ -139,7 +152,26 @@ namespace Neptunium
 
             LogManager.Info(typeof(App), "Application Resuming");
 
+            if (ContinuedAppExperienceManager.RemoteSystemAccess == RemoteSystemAccessStatus.Unspecified)
+                await ContinuedAppExperienceManager.InitializeAsync();
+            ContinuedAppExperienceManager.StartWatchingForRemoteSystems();
+
             await base.OnResumingAsync();
+        }
+
+        public override Task OnBackgroundActivatedAsync(BackgroundActivatedEventArgs args)
+        {
+            switch (args.TaskInstance.Task.Name)
+            {
+                case ContinuedAppExperienceManager.ContinuedAppExperienceAppServiceName:
+                    if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails)
+                    {
+                        ContinuedAppExperienceManager.HandleBackgroundActivation(args.TaskInstance.TriggerDetails as AppServiceTriggerDetails);
+                    }
+                    break;
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

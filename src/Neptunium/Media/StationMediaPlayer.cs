@@ -133,6 +133,12 @@ namespace Neptunium.Media
             set { BackgroundMediaPlayer.Current.Volume = value; }
         }
 
+        internal static void Stop()
+        {
+            if (BackgroundMediaPlayer.Current.PlaybackSession.CanPause)
+                BackgroundMediaPlayer.Current.Pause();
+        }
+
         public static async Task FadeVolumeDownToAsync(double value)
         {
             if (value >= StationMediaPlayer.Volume) throw new ArgumentOutOfRangeException(nameof(value));
