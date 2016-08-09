@@ -84,22 +84,28 @@ namespace Neptunium.View
         {
             if (this.DataContext != null)
             {
-                switch (sender.PlaybackSession.PlaybackState)
+                var upperBarBtn = upperAppBar.PrimaryCommands.First(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
+                var lowerBarBtn = lowerAppBar.PrimaryCommands.First(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
+
+                foreach (var PlayPauseButton in new AppBarButton[]{ upperBarBtn, lowerBarBtn})
                 {
-                    case MediaPlaybackState.Playing:
-                    case MediaPlaybackState.Opening:
-                    case MediaPlaybackState.Buffering:
-                        PlayPauseButton.Icon = new SymbolIcon(Symbol.Pause);
-                        PlayPauseButton.Content = "Pause";
-                        PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PauseCommand;
-                        break;
-                    case MediaPlaybackState.Paused:
-                    case MediaPlaybackState.None:
-                    default:
-                        PlayPauseButton.Icon = new SymbolIcon(Symbol.Play);
-                        PlayPauseButton.Content = "Play";
-                        PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PlayCommand;
-                        break;
+                    switch (sender.PlaybackSession.PlaybackState)
+                    {
+                        case MediaPlaybackState.Playing:
+                        case MediaPlaybackState.Opening:
+                        case MediaPlaybackState.Buffering:
+                            PlayPauseButton.Icon = new SymbolIcon(Symbol.Pause);
+                            PlayPauseButton.Content = "Pause";
+                            PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PauseCommand;
+                            break;
+                        case MediaPlaybackState.Paused:
+                        case MediaPlaybackState.None:
+                        default:
+                            PlayPauseButton.Icon = new SymbolIcon(Symbol.Play);
+                            PlayPauseButton.Content = "Play";
+                            PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PlayCommand;
+                            break;
+                    }
                 }
             }
         }
@@ -173,6 +179,15 @@ namespace Neptunium.View
 
             }
 
+#if DEBUG
+            //NOTE: Keep commands in sync so that this code won't crash the app. Crashing the app/breaking the debugger helps me enforce that I should keep the commands the same.
+
+            if (lowerAppBar.PrimaryCommands.Count != upperAppBar.PrimaryCommands.Count || lowerAppBar.SecondaryCommands.Count != upperAppBar.SecondaryCommands.Count)
+                if (Debugger.IsAttached)
+                    Debugger.Break();
+                else
+                    throw new Exception();
+#endif
 
             App.Dispatcher.RunAsync(() =>
             {
@@ -193,13 +208,13 @@ namespace Neptunium.View
             //});
         }
 
-        private void  HandleUI()
+        private void HandleUI()
         {
             var stateGroup = VisualStateManager.GetVisualStateGroups(RootGrid).FirstOrDefault();
 
             if (stateGroup != null)
             {
-                VisualState appropriateState = stateGroup.States.First(x => 
+                VisualState appropriateState = stateGroup.States.First(x =>
                 {
                     var trigger = x.StateTriggers.FirstOrDefault() as AdaptiveTrigger;
 
@@ -225,6 +240,8 @@ namespace Neptunium.View
         private void VisualStateGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
         {
             Debug.WriteLine("State Change: " + (e.OldState == null ? "null" : e.OldState.Name) + " -> " + e.NewState.Name);
+
+           
         }
 
         private void NowPlayingPanel_Tapped(object sender, TappedRoutedEventArgs e)
