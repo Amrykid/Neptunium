@@ -225,6 +225,8 @@ namespace Neptunium.Fragments
 #if DEBUG
                 if (Debugger.IsAttached)
                     Debugger.Break();
+#else
+                return;
 #endif
             }
 
