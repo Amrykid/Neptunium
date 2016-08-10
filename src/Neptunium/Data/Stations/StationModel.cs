@@ -14,6 +14,7 @@ namespace Neptunium.Data
         public string Logo { get; internal set; }
         public string Name { get; internal set; }
         public string Site { get; internal set; }
+        public string[] StationMessages { get; internal set; }
         public IEnumerable<StationModelStream> Streams { get; internal set; }
     }
 }
