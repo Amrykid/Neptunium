@@ -123,6 +123,34 @@
         </Grid.RowDefinitions>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup CurrentStateChanged="VisualStateGroup_CurrentStateChanged">
+                <VisualState x:Name="XboxVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:DeviceFamilyStateTrigger DeviceFamily="Xbox" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="RootSplitView.DisplayMode" Value="Overlay" />
+                        <Setter Target="RootSplitView.IsPaneOpen" Value="False" />
+                        <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
+                        <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
+
+                        <Setter Target="SplitViewContentGrid.Background" Value="Transparent" />
+
+                        <Setter Target="MobileTogglePaneButton.Visibility" Value="Visible" />
+                        <Setter Target="CurrentPaneTitle.Margin" Value="20 0" />
+                        <Setter Target="CurrentPaneTitle.Style" Value="{ThemeResource SubheaderTextBlockStyle}" />
+                        <Setter Target="CurrentPaneTitleRow.Height" Value="45" />
+
+                        <Setter Target="DesktopNowPlayingPanel.Visibility" Value="Collapsed" />
+                        <Setter Target="MobileNowPlayingPanel.Visibility" Value="Collapsed" />
+
+                        <Setter Target="upperAppBar.Visibility" Value="Collapsed" />
+                        <Setter Target="lowerAppBar.Visibility" Value="Visible" />
+
+                        <Setter Target="inlineFrame.Margin" Value="0" />
+                    </VisualState.Setters>
+                </VisualState>
+                
+                
                 <VisualState x:Name="DesktopVisualState">
                     <VisualState.StateTriggers>
                         <wst:CompositeStateTrigger Operator="And">

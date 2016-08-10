@@ -49,11 +49,31 @@ namespace Neptunium.View
             inlineNavService.NavigationServicePreNavigatedSignaled += AppShellView_NavigationServicePreNavigatedSignaled;
 
             this.Loaded += AppShellView_Loaded;
+            this.Unloaded += AppShellView_Unloaded;
+            this.KeyDown += AppShellView_KeyDown;
 
             this.DataContextChanged += AppShellView_DataContextChanged;
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
 
+        }
+
+        private void AppShellView_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                switch(e.Key)
+                {
+                    case Windows.System.VirtualKey.GamepadView:
+                        RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen; //when a controller presses the view button, toggle the splitview.
+                        break;
+                }
+            }
+        }
+
+        private void AppShellView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            
         }
 
         private async void AppShellView_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
