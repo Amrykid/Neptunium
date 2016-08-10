@@ -26,6 +26,7 @@ using Windows.Media.Playback;
 using Windows.Storage.Streams;
 using Crystal3.UI.Commands;
 using Windows.System;
+using System.Diagnostics;
 
 namespace Neptunium.Fragments
 {
@@ -216,6 +217,16 @@ namespace Neptunium.Fragments
         private async void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
             if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //ignore that pre-defined station message that happens every so often.
+
+            if (!string.IsNullOrWhiteSpace(e.Title) && string.IsNullOrWhiteSpace(e.Artist))
+            {
+                //station message got through.
+
+#if DEBUG
+                if (Debugger.IsAttached)
+                    Debugger.Break();
+#endif
+            }
 
             await App.Dispatcher.RunWhenIdleAsync(() =>
             {
