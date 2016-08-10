@@ -29,5 +29,13 @@ namespace Neptunium.View.Xbox
         {
             this.InitializeComponent();
         }
+
+        private void StationsListBox_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var appCommands = (App.Current.Resources["AppCommands"] as ApplicationCommands);
+            var item = e.ClickedItem;
+
+            appCommands.PlayStationCommand.Execute(null);
+        }
     }
 }

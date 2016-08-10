@@ -8,6 +8,32 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+        <ListView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" x:Name="StationsListBox" 
+                  Visibility="Visible"
+                  AllowFocusOnInteraction="True"
+                  IsItemClickEnabled="True"
+                  Background="Transparent"
+                  ItemClick="StationsListBox_ItemClick"
+                  Margin="0 0 0 20">
+            <ListView.Transitions>
+                <TransitionCollection>
+                    <AddDeleteThemeTransition />
+                </TransitionCollection>
+            </ListView.Transitions>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" Padding="0" Height="55">
+                            <Image Height="50" Width="50" x:Name="stationLogo">
+                                <Image.Source>
+                                    <BitmapImage UriSource="{Binding Logo}" DecodePixelWidth="50" DecodePixelHeight="50" />
+                                </Image.Source>
+                            </Image>
+                            <TextBlock Text="{Binding Name}" FontSize="21" HorizontalAlignment="Stretch" Margin="20 0 0 0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>
