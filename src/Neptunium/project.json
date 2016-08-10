@@ -4,7 +4,8 @@
     "Microsoft.ApplicationInsights.PersistenceChannel": "1.0.0",
     "Microsoft.ApplicationInsights.WindowsApps": "1.0.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
-    "NotificationsExtensions.Win10": "14332.0.2"
+    "NotificationsExtensions.Win10": "14332.0.2",
+    "WindowsStateTriggers": "1.1.0"
   },
   "frameworks": {
     "uap10.0": {}

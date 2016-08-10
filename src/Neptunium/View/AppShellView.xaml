@@ -17,11 +17,6 @@
                 <ResourceDictionary Source="../Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <conv:NullToVisibilityConverter x:Key="NullToVisConv" />
-            <conv:InverseNullToVisibilityConverter x:Key="InvNullToVisConv" />
-            <conv:BooleanToVisibilityConverter x:Key="BoolToVisConv" />
-            <conv:StringToUriConverter x:Key="StrUriConv" />
-
 
             <DataTemplate x:Name="NowPlayingPanelTemplate">
                 <Grid DataContext="{Binding NowPlayingView, UpdateSourceTrigger=PropertyChanged}">
@@ -116,43 +111,6 @@
                     </ScrollViewer>
                 </Grid>
             </DataTemplate>
-
-
-            <Style x:Key="ComAppBarStyle" TargetType="CommandBar">
-                <Style.Setters>
-                    <Setter Property="Background" Value="{ThemeResource SystemListAccentMediumColor}" />
-                    <Setter Property="ContentTemplate">
-                        <Setter.Value>
-                            <DataTemplate>
-                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                                  DataContext="{Binding NowPlayingView, UpdateSourceTrigger=PropertyChanged}">
-
-                                    <Grid Visibility="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}" Margin="0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="60" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-
-                                        <Image Height="60" Width="60" Stretch="Uniform" Margin="7 0" Grid.Column="0"
-                                           Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
-
-                                        <TextBlock Grid.Column="1" Height="50">
-                                        <Span>
-                                            <Run Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" FontSize="16" />
-                                        </Span>
-                                        <LineBreak />
-                                        <Span>
-                                            <Run Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" FontSize="15" /> 
-                                        </Span>
-                                        </TextBlock>
-                                    </Grid>
-                                </Grid>
-                            </DataTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style.Setters>
-            </Style>
         </ResourceDictionary>
     </Page.Resources>
 
@@ -167,7 +125,13 @@
             <VisualStateGroup CurrentStateChanged="VisualStateGroup_CurrentStateChanged">
                 <VisualState x:Name="DesktopVisualState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1080" />
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:AdaptiveTrigger MinWindowWidth="1080" />
+                            <wst:CompositeStateTrigger Operator="Or">
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
+                            </wst:CompositeStateTrigger>
+                        </wst:CompositeStateTrigger>
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
@@ -195,7 +159,13 @@
 
                 <VisualState x:Name="TabletVisualState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="720" />
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:AdaptiveTrigger MinWindowWidth="720" />
+                            <wst:CompositeStateTrigger Operator="Or">
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
+                            </wst:CompositeStateTrigger>
+                        </wst:CompositeStateTrigger>
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
@@ -223,7 +193,13 @@
 
                 <VisualState x:Name="PhoneVisualState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:AdaptiveTrigger MinWindowWidth="0" />
+                            <wst:CompositeStateTrigger Operator="Or">
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
+                            </wst:CompositeStateTrigger>
+                        </wst:CompositeStateTrigger>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="RootSplitView.DisplayMode" Value="Overlay" />

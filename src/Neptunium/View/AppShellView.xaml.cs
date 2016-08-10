@@ -34,8 +34,8 @@ namespace Neptunium.View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    [NavigationViewModel(typeof(ViewModel.AppShellViewModel), NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile)]
-    public sealed partial class AppShellView : Page
+    [NavigationViewModel(typeof(ViewModel.AppShellViewModel), NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile | NavigationViewSupportedPlatform.Xbox)]
+    public partial class AppShellView : Page
     {
         private NavigationService inlineNavService = null;
         public AppShellView()
@@ -217,17 +217,17 @@ namespace Neptunium.View
         {
             var stateGroup = VisualStateManager.GetVisualStateGroups(RootGrid).FirstOrDefault();
 
-            if (stateGroup != null)
-            {
-                VisualState appropriateState = stateGroup.States.First(x =>
-                {
-                    var trigger = x.StateTriggers.FirstOrDefault() as AdaptiveTrigger;
+            //if (stateGroup != null)
+            //{
+            //    VisualState appropriateState = stateGroup.States.First(x =>
+            //    {
+            //        var trigger = x.StateTriggers.FirstOrDefault() as W;
 
-                    return trigger.MinWindowWidth <= Window.Current.Bounds.Width;
-                });
+            //        return trigger.MinWindowWidth <= Window.Current.Bounds.Width;
+            //    });
 
-                VisualStateManager.GoToState(this, appropriateState.Name, false);
-            }
+            //    VisualStateManager.GoToState(this, appropriateState.Name, false);
+            //}
         }
 
         private void GoHome()

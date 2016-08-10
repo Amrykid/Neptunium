@@ -140,8 +140,8 @@
     <Compile Include="View\StationsView.xaml.cs">
       <DependentUpon>StationsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\XboxShellView.xaml.cs">
-      <DependentUpon>XboxShellView.xaml</DependentUpon>
+    <Compile Include="View\Xbox\XboxStationsView.xaml.cs">
+      <DependentUpon>XboxStationsView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -226,7 +226,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\XboxShellView.xaml">
+    <Page Include="View\Xbox\XboxStationsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
