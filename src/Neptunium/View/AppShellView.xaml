@@ -359,6 +359,7 @@
             <CommandBar.PrimaryCommands>
                 <AppBarButton Icon="Play" Label="Play" Tag="PlayPause" Command="{Binding PlayCommand}" />
                 <AppBarButton Label="Handoff" Command="{Binding HandoffStationCommand}" Icon="Remote"/>
+                <AppBarButton Label="Sleep Timer" Icon="Clock" />
             </CommandBar.PrimaryCommands>
         </CommandBar>
     </Page.TopAppBar>
@@ -369,6 +370,7 @@
             </CommandBar.PrimaryCommands>
             <CommandBar.SecondaryCommands>
                 <AppBarButton Label="Handoff" Command="{Binding HandoffStationCommand}" Icon="Remote"/>
+                <AppBarButton Label="Sleep Timer" Icon="Clock" />
             </CommandBar.SecondaryCommands>
         </CommandBar>
     </Page.BottomAppBar>
