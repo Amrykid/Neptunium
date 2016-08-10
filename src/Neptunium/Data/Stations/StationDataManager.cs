@@ -58,6 +58,22 @@ namespace Neptunium.Data
                     return stream;
                 }).ToArray();
 
+                try
+                {
+                    if (stationElement.Element("StationMessages") == null)
+                    {
+                        station.StationMessages = new string[] { };
+                    }
+                    else
+                    {
+                        var stationMsgElement = stationElement.Element("StationMessages");
+
+                        var messages = stationMsgElement.Elements("Message").Select(x => x.Value.ToString()).ToArray();
+                        station.StationMessages = messages;
+                    }
+                }
+                catch (Exception) { }
+
                 stationList.Add(station);
             }
 

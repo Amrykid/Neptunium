@@ -215,6 +215,8 @@ namespace Neptunium.Fragments
 
         private async void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
+            if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //ignore that pre-defined station message that happens every so often.
+
             await App.Dispatcher.RunWhenIdleAsync(() =>
             {
                 SongMetadata = e.Title + " by " + e.Artist;

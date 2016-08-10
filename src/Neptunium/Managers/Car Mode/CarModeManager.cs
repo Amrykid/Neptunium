@@ -169,6 +169,8 @@ namespace Neptunium.Managers
         {
             if (ShouldAnnounceSongs && IsInCarMode)
             {
+                if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //don't play that pre-defined station message that happens every so often.
+
                 double initialVolume = StationMediaPlayer.Volume;
                 await StationMediaPlayer.FadeVolumeDownToAsync(.05); //lower the volume of the song so that the announcement can be heard.
 
