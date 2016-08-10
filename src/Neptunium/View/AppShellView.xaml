@@ -22,7 +22,7 @@
                 <Grid DataContext="{Binding NowPlayingView, UpdateSourceTrigger=PropertyChanged}">
                     <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}"
                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black">
-                        <TextBlock Text="No station was selected." VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" />
+                        <TextBlock Text="Select a station to begin streaming." VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" />
                     </Grid>
 
 
@@ -236,7 +236,7 @@
                         <Setter Target="RootSplitView.DisplayMode" Value="Overlay" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="240" />
 
-                        <Setter Target="SplitViewContentGrid.Background" Value="{Binding ElementName=RootSplitView, Path=PaneBackground, UpdateSourceTrigger=PropertyChanged}" />
+                        <Setter Target="SplitViewContentGrid.Background" Value="{ThemeResource SystemControlPageBackgroundChromeLowBrush}" />
 
                         <Setter Target="MobileTogglePaneButton.Visibility" Value="Visible" />
                         <Setter Target="CurrentPaneTitle.Margin" Value="15 12.5" />
@@ -296,7 +296,7 @@
             </SplitView.Pane>
 
             <SplitView.Content>
-                <Grid x:Name="SplitViewContentGrid" Background="{Binding ElementName=RootSplitView, Path=PaneBackground, UpdateSourceTrigger=PropertyChanged}">
+                <Grid x:Name="SplitViewContentGrid" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition x:Name="CurrentPaneTitleRow" Height="75" />
                         <RowDefinition Height="*" />
