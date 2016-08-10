@@ -35,7 +35,7 @@ namespace Neptunium.View.Xbox
             var appCommands = (App.Current.Resources["AppCommands"] as ApplicationCommands);
             var item = e.ClickedItem;
 
-            appCommands.PlayStationCommand.Execute(null);
+            appCommands.PlayStationCommand.Execute(item);
         }
     }
 }
