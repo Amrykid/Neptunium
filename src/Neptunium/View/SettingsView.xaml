@@ -15,7 +15,7 @@
                     <CheckBox Content="Show Song Nofitications" IsChecked="{Binding ShouldShowSongNofitications, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                     
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Continuous App Experience (Handoff)" />
-                    <CheckBox Content="After successfully handing off a station, stop playing on this device?" 
+                    <CheckBox Content="Stop playing on this device after successful handoff" 
                               IsChecked="{Binding ShouldStopPlayingAfterSuccessfulHandoff, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </PivotItem>
