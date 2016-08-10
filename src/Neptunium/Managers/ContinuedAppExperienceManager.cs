@@ -9,6 +9,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.System.RemoteSystems;
 
 namespace Neptunium.Managers
@@ -16,6 +17,7 @@ namespace Neptunium.Managers
     public static class ContinuedAppExperienceManager
     {
         public const string ContinuedAppExperienceAppServiceName = "ContinuedAppExperienceAppService";
+        public const string StopPlayingMusicAfterGoodHandoff = "StopPlayingMusicAfterGoodHandoff";
 
         #region Variables and Code-Properties
         private static List<RemoteSystem> systemList = null;
@@ -39,19 +41,19 @@ namespace Neptunium.Managers
 
             if (!IsSupported) return;
 
-            var result = await RemoteSystem.RequestAccessAsync();
 
-            RemoteSystemAccess = result;
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(StopPlayingMusicAfterGoodHandoff))
+                ApplicationData.Current.LocalSettings.Values.Add(StopPlayingMusicAfterGoodHandoff, true);
 
-            if (result == RemoteSystemAccessStatus.Allowed)
+            StopPlayingStationOnThisDeviceAfterSuccessfulHandoff = (bool)ApplicationData.Current.LocalSettings.Values[StopPlayingMusicAfterGoodHandoff];
+
+            RemoteSystemAccess = await RemoteSystem.RequestAccessAsync();
+
+            if (RemoteSystemAccess == RemoteSystemAccessStatus.Allowed)
             {
                 systemList = new List<RemoteSystem>();
                 remoteSystemWatcher = RemoteSystem.CreateWatcher();
                 StartWatchingForRemoteSystems();
-
-                //if (App.BackgroundAccess == BackgroundAccessStatus.AllowedMayUseActiveRealTimeConnectivity
-                //    || App.BackgroundAccess == BackgroundAccessStatus.AllowedWithAlwaysOnRealTimeConnectivity
-                //    || App.BackgroundAccess == BackgroundAccessStatus.AllowedSubjectToSystemPolicy)
             }
 
             IsInitialized = true;
@@ -101,6 +103,15 @@ namespace Neptunium.Managers
 
         #region Settings and Settings-Properties
         public static bool StopPlayingStationOnThisDeviceAfterSuccessfulHandoff { get; private set; }
+
+        internal static void SetStopPlayingStationOnThisDeviceAfterSuccessfulHandoff(bool shouldStopPlayingAfterSuccessfulHandoff)
+        {
+            if (!IsInitialized) throw new InvalidOperationException();
+
+            StopPlayingStationOnThisDeviceAfterSuccessfulHandoff = shouldStopPlayingAfterSuccessfulHandoff;
+
+            ApplicationData.Current.LocalSettings.Values[StopPlayingMusicAfterGoodHandoff] = shouldStopPlayingAfterSuccessfulHandoff;
+        }
         #endregion
 
 

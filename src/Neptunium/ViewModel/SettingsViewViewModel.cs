@@ -45,6 +45,12 @@ namespace Neptunium.ViewModel
             set { SetPropertyValue<bool>(value: value); }
         }
 
+        public bool ShouldStopPlayingAfterSuccessfulHandoff
+        {
+            get { return GetPropertyValue<bool>(); }
+            set { SetPropertyValue<bool>(value: value); }
+        }
+
         #region Car Mode Settings
 
         public RelayCommand PickCarModeDeviceCommand { get; private set; }
@@ -83,6 +89,8 @@ namespace Neptunium.ViewModel
             }
 #endif
 
+            ShouldStopPlayingAfterSuccessfulHandoff = ContinuedAppExperienceManager.StopPlayingStationOnThisDeviceAfterSuccessfulHandoff;
+
             ShouldShowSongNofitications = (bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications];
         }
 
@@ -97,6 +105,8 @@ namespace Neptunium.ViewModel
 #if RELEASE
             }
 #endif
+
+            ContinuedAppExperienceManager.SetStopPlayingStationOnThisDeviceAfterSuccessfulHandoff(ShouldStopPlayingAfterSuccessfulHandoff);
 
             ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] = ShouldShowSongNofitications;
         }
