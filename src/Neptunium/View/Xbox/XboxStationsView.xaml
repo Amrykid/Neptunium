@@ -9,6 +9,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" x:Name="StationsListBox" 
+                  DataContextChanged="StationsListBox_DataContextChanged"
                   Visibility="Visible"
                   AllowFocusOnInteraction="True"
                   IsItemClickEnabled="True"

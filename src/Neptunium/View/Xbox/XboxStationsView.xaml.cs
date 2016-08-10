@@ -37,5 +37,14 @@ namespace Neptunium.View.Xbox
 
             appCommands.PlayStationCommand.Execute(item);
         }
+
+        private void StationsListBox_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            try
+            {
+                StationsListBox.SelectedIndex = 0;
+            }
+            catch (Exception) { }
+        }
     }
 }

@@ -146,6 +146,7 @@
                         <Setter Target="upperAppBar.Visibility" Value="Collapsed" />
                         <Setter Target="lowerAppBar.Visibility" Value="Visible" />
 
+                        <Setter Target="lowerAppBar.Style" Value="{StaticResource XboxAppBarStyle}" />
                         <Setter Target="inlineFrame.Margin" Value="0" />
                     </VisualState.Setters>
                 </VisualState>
@@ -180,6 +181,7 @@
 
                         <Setter Target="upperAppBar.Visibility" Value="Visible" />
                         <Setter Target="lowerAppBar.Visibility" Value="Collapsed" />
+                        <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
 
                         <Setter Target="inlineFrame.Margin" Value="0" />
                     </VisualState.Setters>
@@ -214,6 +216,7 @@
 
                         <Setter Target="upperAppBar.Visibility" Value="Visible" />
                         <Setter Target="lowerAppBar.Visibility" Value="Collapsed" />
+                        <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
 
                         <Setter Target="inlineFrame.Margin" Value="0" />
                     </VisualState.Setters>
@@ -246,6 +249,7 @@
 
                         <Setter Target="upperAppBar.Visibility" Value="Collapsed" />
                         <Setter Target="lowerAppBar.Visibility" Value="Visible" />
+                        <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
 
                         <Setter Target="inlineFrame.Margin" Value="0 0 0 10" />
                     </VisualState.Setters>

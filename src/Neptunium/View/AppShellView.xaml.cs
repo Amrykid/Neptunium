@@ -68,7 +68,21 @@ namespace Neptunium.View
                         RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen; //when a controller presses the view button, toggle the splitview.
                         break;
                     case Windows.System.VirtualKey.GamepadY:
-                        lowerAppBar.Focus(FocusState.Programmatic);
+                        if (lowerAppBar.IsOpen)
+                        {
+                            lowerAppBar.IsOpen = false;
+                            inlineFrame.Focus(FocusState.Programmatic);
+                        }
+                        else
+                        {
+                            lowerAppBar.IsOpen = true;
+
+                            var lowerBarBtn = lowerAppBar.PrimaryCommands.FirstOrDefault(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
+                            if (lowerBarBtn == null)
+                            {
+                                lowerBarBtn.Focus(FocusState.Programmatic);
+                            }
+                        }
                         break;
                 }
             }
@@ -79,7 +93,7 @@ namespace Neptunium.View
             
         }
 
-        private async void AppShellView_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        private void AppShellView_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             LogManager.Info(typeof(AppShellView), "DataContextChanged: " + (args.NewValue == null ? "null" : args.NewValue.GetType().FullName));
         }

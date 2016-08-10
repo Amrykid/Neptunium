@@ -55,6 +55,11 @@
                     </Setter>
                 </Style.Setters>
             </Style>
+
+            <Style x:Key="XboxAppBarStyle" BasedOn="{StaticResource ComAppBarStyle}" TargetType="CommandBar">
+                <Setter Property="ClosedDisplayMode" Value="Hidden" />
+                <Setter Property="LightDismissOverlayMode" Value="On" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 
