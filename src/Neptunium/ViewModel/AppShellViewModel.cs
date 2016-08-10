@@ -86,7 +86,7 @@ namespace Neptunium.ViewModel
 
             NowPlayingView = new NowPlayingViewFragment();
 
-            WindowManager.GetStatusManagerForCurrentWindow().NormalStatusText = "Hanasu Alpha";
+            WindowManager.GetStatusManagerForCurrentWindow().NormalStatusText = "Neptunium"; //"Hanasu Alpha";
 
             NowPlayingView.UpdateLiveTile();
         }
