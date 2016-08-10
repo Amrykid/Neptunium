@@ -85,7 +85,12 @@ namespace Neptunium.View
             if (this.DataContext != null)
             {
                 var upperBarBtn = upperAppBar.PrimaryCommands.First(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
-                var lowerBarBtn = lowerAppBar.PrimaryCommands.First(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
+                var lowerBarBtn = lowerAppBar.PrimaryCommands.FirstOrDefault(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
+                if (lowerBarBtn == null)
+                {
+                    //its possible the command got pushed to secondary commands
+                    lowerBarBtn = lowerAppBar.SecondaryCommands.FirstOrDefault(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
+                }
 
                 foreach (var PlayPauseButton in new AppBarButton[]{ upperBarBtn, lowerBarBtn})
                 {
