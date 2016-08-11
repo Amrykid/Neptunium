@@ -1,4 +1,5 @@
-﻿using Crystal3.Model;
+﻿using Crystal3.InversionOfControl;
+using Crystal3.Model;
 using Neptunium.Managers;
 using Neptunium.Media;
 using System;
@@ -11,7 +12,7 @@ using Windows.System.RemoteSystems;
 
 namespace Neptunium.Fragments
 {
-    public class HandOffFlyoutViewFragment: ViewModelFragment
+    public class HandOffFlyoutViewFragment : ViewModelFragment
     {
         internal HandOffFlyoutViewFragment()
         {
@@ -23,7 +24,8 @@ namespace Neptunium.Fragments
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                RaisePropertyChanged(nameof(AvailableDevices));
+                AvailableDevices = ContinuedAppExperienceManager.RemoteSystemsList;
+                //RaisePropertyChanged(nameof(AvailableDevices));
             });
         }
 
@@ -36,7 +38,12 @@ namespace Neptunium.Fragments
                 IsBusy = true;
                 try
                 {
-                    await ContinuedAppExperienceManager.HandoffStationToRemoteDeviceAsync(device, StationMediaPlayer.CurrentStation);
+                    var results = await ContinuedAppExperienceManager.HandoffStationToRemoteDeviceAsync(device, StationMediaPlayer.CurrentStation);
+
+                    if (results)
+                    {
+                        //todo add a message box
+                    }
                 }
                 catch (Exception)
                 {
@@ -54,6 +61,10 @@ namespace Neptunium.Fragments
             ContinuedAppExperienceManager.RemoteSystemsListUpdated -= ContinuedAppExperienceManager_RemoteSystemsListUpdated;
         }
 
-        public ReadOnlyObservableCollection<RemoteSystem> AvailableDevices { get; private set; }
+        public ReadOnlyObservableCollection<RemoteSystem> AvailableDevices
+        {
+            get { return GetPropertyValue<ReadOnlyObservableCollection<RemoteSystem>>(); }
+            set { SetPropertyValue<ReadOnlyObservableCollection<RemoteSystem>>(value: value); }
+        }
     }
 }

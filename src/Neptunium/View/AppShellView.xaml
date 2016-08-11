@@ -17,6 +17,7 @@
                 <ResourceDictionary Source="../Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <conv:BooleanToInverseBooleanConverter x:Key="BToIBConv" />
 
             <Flyout x:Key="HandOffDeviceFlyout" AllowFocusOnInteraction="True" LightDismissOverlayMode="On">
                 <Grid DataContext="{Binding HandOffViewFragment, UpdateSourceTrigger=PropertyChanged}" Width="200">
@@ -28,8 +29,11 @@
 
                     <ProgressBar IsIndeterminate="True" Grid.Row="0" />
 
-                    <ListView x:Name="HandOffDeviceFlyout_DeviceListView" IsItemClickEnabled="True" Grid.Row="1" ItemsSource="{Binding AvailableDevices, UpdateSourceTrigger=PropertyChanged}"
-                              DisplayMemberPath="DisplayName" ItemClick="HandOffDeviceFlyout_DeviceListView_ItemClick"  />
+                    <ListView x:Name="HandOffDeviceFlyout_DeviceListView" IsItemClickEnabled="True" Grid.Row="1" 
+                              ItemsSource="{Binding AvailableDevices, UpdateSourceTrigger=PropertyChanged}"
+                              DisplayMemberPath="DisplayName" ItemClick="HandOffDeviceFlyout_DeviceListView_ItemClick" 
+                              SelectionMode="None" 
+                              IsEnabled="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BToIBConv}}" />
 
                     <StackPanel Orientation="Horizontal" Grid.Row="2">
                         

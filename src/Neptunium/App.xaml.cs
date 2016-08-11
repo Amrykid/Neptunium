@@ -158,22 +158,29 @@ namespace Neptunium
                 {
                     case "play-station":
                         {
-                            var query = uri.Query
-                                .Substring(1)
-                                .Split('&')
-                                .Select(x => 
-                                    new KeyValuePair<string,string>(
-                                        x.Split('=')[0], 
-                                        x.Split('=')[1])); //remote the "?"
+                            try
+                            {
+                                var query = uri.Query
+                                    .Substring(1)
+                                    .Split('&')
+                                    .Select(x =>
+                                        new KeyValuePair<string, string>(
+                                            x.Split('=')[0],
+                                            x.Split('=')[1])); //remote the "?"
 
-                            var stationName = Uri.EscapeUriString(query.First(x => x.Key.ToLower() == "station").Value);
+                                var stationName = Uri.EscapeUriString(query.First(x => x.Key.ToLower() == "station").Value);
 
-                            if (!StationDataManager.IsInitialized)
-                                await StationDataManager.InitializeAsync();
+                                if (!StationDataManager.IsInitialized)
+                                    await StationDataManager.InitializeAsync();
 
-                            var station = StationDataManager.Stations.First(x => x.Name == stationName);
+                                var station = StationDataManager.Stations.First(x => x.Name == stationName);
 
-                            await StationMediaPlayer.PlayStationAsync(station);
+                                await StationMediaPlayer.PlayStationAsync(station);
+                            }
+                            catch (Exception)
+                            {
+
+                            }
                         }
                         break;
                 }

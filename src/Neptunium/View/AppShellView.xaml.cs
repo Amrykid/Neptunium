@@ -300,8 +300,6 @@ namespace Neptunium.View
 
             fragment.Invoke(this.DataContext as ViewModelBase, e.ClickedItem);
 
-            listView.SelectedItem = null;
-
             var parentGrid = listView.Parent as Grid;
             var parentFlyout = parentGrid.Parent as FlyoutPresenter;
             var parentPopup = parentFlyout.Parent as Popup;
