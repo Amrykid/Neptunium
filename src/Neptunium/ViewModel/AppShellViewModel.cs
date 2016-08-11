@@ -79,12 +79,14 @@ namespace Neptunium.ViewModel
                     BackgroundMediaPlayer.Current.Pause();
             }, x => { try { return BackgroundMediaPlayer.Current.PlaybackSession.CanPause; } catch (Exception) { return true; } });
 
+
             HandoffStationCommand = new ManualRelayCommand(x =>
             {
 
             });
 
             NowPlayingView = new NowPlayingViewFragment();
+            HandOffViewFragment = new HandOffFlyoutViewFragment();
 
             WindowManager.GetStatusManagerForCurrentWindow().NormalStatusText = "Neptunium"; //"Hanasu Alpha";
 
@@ -161,5 +163,6 @@ namespace Neptunium.ViewModel
         public ManualRelayCommand HandoffStationCommand { get; private set; }
 
         public NowPlayingViewFragment NowPlayingView { get; private set; }
+        public HandOffFlyoutViewFragment HandOffViewFragment { get; private set; }
     }
 }

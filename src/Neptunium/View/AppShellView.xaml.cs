@@ -1,6 +1,7 @@
 ﻿using Crystal3.InversionOfControl;
 using Crystal3.Model;
 using Crystal3.Navigation;
+using Neptunium.Fragments;
 using Neptunium.Logging;
 using Neptunium.MediaSourceStream;
 using Neptunium.ViewModel;
@@ -289,6 +290,23 @@ namespace Neptunium.View
         private void NowPlayingPanel_Tapped(object sender, TappedRoutedEventArgs e)
         {
             (this.DataContext as AppShellViewModel).GoToNowPlayingViewCommand.Execute(null);
+        }
+
+        private void HandOffDeviceFlyout_DeviceListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            //todo turn this into a behavior.
+            var listView = sender as ListView;
+            var fragment = listView.DataContext as HandOffFlyoutViewFragment;
+
+            fragment.Invoke(this.DataContext as ViewModelBase, e.ClickedItem);
+
+            listView.SelectedItem = null;
+
+            var parentGrid = listView.Parent as Grid;
+            var parentFlyout = parentGrid.Parent as FlyoutPresenter;
+            var parentPopup = parentFlyout.Parent as Popup;
+
+            parentPopup.IsOpen = false;
         }
     }
 }

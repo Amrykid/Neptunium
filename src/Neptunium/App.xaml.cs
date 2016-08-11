@@ -118,21 +118,66 @@ namespace Neptunium
 
             if (!ContinuedAppExperienceManager.IsInitialized)
                 ContinuedAppExperienceManager.InitializeAsync();
-        }
 
-        public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
-        {
             //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
 
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
                 Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+        }
 
+        public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
+        {
             PostUIInit();
 
             LogManager.Info(typeof(App), "Application Launching");
             WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.NavigateTo<AppShellViewModel>();
+
+            await Task.CompletedTask;
+        }
+
+        public override async Task OnActivationAsync(IActivatedEventArgs args)
+        {
+
+            if (!WindowManager.GetNavigationManagerForCurrentWindow()
+                .RootNavigationService.IsNavigatedTo<AppShellViewModel>())
+            {
+                PostUIInit();
+
+                WindowManager.GetNavigationManagerForCurrentWindow()
+                    .RootNavigationService.NavigateTo<AppShellViewModel>();
+            }
+
+            if (args.Kind == ActivationKind.Protocol)
+            {
+                var pargs = args as ProtocolActivatedEventArgs;
+
+                var uri = pargs.Uri;
+                switch(uri.LocalPath.ToLower())
+                {
+                    case "play-station":
+                        {
+                            var query = uri.Query
+                                .Substring(1)
+                                .Split('&')
+                                .Select(x => 
+                                    new KeyValuePair<string,string>(
+                                        x.Split('=')[0], 
+                                        x.Split('=')[1])); //remote the "?"
+
+                            var stationName = Uri.EscapeUriString(query.First(x => x.Key.ToLower() == "station").Value);
+
+                            if (!StationDataManager.IsInitialized)
+                                await StationDataManager.InitializeAsync();
+
+                            var station = StationDataManager.Stations.First(x => x.Name == stationName);
+
+                            await StationMediaPlayer.PlayStationAsync(station);
+                        }
+                        break;
+                }
+            }
 
             await Task.CompletedTask;
         }

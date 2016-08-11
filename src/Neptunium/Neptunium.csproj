@@ -114,6 +114,7 @@
     <Compile Include="Data\Stations\StationDataManager.cs" />
     <Compile Include="Data\Stations\StationModel.cs" />
     <Compile Include="Data\Stations\StationModelStream.cs" />
+    <Compile Include="Fragments\HandOffFlyoutViewFragment.cs" />
     <Compile Include="Logging\LogManager.cs" />
     <Compile Include="Managers\Car Mode\CarModeManager.cs" />
     <Compile Include="Managers\Car Mode\CarModeManagerCarModeStatusChangedEventArgs.cs" />

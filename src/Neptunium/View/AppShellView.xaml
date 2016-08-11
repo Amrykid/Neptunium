@@ -18,6 +18,25 @@
             </ResourceDictionary.MergedDictionaries>
 
 
+            <Flyout x:Key="HandOffDeviceFlyout" AllowFocusOnInteraction="True" LightDismissOverlayMode="On">
+                <Grid DataContext="{Binding HandOffViewFragment, UpdateSourceTrigger=PropertyChanged}" Width="200">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="300" />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+
+                    <ProgressBar IsIndeterminate="True" Grid.Row="0" />
+
+                    <ListView x:Name="HandOffDeviceFlyout_DeviceListView" IsItemClickEnabled="True" Grid.Row="1" ItemsSource="{Binding AvailableDevices, UpdateSourceTrigger=PropertyChanged}"
+                              DisplayMemberPath="DisplayName" ItemClick="HandOffDeviceFlyout_DeviceListView_ItemClick"  />
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="2">
+                        
+                    </StackPanel>
+
+                </Grid>
+            </Flyout>
             <DataTemplate x:Name="NowPlayingPanelTemplate">
                 <Grid DataContext="{Binding NowPlayingView, UpdateSourceTrigger=PropertyChanged}">
                     <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}"
@@ -366,7 +385,7 @@
         <CommandBar x:Name="upperAppBar" Style="{StaticResource ComAppBarStyle}">
             <CommandBar.PrimaryCommands>
                 <AppBarButton Icon="Play" Label="Play" Tag="PlayPause" Command="{Binding PlayCommand}" />
-                <AppBarButton Label="Handoff" Command="{Binding HandoffStationCommand}" Icon="Remote"/>
+                <AppBarButton Label="Handoff" Icon="Remote" Flyout="{StaticResource HandOffDeviceFlyout}" />
                 <AppBarButton Label="Sleep Timer" Icon="Clock" />
             </CommandBar.PrimaryCommands>
         </CommandBar>
@@ -377,7 +396,7 @@
                 <AppBarButton Icon="Play" Label="Play" Tag="PlayPause" Command="{Binding PlayCommand}" />
             </CommandBar.PrimaryCommands>
             <CommandBar.SecondaryCommands>
-                <AppBarButton Label="Handoff" Command="{Binding HandoffStationCommand}" Icon="Remote"/>
+                <AppBarButton Label="Handoff" Icon="Remote" Flyout="{StaticResource HandOffDeviceFlyout}" />
                 <AppBarButton Label="Sleep Timer" Icon="Clock" />
             </CommandBar.SecondaryCommands>
         </CommandBar>

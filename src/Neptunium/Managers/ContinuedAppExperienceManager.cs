@@ -2,6 +2,7 @@
 using Neptunium.Media;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.System;
 using Windows.System.RemoteSystems;
 
 namespace Neptunium.Managers
@@ -18,14 +20,15 @@ namespace Neptunium.Managers
     {
         public const string ContinuedAppExperienceAppServiceName = "ContinuedAppExperienceAppService";
         public const string StopPlayingMusicAfterGoodHandoff = "StopPlayingMusicAfterGoodHandoff";
+        public const string AppPackageName = "61121Amrykid.Neptunium_h1dcj6f978yqr";
 
         #region Variables and Code-Properties
-        private static List<RemoteSystem> systemList = null;
+        private static ObservableCollection<RemoteSystem> systemList = null;
         private static RemoteSystemWatcher remoteSystemWatcher = null;
 
         public static bool IsRunning { get; private set; }
 
-        public static IEnumerable<RemoteSystem> RemoteSystemsList { get { return systemList.AsEnumerable(); } }
+        public static ReadOnlyObservableCollection<RemoteSystem> RemoteSystemsList { get; private set; }
 
         public static RemoteSystemAccessStatus RemoteSystemAccess { get; private set; }
 
@@ -51,7 +54,8 @@ namespace Neptunium.Managers
 
             if (RemoteSystemAccess == RemoteSystemAccessStatus.Allowed)
             {
-                systemList = new List<RemoteSystem>();
+                systemList = new ObservableCollection<RemoteSystem>();
+                RemoteSystemsList = new ReadOnlyObservableCollection<RemoteSystem>(systemList);
                 remoteSystemWatcher = RemoteSystem.CreateWatcher();
                 StartWatchingForRemoteSystems();
             }
@@ -92,14 +96,24 @@ namespace Neptunium.Managers
             var systemToRemove = systemList.FirstOrDefault(x => x.Id == args.RemoteSystemId);
 
             if (systemToRemove != null)
+            {
                 systemList.Remove(systemToRemove);
+
+                if (RemoteSystemsListUpdated != null)
+                    RemoteSystemsListUpdated(null, EventArgs.Empty);
+            }
+
         }
 
         private static void RemoteSystemWatcher_RemoteSystemAdded(RemoteSystemWatcher sender, RemoteSystemAddedEventArgs args)
         {
             systemList.Add(args.RemoteSystem);
+
+            if (RemoteSystemsListUpdated != null)
+                RemoteSystemsListUpdated(null, EventArgs.Empty);
         }
 
+        public static event EventHandler RemoteSystemsListUpdated;
 
         #region Settings and Settings-Properties
         public static bool StopPlayingStationOnThisDeviceAfterSuccessfulHandoff { get; private set; }
@@ -125,7 +139,7 @@ namespace Neptunium.Managers
                 string ver = string.Format("{0}.{1}.{2}.{3}", Package.Current.Id.Version.Major, Package.Current.Id.Version.Minor, Package.Current.Id.Version.Build, Package.Current.Id.Version.Revision);
                 AppServiceConnection connection = new AppServiceConnection();
                 connection.AppServiceName = ContinuedAppExperienceAppServiceName;
-                connection.PackageFamilyName = "61121Amrykid.Neptunium_h1dcj6f978yqr";
+                connection.PackageFamilyName = AppPackageName;
                 var status = await connection.OpenRemoteAsync(new RemoteSystemConnectionRequest(device));
 
                 if (status == AppServiceConnectionStatus.Success)
@@ -148,25 +162,36 @@ namespace Neptunium.Managers
             }
         }
 
-        public static async Task HandoffStationToRemoteDeviceAsync(RemoteSystem device, StationModel station)
+        private static async Task<RemoteLaunchUriStatus> LaunchAppOnDeviceAsync(RemoteSystem device, string args)
         {
+            if (!IsSupported) throw new Exception("Not supported.");
+
+            RemoteSystemConnectionRequest request = new RemoteSystemConnectionRequest(device);
+            return await RemoteLauncher.LaunchUriAsync(request, new Uri("nep:" + args));
+        }
+
+        public static async Task<bool> HandoffStationToRemoteDeviceAsync(RemoteSystem device, StationModel station)
+        {
+            if (!IsSupported) throw new Exception("Not supported.");
+
             try
             {
                 var data = new ValueSet();
                 data.Add("Command", "Play-Station");
                 data.Add("Station", station.Name);
 
-                var status = await SendDataToDeviceAsync(device, data);
+                var status = await LaunchAppOnDeviceAsync(device, "play-station?station=" + station.Name);
 
-                if ((status != null) && StopPlayingStationOnThisDeviceAfterSuccessfulHandoff)
+                if ((status == RemoteLaunchUriStatus.Success) && StopPlayingStationOnThisDeviceAfterSuccessfulHandoff)
                 {
-                    if (status.Message["Status"].ToString() == "OK")
-                        StationMediaPlayer.Stop();
+                    StationMediaPlayer.Stop();
                 }
+
+                return true;
             }
             catch (Exception ex)
             {
-                throw new Exception("Unable to hand off station to remote device.", ex);
+                return false;
             }
         }
 
