@@ -161,6 +161,8 @@ namespace Neptunium.ViewModel
                         ShowSongNotification();
                 });
             }
+
+            UpdateLiveTile();
         }
 
         internal void ShowSongNotification()
