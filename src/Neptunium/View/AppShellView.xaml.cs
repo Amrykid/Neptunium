@@ -85,6 +85,17 @@ namespace Neptunium.View
                             }
                         }
                         break;
+                    case Windows.System.VirtualKey.GamepadX:
+                        {
+                            //mimic's groove music uwp on xbox one
+
+                            if (!inlineNavService.IsNavigatedTo<NowPlayingViewViewModel>())
+                                inlineNavService.NavigateTo<NowPlayingViewViewModel>();
+                            else if (inlineNavService.CanGoBackward)
+                                inlineNavService.GoBack();
+                        }
+                        break;
+                        
                 }
             }
         }
