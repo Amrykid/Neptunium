@@ -21,6 +21,7 @@
 
             <Style x:Key="ComAppBarStyle" TargetType="CommandBar">
                 <Style.Setters>
+                    <Setter Property="DefaultLabelPosition" Value="Bottom" />
                     <Setter Property="Background" Value="{ThemeResource SystemListAccentMediumColor}" />
                     <Setter Property="ContentTemplate">
                         <Setter.Value>
@@ -58,6 +59,7 @@
             <Style x:Key="XboxAppBarStyle" BasedOn="{StaticResource ComAppBarStyle}" TargetType="CommandBar">
                 <Setter Property="ClosedDisplayMode" Value="Hidden" />
                 <Setter Property="LightDismissOverlayMode" Value="On" />
+                <Setter Property="DefaultLabelPosition" Value="Right" />
             </Style>
 
             <Flyout x:Key="HandOffDeviceFlyout" AllowFocusOnInteraction="True" LightDismissOverlayMode="On">
