@@ -242,7 +242,7 @@
                     <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Now Playing"
                                  Command="{Binding GoToNowPlayingViewCommand}" x:Name="nowPlayingNavButton">
                         <RadioButton.Tag>
-                            <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                            <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
                         </RadioButton.Tag>
                     </RadioButton>
                     <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Song History"
