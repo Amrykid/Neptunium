@@ -291,11 +291,6 @@ namespace Neptunium.View
            
         }
 
-        private void NowPlayingPanel_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            (this.DataContext as AppShellViewModel).GoToNowPlayingViewCommand.Execute(null);
-        }
-
         private void HandOffDeviceFlyout_DeviceListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             //todo turn this into a behavior.
@@ -309,6 +304,12 @@ namespace Neptunium.View
             var parentPopup = parentFlyout.Parent as Popup;
 
             parentPopup.IsOpen = false;
+        }
+
+        private void nowPlayingAppBarGrid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (!inlineNavService.IsNavigatedTo<NowPlayingViewViewModel>())
+                inlineNavService.NavigateTo<NowPlayingViewViewModel>();
         }
     }
 }
