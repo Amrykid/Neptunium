@@ -1,4 +1,5 @@
-﻿using Crystal3.InversionOfControl;
+﻿using Crystal3.Core;
+using Crystal3.InversionOfControl;
 using Crystal3.Model;
 using Neptunium.Managers;
 using Neptunium.Media;
@@ -42,12 +43,23 @@ namespace Neptunium.Fragments
 
                     if (results)
                     {
-                        //todo add a message box
+                        await IoC.Current.Resolve<IMessageDialogService>()
+                            .ShowAsync("YAY!", 
+                                string.Format("Hand off was successful. '{0}' should begin playing on '{1}' shortly.",
+                                    StationMediaPlayer.CurrentStation.Name, device.DisplayName));
+                    }
+                    else
+                    {
+                        await IoC.Current.Resolve<IMessageDialogService>()
+                            .ShowAsync("Uh-oh!",
+                                string.Format("Hand off failed. Unable to get '{0}' playing on '{1}'.",
+                                    StationMediaPlayer.CurrentStation.Name, device.DisplayName));
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
+                    await IoC.Current.Resolve<IMessageDialogService>()
+                          .ShowAsync("Uh-oh!", "We weren't able to hand off.");
                 }
                 finally
                 {
