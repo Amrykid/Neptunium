@@ -138,14 +138,14 @@ namespace Neptunium.View
                         case MediaPlaybackState.Opening:
                         case MediaPlaybackState.Buffering:
                             PlayPauseButton.Icon = new SymbolIcon(Symbol.Pause);
-                            PlayPauseButton.Content = "Pause";
+                            PlayPauseButton.Label = "Pause";
                             PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PauseCommand;
                             break;
                         case MediaPlaybackState.Paused:
                         case MediaPlaybackState.None:
                         default:
                             PlayPauseButton.Icon = new SymbolIcon(Symbol.Play);
-                            PlayPauseButton.Content = "Play";
+                            PlayPauseButton.Label = "Play";
                             PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PlayCommand;
                             break;
                     }
