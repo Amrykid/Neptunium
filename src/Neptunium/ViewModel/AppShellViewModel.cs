@@ -45,8 +45,8 @@ namespace Neptunium.ViewModel
 
             GoToNowPlayingViewCommand = new RelayCommand(x =>
             {
-                if (!InlineNavigationService.IsNavigatedTo<NowPlayingViewFragment>())
-                    InlineNavigationService.NavigateTo<NowPlayingViewFragment>();
+                if (!InlineNavigationService.IsNavigatedTo<NowPlayingViewViewModel>())
+                    InlineNavigationService.NavigateTo<NowPlayingViewViewModel>();
             });
 
             GoToSettingsViewCommand = new RelayCommand(x =>
@@ -85,12 +85,12 @@ namespace Neptunium.ViewModel
 
             });
 
-            NowPlayingView = new NowPlayingViewFragment();
             HandOffViewFragment = new HandOffFlyoutViewFragment();
+            NowPlayingView = new NowPlayingViewFragment();
 
             WindowManager.GetStatusManagerForCurrentWindow().NormalStatusText = "Neptunium"; //"Hanasu Alpha";
 
-            NowPlayingView.UpdateLiveTile();
+            UpdateLiveTile();
         }
 
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
@@ -140,17 +140,181 @@ namespace Neptunium.ViewModel
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
         }
 
+
         private void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)
         {
             LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_CurrentStationChanged");
+
+            UpdateLiveTile();
         }
 
-        private void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
+        private async void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
             LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged");
+
+
+            if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] == true)
+            {
+                await App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    if (!Windows.UI.Xaml.Window.Current.Visible)
+                        ShowSongNotification();
+                });
+            }
         }
 
-        
+        internal void ShowSongNotification()
+        {
+            try
+            {
+                if (StationMediaPlayer.IsPlaying && StationMediaPlayer.SongMetadata != null)
+                {
+                    var nowPlaying = StationMediaPlayer.SongMetadata;
+
+                    var toastHistory = ToastNotificationManager.History.GetHistory();
+
+                    if (toastHistory.Count > 0)
+                    {
+                        var latestToast = toastHistory.FirstOrDefault();
+
+                        if (latestToast != null)
+                        {
+                            var track = latestToast.Content.LastChild.FirstChild.FirstChild.FirstChild.LastChild.InnerText as string;
+
+                            if (track == nowPlaying.Track) return;
+                        }
+                    }
+
+                    ToastContent content = new ToastContent()
+                    {
+                        Launch = "nowPlaying",
+                        Audio = new ToastAudio()
+                        {
+                            Silent = true,
+                        },
+                        Duration = CrystalApplication.GetDevicePlatform() == Platform.Mobile ? ToastDuration.Short : ToastDuration.Long,
+                        Visual = new ToastVisual()
+                        {
+                            BindingGeneric = new ToastBindingGeneric()
+                            {
+                                Children =
+                                {
+                                    new AdaptiveText()
+                                    {
+                                        Text = nowPlaying.Track,
+                                        HintStyle = AdaptiveTextStyle.Title
+                                    },
+                                    new AdaptiveText()
+                                    {
+                                        Text = nowPlaying.Artist,
+                                        HintStyle = AdaptiveTextStyle.Body
+                                    }
+                                },
+                                HeroImage = new ToastGenericHeroImage()
+                                {
+                                    Source = StationMediaPlayer.CurrentStation?.Logo,
+                                    AlternateText = StationMediaPlayer.CurrentStation?.Name,
+                                },
+                            }
+                        }
+                    };
+
+                    XmlDocument doc = content.GetXml();
+                    ToastNotification notification = new ToastNotification(doc);
+                    notification.NotificationMirroring = NotificationMirroring.Disabled;
+                    notification.Tag = "nowPlaying";
+                    notification.ExpirationTime = DateTime.Now.AddMinutes(5); //songs usually aren't this long.
+
+                    ToastNotificationManager.CreateToastNotifier().Show(notification);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        public void UpdateLiveTile()
+        {
+            var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
+
+            TileBindingContentAdaptive bindingContent = null;
+
+            if (StationMediaPlayer.IsPlaying && StationMediaPlayer.SongMetadata != null)
+            {
+                var nowPlaying = StationMediaPlayer.SongMetadata;
+
+                bindingContent = new TileBindingContentAdaptive()
+                {
+                    PeekImage = new TilePeekImage()
+                    {
+                        Source = StationMediaPlayer.CurrentStation?.Logo,
+                        AlternateText = StationMediaPlayer.CurrentStation?.Name,
+                        HintCrop = TilePeekImageCrop.None
+                    },
+                    Children =
+                    {
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Track,
+                            HintStyle = AdaptiveTextStyle.Body
+                        },
+
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Artist,
+                            HintWrap = true,
+                            HintStyle = AdaptiveTextStyle.CaptionSubtle
+                        }
+                    }
+                };
+            }
+            else
+            {
+                bindingContent = new TileBindingContentAdaptive()
+                {
+                    Children =
+                    {
+                        new AdaptiveText()
+                        {
+                            Text = "Ready to stream",
+                            HintStyle = AdaptiveTextStyle.Body
+                        },
+
+                        new AdaptiveText()
+                        {
+                            Text = "Tap to get started.",
+                            HintWrap = true,
+                            HintStyle = AdaptiveTextStyle.CaptionSubtle
+                        }
+                    }
+                };
+            }
+
+            TileBinding binding = new TileBinding()
+            {
+                Branding = TileBranding.NameAndLogo,
+
+                DisplayName = StationMediaPlayer.IsPlaying ? "Now Playing" : "Neptunium",
+
+                Content = bindingContent
+            };
+
+            TileContent content = new TileContent()
+            {
+                Visual = new TileVisual()
+                {
+                    TileMedium = binding,
+                    TileWide = binding,
+                    TileLarge = binding
+                }
+            };
+
+            var tile = new TileNotification(content.GetXml());
+            tiler.Update(tile);
+
+        }
+
 
         public RelayCommand GoToStationsViewCommand { get; private set; }
         public RelayCommand GoToNowPlayingViewCommand { get; private set; }
@@ -161,8 +325,7 @@ namespace Neptunium.ViewModel
         public RelayCommand PauseCommand { get; private set; }
 
         public ManualRelayCommand HandoffStationCommand { get; private set; }
-
-        public NowPlayingViewFragment NowPlayingView { get; private set; }
         public HandOffFlyoutViewFragment HandOffViewFragment { get; private set; }
+        public NowPlayingViewFragment NowPlayingView { get; private set; }
     }
 }

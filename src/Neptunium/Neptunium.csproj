@@ -115,6 +115,7 @@
     <Compile Include="Data\Stations\StationModel.cs" />
     <Compile Include="Data\Stations\StationModelStream.cs" />
     <Compile Include="Fragments\HandOffFlyoutViewFragment.cs" />
+    <Compile Include="Fragments\NowPlayingViewFragment.cs" />
     <Compile Include="Logging\LogManager.cs" />
     <Compile Include="Managers\Car Mode\CarModeManager.cs" />
     <Compile Include="Managers\Car Mode\CarModeManagerCarModeStatusChangedEventArgs.cs" />
@@ -125,12 +126,15 @@
     <Compile Include="Old-Hanasu\ShoutcastInformationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AppShellViewModel.cs" />
-    <Compile Include="Fragments\NowPlayingViewFragment.cs" />
+    <Compile Include="ViewModel\NowPlayingViewViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewViewModel.cs" />
     <Compile Include="ViewModel\SongHistoryViewModel.cs" />
     <Compile Include="ViewModel\StationsViewViewModel.cs" />
     <Compile Include="View\AppShellView.xaml.cs">
       <DependentUpon>AppShellView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\NowPlayingView.xaml.cs">
+      <DependentUpon>NowPlayingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
@@ -214,6 +218,10 @@
     <Page Include="View\AppShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\NowPlayingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\SettingsView.xaml">
       <Generator>MSBuild:Compile</Generator>
