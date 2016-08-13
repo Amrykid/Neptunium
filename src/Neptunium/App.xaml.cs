@@ -31,6 +31,7 @@ using Windows.Storage;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using Windows.System.RemoteSystems;
+using Kukkii;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -68,6 +69,8 @@ namespace Neptunium
 
         private static async void CoreInit()
         {
+            CookieJar.ApplicationName = "Neptunium";
+
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
 

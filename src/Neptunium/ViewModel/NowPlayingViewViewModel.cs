@@ -27,6 +27,7 @@ using Windows.Storage.Streams;
 using Crystal3.UI.Commands;
 using Windows.System;
 using System.Diagnostics;
+using Neptunium.Managers;
 
 namespace Neptunium.ViewModel
 {
@@ -85,7 +86,7 @@ namespace Neptunium.ViewModel
 
             var timeOut = Task.Delay(4000);
 
-            var albumDataTask = TryFindArtistOnMusicBrainzAsync(e.Title, e.Artist);
+            var albumDataTask = SongMetadataManager.FindAlbumDataAsync(e.Title, e.Artist);
 
             Task resultTask = null;
 
@@ -124,53 +125,6 @@ namespace Neptunium.ViewModel
                 }
                 catch (Exception) { }
             });
-        }
-
-        private async Task<AlbumData> TryFindArtistOnMusicBrainzAsync(string track, string artist)
-        {
-            AlbumData data = new AlbumData();
-            try
-            {
-                var recordingQuery = new Hqub.MusicBrainz.API.QueryParameters<Hqub.MusicBrainz.API.Entities.Recording>();
-                recordingQuery.Add("artistname", artist);
-                recordingQuery.Add("country", "JP");
-                recordingQuery.Add("recording", track);
-
-                var recordings = await Recording.SearchAsync(recordingQuery);
-
-                foreach (var potentialRecording in recordings?.Items)
-                {
-                    if (potentialRecording.Title.ToLower().StartsWith(track.ToLower()))
-                    {
-                        var firstRelease = potentialRecording.Releases.Items.FirstOrDefault();
-
-                        if (firstRelease != null)
-                        {
-                            try
-                            {
-                                data.AlbumCoverUrl = CoverArtArchive.GetCoverArtUri(firstRelease.Id)?.ToString();
-                            }
-                            catch (Exception) { }
-
-                            data.Artist = potentialRecording.Credits.First().Artist.Name;
-                            data.ArtistID = potentialRecording.Credits.First().Artist.Id;
-                            data.Album = firstRelease.Title;
-                            data.AlbumID = firstRelease.Id;
-                            if (!string.IsNullOrWhiteSpace(firstRelease.Date))
-                                data.ReleaseDate = DateTime.Parse(firstRelease.Date);
-
-                            return data;
-                        }
-                    }
-                }
-
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            return null;
         }
 
         private async void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)
