@@ -17,22 +17,14 @@ namespace Neptunium.ViewModel
 {
     public class StationsViewViewModel : UIViewModelBase
     {
-        public StationsViewViewModel()
-        {
-            Stations = new ObservableCollection<StationModel>();
-        }
-
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            base.OnNavigatedTo(sender, e);
-
             if (!StationDataManager.IsInitialized)
             {
                 await StationDataManager.InitializeAsync();
             }
 
-            if (Stations.Count == 0)
-                Stations.AddRange(StationDataManager.Stations);
+            Stations = new ObservableCollection<StationModel>(StationDataManager.Stations);
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)

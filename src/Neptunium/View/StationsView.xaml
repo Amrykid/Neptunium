@@ -93,7 +93,8 @@
                  ItemsPanel="{StaticResource ListItemsPanelTemplate}">
             <ListBox.Transitions>
                 <TransitionCollection>
-                    <AddDeleteThemeTransition />
+                    <ContentThemeTransition />
+                    <!--<AddDeleteThemeTransition />-->
                 </TransitionCollection>
             </ListBox.Transitions>
         </ListBox>
@@ -102,7 +103,8 @@
                   Visibility="Collapsed" ItemTemplate="{StaticResource WrapItemTemplate}"  Margin="20 0">
             <GridView.Transitions>
                 <TransitionCollection>
-                    <AddDeleteThemeTransition />
+                    <ContentThemeTransition />
+                    <!--<AddDeleteThemeTransition />-->
                 </TransitionCollection>
             </GridView.Transitions>
         </GridView>
