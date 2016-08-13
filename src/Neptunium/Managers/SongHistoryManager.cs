@@ -58,16 +58,23 @@ namespace Neptunium.Managers
 
         private static void StationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
-            if (StationMediaPlayer.CurrentStation.StationMessages.Any(x => x == e.Title)) return;
-            //add a new song to the metadata when the song changes.
+            try
+            {
+                if (StationMediaPlayer.CurrentStation.StationMessages.Any(x => x == e.Title)) return;
+                //add a new song to the metadata when the song changes.
 
-            var historyItem = new SongHistoryItem();
-            historyItem.Track = e.Title;
-            historyItem.Artist = e.Artist;
-            historyItem.Station = StationMediaPlayer.CurrentStation.Name;
-            historyItem.DatePlayed = DateTime.Now;
+                var historyItem = new SongHistoryItem();
+                historyItem.Track = e.Title;
+                historyItem.Artist = e.Artist;
+                historyItem.Station = StationMediaPlayer.CurrentStation.Name;
+                historyItem.DatePlayed = DateTime.Now;
 
-            songHistoryCollection.Insert(0, historyItem);
+                songHistoryCollection.Insert(0, historyItem);
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
     }
 }
