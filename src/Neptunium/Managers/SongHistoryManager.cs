@@ -26,6 +26,10 @@ namespace Neptunium.Managers
             songHistoryCollection = await CookieJar.DeviceCache.GetObjectAsync<ObservableCollection<SongHistoryItem>>("SongHistory", () => new ObservableCollection<SongHistoryItem>());
             SongHistory = new ReadOnlyObservableCollection<SongHistoryItem>(songHistoryCollection);
 
+            var items = SongHistory.ToArray();
+            foreach (var item in items.Where(x => x.DatePlayed.AddDays(30) < DateTime.Now)) //remove songs that have been there for longer than 30 days
+                songHistoryCollection.Remove(item);
+
             IsInitialized = true;
 
             await Task.CompletedTask;
@@ -63,7 +67,7 @@ namespace Neptunium.Managers
             historyItem.Station = StationMediaPlayer.CurrentStation.Name;
             historyItem.DatePlayed = DateTime.Now;
 
-            songHistoryCollection.Add(historyItem);
+            songHistoryCollection.Insert(0, historyItem);
         }
     }
 }
