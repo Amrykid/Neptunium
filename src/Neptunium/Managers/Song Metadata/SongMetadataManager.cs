@@ -29,6 +29,8 @@ namespace Neptunium.Managers
                 {
                     await CookieJar.DeviceCache.InsertObjectAsync<AlbumData>(key, albumData);
                     await CookieJar.DeviceCache.FlushAsync();
+
+                    FoundMetadata?.Invoke(null, new SongMetadataManagerFoundMetadataEventArgs() { FoundAlbumData = albumData, QueriedTrack = cleanedTrack, QueiredArtist = cleanedArtist });
                 }
 
                 return albumData;
@@ -84,5 +86,7 @@ namespace Neptunium.Managers
 
             return null;
         }
+
+        public static event EventHandler<SongMetadataManagerFoundMetadataEventArgs> FoundMetadata;
     }
 }

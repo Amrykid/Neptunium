@@ -87,6 +87,8 @@ namespace Neptunium
             await LogManager.InitializeAsync();
             await StationMediaPlayer.InitializeAsync();
 
+            await SongHistoryManager.InitializeAsync();
+
             Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/0.1 ( amrykid@gmail.com )";
 
             LogManager.Info(typeof(App), "CoreInitialization Complete");
@@ -197,6 +199,7 @@ namespace Neptunium
             LogManager.Info(typeof(App), "Application Suspending");
 
             ContinuedAppExperienceManager.StopWatchingForRemoteSystems();
+            await SongHistoryManager.FlushAsync();
 
             await base.OnSuspendingAsync();
         }

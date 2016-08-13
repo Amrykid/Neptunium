@@ -8,6 +8,31 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ListView ItemsSource="{Binding SongHistory, UpdateSourceTrigger=PropertyChanged}" Margin="0 5 0 0">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Height="75">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="75" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
 
+                        <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Width="70" Height="70"
+                               Source="{Binding AlbumData.AlbumCoverUrl, UpdateSourceTrigger=PropertyChanged, FallbackValue='/Assets/NoAlbumCover.png'}" />
+                        <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Track}" Margin="0 5 0 0"
+                                   Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Artist}" 
+                                   Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
+                        <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding AlbumData.Album, UpdateSourceTrigger=PropertyChanged, FallbackValue='Album unavailable.'}" 
+                                   Style="{ThemeResource CaptionTextBlockStyle}" FontSize="13" LineHeight="16" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>

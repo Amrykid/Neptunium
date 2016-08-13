@@ -109,7 +109,7 @@
     <Compile Include="Controls\StationItemControl.xaml.cs">
       <DependentUpon>StationItemControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Data\AlbumData.cs" />
+    <Compile Include="Model\AlbumData.cs" />
     <Compile Include="Data\History\HistoryItemModel.cs" />
     <Compile Include="Data\Stations\StationDataManager.cs" />
     <Compile Include="Data\Stations\StationModel.cs" />
@@ -120,6 +120,10 @@
     <Compile Include="Managers\Car Mode\CarModeManager.cs" />
     <Compile Include="Managers\Car Mode\CarModeManagerCarModeStatusChangedEventArgs.cs" />
     <Compile Include="Managers\ContinuedAppExperienceManager.cs" />
+    <Compile Include="Model\SongHistoryItem.cs" />
+    <Compile Include="Managers\SongHistoryManager.cs" />
+    <Compile Include="Managers\Song Metadata\SongMetadataManager.cs" />
+    <Compile Include="Managers\Song Metadata\SongMetadataManagerFoundMetadataEventArgs.cs" />
     <Compile Include="Media\ShoutcastSongInfo.cs" />
     <Compile Include="Media\StationMediaPlayer.cs" />
     <Compile Include="Media\StationMediaPlayerConnectingStatusChangedEventArgs.cs" />
@@ -156,6 +160,7 @@
     <None Include="Neptunium_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\NoAlbumCover.png" />
     <Content Include="Assets\Logo.scale-100.png" />
     <Content Include="Assets\SmallLogo.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
@@ -188,6 +193,10 @@
     <ProjectReference Include="..\..\..\Kimono\src\Kimono\Kimono.csproj">
       <Project>{329833b1-79b7-4724-b9a2-0629d735bea1}</Project>
       <Name>Kimono</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Kukkii\src\Kukkii\Kukkii.csproj">
+      <Project>{c05d6334-a960-4289-8104-7b554e987f0a}</Project>
+      <Name>Kukkii</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\lib\MusicBrainz\Hqub.MusicBrainz\Hqub.MusicBrainz.API.Portable\Hqub.MusicBrainz.API.Portable.csproj">
       <Project>{08d4701e-168c-43d1-9c6e-34b079cfd934}</Project>
