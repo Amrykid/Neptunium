@@ -152,6 +152,7 @@ namespace Neptunium.ViewModel
         {
             LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged");
 
+            if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //don't play that pre-defined station message that happens every so often.
 
             if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] == true)
             {
