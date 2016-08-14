@@ -121,6 +121,36 @@
       <Message><![CDATA[Modern Japanese Pop and R&B]]></Message>
     </StationMessages>
   </Station>
+  <Station>
+    <Name>Extreme Anime Radio</Name>
+    <Description><![CDATA[Your Anime & J-POP Radio Station]]></Description>
+    <Logo>
+      <![CDATA[https://scontent-atl3-1.xx.fbcdn.net/v/t1.0-9/1510353_10152123615106061_2051094601_n.png?oh=6efaadd63fa573691d5fe374a22510d7&oe=584C393D]]>
+    </Logo>
+    <Site>http://www.animeradio.net/index.php</Site>
+    <Genres><![CDATA[Anime; J-Pop]]></Genres>
+    <Background></Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://69.4.225.75:8100/
+      </Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>Yggdrasil Radio</Name>
+    <Description><![CDATA[Anime themes and Jpop to wake you up.]]></Description>
+    <Logo>
+      <![CDATA[http://cdn-radiotime-logos.tunein.com/s120196q.png]]>
+    </Logo>
+    <Site>http://yggdrasilradio.net/</Site>
+    <Genres><![CDATA[Anime; J-Pop]]></Genres>
+    <Background></Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://95.211.241.92:9200/
+      </Stream>
+    </Streams>
+  </Station>
   <!--<Station>
     <Name>J-Pop Project Radio</Name>
     <Description><![CDATA[J-POP]]></Description>
