@@ -29,14 +29,15 @@
                                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Tapped="nowPlayingAppBarGrid_Tapped"
                                   DataContext="{Binding NowPlayingView, UpdateSourceTrigger=PropertyChanged}">
 
-                                    <Grid Visibility="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}" Margin="0">
+                                    <Grid Visibility="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}" Margin="0"
+                                          Height="50">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="60" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
 
-                                        <Image Height="60" Width="60" Stretch="Uniform" Margin="7 0" Grid.Column="0"
+                                        <Image Height="60" Width="60" Stretch="Uniform" Margin="7,2,7,0" Grid.Column="0" VerticalAlignment="Top"
                                            Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
 
                                         <TextBlock Grid.Column="1" Height="50">
@@ -212,7 +213,7 @@
                         <Setter Target="lowerAppBar.Visibility" Value="Visible" />
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
 
-                        <Setter Target="inlineFrame.Margin" Value="0 0 0 10" />
+                        <Setter Target="inlineFrame.Margin" Value="0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
