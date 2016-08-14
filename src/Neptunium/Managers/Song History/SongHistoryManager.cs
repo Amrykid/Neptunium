@@ -1,4 +1,5 @@
 ﻿using Kukkii;
+using Neptunium.Managers;
 using Neptunium.Media;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,10 @@ namespace Neptunium.Managers
 
             var items = SongHistory.ToArray();
             foreach (var item in items.Where(x => x.DatePlayed.AddDays(30) < DateTime.Now)) //remove songs that have been there for longer than 30 days
+            {
                 songHistoryCollection.Remove(item);
+                ItemRemoved?.Invoke(null, new SongHistoryManagerItemRemovedEventArgs() { RemovedItem = item });
+            }
 
             IsInitialized = true;
 
@@ -70,11 +74,16 @@ namespace Neptunium.Managers
                 historyItem.DatePlayed = DateTime.Now;
 
                 songHistoryCollection.Insert(0, historyItem);
+
+                ItemAdded?.Invoke(null, new SongHistoryManagerItemAddedEventArgs() { AddedItem = historyItem });
             }
             catch (Exception ex)
             {
 
             }
         }
+
+        public static event EventHandler<SongHistoryManagerItemAddedEventArgs> ItemAdded;
+        public static event EventHandler<SongHistoryManagerItemRemovedEventArgs> ItemRemoved;
     }
 }

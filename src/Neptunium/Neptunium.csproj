@@ -109,6 +109,8 @@
     <Compile Include="Controls\StationItemControl.xaml.cs">
       <DependentUpon>StationItemControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Managers\Song History\SongHistoryManagerItemAddedEventArgs.cs" />
+    <Compile Include="Managers\Song History\SongHistoryManagerItemRemovedEventArgs.cs" />
     <Compile Include="Model\AlbumData.cs" />
     <Compile Include="Data\History\HistoryItemModel.cs" />
     <Compile Include="Data\Stations\StationDataManager.cs" />
@@ -121,7 +123,7 @@
     <Compile Include="Managers\Car Mode\CarModeManagerCarModeStatusChangedEventArgs.cs" />
     <Compile Include="Managers\ContinuedAppExperienceManager.cs" />
     <Compile Include="Model\SongHistoryItem.cs" />
-    <Compile Include="Managers\SongHistoryManager.cs" />
+    <Compile Include="Managers\Song History\SongHistoryManager.cs" />
     <Compile Include="Managers\Song Metadata\SongMetadataManager.cs" />
     <Compile Include="Managers\Song Metadata\SongMetadataManagerFoundMetadataEventArgs.cs" />
     <Compile Include="Media\ShoutcastSongInfo.cs" />

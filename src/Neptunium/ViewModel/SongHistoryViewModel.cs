@@ -10,18 +10,42 @@ using Crystal3.Navigation;
 
 namespace Neptunium.ViewModel
 {
-    public class SongHistoryViewModel: ViewModelBase
+    public class SongHistoryViewModel : ViewModelBase
     {
-
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            SongHistory = SongHistoryManager.SongHistory;
+            SongHistory = new ObservableCollection<SongHistoryItem>(SongHistoryManager.SongHistory);
+            SongHistoryManager.ItemAdded += SongHistoryManager_ItemAdded;
+            SongHistoryManager.ItemRemoved += SongHistoryManager_ItemRemoved;
         }
 
-        public ReadOnlyObservableCollection<SongHistoryItem> SongHistory
+        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-            get { return GetPropertyValue<ReadOnlyObservableCollection<SongHistoryItem>>(); }
-            set { SetPropertyValue<ReadOnlyObservableCollection<SongHistoryItem>>(value: value); }
+            SongHistoryManager.ItemAdded -= SongHistoryManager_ItemAdded;
+            SongHistoryManager.ItemRemoved -= SongHistoryManager_ItemRemoved;
+        }
+
+        private void SongHistoryManager_ItemRemoved(object sender, SongHistoryManagerItemRemovedEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                if (SongHistory.Contains(e.RemovedItem))
+                    SongHistory.Remove(e.RemovedItem);
+            });
+        }
+
+        private void SongHistoryManager_ItemAdded(object sender, SongHistoryManagerItemAddedEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                SongHistory.Add(e.AddedItem);
+            });
+        }
+
+        public ObservableCollection<SongHistoryItem> SongHistory
+        {
+            get { return GetPropertyValue<ObservableCollection<SongHistoryItem>>(); }
+            set { SetPropertyValue<ObservableCollection<SongHistoryItem>>(value: value); }
         }
     }
 }
