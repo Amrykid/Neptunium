@@ -14,7 +14,15 @@ namespace Neptunium.ViewModel
     {
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            SongHistory = new ObservableCollection<SongHistoryItem>(SongHistoryManager.SongHistory);
+            try
+            {
+                SongHistory = new ObservableCollection<SongHistoryItem>(SongHistoryManager.SongHistory);
+            }
+            catch (Exception)
+            {
+                SongHistory = new ObservableCollection<SongHistoryItem>();
+            }
+
             SongHistoryManager.ItemAdded += SongHistoryManager_ItemAdded;
             SongHistoryManager.ItemRemoved += SongHistoryManager_ItemRemoved;
         }
@@ -38,7 +46,7 @@ namespace Neptunium.ViewModel
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                SongHistory.Add(e.AddedItem);
+                SongHistory.Insert(0, e.AddedItem);
             });
         }
 
