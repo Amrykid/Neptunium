@@ -294,7 +294,7 @@ namespace Neptunium.Media
             switch (args.Request.Reason)
             {
                 case Windows.Media.Core.MediaStreamSourceClosedReason.Done:
-                    return;
+                    break;
                 default:
                     if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
                     break;

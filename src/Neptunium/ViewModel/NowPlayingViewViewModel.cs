@@ -99,6 +99,7 @@ namespace Neptunium.ViewModel
 
         private async Task UpdateAlbumDataFromTaskAsync(Task<AlbumData> albumDataTask)
         {
+            //todo figure out what to do with this
             await App.Dispatcher.RunAsync(async () =>
             {
                 try
