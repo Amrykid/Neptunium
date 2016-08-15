@@ -194,6 +194,18 @@ namespace Neptunium
             await Task.CompletedTask;
         }
 
+        internal static bool GetIfPrimaryWindowVisible()
+        {
+            return Windows.UI.Xaml.Window.Current.Visible;
+        }
+        internal static async Task<bool> GetIfPrimaryWindowVisibleAsync()
+        {
+            return await App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                return App.GetIfPrimaryWindowVisible();
+            });
+        }
+
         public override async Task OnSuspendingAsync()
         {
             LogManager.Info(typeof(App), "Application Suspending");

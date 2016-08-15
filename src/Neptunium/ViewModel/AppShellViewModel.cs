@@ -135,7 +135,16 @@ namespace Neptunium.ViewModel
         {
             StationMediaPlayer.BackgroundAudioError -= ShoutcastStationMediaPlayer_BackgroundAudioError; //throttle error messages
 
-            await IoC.Current.Resolve<IMessageDialogService>().ShowAsync("We are unable to play this station.", "Error while trying to play this station.");
+            bool appVisible = await App.GetIfPrimaryWindowVisibleAsync();
+
+            if (appVisible)
+            {
+                await IoC.Current.Resolve<IMessageDialogService>().ShowAsync("What the goodness?!", "An error occured while trying stream this station.");
+            }
+            else
+            {
+                ShowMediaErrorNotification("What the goodness?!", "An error occured while trying stream this station.");
+            }
 
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
         }
@@ -158,12 +167,53 @@ namespace Neptunium.ViewModel
             {
                 await App.Dispatcher.RunWhenIdleAsync(() =>
                 {
-                    if (!Windows.UI.Xaml.Window.Current.Visible)
+                    if (!App.GetIfPrimaryWindowVisible())
                         ShowSongNotification();
                 });
             }
 
             UpdateLiveTile();
+        }
+
+        internal void ShowMediaErrorNotification(string title, string message)
+        {
+            try
+            {
+                ToastContent content = new ToastContent()
+                {
+                    Visual = new ToastVisual()
+                    {
+                        BindingGeneric = new ToastBindingGeneric()
+                        {
+                            Children =
+                            {
+                                new AdaptiveText()
+                                {
+                                    Text = title,
+                                    HintStyle = AdaptiveTextStyle.Title
+                                },
+                                new AdaptiveText()
+                                {
+                                    Text = message,
+                                    HintStyle = AdaptiveTextStyle.Body
+                                }
+                            },
+                        }
+                    }
+                };
+
+                XmlDocument doc = content.GetXml();
+                ToastNotification notification = new ToastNotification(doc);
+                notification.NotificationMirroring = NotificationMirroring.Disabled;
+                notification.Tag = "mediaError";
+
+                ToastNotificationManager.CreateToastNotifier().Show(notification);
+
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         internal void ShowSongNotification()
