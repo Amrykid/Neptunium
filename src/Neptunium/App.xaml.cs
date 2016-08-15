@@ -32,6 +32,7 @@ using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using Windows.System.RemoteSystems;
 using Kukkii;
+using Windows.System;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -58,7 +59,56 @@ namespace Neptunium
             this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
 
             CoreInit();
+
+            Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
+            Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;
+
+            App.Current.EnteredBackground += Current_EnteredBackground;
+            App.Current.LeavingBackground += Current_LeavingBackground;
         }
+
+        private static volatile bool isInBackground = false;
+
+        private void Current_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
+        {
+            isInBackground = false;
+        }
+
+        private void Current_EnteredBackground(object sender, EnteredBackgroundEventArgs e)
+        {
+            isInBackground = true;
+        }
+
+        #region Memory reduction stuff based on https://msdn.microsoft.com/en-us/windows/uwp/audio-video-camera/background-audio
+        private void MemoryManager_AppMemoryUsageLimitChanging(object sender, AppMemoryUsageLimitChangingEventArgs e)
+        {
+            if (MemoryManager.AppMemoryUsage >= e.NewLimit)
+            {
+                ReduceMemoryUsage(e.NewLimit);
+            }
+        }
+
+        private void MemoryManager_AppMemoryUsageIncreased(object sender, object e)
+        {
+            var level = MemoryManager.AppMemoryUsageLevel;
+
+            if (level == AppMemoryUsageLevel.OverLimit || level == AppMemoryUsageLevel.High)
+            {
+                ReduceMemoryUsage(MemoryManager.AppMemoryUsageLimit);
+            }
+        }
+
+        public void ReduceMemoryUsage(ulong limit)
+        {
+            if (isInBackground)
+            {
+                if (StationDataManager.IsInitialized)
+                    StationDataManager.DeinitializeAsync();
+
+                GC.Collect();
+            }
+        }
+        #endregion
 
         protected override void OnConfigure()
         {
@@ -159,7 +209,7 @@ namespace Neptunium
                 var pargs = args as ProtocolActivatedEventArgs;
 
                 var uri = pargs.Uri;
-                switch(uri.LocalPath.ToLower())
+                switch (uri.LocalPath.ToLower())
                 {
                     case "play-station":
                         {
@@ -196,7 +246,7 @@ namespace Neptunium
 
         internal static bool GetIfPrimaryWindowVisible()
         {
-            return Windows.UI.Xaml.Window.Current.Visible;
+            return Windows.UI.Xaml.Window.Current.Visible || isInBackground;
         }
         internal static async Task<bool> GetIfPrimaryWindowVisibleAsync()
         {

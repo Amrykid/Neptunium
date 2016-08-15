@@ -24,7 +24,10 @@ namespace Neptunium.ViewModel
                 await StationDataManager.InitializeAsync();
             }
 
-            Stations = new ObservableCollection<StationModel>(StationDataManager.Stations);
+            if (e.Direction == CrystalNavigationDirection.Forward || e.Direction == CrystalNavigationDirection.Restore || e.Direction == CrystalNavigationDirection.Refresh)
+            {
+                Stations = new ObservableCollection<StationModel>(StationDataManager.Stations);
+            }
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)

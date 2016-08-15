@@ -99,5 +99,16 @@ namespace Neptunium.Data
                 reader.Dispose();
             }
         }
+
+        internal static Task DeinitializeAsync()
+        {
+            if (!IsInitialized) return Task.CompletedTask;
+
+            Stations = null;
+
+            IsInitialized = false;
+
+            return Task.CompletedTask;
+        }
     }
 }
