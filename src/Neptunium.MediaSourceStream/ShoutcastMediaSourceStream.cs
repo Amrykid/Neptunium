@@ -28,6 +28,9 @@ namespace Neptunium.MediaSourceStream
         StreamSocket socket = null;
         DataWriter socketWriter = null;
         DataReader socketReader = null;
+        private volatile bool connected = false;
+        private string _relativePath = ";";
+        private uint _sampleRate = 44100;
 
         Uri streamUrl = null;
 
@@ -47,9 +50,15 @@ namespace Neptunium.MediaSourceStream
             }
             catch (Exception) { }
 
-            socketWriter.Dispose();
-            socketReader.Dispose();
-            socket.Dispose();
+            try
+            {
+                socketWriter.Dispose();
+                socketReader.Dispose();
+                socket.Dispose();
+            }
+            catch (Exception) { }
+
+            connected = false;
         }
 
         //http://stackoverflow.com/questions/6294807/calculate-mpeg-frame-length-ms
@@ -76,6 +85,15 @@ namespace Neptunium.MediaSourceStream
             socket = new StreamSocket();
         }
 
+
+        public async Task ReconnectAsync()
+        {
+            if (MediaStreamSource == null) throw new InvalidOperationException();
+
+            metadataPos = 0;
+
+            await HandleConnection(_relativePath);
+        }
         public async Task<MediaStreamSource> ConnectAsync(uint sampleRate = 44100, string relativePath = ";")
         {
             try
@@ -105,6 +123,10 @@ namespace Neptunium.MediaSourceStream
                 MediaStreamSource.CanSeek = false;
                 MediaStreamSource.Starting += MediaStreamSource_Starting;
                 MediaStreamSource.Closed += MediaStreamSource_Closed;
+
+                connected = true;
+                _relativePath = relativePath;
+                _sampleRate = sampleRate;
 
                 return MediaStreamSource;
             }
@@ -219,6 +241,8 @@ namespace Neptunium.MediaSourceStream
             }
             catch (Exception ex)
             {
+                connected = false;
+
                 if (MediaStreamSource != null)
                     MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.FailedToConnectToServer);
                 else
@@ -251,6 +275,11 @@ namespace Neptunium.MediaSourceStream
         {
             var request = args.Request;
             var deferral = request.GetDeferral();
+
+            if (!connected)
+            {
+                await ReconnectAsync();
+            }
 
             try
             {
