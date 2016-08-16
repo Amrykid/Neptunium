@@ -12,7 +12,7 @@
             <PivotItem Header="General">
                 <StackPanel>
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Notifications" />
-                    <CheckBox Content="Show Song Nofitications" IsChecked="{Binding ShouldShowSongNofitications, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <CheckBox Content="Show Song Notifications" IsChecked="{Binding ShouldShowSongNofitications, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                     
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Continuous App Experience (Handoff)" />
                     <CheckBox Content="Stop playing on this device after successful handoff" 
