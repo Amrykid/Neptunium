@@ -23,15 +23,31 @@
             </ListView.Transitions>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
-                        <StackPanel Orientation="Horizontal" Padding="0" Height="55">
-                            <Image Height="50" Width="50" x:Name="stationLogo">
-                                <Image.Source>
-                                    <BitmapImage UriSource="{Binding Logo}" DecodePixelWidth="50" DecodePixelHeight="50" />
-                                </Image.Source>
-                            </Image>
-                            <TextBlock Text="{Binding Name}" FontSize="21" HorizontalAlignment="Stretch" Margin="20 0 0 0" VerticalAlignment="Center" />
-                        </StackPanel>
+                    <Grid Padding="0" Height="55" HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Image Height="50" Width="50" Grid.Column="0">
+                            <Image.Source>
+                                <BitmapImage UriSource="{Binding Logo}" DecodePixelWidth="50" DecodePixelHeight="50" />
+                            </Image.Source>
+                        </Image>
+
+                        <Grid Grid.Column="1" Margin="20 0 0 0" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="{Binding Name}" Grid.Row="0" Style="{ThemeResource BaseTextBlockStyle}" 
+                                   Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                            <TextBlock Text="{Binding Description, FallbackValue='No description provided.'}" Grid.Row="1" 
+                                   Style="{ThemeResource BodyTextBlockStyle}" 
+                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
+
+                        </Grid>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

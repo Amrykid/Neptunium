@@ -17,16 +17,33 @@
 
         <DataTemplate x:Key="ListItemTemplate">
             <winrt:ListItemButton Command="{Binding Source={StaticResource AppCommands}, Path=PlayStationCommand}"
-                                  CommandParameter="{Binding}">
-                <StackPanel Orientation="Horizontal" Padding="0" Height="55">
-                    <Image Height="50" Width="50" x:Name="stationLogo">
+                                  CommandParameter="{Binding}" HorizontalAlignment="Stretch">
+                <Grid Padding="0" Height="55">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Height="50" Width="50" Grid.Column="0">
                         <Image.Source>
                             <BitmapImage UriSource="{Binding Logo}" DecodePixelWidth="50" DecodePixelHeight="50" />
                         </Image.Source>
                     </Image>
-                    <TextBlock Text="{Binding Name}" FontSize="21" HorizontalAlignment="Stretch"
-                           x:Name="stationName" Margin="20 0 0 0" VerticalAlignment="Center" />
-                </StackPanel>
+
+                    <Grid Grid.Column="1" Margin="20 0 0 0" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="{Binding Name}" Grid.Row="0" Style="{ThemeResource BaseTextBlockStyle}" 
+                                   Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                        <TextBlock Text="{Binding Description, FallbackValue='No description provided.'}" Grid.Row="1" 
+                                   Style="{ThemeResource BodyTextBlockStyle}" 
+                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
+
+                    </Grid>
+                </Grid>
             </winrt:ListItemButton>
         </DataTemplate>
         <DataTemplate x:Key="WrapItemTemplate">
@@ -35,15 +52,24 @@
                                   Margin="5 5" Height="150" Width="150">
                 <Grid>
                     <Grid.Background>
-                        <ImageBrush Opacity=".5">
+                        <ImageBrush Opacity=".45">
                             <ImageBrush.ImageSource>
                                 <BitmapImage UriSource="{Binding Logo}" />
                             </ImageBrush.ImageSource>
                         </ImageBrush>
                     </Grid.Background>
 
-                    <TextBlock Text="{Binding Name}" FontSize="18" Width="150" x:Name="stationName" Grid.Row="1"
-                           Margin="0 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" />
+                    <TextBlock x:Name="stationName" Margin="0 0 0 0" VerticalAlignment="Center"
+                               TextAlignment="Center"
+                               HorizontalAlignment="Center" TextWrapping="WrapWholeWords">
+                        <Span>
+                            <Run Text="{Binding Name}" FontSize="18" FontWeight="SemiBold" 
+                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                            <LineBreak />
+                            <Run Text="{Binding Description}" FontSize="15" 
+                                 Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
+                        </Span>
+                    </TextBlock>
                 </Grid>
             </winrt:ListItemButton>
         </DataTemplate>
