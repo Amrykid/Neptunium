@@ -31,6 +31,7 @@
     <Capability Name="internetClient" />
     <uap3:Capability Name="backgroundMediaPlayback" />
     <uap3:Capability Name="remoteSystem" />
+    <DeviceCapability Name="bluetooth" />
     <DeviceCapability Name="radios" />
   </Capabilities>
 </Package>

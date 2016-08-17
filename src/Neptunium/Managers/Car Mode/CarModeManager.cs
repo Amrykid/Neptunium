@@ -37,6 +37,7 @@ namespace Neptunium.Managers
 
         #region Options
         public static DeviceInformation SelectedDevice { get; private set; }
+        private static BluetoothDevice SelectedDeviceObj { get; set; }
         public static bool ShouldAnnounceSongs { get; private set; }
         public static bool ShouldUseJapaneseVoice { get; private set; }
 
@@ -80,18 +81,6 @@ namespace Neptunium.Managers
             if (Crystal3.CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Mobile) return;
 #endif
 
-            //creates a AQS filter string for watching for PAIRED bluetooth devices.
-            var selector = BluetoothDevice.GetDeviceSelectorFromPairingState(true);
-            //creates a device watcher which will detect paired bluetooth devices and watches their connection status,
-            watcher = DeviceInformation.CreateWatcher(selector, GetWantedProperties());
-
-            watcher.Added += Watcher_Added;
-            watcher.Removed += Watcher_Removed;
-            watcher.EnumerationCompleted += Watcher_EnumerationCompleted;
-            watcher.Updated += Watcher_Updated;
-
-            DetectedBluetoothDevices = new ReadOnlyObservableCollection<DeviceInformation>(detectedDevices);
-
             radioAccess = await await App.Dispatcher.RunWhenIdleAsync(() =>
             {
                 return Radio.RequestAccessAsync();
@@ -100,27 +89,25 @@ namespace Neptunium.Managers
             if (radioAccess == RadioAccessStatus.Allowed)
             {
                 var BTradios = (await Radio.GetRadiosAsync()).Where(x => x.Kind == RadioKind.Bluetooth);
-                foreach(var btRadio in BTradios)
+                foreach (var btRadio in BTradios)
                     btRadio.StateChanged += BtRadio_StateChanged;
             }
 
 
-                //Pull the selected bluetooth device from settings if it exists
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
+            //Pull the selected bluetooth device from settings if it exists
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
             {
                 var deviceID = ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] as string;
 
                 if (!string.IsNullOrWhiteSpace(deviceID))
                 {
-                    SelectedDevice = await DeviceInformation.CreateFromIdAsync(deviceID, GetWantedProperties());
+                    SelectedDevice = await DeviceInformation.CreateFromIdAsync(deviceID);
 
                     if (SelectedDevice != null)
                     {
-                        if (watcher.Status == DeviceWatcherStatus.Stopped || watcher.Status == DeviceWatcherStatus.Created)
-                            watcher.Start();
+                        SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
 
-                        bool isConnected = (bool)SelectedDevice.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
-                        SetCarModeStatus(isConnected && await GetIfBluetoothIsOnAsync());
+                        SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
                     }
                 }
             }
@@ -135,16 +122,19 @@ namespace Neptunium.Managers
             japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
                 x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female);
 
-
             IsInitialized = true;
+        }
+
+        private static void SelectedDeviceObj_ConnectionStatusChanged(BluetoothDevice sender, object args)
+        {
+            SetCarModeStatus(sender.ConnectionStatus == BluetoothConnectionStatus.Connected);
         }
 
         private static async void BtRadio_StateChanged(Radio sender, object args)
         {
             if (SelectedDevice != null)
             {
-                bool isConnected = (bool)SelectedDevice.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
-                SetCarModeStatus(isConnected && await GetIfBluetoothIsOnAsync());
+                
             }
         }
 
@@ -158,11 +148,6 @@ namespace Neptunium.Managers
             }
 
             return false;
-        }
-
-        private static IEnumerable<string> GetWantedProperties()
-        {
-            return new List<string> { "System.Devices.Connected", "System.Devices.Aep.IsConnected" };
         }
 
         private static async void StationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
@@ -234,44 +219,36 @@ namespace Neptunium.Managers
 
             DevicePicker picker = new DevicePicker();
 
-            foreach (var prop in GetWantedProperties())
-                picker.RequestedProperties.Add(prop);
-
             picker.Filter.SupportedDeviceClasses.Add(DeviceClass.AudioRender);
+            picker.Filter.SupportedDeviceSelectors.Add(
+                BluetoothDevice.GetDeviceSelectorFromClassOfDevice(
+                    BluetoothClassOfDevice.FromParts(BluetoothMajorClass.AudioVideo,
+                        BluetoothMinorClass.AudioVideoCarAudio | BluetoothMinorClass.AudioVideoHeadphones | BluetoothMinorClass.AudioVideoPortableAudio,
+                        BluetoothServiceCapabilities.AudioService)));
+
             picker.Filter.SupportedDeviceSelectors.Add(BluetoothDevice.GetDeviceSelectorFromPairingState(true));
 
-            SelectedDevice = await picker.PickSingleDeviceAsync(uiArea);
+            var selection = await picker.PickSingleDeviceAsync(uiArea);
 
-            if (SelectedDevice == null)
+            if (selection != null)
             {
-            }
-            else
-            {
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
-                    ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] = SelectedDevice.Id;
-
-                if (watcher.Status == DeviceWatcherStatus.Stopped || watcher.Status == DeviceWatcherStatus.Stopping || watcher.Status == DeviceWatcherStatus.Created)
+                try
                 {
-                    if (watcher.Status == DeviceWatcherStatus.Stopping)
-                    {
-                        TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
-                        TypedEventHandler<DeviceWatcher, object> handler = null;
-                        handler = new TypedEventHandler<DeviceWatcher, object>((w, o) =>
-                        {
-                            watcher.Stopped -= handler;
-                            tcs.SetResult(null);
-                        });
-                        watcher.Stopped += handler;
+                    if (SelectedDeviceObj != null)
+                        SelectedDeviceObj.ConnectionStatusChanged -= SelectedDeviceObj_ConnectionStatusChanged;
 
-                        await tcs.Task;
-                    }
+                    SelectedDevice = selection;
 
-                    if (watcher.Status == DeviceWatcherStatus.Stopped || watcher.Status == DeviceWatcherStatus.Created)
-                        watcher.Start();
+                    SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
+
+                    SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
+
+                    if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
+                        ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] = SelectedDevice.Id;
+
+                    SetCarModeStatus(SelectedDeviceObj.ConnectionStatus == BluetoothConnectionStatus.Connected);
                 }
-
-                bool isConnected = (bool)SelectedDevice.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
-                SetCarModeStatus(isConnected && await GetIfBluetoothIsOnAsync());
+                catch (Exception) { }
             }
         }
 
@@ -283,53 +260,12 @@ namespace Neptunium.Managers
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
                 ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] = string.Empty;
 
-            if (watcher.Status != DeviceWatcherStatus.Stopped && watcher.Status != DeviceWatcherStatus.Stopping)
-                watcher.Stop();
+            //if (watcher.Status != DeviceWatcherStatus.Stopped && watcher.Status != DeviceWatcherStatus.Stopping)
+            //    watcher.Stop();
 
             SetCarModeStatus(false);
         }
 
         public static event EventHandler<CarModeManagerCarModeStatusChangedEventArgs> CarModeManagerCarModeStatusChanged;
-
-        #region Device Watcher Stuff
-        private static async void Watcher_Updated(DeviceWatcher sender, DeviceInformationUpdate args)
-        {
-            if (detectedDevices.Any(x => x.Id == args.Id))
-            {
-                var device = detectedDevices.FirstOrDefault(x => x.Id == args.Id);
-                if (device != null)
-                {
-                    device.Update(args);
-
-                    if (device.Id == SelectedDevice?.Id)
-                    {
-                        SelectedDevice = device;
-                        try
-                        {
-                            bool isConnected = (bool)device.Properties.FirstOrDefault(p => p.Key == "System.Devices.Aep.IsConnected").Value;
-                            SetCarModeStatus(isConnected && await GetIfBluetoothIsOnAsync());
-                        }
-                        catch (Exception) { }
-                    }
-                }
-            }
-        }
-
-        private static void Watcher_EnumerationCompleted(DeviceWatcher sender, object args)
-        {
-
-        }
-
-        private static void Watcher_Removed(DeviceWatcher sender, DeviceInformationUpdate args)
-        {
-            if (detectedDevices.Any(x => x.Id == args.Id))
-                detectedDevices.Remove(detectedDevices.First(x => x.Id == args.Id));
-        }
-
-        private static void Watcher_Added(DeviceWatcher sender, DeviceInformation args)
-        {
-            detectedDevices.Add(args);
-        }
-        #endregion
     }
 }
