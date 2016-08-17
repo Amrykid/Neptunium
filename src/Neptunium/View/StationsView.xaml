@@ -30,9 +30,9 @@
                         </Image.Source>
                     </Image>
 
-                    <Grid Grid.Column="1" Margin="0 0 0 0" Padding="10 0 10 10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="55">
+                    <Grid Grid.Column="1" Margin="0 0 0 0" Padding="10 0 10 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="55">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="25" />
+                            <RowDefinition Height="23" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
