@@ -62,22 +62,21 @@ namespace Neptunium
 
             Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
             Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;
-
-            App.Current.EnteredBackground += Current_EnteredBackground;
-            App.Current.LeavingBackground += Current_LeavingBackground;
         }
 
         private static volatile bool isInBackground = false;
 
-        private void Current_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
+        public override Task OnForegroundingAsync()
         {
             isInBackground = false;
+            return base.OnForegroundingAsync();
         }
-
-        private void Current_EnteredBackground(object sender, EnteredBackgroundEventArgs e)
+        public override Task OnBackgroundingAsync()
         {
             isInBackground = true;
+            return base.OnBackgroundingAsync();
         }
+        
 
         #region Memory reduction stuff based on https://msdn.microsoft.com/en-us/windows/uwp/audio-video-camera/background-audio
         private void MemoryManager_AppMemoryUsageLimitChanging(object sender, AppMemoryUsageLimitChangingEventArgs e)
