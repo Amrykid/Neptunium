@@ -19,6 +19,15 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
+
+                <Grid.Background>
+                    <ImageBrush Opacity=".45" Stretch="UniformToFill">
+                        <ImageBrush.ImageSource>
+                            <BitmapImage UriSource="{Binding CurrentStation.Background}"/>
+                        </ImageBrush.ImageSource>
+                    </ImageBrush>
+                </Grid.Background>
+
                 <Grid Grid.Row="0" x:Name="StationInfoPanel" Margin="20 5">
                     <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentStation.Title, UpdateSourceTrigger=PropertyChanged}" />
                     <Image Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 

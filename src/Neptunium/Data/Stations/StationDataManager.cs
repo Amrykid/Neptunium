@@ -40,6 +40,17 @@ namespace Neptunium.Data
                     station.Name = stationElement.Element("Name").Value;
                     station.Description = stationElement.Element("Description").Value;
                     station.Logo = stationElement.Element("Logo").Value;
+
+                    try
+                    {
+                        if (stationElement.Element("Background") != null)
+                        {
+                            var backgroundElement = stationElement.Element("Background");
+                            station.Background = backgroundElement.Value;
+                        }
+                    }
+                    catch (Exception) { }
+
                     station.Site = stationElement.Element("Site").Value;
                     station.Genres = stationElement.Element("Genres").Value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 

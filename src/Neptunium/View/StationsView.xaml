@@ -38,7 +38,7 @@
 
                         <TextBlock Text="{Binding Name}" Grid.Row="0" Style="{ThemeResource BaseTextBlockStyle}" 
                                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                        <TextBlock Text="{Binding Description}" Grid.Row="1" 
+                        <TextBlock Text="{Binding Description}" Grid.Row="1" TextTrimming="WordEllipsis" 
                                    Style="{ThemeResource BodyTextBlockStyle}" 
                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
 

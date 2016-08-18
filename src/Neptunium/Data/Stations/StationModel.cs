@@ -18,6 +18,8 @@ namespace Neptunium.Data
         [DataMember]
         public string Logo { get; internal set; }
         [DataMember]
+        public string Background { get; internal set; }
+        [DataMember]
         public string Name { get; internal set; }
         [DataMember]
         public string Site { get; internal set; }
