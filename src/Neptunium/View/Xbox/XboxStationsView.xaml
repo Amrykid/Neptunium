@@ -23,7 +23,7 @@
             </ListView.Transitions>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="0" Height="55">
+                    <Grid Padding="0" Height="60">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50" />
                             <ColumnDefinition Width="*" />
@@ -35,10 +35,10 @@
                             </Image.Source>
                         </Image>
 
-                        <Grid Grid.Column="1" Margin="0 0 0 0" Padding="10 0 10 10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="55">
+                        <Grid Grid.Column="1" Margin="0 0 0 0" Padding="10 0 10 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="60">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="25" />
-                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
                             <TextBlock Text="{Binding Name}" Grid.Row="0" Style="{ThemeResource BaseTextBlockStyle}" 

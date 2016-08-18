@@ -2,13 +2,17 @@
 <Stations>
   <Station>
     <Name>AnimeAmaze</Name>
-    <Description></Description>
+    <Description>A commercial free Internet radio station streaming J-Pop, and all sorts of great music, straight from Japan, in celebration of Japanese Culture.</Description>
     <Logo>http://media-cache-ak0.pinimg.com/736x/31/49/96/3149969651addc3627b4d360545c6149.jpg</Logo>
+    <Background>http://www.animeamaze.com/web/wp-content/uploads/2016/04/slider1_reduced.jpg?1471506640148</Background>
     <Site>http://www.animeamaze.com/#</Site>
     <Genres>Anime; J-Pop</Genres>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://199.187.121.124:10007/</Stream>
     </Streams>
+    <StationMessages>
+      <Message>AnimeAMAZE - Triple-M - AnimeAMAZE Internet Radio</Message>
+    </StationMessages>
   </Station>
   <Station>
     <Name>AnimeNfo</Name>
@@ -23,7 +27,7 @@
   </Station>
   <Station>
     <Name>Japan-A-Radio</Name>
-    <Description></Description>
+    <Description>Japan-A-Radio plays the best Japanese music from JPOP to Anime Soundtracks, including JROCK, Enka, and other specialty programming 24 hours a day, 7 days a week. </Description>
     <Logo>http://www.japanaradio.com/images/logo02.png</Logo>
     <Site>http://www.japanaradio.com/index.php</Site>
     <Genres>J-Pop; Anime</Genres>
@@ -64,8 +68,9 @@
   </Station>
   <Station>
     <Name>RadioVocaloid</Name>
-    <Description></Description>
+    <Description>Radio Vocaloid station online listen vocaloid music streaming radio.</Description>
     <Logo>http://4.bp.blogspot.com/-wN_jxmS7poI/VS0FZWHKVOI/AAAAAAAACXA/bM1ZVr3mNWU/s238/radio-vocaloid-logo.png</Logo>
+    <Background>https://2.bp.blogspot.com/-baIw_szPZKI/VuT551_pjYI/AAAAAAAACvQ/oaqnEq0Rv-M_tCGaSdma-nqVXVLNZHUxw/s1600/radio-vocaloid.jpg</Background>
     <Site>http://www.radiovocaloid.com/</Site>
     <Genres>Anime; J-Pop</Genres>
     <Background>http://1.bp.blogspot.com/-Ij-IW-Gpwcw/VUyEgLzhlyI/AAAAAAAACYg/xh7KhIcU6qE/s1600/radio-vocaloid.png</Background>
@@ -79,9 +84,9 @@
     <Logo>
       <![CDATA[https://scontent-dfw1-1.xx.fbcdn.net/v/t1.0-9/10897867_10153650152509386_7707399943066538257_n.jpg?oh=ea2b44d0aa0a54ef316bbc1d4fb21f3d&oe=57F1D14C]]>
     </Logo>
+    <Background><![CDATA[https://scontent-dfw1-1.xx.fbcdn.net/v/t1.0-9/10858627_10153592863194386_7716539785810170138_n.jpg?oh=35a826ffca40f5d4bff542a2dc04428d&oe=58045ACB]]></Background>
     <Site>http://en.j1fm.com/</Site>
     <Genres>J-Pop;J-Rock</Genres>
-    <Background><![CDATA[https://scontent-dfw1-1.xx.fbcdn.net/v/t1.0-9/10858627_10153592863194386_7716539785810170138_n.jpg?oh=35a826ffca40f5d4bff542a2dc04428d&oe=58045ACB]]></Background>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html?sid=1">
         http://cabhs30.sonixcast.com:9774/
