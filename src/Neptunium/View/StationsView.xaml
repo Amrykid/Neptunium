@@ -66,7 +66,7 @@
                             <Run Text="{Binding Name}" FontSize="18" FontWeight="SemiBold" 
                                  Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
                             <LineBreak />
-                            <Run Text="{Binding Description}" FontSize="15" 
+                            <Run Text="{Binding Description}" FontSize="15"
                                  Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
                         </Span>
                     </TextBlock>

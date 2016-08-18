@@ -2,7 +2,7 @@
 <Stations>
   <Station>
     <Name>AnimeAmaze</Name>
-    <Description>A commercial free Internet radio station streaming J-Pop, and all sorts of great music, straight from Japan, in celebration of Japanese Culture.</Description>
+    <Description>A commercial free Internet radio station streaming J-Pop, and all sorts of great music.</Description>
     <Logo>http://media-cache-ak0.pinimg.com/736x/31/49/96/3149969651addc3627b4d360545c6149.jpg</Logo>
     <Background>http://www.animeamaze.com/web/wp-content/uploads/2016/04/slider1_reduced.jpg?1471506640148</Background>
     <Site>http://www.animeamaze.com/#</Site>
@@ -27,7 +27,7 @@
   </Station>
   <Station>
     <Name>Japan-A-Radio</Name>
-    <Description>Japan-A-Radio plays the best Japanese music from JPOP to Anime Soundtracks, including JROCK, Enka, and other specialty programming 24 hours a day, 7 days a week. </Description>
+    <Description>The best Japanese music from JPOP to Anime Soundtracks.</Description>
     <Logo>http://www.japanaradio.com/images/logo02.png</Logo>
     <Site>http://www.japanaradio.com/index.php</Site>
     <Genres>J-Pop; Anime</Genres>
