@@ -4,6 +4,7 @@ using Crystal3.Navigation;
 using Neptunium.Fragments;
 using Neptunium.Logging;
 using Neptunium.MediaSourceStream;
+using Neptunium.Services.SnackBar;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -56,6 +57,8 @@ namespace Neptunium.View
             this.DataContextChanged += AppShellView_DataContextChanged;
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
+
+            IoC.Current.Register<ISnackBarService>(new SnackBarService(snackBarGrid));
 
         }
 

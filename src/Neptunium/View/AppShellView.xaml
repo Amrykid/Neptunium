@@ -267,7 +267,9 @@
                 <Grid x:Name="SplitViewContentGrid" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition x:Name="CurrentPaneTitleRow" Height="75" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
+                        
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0">
@@ -289,7 +291,9 @@
                         <TextBlock x:Name="CurrentPaneTitle" Grid.Column="1" Style="{ThemeResource SubheaderTextBlockStyle}" />
                     </Grid>
 
-                    <Grid Grid.Row="1">
+                    <Grid x:Name="snackBarGrid" Grid.Row="1"/>
+
+                    <Grid x:Name="inlineFrameGrid" Grid.Row="2">
                         <Frame x:Name="inlineFrame">
                             <Frame.ContentTransitions>
                                 <TransitionCollection>
