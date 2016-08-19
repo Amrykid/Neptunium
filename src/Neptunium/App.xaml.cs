@@ -76,7 +76,7 @@ namespace Neptunium
             isInBackground = true;
             return base.OnBackgroundingAsync();
         }
-        
+
 
         #region Memory reduction stuff based on https://msdn.microsoft.com/en-us/windows/uwp/audio-video-camera/background-audio
         private void MemoryManager_AppMemoryUsageLimitChanging(object sender, AppMemoryUsageLimitChangingEventArgs e)
@@ -275,6 +275,8 @@ namespace Neptunium
                 await ContinuedAppExperienceManager.InitializeAsync();
             ContinuedAppExperienceManager.StartWatchingForRemoteSystems();
 
+            ContinuedAppExperienceManager.CheckForReverseHandoffOpportunities();
+
             await base.OnResumingAsync();
         }
 
@@ -282,10 +284,17 @@ namespace Neptunium
         {
             switch (args.TaskInstance.Task.Name)
             {
-                case ContinuedAppExperienceManager.ContinuedAppExperienceAppServiceName:
+                default:
                     if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails)
                     {
-                        ContinuedAppExperienceManager.HandleBackgroundActivation(args.TaskInstance.TriggerDetails as AppServiceTriggerDetails);
+                        var asTD = args.TaskInstance.TriggerDetails as AppServiceTriggerDetails;
+
+                        switch (asTD.Name)
+                        {
+                            case ContinuedAppExperienceManager.ContinuedAppExperienceAppServiceName:
+                                ContinuedAppExperienceManager.HandleBackgroundActivation(asTD);
+                                break;
+                        }
                     }
                     break;
             }

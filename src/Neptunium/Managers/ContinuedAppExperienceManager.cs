@@ -1,5 +1,8 @@
-﻿using Neptunium.Data;
+﻿using Crystal3.Core;
+using Crystal3.InversionOfControl;
+using Neptunium.Data;
 using Neptunium.Media;
+using Neptunium.Services.SnackBar;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,7 +21,7 @@ namespace Neptunium.Managers
 {
     public static class ContinuedAppExperienceManager
     {
-        public const string ContinuedAppExperienceAppServiceName = "ContinuedAppExperienceAppService";
+        public const string ContinuedAppExperienceAppServiceName = "com.Amrykid.CAEAppService";
         public const string StopPlayingMusicAfterGoodHandoff = "StopPlayingMusicAfterGoodHandoff";
         public const string AppPackageName = "61121Amrykid.Neptunium_h1dcj6f978yqr";
 
@@ -56,7 +59,7 @@ namespace Neptunium.Managers
             {
                 systemList = new ObservableCollection<RemoteSystem>();
                 RemoteSystemsList = new ReadOnlyObservableCollection<RemoteSystem>(systemList);
-                remoteSystemWatcher = RemoteSystem.CreateWatcher();
+                remoteSystemWatcher = RemoteSystem.CreateWatcher(new IRemoteSystemFilter[] {new RemoteSystemDiscoveryTypeFilter(RemoteSystemDiscoveryType.Proximal) });
                 StartWatchingForRemoteSystems();
             }
 
@@ -135,7 +138,6 @@ namespace Neptunium.Managers
 
             try
             {
-
                 string ver = string.Format("{0}.{1}.{2}.{3}", Package.Current.Id.Version.Major, Package.Current.Id.Version.Minor, Package.Current.Id.Version.Build, Package.Current.Id.Version.Revision);
                 AppServiceConnection connection = new AppServiceConnection();
                 connection.AppServiceName = ContinuedAppExperienceAppServiceName;
@@ -195,6 +197,82 @@ namespace Neptunium.Managers
             }
         }
 
+        public static async void CheckForReverseHandoffOpportunities()
+        {
+            if (IsSupported)
+            {
+                var streamingDevices = await DetectStreamingDevicesAsync();
+
+                if (streamingDevices.Count > 0)
+                {
+                    if (streamingDevices.Count == 1)
+                    {
+                        var streamingDevice = streamingDevices.First();
+                        await IoC.Current.Resolve<ISnackBarService>().ShowActionableSnackAsync(
+                            "You're streaming on \'" + streamingDevice.Item1.DisplayName + "\'.",
+                            "Transfer playback",
+                            async x =>
+                            {
+                                //do reverse handoff
+
+                                var cmd = new ValueSet();
+                                cmd.Add("Message", "StopPlayback");
+                                var stopMsgTask = SendDataToDeviceAsync(streamingDevice.Item1, cmd);
+
+                                var playStationTask = StationMediaPlayer.PlayStationAsync(streamingDevice.Item2);
+
+                                await Task.WhenAny(stopMsgTask, playStationTask);
+                            },
+                            10000);
+                    }
+                    else
+                    {
+                        await IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync("You have multiple devices streaming.", 3000);
+                    }
+                }
+            }
+        }
+
+        private static async Task<List<Tuple<RemoteSystem, StationModel>>> DetectStreamingDevicesAsync()
+        {
+            if (!StationDataManager.IsInitialized)
+                await StationDataManager.InitializeAsync();
+
+            List<Tuple<RemoteSystem, StationModel>> devices = new List<Tuple<RemoteSystem, StationModel>>();
+
+            var packet = new ValueSet();
+            packet.Add("Message", "Status");
+
+            foreach(var system in systemList.ToArray())
+            {
+                try
+                {
+                    var response = await SendDataToDeviceAsync(system, packet);
+
+                    if (response != null)
+                    {
+                        if (response?.Status == AppServiceResponseStatus.Success)
+                        {
+                            var responseMsg = response.Message;
+
+                            if (responseMsg["Status"].ToString() == "OK")
+                            {
+                                if (bool.Parse(responseMsg["IsPlaying"].ToString()) == true)
+                                {
+                                    var station = StationDataManager.Stations.FirstOrDefault(x => x.Name == responseMsg["CurrentStation"].ToString());
+
+                                    devices.Add(new Tuple<RemoteSystem, StationModel>(system, station));
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception) { }
+            }
+
+            return devices;
+        }
+
         #region Handling app service requests
         internal static void HandleBackgroundActivation(AppServiceTriggerDetails appServiceTriggerDetails)
         {
@@ -214,52 +292,33 @@ namespace Neptunium.Managers
 
             var response = new ValueSet();
 
-            switch (message["Command"].ToString())
+            switch (message["Message"].ToString())
             {
-                case "Play-Station":
+                case "Status":
                     {
-                        if (Windows.Networking.Connectivity.NetworkInformation.GetInternetConnectionProfile() != null)
-                        {
-                            var stationName = message["Station"].ToString();
+                        response.Add("Status", "OK");
+                        response.Add("IsPlaying", StationMediaPlayer.IsPlaying);
 
-                            if (!StationDataManager.IsInitialized)
-                                await StationDataManager.InitializeAsync();
-
-                            var stationModel = StationDataManager.Stations.FirstOrDefault(x => x.Name == stationName);
-
-                            if (stationModel != null)
-                            {
-                                if (StationMediaPlayer.IsPlaying)
-                                    StationMediaPlayer.Stop();
-
-                                var result = await StationMediaPlayer.PlayStationAsync(stationModel);
-
-                                if (result == true)
-                                {
-                                    response.Add("Status", "OK");
-                                }
-                                else
-                                {
-                                    response.Add("Status", "CantPlay");
-                                }
-                            }
-                            else
-                            {
-                                response.Add("Status", "NotFound");
-                            }
-
-                            await args.Request.SendResponseAsync(response);
-                        }
-
+                        if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
+                            response.Add("CurrentStation", StationMediaPlayer.CurrentStation.Name);
+                        
+                        break;
+                    }
+                case "StopPlayback":
+                    {
+                        if (StationMediaPlayer.IsPlaying)
+                            StationMediaPlayer.Stop();
+                        response.Add("Status", "OK");
                         break;
                     }
                 default:
                     {
                         response.Add("Status", "Unknown");
-                        await args.Request.SendResponseAsync(response);
                         break;
                     }
             }
+
+            await args.Request.SendResponseAsync(response);
 
             deferral.Complete();
         }

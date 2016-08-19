@@ -8,6 +8,7 @@ using Crystal3.UI.MessageDialog;
 using Neptunium.Data;
 using Neptunium.Fragments;
 using Neptunium.Logging;
+using Neptunium.Managers;
 using Neptunium.Media;
 using Neptunium.Shared;
 using NotificationsExtensions;
@@ -111,6 +112,9 @@ namespace Neptunium.ViewModel
             StationMediaPlayer.ConnectingStatusChanged += StationMediaPlayer_ConnectingStatusChanged;
 
             BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
+
+            await Task.Delay(5000); //give the cae manager a chance to discover some devices.
+            ContinuedAppExperienceManager.CheckForReverseHandoffOpportunities();
         }
 
         private void Current_CurrentStateChanged(MediaPlayer sender, object args)
@@ -190,7 +194,7 @@ namespace Neptunium.ViewModel
                                 new AdaptiveText()
                                 {
                                     Text = title,
-                                    HintStyle = AdaptiveTextStyle.Title
+                                    HintStyle = AdaptiveTextStyle.Title,
                                 },
                                 new AdaptiveText()
                                 {
@@ -287,7 +291,7 @@ namespace Neptunium.ViewModel
             }
         }
 
-        public void UpdateLiveTile()
+        public static void UpdateLiveTile()
         {
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
 
