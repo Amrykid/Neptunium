@@ -52,9 +52,16 @@ namespace Neptunium.Media
             smtc.IsRewindEnabled = false;
             smtc.IsStopEnabled = false;
 
+            BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+
             IsInitialized = true;
 
             await Task.CompletedTask;
+        }
+
+        private static void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
+        {
+            
         }
 
         public static void Deinitialize()
@@ -63,6 +70,8 @@ namespace Neptunium.Media
 
             smtc.ButtonPressed -= Smtc_ButtonPressed;
             smtc.PropertyChanged -= Smtc_PropertyChanged;
+
+            BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
 
             IsInitialized = false;
         }

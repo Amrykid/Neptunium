@@ -88,6 +88,7 @@ namespace Neptunium.ViewModel
 
             HandOffViewFragment = new HandOffFlyoutViewFragment();
             NowPlayingView = new NowPlayingViewFragment();
+            SleepTimerViewFragment = new SleepTimerFlyoutViewFragment();
 
             WindowManager.GetStatusManagerForCurrentWindow().NormalStatusText = "Neptunium"; //"Hanasu Alpha";
 
@@ -381,7 +382,9 @@ namespace Neptunium.ViewModel
         public RelayCommand PauseCommand { get; private set; }
 
         public ManualRelayCommand HandoffStationCommand { get; private set; }
+
         public HandOffFlyoutViewFragment HandOffViewFragment { get; private set; }
         public NowPlayingViewFragment NowPlayingView { get; private set; }
+        public SleepTimerFlyoutViewFragment SleepTimerViewFragment { get; private set; }
     }
 }

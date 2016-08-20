@@ -109,6 +109,7 @@
     <Compile Include="Controls\StationItemControl.xaml.cs">
       <DependentUpon>StationItemControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Fragments\SleepTimerFlyoutViewFragment.cs" />
     <Compile Include="Managers\Song History\SongHistoryManagerItemAddedEventArgs.cs" />
     <Compile Include="Managers\Song History\SongHistoryManagerItemRemovedEventArgs.cs" />
     <Compile Include="Model\AlbumData.cs" />

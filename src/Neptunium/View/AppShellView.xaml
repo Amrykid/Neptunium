@@ -8,6 +8,7 @@
     xmlns:wst="using:WindowsStateTriggers"
     xmlns:conv="using:Crystal3.UI.Converters"
     xmlns:ki="using:Kimono.Controls"
+    xmlns:wrxt="using:WinRTXamlToolkit.Controls"
     x:Name="LayoutRoot"
     mc:Ignorable="d" RequestedTheme="Dark">
 
@@ -83,6 +84,15 @@
 
                     </StackPanel>
 
+                </Grid>
+            </Flyout>
+
+            <Flyout x:Key="SleepTimerDeviceFlyout" AllowFocusOnInteraction="True" LightDismissOverlayMode="On">
+                <Grid DataContext="{Binding SleepTimerViewFragment, UpdateSourceTrigger=PropertyChanged}">
+                    <ListView x:Name="SleepTimerItemsListView" Header="Stop playing music after:" IsEnabled="{Binding IsViewEnabled, UpdateSourceTrigger=PropertyChanged}"
+                              ItemsSource="{Binding AvailableSleepItems, UpdateSourceTrigger=PropertyChanged}"
+                              DisplayMemberPath="DisplayName" IsItemClickEnabled="True" ItemClick="SleepTimerItemsListView_ItemClick"
+                              SelectedItem="{Binding SelectedSleepItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </Grid>
             </Flyout>
         </ResourceDictionary>
@@ -346,7 +356,7 @@
             <CommandBar.PrimaryCommands>
                 <AppBarButton Icon="Play" Label="Play" Tag="PlayPause" Command="{Binding PlayCommand}" />
                 <AppBarButton Label="Handoff" Icon="Remote" Flyout="{StaticResource HandOffDeviceFlyout}" />
-                <AppBarButton Label="Sleep Timer" Icon="Clock" />
+                <AppBarButton Label="Sleep Timer" Icon="Clock" Flyout="{StaticResource SleepTimerDeviceFlyout}" />
             </CommandBar.PrimaryCommands>
         </CommandBar>
     </Page.TopAppBar>
@@ -357,7 +367,7 @@
             </CommandBar.PrimaryCommands>
             <CommandBar.SecondaryCommands>
                 <AppBarButton Label="Handoff" Icon="Remote" Flyout="{StaticResource HandOffDeviceFlyout}" />
-                <AppBarButton Label="Sleep Timer" Icon="Clock" />
+                <AppBarButton Label="Sleep Timer" Icon="Clock" Flyout="{StaticResource SleepTimerDeviceFlyout}" />
             </CommandBar.SecondaryCommands>
         </CommandBar>
     </Page.BottomAppBar>

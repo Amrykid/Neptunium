@@ -333,5 +333,20 @@ namespace Neptunium.View
             if (!inlineNavService.IsNavigatedTo<NowPlayingViewViewModel>())
                 inlineNavService.NavigateTo<NowPlayingViewViewModel>();
         }
+
+        private void SleepTimerItemsListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            //todo turn this into a behavior.
+            var listView = sender as ListView;
+            var fragment = listView.DataContext as SleepTimerFlyoutViewFragment;
+
+            fragment.Invoke(this.DataContext as ViewModelBase, e.ClickedItem);
+
+            var parentGrid = listView.Parent as Grid;
+            var parentFlyout = parentGrid.Parent as FlyoutPresenter;
+            var parentPopup = parentFlyout.Parent as Popup;
+
+            parentPopup.IsOpen = false;
+        }
     }
 }
