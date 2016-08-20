@@ -63,7 +63,7 @@ namespace Neptunium.Managers
 
                 systemList = new ObservableCollection<RemoteSystem>();
                 RemoteSystemsList = new ReadOnlyObservableCollection<RemoteSystem>(systemList);
-                remoteSystemWatcher = RemoteSystem.CreateWatcher(new IRemoteSystemFilter[] {new RemoteSystemDiscoveryTypeFilter(RemoteSystemDiscoveryType.Proximal) });
+                remoteSystemWatcher = RemoteSystem.CreateWatcher(new IRemoteSystemFilter[] { new RemoteSystemDiscoveryTypeFilter(RemoteSystemDiscoveryType.Proximal) });
                 StartWatchingForRemoteSystems();
             }
 
@@ -108,7 +108,7 @@ namespace Neptunium.Managers
 
         private static void RemoteSystemWatcher_RemoteSystemUpdated(RemoteSystemWatcher sender, RemoteSystemUpdatedEventArgs args)
         {
-            
+
         }
 
         private static void RemoteSystemWatcher_RemoteSystemRemoved(RemoteSystemWatcher sender, RemoteSystemRemovedEventArgs args)
@@ -149,7 +149,7 @@ namespace Neptunium.Managers
         #endregion
 
 
-        private static async Task<AppServiceResponse> SendDataToDeviceAsync(RemoteSystem device, ValueSet data)
+        private static async Task<Tuple<AppServiceResponse, AppServiceConnection>> SendDataToDeviceAsync(RemoteSystem device, ValueSet data, bool keepAlive = false)
         {
             if (!IsSupported) return null;
 
@@ -164,9 +164,11 @@ namespace Neptunium.Managers
                 if (status == AppServiceConnectionStatus.Success)
                 {
                     var response = await connection.SendMessageAsync(data);
-                    connection.Dispose();
 
-                    return response;
+                    if (!keepAlive)
+                        connection.Dispose();
+
+                    return new Tuple<AppServiceResponse, AppServiceConnection>(response, keepAlive ? connection : null);
                 }
                 else
                 {
@@ -179,6 +181,19 @@ namespace Neptunium.Managers
             {
                 return null;
             }
+        }
+
+        private static async Task<AppServiceResponse> SendDataToDeviceOverExistingConnectionAsync(AppServiceConnection connection, ValueSet data, bool keepAlive = true)
+        {
+            if (!IsSupported) return null;
+
+            var response = await connection.SendMessageAsync(data);
+
+            if (!keepAlive)
+                connection.Dispose();
+
+            return response;
+
         }
 
         private static async Task<RemoteLaunchUriStatus> LaunchAppOnDeviceAsync(RemoteSystem device, string args)
@@ -234,7 +249,7 @@ namespace Neptunium.Managers
 
                                 var cmd = new ValueSet();
                                 cmd.Add("Message", "StopPlayback");
-                                var stopMsgTask = SendDataToDeviceAsync(streamingDevice.Item1, cmd);
+                                var stopMsgTask = SendDataToDeviceOverExistingConnectionAsync(streamingDevice.Item3, cmd, keepAlive: false);
 
                                 var playStationTask = StationMediaPlayer.PlayStationAsync(streamingDevice.Item2);
 
@@ -250,37 +265,42 @@ namespace Neptunium.Managers
             }
         }
 
-        private static async Task<List<Tuple<RemoteSystem, StationModel>>> DetectStreamingDevicesAsync()
+        private static async Task<List<Tuple<RemoteSystem, StationModel, AppServiceConnection>>> DetectStreamingDevicesAsync()
         {
             if (!StationDataManager.IsInitialized)
                 await StationDataManager.InitializeAsync();
 
             await Task.Run(() => watcherLock.WaitOne());
 
-            List<Tuple<RemoteSystem, StationModel>> devices = new List<Tuple<RemoteSystem, StationModel>>();
+            List<Tuple<RemoteSystem, StationModel, AppServiceConnection>> devices = new List<Tuple<RemoteSystem, StationModel, AppServiceConnection>>();
 
             var packet = new ValueSet();
             packet.Add("Message", "Status");
 
-            foreach(var system in systemList.ToArray())
+            foreach (var system in systemList.ToArray())
             {
                 try
                 {
-                    var response = await SendDataToDeviceAsync(system, packet);
+                    var result = await SendDataToDeviceAsync(system, packet, keepAlive: true);
 
-                    if (response != null)
+                    if (result != null)
                     {
-                        if (response?.Status == AppServiceResponseStatus.Success)
+                        var response = result.Item1;
+                        var connection = result.Item2;
+                        if (response != null)
                         {
-                            var responseMsg = response.Message;
-
-                            if (responseMsg["Status"].ToString() == "OK")
+                            if (response.Status == AppServiceResponseStatus.Success)
                             {
-                                if (bool.Parse(responseMsg["IsPlaying"].ToString()) == true)
-                                {
-                                    var station = StationDataManager.Stations.FirstOrDefault(x => x.Name == responseMsg["CurrentStation"].ToString());
+                                var responseMsg = response.Message;
 
-                                    devices.Add(new Tuple<RemoteSystem, StationModel>(system, station));
+                                if (responseMsg["Status"].ToString() == "OK")
+                                {
+                                    if (bool.Parse(responseMsg["IsPlaying"].ToString()) == true)
+                                    {
+                                        var station = StationDataManager.Stations.FirstOrDefault(x => x.Name == responseMsg["CurrentStation"].ToString());
+
+                                        devices.Add(new Tuple<RemoteSystem, StationModel, AppServiceConnection>(system, station, connection));
+                                    }
                                 }
                             }
                         }
@@ -298,13 +318,19 @@ namespace Neptunium.Managers
             if (appServiceTriggerDetails != null)
             {
                 appServiceTriggerDetails.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
+
+                appServiceTriggerDetails.AppServiceConnection.ServiceClosed += AppServiceConnection_ServiceClosed;
             }
+        }
+
+        private static void AppServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
+        {
+            sender.RequestReceived -= AppServiceConnection_RequestReceived;
+            sender.ServiceClosed -= AppServiceConnection_ServiceClosed;
         }
 
         private static async void AppServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
-            sender.RequestReceived -= AppServiceConnection_RequestReceived;
-
             var deferral = args.GetDeferral();
 
             var message = args.Request.Message;
@@ -320,7 +346,7 @@ namespace Neptunium.Managers
 
                         if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
                             response.Add("CurrentStation", StationMediaPlayer.CurrentStation.Name);
-                        
+
                         break;
                     }
                 case "StopPlayback":
