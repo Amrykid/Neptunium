@@ -119,6 +119,11 @@
 
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource XboxAppBarStyle}" />
                         <Setter Target="inlineFrame.Margin" Value="0" />
+
+                        <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="*" />
+                        <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
+                        <Setter Target="snackBarGrid.(Grid.Row)" Value="2" />
+                        <Setter Target="inlineFrameGrid.(Grid.Row)" Value="1" />
                     </VisualState.Setters>
                 </VisualState>
                 
@@ -152,6 +157,11 @@
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
 
                         <Setter Target="inlineFrame.Margin" Value="0" />
+
+                        <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="*" />
+                        <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
+                        <Setter Target="snackBarGrid.(Grid.Row)" Value="2" />
+                        <Setter Target="inlineFrameGrid.(Grid.Row)" Value="1" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -184,6 +194,11 @@
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
 
                         <Setter Target="inlineFrame.Margin" Value="0" />
+
+                        <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="*" />
+                        <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
+                        <Setter Target="snackBarGrid.(Grid.Row)" Value="2" />
+                        <Setter Target="inlineFrameGrid.(Grid.Row)" Value="1" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -214,6 +229,11 @@
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
 
                         <Setter Target="inlineFrame.Margin" Value="0" />
+
+                        <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="Auto" />
+                        <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="*" />
+                        <Setter Target="snackBarGrid.(Grid.Row)" Value="1" />
+                        <Setter Target="inlineFrameGrid.(Grid.Row)" Value="2" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -267,8 +287,8 @@
                 <Grid x:Name="SplitViewContentGrid" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition x:Name="CurrentPaneTitleRow" Height="75" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
+                        <RowDefinition x:Name="SplitViewContentGrid_SecondRow" Height="Auto" />
+                        <RowDefinition x:Name="SplitViewContentGrid_ThirdRow" Height="*" />
                         
                     </Grid.RowDefinitions>
 
