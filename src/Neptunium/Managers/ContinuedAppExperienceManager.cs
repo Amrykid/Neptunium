@@ -248,7 +248,7 @@ namespace Neptunium.Managers
                                 //do reverse handoff
 
                                 var cmd = new ValueSet();
-                                cmd.Add("Message", "StopPlayback");
+                                cmd.Add("Message", "CAE:StopPlayback");
                                 var stopMsgTask = SendDataToDeviceOverExistingConnectionAsync(streamingDevice.Item3, cmd, keepAlive: false);
 
                                 var playStationTask = StationMediaPlayer.PlayStationAsync(streamingDevice.Item2);
@@ -349,7 +349,7 @@ namespace Neptunium.Managers
 
                         break;
                     }
-                case "StopPlayback":
+                case "CAE:StopPlayback":
                     {
                         if (StationMediaPlayer.IsPlaying)
                             StationMediaPlayer.Stop();
