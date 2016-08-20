@@ -24,7 +24,7 @@ namespace Neptunium.Managers
             StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
             SongMetadataManager.FoundMetadata += SongMetadataManager_FoundMetadata;
 
-            songHistoryCollection = await CookieJar.DeviceCache.GetObjectAsync<ObservableCollection<SongHistoryItem>>("SongHistory", () => new ObservableCollection<SongHistoryItem>());
+            songHistoryCollection = await CookieJar.DeviceCache.PeekObjectAsync<ObservableCollection<SongHistoryItem>>("SongHistory", () => new ObservableCollection<SongHistoryItem>());
             SongHistory = new ReadOnlyObservableCollection<SongHistoryItem>(songHistoryCollection);
 
             var items = SongHistory.ToArray();

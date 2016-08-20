@@ -123,6 +123,9 @@ namespace Neptunium
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
 
+            if (!ContinuedAppExperienceManager.IsInitialized)
+                await ContinuedAppExperienceManager.InitializeAsync();
+
             //initialize app settings
             //todo add all settings
 
@@ -169,9 +172,6 @@ namespace Neptunium
 #endif
             if (!CarModeManager.IsInitialized)
                 CarModeManager.Initialize();
-
-            if (!ContinuedAppExperienceManager.IsInitialized)
-                ContinuedAppExperienceManager.InitializeAsync();
 
             //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
 

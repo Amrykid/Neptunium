@@ -113,7 +113,6 @@ namespace Neptunium.ViewModel
 
             BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
 
-            await Task.Delay(5000); //give the cae manager a chance to discover some devices.
             ContinuedAppExperienceManager.CheckForReverseHandoffOpportunities();
         }
 

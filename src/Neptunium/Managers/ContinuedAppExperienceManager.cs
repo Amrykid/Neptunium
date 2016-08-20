@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
@@ -28,6 +29,7 @@ namespace Neptunium.Managers
         #region Variables and Code-Properties
         private static ObservableCollection<RemoteSystem> systemList = null;
         private static RemoteSystemWatcher remoteSystemWatcher = null;
+        private static AutoResetEvent watcherLock = null;
 
         public static bool IsRunning { get; private set; }
 
@@ -57,6 +59,8 @@ namespace Neptunium.Managers
 
             if (RemoteSystemAccess == RemoteSystemAccessStatus.Allowed)
             {
+                watcherLock = new AutoResetEvent(true);
+
                 systemList = new ObservableCollection<RemoteSystem>();
                 RemoteSystemsList = new ReadOnlyObservableCollection<RemoteSystem>(systemList);
                 remoteSystemWatcher = RemoteSystem.CreateWatcher(new IRemoteSystemFilter[] {new RemoteSystemDiscoveryTypeFilter(RemoteSystemDiscoveryType.Proximal) });
@@ -66,17 +70,24 @@ namespace Neptunium.Managers
             IsInitialized = true;
         }
 
-        public static void StartWatchingForRemoteSystems()
+        public static async void StartWatchingForRemoteSystems()
         {
             if (!IsSupported) return;
 
             if (RemoteSystemAccess == RemoteSystemAccessStatus.Allowed && !IsRunning)
             {
+                watcherLock.Reset();
+
                 remoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcher_RemoteSystemAdded;
                 remoteSystemWatcher.RemoteSystemRemoved += RemoteSystemWatcher_RemoteSystemRemoved;
+                remoteSystemWatcher.RemoteSystemUpdated += RemoteSystemWatcher_RemoteSystemUpdated;
                 remoteSystemWatcher.Start();
 
                 IsRunning = true;
+
+                await Task.Delay(5000);
+
+                watcherLock.Set();
             }
         }
 
@@ -88,10 +99,16 @@ namespace Neptunium.Managers
             {
                 remoteSystemWatcher.RemoteSystemAdded -= RemoteSystemWatcher_RemoteSystemAdded;
                 remoteSystemWatcher.RemoteSystemRemoved -= RemoteSystemWatcher_RemoteSystemRemoved;
+                remoteSystemWatcher.RemoteSystemUpdated -= RemoteSystemWatcher_RemoteSystemUpdated;
                 remoteSystemWatcher?.Stop();
 
                 IsRunning = false;
             }
+        }
+
+        private static void RemoteSystemWatcher_RemoteSystemUpdated(RemoteSystemWatcher sender, RemoteSystemUpdatedEventArgs args)
+        {
+            
         }
 
         private static void RemoteSystemWatcher_RemoteSystemRemoved(RemoteSystemWatcher sender, RemoteSystemRemovedEventArgs args)
@@ -237,6 +254,8 @@ namespace Neptunium.Managers
         {
             if (!StationDataManager.IsInitialized)
                 await StationDataManager.InitializeAsync();
+
+            await Task.Run(() => watcherLock.WaitOne());
 
             List<Tuple<RemoteSystem, StationModel>> devices = new List<Tuple<RemoteSystem, StationModel>>();
 
