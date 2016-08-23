@@ -10,6 +10,7 @@ using Neptunium.Fragments;
 using Neptunium.Logging;
 using Neptunium.Managers;
 using Neptunium.Media;
+using Neptunium.Services.SnackBar;
 using Neptunium.Shared;
 using NotificationsExtensions;
 using NotificationsExtensions.Tiles;
@@ -37,6 +38,8 @@ namespace Neptunium.ViewModel
 
             if (!IoC.Current.IsRegistered<IMessageDialogService>())
                 IoC.Current.Register<IMessageDialogService>(new DefaultMessageDialogService());
+
+            CarModeManager.CarModeManagerCarModeStatusChanged += CarModeManager_CarModeManagerCarModeStatusChanged;
 
             GoToStationsViewCommand = new RelayCommand(x =>
             {
@@ -93,6 +96,16 @@ namespace Neptunium.ViewModel
             WindowManager.GetStatusManagerForCurrentWindow().NormalStatusText = "Neptunium"; //"Hanasu Alpha";
 
             UpdateLiveTile();
+        }
+
+        private async void CarModeManager_CarModeManagerCarModeStatusChanged(object sender, CarModeManagerCarModeStatusChangedEventArgs e)
+        {
+            await IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync((e.IsInCarMode ? "Car Mode Activated" : "Car Mode Deactivated"), 3000);
+
+            await App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                ShowCarModeStatusButton = e.IsInCarMode;
+            });
         }
 
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
@@ -386,5 +399,11 @@ namespace Neptunium.ViewModel
         public HandOffFlyoutViewFragment HandOffViewFragment { get; private set; }
         public NowPlayingViewFragment NowPlayingView { get; private set; }
         public SleepTimerFlyoutViewFragment SleepTimerViewFragment { get; private set; }
+
+        public bool ShowCarModeStatusButton
+        {
+            get { return GetPropertyValue<bool>(); }
+            set { SetPropertyValue<bool>(value: value); }
+        }
     }
 }

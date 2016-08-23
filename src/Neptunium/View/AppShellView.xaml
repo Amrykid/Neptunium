@@ -130,6 +130,8 @@
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource XboxAppBarStyle}" />
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
+                        <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
+
                         <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="*" />
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
                         <Setter Target="snackBarGrid.(Grid.Row)" Value="2" />
@@ -168,6 +170,8 @@
 
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
+                        <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
+
                         <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="*" />
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
                         <Setter Target="snackBarGrid.(Grid.Row)" Value="2" />
@@ -205,6 +209,8 @@
 
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
+                        <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
+
                         <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="*" />
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
                         <Setter Target="snackBarGrid.(Grid.Row)" Value="2" />
@@ -239,6 +245,8 @@
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
 
                         <Setter Target="inlineFrame.Margin" Value="0" />
+
+                        <Setter Target="MobileIconMenu.Visibility" Value="Visible" />
 
                         <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="Auto" />
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="*" />
@@ -306,6 +314,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
 
                         <ToggleButton x:Name="MobileTogglePaneButton"
@@ -319,6 +328,32 @@
                                     ToolTipService.ToolTip="Menu" />
 
                         <TextBlock x:Name="CurrentPaneTitle" Grid.Column="1" Style="{ThemeResource SubheaderTextBlockStyle}" />
+
+                        <StackPanel x:Name="MobileIconMenu" Visibility="Visible" Orientation="Horizontal" Grid.Column="2">
+                            <StackPanel.Resources>
+                                <Style TargetType="Button">
+                                    <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+                                    <Setter Property="FontSize" Value="20" />
+                                    <Setter Property="MinHeight" Value="48" />
+                                    <Setter Property="MinWidth" Value="48" />
+                                    <Setter Property="Margin" Value="0" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="HorizontalAlignment" Value="Left" />
+                                    <Setter Property="VerticalAlignment" Value="Top" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                                    <Setter Property="VerticalContentAlignment" Value="Center" />
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Style>
+                            </StackPanel.Resources>
+                            <StackPanel.Transitions>
+                                <TransitionCollection>
+                                    <AddDeleteThemeTransition />
+                                    <ContentThemeTransition />
+                                </TransitionCollection>
+                            </StackPanel.Transitions>
+                            <Button x:Name="CarModeButton" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                    Content="" Visibility="{Binding ShowCarModeStatusButton, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}"/>
+                        </StackPanel>
                     </Grid>
 
                     <Grid x:Name="snackBarGrid" Grid.Row="1"/>
