@@ -90,7 +90,8 @@ namespace Neptunium.ViewModel
 
         private async Task UpdateBackgroundImageAsync(string title, string artist)
         {
-            if (!App.IsUnrestrictiveInternetConnection()) return;
+            if (App.GetDevicePlatform() != Platform.Xbox)
+                if (!App.IsUnrestrictiveInternetConnection()) return;
 
             await App.Dispatcher.RunWhenIdleAsync(() =>
             {
