@@ -20,7 +20,7 @@
                                   CommandParameter="{Binding}" HorizontalAlignment="Stretch">
                 <Grid Padding="0" Height="60">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="55" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
