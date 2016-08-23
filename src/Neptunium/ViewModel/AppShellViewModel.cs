@@ -100,10 +100,10 @@ namespace Neptunium.ViewModel
 
         private async void CarModeManager_CarModeManagerCarModeStatusChanged(object sender, CarModeManagerCarModeStatusChangedEventArgs e)
         {
-            await IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync((e.IsInCarMode ? "Car Mode Activated" : "Car Mode Deactivated"), 3000);
-
             await App.Dispatcher.RunWhenIdleAsync(() =>
             {
+                IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync((e.IsInCarMode ? "Car Mode Activated" : "Car Mode Deactivated"), 3000);
+
                 ShowCarModeStatusButton = e.IsInCarMode;
             });
         }
