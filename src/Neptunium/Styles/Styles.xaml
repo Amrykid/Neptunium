@@ -143,7 +143,7 @@
     <Style TargetType="RadioButton" x:Key="SplitViewRadioButtonStyle">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{ThemeResource SplitViewForegroundBrush}" />
-        <Setter Property="Padding" Value="1,4,0,0" />
+        <Setter Property="Padding" Value="1,0,0,0" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -213,6 +213,10 @@
                                             </DiscreteObjectKeyFrame>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
+                                        <Setter Target="NixonGlyph.Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
+                                    </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Unchecked" />
                                 <VisualState x:Name="Indeterminate" />
@@ -235,7 +239,8 @@
                             </Grid.RowDefinitions>
 
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="48" />
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="42" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="20" />
                             </Grid.ColumnDefinitions>
@@ -250,11 +255,11 @@
 
                             <!-- background -->
 
-                            <Grid x:Name="NotCheckedBackground" Grid.ColumnSpan="4">
+                            <Grid x:Name="NotCheckedBackground" Grid.ColumnSpan="5">
                                 <Rectangle x:Name="PressedBackground" Visibility="Collapsed" Fill="{StaticResource NavButtonPressedBackgroundBrush}"/>
                                 <Rectangle x:Name="HoverBackground" Visibility="Collapsed" Fill="{StaticResource NavButtonHoverBackgroundBrush}"/>
                             </Grid>
-                            <Grid x:Name="CheckedBackground" Grid.ColumnSpan="4" Visibility="Collapsed" Background="{StaticResource NavButtonCheckedBackgroundBrush}">
+                            <Grid x:Name="CheckedBackground" Grid.Column="0"  Visibility="Collapsed" Background="{StaticResource NavButtonCheckedBackgroundBrush}">
                                 <Rectangle x:Name="CheckedPressedBackground" Visibility="Collapsed" Fill="{StaticResource NavButtonCheckedPressedBackgroundBrush}"/>
                                 <Rectangle x:Name="CheckedHoverBackground" Visibility="Collapsed" Fill="{StaticResource NavButtonCheckedHoverBackgroundBrush}"/>
                             </Grid>
@@ -264,11 +269,11 @@
                             <Rectangle x:Name="FocusVisualBlack" Stroke="{ThemeResource FocusVisualBlackStrokeThemeBrush}" StrokeDashOffset="0.5" Style="{StaticResource FocusVisual}" />
 
                             <!-- glyph -->
-                            <ContentPresenter x:Name="NixonGlyph" Content="{TemplateBinding Tag}" />
+                            <ContentPresenter x:Name="NixonGlyph" Grid.Column="1" Content="{TemplateBinding Tag}" />
 
                             <!-- text -->
                             <ContentPresenter x:Name="ContentPresenter"
-                        			Grid.Column="1"
+                        			Grid.Column="2"
                         			Margin="{TemplateBinding Padding}"
                         			HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                         			VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
