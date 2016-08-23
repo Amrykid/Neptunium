@@ -110,6 +110,8 @@ namespace Neptunium.Managers
                                 SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
 
                                 SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
+
+                                SetCarModeStatus(SelectedDeviceObj.ConnectionStatus == BluetoothConnectionStatus.Connected);
                             }
                             else
                             {
@@ -120,24 +122,19 @@ namespace Neptunium.Managers
                 }
             }
 
-            if (radioAccess == RadioAccessStatus.Allowed)
-            {
-                CreateSettings();
 
-                ShouldAnnounceSongs = (bool)ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs];
-                ShouldUseJapaneseVoice = (bool)ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements];
+            CreateSettings();
 
-                StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
+            ShouldAnnounceSongs = (bool)ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs];
+            ShouldUseJapaneseVoice = (bool)ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements];
 
-                japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
-                    x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female);
+            StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
 
-                IsInitialized = true;
-            }
-            else
-            {
-                return;
-            }
+            japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
+                x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female);
+
+            IsInitialized = true;
+
         }
 
         private static void SelectedDeviceObj_ConnectionStatusChanged(BluetoothDevice sender, object args)
@@ -153,7 +150,7 @@ namespace Neptunium.Managers
             {
                 btRadio.StateChanged -= BtRadio_StateChanged; //event is fired twice for some reason so we're trying to throttle it.
             });
-            
+
             if (sender.State == RadioState.On)
             {
                 if (SelectedDevice != null && SelectedDeviceObj == null)
@@ -162,6 +159,8 @@ namespace Neptunium.Managers
                     SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
 
                     SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
+
+                    SetCarModeStatus(SelectedDeviceObj.ConnectionStatus == BluetoothConnectionStatus.Connected);
 
                     //todo check if re-enabling bluetooth after disabling it after this initialization still allows us to detect status changes
                 }
@@ -191,7 +190,7 @@ namespace Neptunium.Managers
                 if (lastPlayedSongMetadata == e.Title) return;
 
                 double initialVolume = StationMediaPlayer.Volume;
-                await StationMediaPlayer.FadeVolumeDownToAsync(.05); //lower the volume of the song so that the announcement can be heard.
+                //await StationMediaPlayer.FadeVolumeDownToAsync(.05); //lower the volume of the song so that the announcement can be heard.
 
                 if (japaneseFemaleVoice != null && ShouldUseJapaneseVoice)
                     speechSynth.Voice = japaneseFemaleVoice;
@@ -206,15 +205,15 @@ namespace Neptunium.Managers
                     var media = new MediaElement();
 
                     media.Volume = 1.0;
-                    media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Alerts;
+                    media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Alerts; //setting this to alerts automatically fades out music
                     media.SetSource(stream, stream.ContentType);
                     media.Play();
 
-                    await Task.Delay(nowPlayingSpeech.Length * 155);
+                    await Task.Delay(media.NaturalDuration.HasTimeSpan ? (((int)media.NaturalDuration.TimeSpan.TotalMilliseconds) + 500) : nowPlayingSpeech.Length * 155);
 
                     stream.Dispose();
 
-                    await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume); //raise the volume back up
+                    //await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume); //raise the volume back up
                 });
 
 
