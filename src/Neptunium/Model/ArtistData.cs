@@ -12,5 +12,6 @@ namespace Neptunium.Data
         public string Name { get; internal set; }
         public string ArtistID { get; internal set; }
         public string Gender { get; internal set; }
+        public string ArtistImage { get; internal set; }
     }
 }

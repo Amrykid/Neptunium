@@ -29,7 +29,7 @@ namespace Neptunium.Managers
 
                     await CookieJar.DeviceCache.FlushAsync();
 
-                    FoundArtistMetadata?.Invoke(null, new SongMetadataManagerFoundArtistMetadataEventArgs() {  });
+                    FoundArtistMetadata?.Invoke(null, new SongMetadataManagerFoundArtistMetadataEventArgs() { });
                 }
 
                 return artistData;
@@ -127,14 +127,20 @@ namespace Neptunium.Managers
             try
             {
                 var artistQuery = new Hqub.MusicBrainz.API.QueryParameters<Hqub.MusicBrainz.API.Entities.Artist>();
-                artistQuery.Add("artistname", artistName);
+                artistQuery.Add("artist", artistName);
                 artistQuery.Add("country", "JP");
-                var artistResults =  await Artist.SearchAsync(artistQuery);
 
-                foreach(var artist in artistResults?.Items)
+                var artistResults = await Artist.SearchAsync(artistQuery);
+
+                foreach (var artist in artistResults?.Items)
                 {
                     data.Name = artist.Name;
                     data.Gender = artist.Gender;
+                    data.ArtistID = artist.Id;
+
+                    var imageRel = artist.RelationLists.Items.FirstOrDefault(x => x.Type == "image");
+                    if (imageRel != null)
+                        data.ArtistImage = imageRel.Target;
 
                     return data;
                 }

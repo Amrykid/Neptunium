@@ -86,15 +86,29 @@ namespace Neptunium.ViewModel
 
             try
             {
+                NowPlayingBackgroundImage = null;
+
                 var albumData = await SongMetadataManager.FindAlbumDataAsync(e.Title, e.Artist);
 
                 if (albumData != null)
                 {
                     await UpdateAlbumDataFromTaskAsync(albumData);
+
+                    NowPlayingBackgroundImage = albumData?.AlbumCoverUrl;
                 }
                 else
                 {
                     var artistData = await SongMetadataManager.FindArtistDataAsync(e.Artist);
+
+                    NowPlayingBackgroundImage = artistData?.ArtistImage;
+                }
+
+                if (NowPlayingBackgroundImage == null)
+                {
+                    await App.Dispatcher.RunWhenIdleAsync(() =>
+                    {
+                        NowPlayingBackgroundImage = CurrentStationLogo;
+                    });
                 }
             }
             catch (Exception)
@@ -115,23 +129,23 @@ namespace Neptunium.ViewModel
                 {
                     CurrentSongAlbumData = albumData;
 
-                    var displayUp = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater;
+                    //var displayUp = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater;
 
-                    if (CurrentSongAlbumData != null)
-                    {
-                        displayUp.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentSongAlbumData.AlbumCoverUrl));
-                    }
-                    else
-                    {
-                        if (!string.IsNullOrWhiteSpace(CurrentStationLogo))
-                            displayUp.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentStationLogo));
-                        else
-                            displayUp.Thumbnail = null;
-                    }
+                    //if (CurrentSongAlbumData != null)
+                    //{
+                    //    displayUp.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentSongAlbumData.AlbumCoverUrl));
+                    //}
+                    //else
+                    //{
+                    //    if (!string.IsNullOrWhiteSpace(CurrentStationLogo))
+                    //        displayUp.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentStationLogo));
+                    //    else
+                    //        displayUp.Thumbnail = null;
+                    //}
 
                     ViewAlbumOnMusicBrainzCommand.SetCanExecute(CurrentSongAlbumData != null);
 
-                    displayUp.Update();
+                    //displayUp.Update();
                 }
                 catch (Exception) { }
             });
