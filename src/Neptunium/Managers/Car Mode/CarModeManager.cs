@@ -37,6 +37,8 @@ namespace Neptunium.Managers
         private static RadioAccessStatus radioAccess = RadioAccessStatus.Unspecified;
         private static Radio btRadio = null; //Since this is a mobile only feature, it is safe to assume there is only 1 bluetooth radio.
 
+        private static string lastPlayedSongMetadata = null;
+
         #region Options
         public static DeviceInformation SelectedDevice { get; private set; }
         private static BluetoothDevice SelectedDeviceObj { get; set; }
@@ -185,6 +187,8 @@ namespace Neptunium.Managers
             if (ShouldAnnounceSongs && IsInCarMode)
             {
                 if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //don't play that pre-defined station message that happens every so often.
+
+                if (lastPlayedSongMetadata == e.Title) return;
 
                 double initialVolume = StationMediaPlayer.Volume;
                 await StationMediaPlayer.FadeVolumeDownToAsync(.05); //lower the volume of the song so that the announcement can be heard.
