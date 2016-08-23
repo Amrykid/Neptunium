@@ -33,6 +33,7 @@ using Windows.ApplicationModel.Background;
 using Windows.System.RemoteSystems;
 using Kukkii;
 using Windows.System;
+using Windows.Networking.Connectivity;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -254,6 +255,27 @@ namespace Neptunium
             {
                 return App.GetIfPrimaryWindowVisible();
             });
+        }
+
+        public static bool IsInternetConnected()
+        {
+            ConnectionProfile connections = NetworkInformation.GetInternetConnectionProfile();
+            bool internet = (connections != null) &&
+                (connections.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess);
+            return internet;
+        }
+        public static bool IsUnrestrictiveInternetConnection()
+        {
+            var profile =NetworkInformation.GetInternetConnectionProfile();
+            if (profile != null)
+            {
+                var cost = profile.GetConnectionCost();
+
+                return cost.NetworkCostType == NetworkCostType.Unrestricted
+                    || (cost.NetworkCostType == NetworkCostType.Fixed && cost.ApproachingDataLimit == false);
+            }
+
+            return true;
         }
 
         public override async Task OnSuspendingAsync()
