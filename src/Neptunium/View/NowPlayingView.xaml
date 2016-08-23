@@ -60,6 +60,7 @@
                 <Grid.Background>
                     <ImageBrush Opacity=".45" Stretch="Uniform">
                         <ImageBrush.ImageSource>
+                            <!--todo blur this image-->
                             <BitmapImage UriSource="{Binding NowPlayingBackgroundImage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StrUriConv}}"/>
                         </ImageBrush.ImageSource>
                     </ImageBrush>
