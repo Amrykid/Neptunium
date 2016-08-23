@@ -17,15 +17,15 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Neptunium.View
+namespace Neptunium.View.Xbox
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    [Crystal3.Navigation.NavigationViewModel(typeof(NowPlayingViewViewModel), NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile)]
-    public sealed partial class NowPlayingView : Page
+    [Crystal3.Navigation.NavigationViewModel(typeof(NowPlayingViewViewModel), NavigationViewSupportedPlatform.Xbox)]
+    public sealed partial class XboxNowPlayingView : Page
     {
-        public NowPlayingView()
+        public XboxNowPlayingView()
         {
             this.InitializeComponent();
         }

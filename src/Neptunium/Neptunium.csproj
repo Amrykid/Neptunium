@@ -154,6 +154,9 @@
     <Compile Include="View\StationsView.xaml.cs">
       <DependentUpon>StationsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Xbox\XboxNowPlayingView.xaml.cs">
+      <DependentUpon>XboxNowPlayingView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Xbox\XboxStationsView.xaml.cs">
       <DependentUpon>XboxStationsView.xaml</DependentUpon>
     </Compile>
