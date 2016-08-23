@@ -8,6 +8,43 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="DesktopVisualState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1080" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="StationLogo.Height" Value="300" />
+                        <Setter Target="StationLogo.HorizontalAlignment" Value="Left" />
+                        <Setter Target="StationLogo.Stretch" Value="Uniform" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="TabletVisualState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="StationLogo.Height" Value="300" />
+                        <Setter Target="StationLogo.HorizontalAlignment" Value="Left" />
+                        <Setter Target="StationLogo.Stretch" Value="Uniform" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="PhoneVisualState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="StationLogo.Height" Value="250" />
+                        <Setter Target="StationLogo.HorizontalAlignment" Value="Stretch" />
+                        <Setter Target="StationLogo.Stretch" Value="Uniform" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}"
                             VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <TextBlock Text="Select a station to begin streaming." VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" />
@@ -30,8 +67,8 @@
 
                 <Grid Grid.Row="0" x:Name="StationInfoPanel" Margin="20 5">
                     <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentStation.Title, UpdateSourceTrigger=PropertyChanged}" />
-                    <Image Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
-                                    HorizontalAlignment="Stretch" Height="150" Stretch="Uniform" />
+                    <Image x:Name="StationLogo" Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
+                                    HorizontalAlignment="Stretch" Height="250" Stretch="Uniform" />
                 </Grid>
 
                 <StackPanel x:Name="SongInfoPanel" Grid.Row="1">
