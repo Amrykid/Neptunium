@@ -9,7 +9,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}"
-                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="Black">
+                            VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <TextBlock Text="Select a station to begin streaming." VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" />
         </Grid>
         <ScrollViewer>

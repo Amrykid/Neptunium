@@ -4,8 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Neptunium"
     xmlns:crystal="using:Crystal3"
-    xmlns:conv="using:Crystal3.UI.Converters"
-    RequestedTheme="Dark">
+    xmlns:conv="using:Crystal3.UI.Converters">
 
     <Application.Resources>
         <ResourceDictionary>

@@ -10,7 +10,7 @@
     xmlns:ki="using:Kimono.Controls"
     xmlns:wrxt="using:WinRTXamlToolkit.Controls"
     x:Name="LayoutRoot"
-    mc:Ignorable="d" RequestedTheme="Dark">
+    mc:Ignorable="d">
 
     <Page.Resources>
         <ResourceDictionary>
@@ -259,7 +259,7 @@
 
                     <ToggleButton x:Name="TogglePaneButton"
                               TabIndex="1"
-                              Foreground="White"
+                              Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                               Style="{StaticResource SplitViewTogglePaneButtonStyle}"
                               IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
                               AutomationProperties.Name="Menu"
@@ -310,7 +310,7 @@
 
                         <ToggleButton x:Name="MobileTogglePaneButton"
                                     TabIndex="1"
-                                    Foreground="White"
+                                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                     Style="{StaticResource SplitViewTogglePaneButtonStyle}"
                                     IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
                                     Visibility="Collapsed"
