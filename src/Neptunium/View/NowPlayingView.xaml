@@ -30,7 +30,7 @@
 
                 <Grid Grid.Row="0" x:Name="StationInfoPanel" Margin="20 5">
                     <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentStation.Title, UpdateSourceTrigger=PropertyChanged}" />
-                    <Image Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
+                    <Image Source="{Binding NowPlayingBackgroundImage, UpdateSourceTrigger=PropertyChanged}" 
                                     HorizontalAlignment="Stretch" Height="150" Stretch="Uniform" />
                 </Grid>
 

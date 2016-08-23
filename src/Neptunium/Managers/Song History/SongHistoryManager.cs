@@ -22,7 +22,7 @@ namespace Neptunium.Managers
             if (IsInitialized) return;
 
             StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
-            SongMetadataManager.FoundMetadata += SongMetadataManager_FoundMetadata;
+            SongMetadataManager.FoundAlbumMetadata += SongMetadataManager_FoundMetadata;
 
             songHistoryCollection = await CookieJar.DeviceCache.PeekObjectAsync<ObservableCollection<SongHistoryItem>>("SongHistory", () => new ObservableCollection<SongHistoryItem>());
             SongHistory = new ReadOnlyObservableCollection<SongHistoryItem>(songHistoryCollection);
@@ -45,7 +45,7 @@ namespace Neptunium.Managers
             await CookieJar.DeviceCache.FlushAsync();
         }
 
-        private static async void SongMetadataManager_FoundMetadata(object sender, SongMetadataManagerFoundMetadataEventArgs e)
+        private static async void SongMetadataManager_FoundMetadata(object sender, SongMetadataManagerFoundAlbumMetadataEventArgs e)
         {
             if (songHistoryCollection.Any(x => x.Artist == e.QueiredArtist && x.Track == e.QueriedTrack))
             {

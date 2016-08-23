@@ -112,6 +112,7 @@
     <Compile Include="Fragments\SleepTimerFlyoutViewFragment.cs" />
     <Compile Include="Managers\Song History\SongHistoryManagerItemAddedEventArgs.cs" />
     <Compile Include="Managers\Song History\SongHistoryManagerItemRemovedEventArgs.cs" />
+    <Compile Include="Managers\Song Metadata\SongMetadataManagerFoundArtistMetadataEventArgs.cs" />
     <Compile Include="Model\AlbumData.cs" />
     <Compile Include="Data\History\HistoryItemModel.cs" />
     <Compile Include="Data\Stations\StationDataManager.cs" />
@@ -123,10 +124,11 @@
     <Compile Include="Managers\Car Mode\CarModeManager.cs" />
     <Compile Include="Managers\Car Mode\CarModeManagerCarModeStatusChangedEventArgs.cs" />
     <Compile Include="Managers\ContinuedAppExperienceManager.cs" />
+    <Compile Include="Model\ArtistData.cs" />
     <Compile Include="Model\SongHistoryItem.cs" />
     <Compile Include="Managers\Song History\SongHistoryManager.cs" />
     <Compile Include="Managers\Song Metadata\SongMetadataManager.cs" />
-    <Compile Include="Managers\Song Metadata\SongMetadataManagerFoundMetadataEventArgs.cs" />
+    <Compile Include="Managers\Song Metadata\SongMetadataManagerFoundAlbumMetadataEventArgs.cs" />
     <Compile Include="Media\ShoutcastSongInfo.cs" />
     <Compile Include="Media\StationMediaPlayer.cs" />
     <Compile Include="Media\StationMediaPlayerConnectingStatusChangedEventArgs.cs" />
@@ -251,6 +253,10 @@
     <Page Include="View\StationsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Xbox\XboxNowPlayingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Xbox\XboxStationsView.xaml">
       <SubType>Designer</SubType>

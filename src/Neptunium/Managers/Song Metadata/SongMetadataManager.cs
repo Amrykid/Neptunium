@@ -11,26 +11,60 @@ namespace Neptunium.Managers
 {
     public static class SongMetadataManager
     {
+        internal static async Task<ArtistData> FindArtistDataAsync(string artist)
+        {
+            string cleanedArtist = artist.Trim();
+            string key = "ARTIST:" + cleanedArtist;
+
+            if (await CookieJar.DeviceCache.ContainsObjectAsync(key))
+                await CookieJar.DeviceCache.PeekObjectAsync<ArtistData>(key);
+
+            try
+            {
+                var artistData = await TryFindArtistOnMusicBrainzAsync(cleanedArtist);
+
+                if (artistData != null)
+                {
+                    await CookieJar.DeviceCache.InsertObjectAsync<ArtistData>(key, artistData);
+
+                    await CookieJar.DeviceCache.FlushAsync();
+
+                    FoundArtistMetadata?.Invoke(null, new SongMetadataManagerFoundArtistMetadataEventArgs() {  });
+                }
+
+                return artistData;
+            }
+            catch (Exception)
+            {
+
+            }
+
+            return null;
+        }
         internal static async Task<AlbumData> FindAlbumDataAsync(string title, string artist)
         {
             string cleanedArtist = artist.Trim();
             string cleanedTrack = title.Trim();
 
-            string key = cleanedArtist + "|" + cleanedTrack;
+            string key = "ALBUM:" + cleanedArtist + "|" + cleanedTrack;
 
             if (await CookieJar.DeviceCache.ContainsObjectAsync(key))
                 return await CookieJar.DeviceCache.PeekObjectAsync<AlbumData>(key);
 
             try
             {
-                var albumData = await TryFindArtistOnMusicBrainzAsync(cleanedTrack, cleanedArtist);
+                var albumData = await TryFindAlbumOnMusicBrainzAsync(cleanedTrack, cleanedArtist);
 
                 if (albumData != null)
                 {
                     await CookieJar.DeviceCache.InsertObjectAsync<AlbumData>(key, albumData);
+
+                    if (!await CookieJar.DeviceCache.ContainsObjectAsync("ARTIST:" + albumData.Artist))
+                        await CookieJar.DeviceCache.InsertObjectAsync("ARTIST:" + albumData.Artist, new ArtistData() { Name = albumData.Artist, ArtistID = albumData.ArtistID });
+
                     await CookieJar.DeviceCache.FlushAsync();
 
-                    FoundMetadata?.Invoke(null, new SongMetadataManagerFoundMetadataEventArgs() { FoundAlbumData = albumData, QueriedTrack = cleanedTrack, QueiredArtist = cleanedArtist });
+                    FoundAlbumMetadata?.Invoke(null, new SongMetadataManagerFoundAlbumMetadataEventArgs() { FoundAlbumData = albumData, QueriedTrack = cleanedTrack, QueiredArtist = cleanedArtist });
                 }
 
                 return albumData;
@@ -40,7 +74,7 @@ namespace Neptunium.Managers
             return null;
         }
 
-        private static async Task<AlbumData> TryFindArtistOnMusicBrainzAsync(string track, string artist)
+        private static async Task<AlbumData> TryFindAlbumOnMusicBrainzAsync(string track, string artist)
         {
             AlbumData data = new AlbumData();
             try
@@ -87,6 +121,34 @@ namespace Neptunium.Managers
             return null;
         }
 
-        public static event EventHandler<SongMetadataManagerFoundMetadataEventArgs> FoundMetadata;
+        private static async Task<ArtistData> TryFindArtistOnMusicBrainzAsync(string artistName)
+        {
+            ArtistData data = new ArtistData();
+            try
+            {
+                var artistQuery = new Hqub.MusicBrainz.API.QueryParameters<Hqub.MusicBrainz.API.Entities.Artist>();
+                artistQuery.Add("artistname", artistName);
+                artistQuery.Add("country", "JP");
+                var artistResults =  await Artist.SearchAsync(artistQuery);
+
+                foreach(var artist in artistResults?.Items)
+                {
+                    data.Name = artist.Name;
+                    data.Gender = artist.Gender;
+
+                    return data;
+                }
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return null;
+        }
+
+        public static event EventHandler<SongMetadataManagerFoundAlbumMetadataEventArgs> FoundAlbumMetadata;
+        public static event EventHandler<SongMetadataManagerFoundArtistMetadataEventArgs> FoundArtistMetadata;
     }
 }

@@ -84,27 +84,36 @@ namespace Neptunium.ViewModel
                 }
             });
 
-            var timeOut = Task.Delay(4000);
-
-            var albumDataTask = SongMetadataManager.FindAlbumDataAsync(e.Title, e.Artist);
-
-            Task resultTask = null;
-
-            if ((resultTask = await Task.WhenAny(albumDataTask, timeOut)) != timeOut)
+            try
             {
-                //update immediately since we didn't timeout
-                await UpdateAlbumDataFromTaskAsync(albumDataTask);
+                var albumData = await SongMetadataManager.FindAlbumDataAsync(e.Title, e.Artist);
+
+                if (albumData != null)
+                {
+                    await UpdateAlbumDataFromTaskAsync(albumData);
+                }
+                else
+                {
+                    var artistData = await SongMetadataManager.FindArtistDataAsync(e.Artist);
+                }
+            }
+            catch (Exception)
+            {
+                await App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    NowPlayingBackgroundImage = CurrentStationLogo;
+                });
             }
         }
 
-        private async Task UpdateAlbumDataFromTaskAsync(Task<AlbumData> albumDataTask)
+        private async Task UpdateAlbumDataFromTaskAsync(AlbumData albumData)
         {
             //todo figure out what to do with this
-            await App.Dispatcher.RunAsync(async () =>
+            await App.Dispatcher.RunAsync(() =>
             {
                 try
                 {
-                    CurrentSongAlbumData = await albumDataTask;
+                    CurrentSongAlbumData = albumData;
 
                     var displayUp = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater;
 
@@ -186,5 +195,7 @@ namespace Neptunium.ViewModel
         public string CurrentStationLogo { get { return GetPropertyValue<string>("CurrentStationLogo"); } private set { SetPropertyValue<string>("CurrentStationLogo", value); } }
 
         public AlbumData CurrentSongAlbumData { get { return GetPropertyValue<AlbumData>(); } set { SetPropertyValue<AlbumData>(value: value); } }
+
+        public string NowPlayingBackgroundImage { get { return GetPropertyValue<string>(); } set { SetPropertyValue<string>(value: value); } }
     }
 }

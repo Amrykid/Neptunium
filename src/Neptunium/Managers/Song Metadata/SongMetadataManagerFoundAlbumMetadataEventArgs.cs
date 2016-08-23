@@ -2,9 +2,9 @@
 
 namespace Neptunium.Managers
 {
-    public class SongMetadataManagerFoundMetadataEventArgs: EventArgs
+    public class SongMetadataManagerFoundAlbumMetadataEventArgs: EventArgs
     {
-        internal SongMetadataManagerFoundMetadataEventArgs()
+        internal SongMetadataManagerFoundAlbumMetadataEventArgs()
         {
 
         }
