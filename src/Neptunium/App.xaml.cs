@@ -165,13 +165,13 @@ namespace Neptunium
             //Application.Current.Exit();
         }
 
-        private void PostUIInit()
+        private async Task PostUIInitAsync()
         {
 #if RELEASE
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
 #endif
             if (!CarModeManager.IsInitialized)
-                CarModeManager.Initialize();
+                await CarModeManager.InitializeAsync();
 
             //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
 
@@ -182,7 +182,7 @@ namespace Neptunium
 
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
-            PostUIInit();
+            await PostUIInitAsync();
 
             LogManager.Info(typeof(App), "Application Launching");
             WindowManager.GetNavigationManagerForCurrentWindow()
@@ -197,7 +197,7 @@ namespace Neptunium
             if (!WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.IsNavigatedTo<AppShellViewModel>())
             {
-                PostUIInit();
+                await PostUIInitAsync();
 
                 WindowManager.GetNavigationManagerForCurrentWindow()
                     .RootNavigationService.NavigateTo<AppShellViewModel>();

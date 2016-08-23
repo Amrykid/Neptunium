@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
@@ -34,6 +35,7 @@ namespace Neptunium.Managers
         private static SpeechSynthesizer speechSynth = new SpeechSynthesizer();
         private static VoiceInformation japaneseFemaleVoice = null;
         private static RadioAccessStatus radioAccess = RadioAccessStatus.Unspecified;
+        private static Radio btRadio = null; //Since this is a mobile only feature, it is safe to assume there is only 1 bluetooth radio.
 
         #region Options
         public static DeviceInformation SelectedDevice { get; private set; }
@@ -73,26 +75,13 @@ namespace Neptunium.Managers
         }
         #endregion
 
-        public static async void Initialize()
+        public static async Task InitializeAsync()
         {
             if (IsInitialized) return;
 
 #if RELESE
             if (Crystal3.CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Mobile) return;
 #endif
-
-            radioAccess = await await App.Dispatcher.RunWhenIdleAsync(() =>
-            {
-                return Radio.RequestAccessAsync();
-            });
-
-            if (radioAccess == RadioAccessStatus.Allowed)
-            {
-                var BTradios = (await Radio.GetRadiosAsync()).Where(x => x.Kind == RadioKind.Bluetooth);
-                foreach (var btRadio in BTradios)
-                    btRadio.StateChanged += BtRadio_StateChanged;
-            }
-
 
             //Pull the selected bluetooth device from settings if it exists
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
@@ -105,24 +94,48 @@ namespace Neptunium.Managers
 
                     if (SelectedDevice != null)
                     {
-                        SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
+                        radioAccess = await await App.Dispatcher.RunWhenIdleAsync(() =>
+                        {
+                            return Radio.RequestAccessAsync();
+                        });
 
-                        SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
+                        if (radioAccess == RadioAccessStatus.Allowed)
+                        {
+                            btRadio = (await Radio.GetRadiosAsync()).First(x => x.Kind == RadioKind.Bluetooth);
+
+                            if (btRadio.State == RadioState.On)
+                            {
+                                SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
+
+                                SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
+                            }
+                            else
+                            {
+                                btRadio.StateChanged += BtRadio_StateChanged;
+                            }
+                        }
                     }
                 }
             }
 
-            CreateSettings();
+            if (radioAccess == RadioAccessStatus.Allowed)
+            {
+                CreateSettings();
 
-            ShouldAnnounceSongs = (bool)ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs];
-            ShouldUseJapaneseVoice = (bool)ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements];
+                ShouldAnnounceSongs = (bool)ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs];
+                ShouldUseJapaneseVoice = (bool)ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements];
 
-            StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
+                StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
 
-            japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
-                x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female);
+                japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
+                    x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female);
 
-            IsInitialized = true;
+                IsInitialized = true;
+            }
+            else
+            {
+                return;
+            }
         }
 
         private static void SelectedDeviceObj_ConnectionStatusChanged(BluetoothDevice sender, object args)
@@ -130,12 +143,29 @@ namespace Neptunium.Managers
             SetCarModeStatus(sender.ConnectionStatus == BluetoothConnectionStatus.Connected);
         }
 
+        private static SemaphoreSlim btRadioStateChangeLock = new SemaphoreSlim(1);
         private static async void BtRadio_StateChanged(Radio sender, object args)
         {
-            if (SelectedDevice != null)
+            await btRadioStateChangeLock.WaitAsync();
+            await App.Dispatcher.RunAsync(() =>
             {
-                
+                btRadio.StateChanged -= BtRadio_StateChanged; //event is fired twice for some reason so we're trying to throttle it.
+            });
+            
+            if (sender.State == RadioState.On)
+            {
+                if (SelectedDevice != null && SelectedDeviceObj == null)
+                {
+                    //lazy initialize this since it cannot be created when bluetooth is off.
+                    SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
+
+                    SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
+
+                    //todo check if re-enabling bluetooth after disabling it after this initialization still allows us to detect status changes
+                }
             }
+
+            btRadioStateChangeLock.Release();
         }
 
         private static async Task<bool> GetIfBluetoothIsOnAsync()
