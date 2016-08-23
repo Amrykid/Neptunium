@@ -209,7 +209,7 @@ namespace Neptunium.Managers
                     media.SetSource(stream, stream.ContentType);
                     media.Play();
 
-                    await Task.Delay(media.NaturalDuration.HasTimeSpan ? (((int)media.NaturalDuration.TimeSpan.TotalMilliseconds) + 500) : nowPlayingSpeech.Length * 155);
+                    await Task.Delay(nowPlayingSpeech.Length * 500);
 
                     stream.Dispose();
 
