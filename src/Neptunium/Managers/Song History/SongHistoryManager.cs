@@ -47,17 +47,21 @@ namespace Neptunium.Managers
 
         private static async void SongMetadataManager_FoundMetadata(object sender, SongMetadataManagerFoundAlbumMetadataEventArgs e)
         {
-            if (songHistoryCollection.Any(x => x.Artist == e.QueiredArtist && x.Track == e.QueriedTrack))
+            try
             {
-                var item = songHistoryCollection.First(x => x.Artist == e.QueiredArtist && x.Track == e.QueriedTrack);
-                var index = songHistoryCollection.IndexOf(item);
+                if (songHistoryCollection.Any(x => x.Artist == e.QueiredArtist && x.Track == e.QueriedTrack))
+                {
+                    var item = songHistoryCollection.First(x => x.Artist == e.QueiredArtist && x.Track == e.QueriedTrack);
+                    var index = songHistoryCollection.IndexOf(item);
 
-                item.Album = e.FoundAlbumData;
+                    item.Album = e.FoundAlbumData;
 
-                songHistoryCollection[index] = item;
+                    songHistoryCollection[index] = item;
 
-                await FlushAsync();
+                    await FlushAsync();
+                }
             }
+            catch (Exception) { }
         }
 
         private static void StationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)

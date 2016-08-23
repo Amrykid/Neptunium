@@ -73,49 +73,70 @@ namespace Neptunium.ViewModel
             {
                 SongMetadata = e.Title + " by " + e.Artist;
 
-
                 CurrentSong = e.Title;
                 CurrentArtist = e.Artist;
 
                 if (StationMediaPlayer.CurrentStation != null)
                 {
                     CurrentStation = StationMediaPlayer.CurrentStation;
-                    CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo.ToString();
+                    CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo?.ToString();
                 }
+
+                CurrentSongAlbumData = null;
+            });
+
+            await UpdateBackgroundImageAsync(e.Title, e.Artist);
+        }
+
+        private async Task UpdateBackgroundImageAsync(string title, string artist)
+        {
+            await App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                NowPlayingBackgroundImage = null;
             });
 
             try
             {
-                NowPlayingBackgroundImage = null;
+                var albumData = await SongMetadataManager.FindAlbumDataAsync(title, artist);
 
-                var albumData = await SongMetadataManager.FindAlbumDataAsync(e.Title, e.Artist);
-
-                if (albumData != null)
+                if (albumData != null && !string.IsNullOrWhiteSpace(albumData?.AlbumCoverUrl))
                 {
                     await UpdateAlbumDataFromTaskAsync(albumData);
-
-                    NowPlayingBackgroundImage = albumData?.AlbumCoverUrl;
+                    await App.Dispatcher.RunWhenIdleAsync(() =>
+                    {
+                        NowPlayingBackgroundImage = albumData?.AlbumCoverUrl;
+                    });
                 }
                 else
                 {
-                    var artistData = await SongMetadataManager.FindArtistDataAsync(e.Artist);
+                    var artistData = await SongMetadataManager.FindArtistDataAsync(artist);
 
-                    NowPlayingBackgroundImage = artistData?.ArtistImage;
-                }
-
-                if (NowPlayingBackgroundImage == null)
-                {
-                    await App.Dispatcher.RunWhenIdleAsync(() =>
+                    if (artistData != null)
                     {
-                        NowPlayingBackgroundImage = CurrentStationLogo;
-                    });
+                        await App.Dispatcher.RunWhenIdleAsync(() =>
+                        {
+                            NowPlayingBackgroundImage = artistData?.ArtistImage;
+                        });
+                    }
+                    else
+                    {
+                        if (NowPlayingBackgroundImage == null)
+                        {
+                            await App.Dispatcher.RunWhenIdleAsync(() =>
+                            {
+                                NowPlayingBackgroundImage = CurrentStation.Background;
+                            });
+                        }
+                    }
                 }
+
+
             }
             catch (Exception)
             {
                 await App.Dispatcher.RunWhenIdleAsync(() =>
                 {
-                    NowPlayingBackgroundImage = CurrentStationLogo;
+                    NowPlayingBackgroundImage = CurrentStation.Background;
                 });
             }
         }
@@ -173,12 +194,17 @@ namespace Neptunium.ViewModel
         {
             CurrentStation = StationMediaPlayer.CurrentStation;
 
-            StationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
             StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
 
             if (StationMediaPlayer.SongMetadata != null)
+            {
                 SongMetadata = StationMediaPlayer.SongMetadata.Track + " by " + StationMediaPlayer.SongMetadata.Artist;
+
+                UpdateBackgroundImageAsync(StationMediaPlayer.SongMetadata.Track, StationMediaPlayer.SongMetadata.Artist).Forget();
+            }
+
+            StationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)

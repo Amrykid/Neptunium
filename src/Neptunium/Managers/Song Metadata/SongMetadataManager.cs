@@ -96,7 +96,8 @@ namespace Neptunium.Managers
                         {
                             try
                             {
-                                data.AlbumCoverUrl = CoverArtArchive.GetCoverArtUri(firstRelease.Id)?.ToString();
+                                //data.AlbumCoverUrl = CoverArtArchive.GetCoverArtUri(firstRelease.Id)?.ToString();
+                                data.AlbumCoverUrl = "http://coverartarchive.org/release/" + firstRelease.Id + "/front-250.jpg";
                             }
                             catch (Exception) { }
 
@@ -127,20 +128,34 @@ namespace Neptunium.Managers
             try
             {
                 var artistQuery = new Hqub.MusicBrainz.API.QueryParameters<Hqub.MusicBrainz.API.Entities.Artist>();
+                //artistQuery.Add("inc", "url-rels");
                 artistQuery.Add("artist", artistName);
                 artistQuery.Add("country", "JP");
 
                 var artistResults = await Artist.SearchAsync(artistQuery);
 
-                foreach (var artist in artistResults?.Items)
+                var artist = artistResults?.Items.FirstOrDefault();
+
+                if (artist != null)
                 {
                     data.Name = artist.Name;
                     data.Gender = artist.Gender;
                     data.ArtistID = artist.Id;
 
-                    var imageRel = artist.RelationLists.Items.FirstOrDefault(x => x.Type == "image");
-                    if (imageRel != null)
-                        data.ArtistImage = imageRel.Target;
+                    await Task.Delay(200);
+
+                    try
+                    {
+                        var browsingData = await Artist.GetAsync(artist.Id, "url-rels");
+
+                        if (browsingData != null)
+                        {
+                            var imageRel = browsingData.RelationLists.Items.FirstOrDefault(x => x.Type == "image");
+                            if (imageRel != null)
+                                data.ArtistImage = imageRel.Target;
+                        }
+                    }
+                    catch (Exception) { }
 
                     return data;
                 }
@@ -148,7 +163,7 @@ namespace Neptunium.Managers
             }
             catch (Exception)
             {
-                return null;
+
             }
 
             return null;
