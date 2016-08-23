@@ -222,7 +222,8 @@ namespace Neptunium
                                             x.Split('=')[0],
                                             x.Split('=')[1])); //remote the "?"
 
-                                var stationName = Uri.EscapeUriString(query.First(x => x.Key.ToLower() == "station").Value);
+                                var stationName = query.First(x => x.Key.ToLower() == "station").Value;
+                                stationName = stationName.Replace("%20", " ");
 
                                 if (!StationDataManager.IsInitialized)
                                     await StationDataManager.InitializeAsync();
