@@ -76,10 +76,16 @@
                                     HorizontalAlignment="Stretch" Height="250" Stretch="Uniform" />
                     </Grid>
 
-                    <StackPanel x:Name="SongInfoPanel" Grid.Row="1">
-                        <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}" Margin="20 10 0 0">Song Info</TextBlock>
-                        <TextBlock Text="{Binding SongMetadata, UpdateSourceTrigger=PropertyChanged}" 
+                    <VariableSizedWrapGrid x:Name="SongInfoPanel" Grid.Row="1" Orientation="Horizontal" Margin="0 0 0 20">
+                        <Grid x:Name="songInfoGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}" Margin="20 10 0 0" Grid.Row="0">Song Info</TextBlock>
+                            <TextBlock Text="{Binding SongMetadata, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1"
                                            Margin="20 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                        </Grid>
 
                         <Grid x:Name="extendedSongInfoGrid"
                                       Margin="20 10 0 0"
@@ -115,35 +121,34 @@
                             </TextBlock>
                             <Button Grid.Row="4" Content="View on MusicBrainz" Command="{Binding ViewAlbumOnMusicBrainzCommand}" />
                         </Grid>
-                    </StackPanel>
 
-                    <Grid x:Name="SongHistoryPanel" Width="600" Grid.Row="2" Visibility="Collapsed">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
+                        <Grid x:Name="SongHistoryPanel" Width="600" Grid.Row="2" Visibility="Collapsed">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Style="{ThemeResource TitleTextBlockStyle}" Margin="20 10 0 0">Song History</TextBlock>
+                            <TextBlock Grid.Row="0" Style="{ThemeResource TitleTextBlockStyle}" Margin="20 10 0 0">Song History</TextBlock>
 
-                        <ListView ItemsSource="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Margin="10 10 0 0">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="300" />
-                                            <ColumnDefinition Width="30" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
+                            <ListView ItemsSource="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Margin="10 10 0 0">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="300" />
+                                                <ColumnDefinition Width="30" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
 
-                                        <TextBlock Text="{Binding Song, Mode=OneTime}" Grid.Column="0" />
+                                            <TextBlock Text="{Binding Song, Mode=OneTime}" Grid.Column="0" />
 
-                                        <TextBlock Text="{Binding Time, Mode=OneTime}" Grid.Column="1" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Grid>
-
+                                            <TextBlock Text="{Binding Time, Mode=OneTime}" Grid.Column="1" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Grid>
+                    </VariableSizedWrapGrid>
                 </Grid>
             </Grid>
         </ScrollViewer>
