@@ -8,6 +8,43 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid>
+            <Grid.Background>
+                <ImageBrush Opacity=".45" Stretch="Uniform">
+                    <ImageBrush.ImageSource>
+                        <BitmapImage UriSource="{Binding NowPlayingBackgroundImage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StrUriConv}}"/>
+                    </ImageBrush.ImageSource>
+                </ImageBrush>
+            </Grid.Background>
 
+            <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}"
+                            VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="40 0 0 40">
+                <TextBlock Text="Select a station to begin streaming." VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" FontSize="25" />
+            </Grid>
+            <Grid x:Name="NowPlayingInfoGrid" Margin="40 0 0 40"
+              Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
+              HorizontalAlignment="Left" VerticalAlignment="Bottom" 
+              Height="150" Width="Auto">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Image Grid.Column="0" Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
+                       Width="150" Height="150" />
+
+                <Grid Grid.Column="1" Margin="20 0 0 0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="35" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="35" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="1" Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" Style="{ThemeResource TitleTextBlockStyle}" />
+                    <TextBlock Grid.Row="2" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" Style="{ThemeResource SubtitleTextBlockStyle}" FontSize="18" LineHeight="22" />
+                </Grid>
+            </Grid>
+        </Grid>
     </Grid>
 </Page>
