@@ -150,9 +150,12 @@ namespace Neptunium.Managers
 
                         if (browsingData != null)
                         {
-                            var imageRel = browsingData.RelationLists.Items.FirstOrDefault(x => x.Type == "image");
-                            if (imageRel != null)
-                                data.ArtistImage = imageRel.Target;
+                            if (browsingData.RelationLists != null)
+                            {
+                                var imageRel = browsingData.RelationLists.Items.FirstOrDefault(x => x.Type == "image");
+                                if (imageRel != null)
+                                    data.ArtistImage = imageRel.Target;
+                            }
                         }
                     }
                     catch (Exception) { }
