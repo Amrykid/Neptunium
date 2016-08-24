@@ -5,6 +5,7 @@
     "Microsoft.ApplicationInsights.WindowsApps": "1.0.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "NotificationsExtensions.Win10": "14332.0.2",
+    "Win2D.uwp": "1.19.0",
     "WindowsStateTriggers": "1.1.0"
   },
   "frameworks": {
