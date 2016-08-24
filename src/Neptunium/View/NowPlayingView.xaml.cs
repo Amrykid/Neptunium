@@ -52,7 +52,7 @@ namespace Neptunium.View
             {
                 var viewModel = (this.DataContext as NowPlayingViewViewModel);
 
-                await Task.Delay(1000);
+                await Task.Delay(500);
 
                 var imgSrc = viewModel.NowPlayingBackgroundImage;
 

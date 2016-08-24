@@ -66,7 +66,7 @@
                 <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
@@ -76,7 +76,8 @@
                                     HorizontalAlignment="Stretch" Height="250" Stretch="Uniform" />
                     </Grid>
 
-                    <VariableSizedWrapGrid x:Name="SongInfoPanel" Grid.Row="1" Orientation="Horizontal" Margin="0 0 0 20">
+                    <VariableSizedWrapGrid x:Name="SongInfoPanel" Grid.Row="1" 
+                                           Orientation="Horizontal" Margin="0 0 0 20" VerticalAlignment="Stretch">
                         <Grid x:Name="songInfoGrid">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -88,7 +89,7 @@
                         </Grid>
 
                         <Grid x:Name="extendedSongInfoGrid"
-                                      Margin="20 10 0 0"
+                                      Margin="20 10 0 0" MinHeight="425"
                                       Visibility="{Binding CurrentSongAlbumData, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -122,7 +123,7 @@
                             <Button Grid.Row="4" Content="View on MusicBrainz" Command="{Binding ViewAlbumOnMusicBrainzCommand}" />
                         </Grid>
 
-                        <Grid x:Name="SongHistoryPanel" Width="600" Grid.Row="2" Visibility="Collapsed">
+                        <Grid x:Name="SongHistoryPanel" Width="600" Visibility="Collapsed">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
