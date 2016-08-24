@@ -202,6 +202,9 @@ namespace Neptunium.ViewModel
 
             if (StationMediaPlayer.SongMetadata != null)
             {
+                CurrentSong = StationMediaPlayer.SongMetadata.Track;
+                CurrentArtist = StationMediaPlayer.SongMetadata.Artist;
+
                 SongMetadata = StationMediaPlayer.SongMetadata.Track + " by " + StationMediaPlayer.SongMetadata.Artist;
 
                 UpdateBackgroundImageAsync(StationMediaPlayer.SongMetadata.Track, StationMediaPlayer.SongMetadata.Artist).Forget();
