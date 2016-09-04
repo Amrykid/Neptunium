@@ -39,8 +39,6 @@ namespace Neptunium.ViewModel
             if (!IoC.Current.IsRegistered<IMessageDialogService>())
                 IoC.Current.Register<IMessageDialogService>(new DefaultMessageDialogService());
 
-            CarModeManager.CarModeManagerCarModeStatusChanged += CarModeManager_CarModeManagerCarModeStatusChanged;
-
             GoToStationsViewCommand = new RelayCommand(x =>
             {
                 if (!InlineNavigationService.IsNavigatedTo<StationsViewViewModel>())
@@ -100,11 +98,16 @@ namespace Neptunium.ViewModel
 
         private async void CarModeManager_CarModeManagerCarModeStatusChanged(object sender, CarModeManagerCarModeStatusChangedEventArgs e)
         {
+            await UpdateCarModeButtonStatusAsync(e.IsInCarMode);
+        }
+
+        private async Task UpdateCarModeButtonStatusAsync(bool IsInCarMode)
+        {
             await App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync((e.IsInCarMode ? "Car Mode Activated" : "Car Mode Deactivated"), 3000);
+                IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync((IsInCarMode ? "Car Mode Activated" : "Car Mode Deactivated"), 3000);
 
-                ShowCarModeStatusButton = e.IsInCarMode;
+                ShowCarModeStatusButton = IsInCarMode;
             });
         }
 
@@ -122,12 +125,15 @@ namespace Neptunium.ViewModel
             StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
 
+            CarModeManager.CarModeManagerCarModeStatusChanged += CarModeManager_CarModeManagerCarModeStatusChanged;
 
             StationMediaPlayer.ConnectingStatusChanged += StationMediaPlayer_ConnectingStatusChanged;
 
             BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
 
             ContinuedAppExperienceManager.CheckForReverseHandoffOpportunities();
+
+            await UpdateCarModeButtonStatusAsync(CarModeManager.IsInCarMode);
         }
 
         private void Current_CurrentStateChanged(MediaPlayer sender, object args)
