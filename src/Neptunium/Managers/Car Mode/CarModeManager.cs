@@ -190,15 +190,9 @@ namespace Neptunium.Managers
                 if (lastPlayedSongMetadata == e.Title) return;
 
                 double initialVolume = StationMediaPlayer.Volume;
-                //await StationMediaPlayer.FadeVolumeDownToAsync(.05); //lower the volume of the song so that the announcement can be heard.
 
-                if (japaneseFemaleVoice != null && ShouldUseJapaneseVoice)
-                    speechSynth.Voice = japaneseFemaleVoice;
-                else
-                    speechSynth.Voice = SpeechSynthesizer.DefaultVoice;
-
-                var nowPlayingSpeech = string.Format(GetRandomNowPlayingText(), e.Artist, e.Title);
-                var stream = await speechSynth.SynthesizeTextToStreamAsync(nowPlayingSpeech);
+                var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Artist, e.Title, japaneseFemaleVoice != null && ShouldUseJapaneseVoice);
+                var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData.Item1);
 
                 await CrystalApplication.Dispatcher.RunWhenIdleAsync(async () =>
                 {
@@ -209,17 +203,78 @@ namespace Neptunium.Managers
                     media.SetSource(stream, stream.ContentType);
                     media.Play();
 
-                    await Task.Delay(nowPlayingSpeech.Length * 500);
+                    await Task.Delay((int)TimeSpan.FromSeconds(10).TotalMilliseconds);
 
                     stream.Dispose();
-
-                    //await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume); //raise the volume back up
                 });
 
 
             }
         }
 
+        private static Tuple<string, int> GenerateSongAnnouncementSsml(string artist, string title, bool japaneseVoiceAvailable)
+        {
+            StringBuilder builder = new StringBuilder();
+
+            var englishVoice = SpeechSynthesizer.AllVoices.Where(x => x.Language.ToLower().StartsWith("en")).First(x => x.Gender == VoiceGender.Female);
+
+            var phrases = new string[] {
+                "Now Playing: {1} by {0}",
+                "And Now: {1} by {0}",
+                "Playing: {1} by {0}",
+                "君が{0}の{1}を聞いています"
+            };
+            var randomizer = new Random(DateTime.Now.Millisecond);
+            var index = randomizer.Next(0, phrases.Length - 1);
+
+            var phrase = phrases[index];
+
+            if (index == 3 && !japaneseVoiceAvailable)
+                index = 1;
+
+            builder.AppendLine(@"<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='" + englishVoice.Language + "'>");
+
+            Action<string> speakInEnglish = (text) =>
+            {                
+                builder.AppendLine("<voice name=\"" + englishVoice.DisplayName + "\">" + text + "</voice>");
+            };
+            Action<string> speakInJapanese = (text) =>
+            {
+               builder.AppendLine("<voice name=\"" +
+                                        (japaneseVoiceAvailable ? japaneseFemaleVoice.DisplayName : SpeechSynthesizer.DefaultVoice.DisplayName) + "\">");
+                builder.AppendLine(text);
+                builder.AppendLine("</voice>");
+            };
+
+            switch (index)
+            {
+                case 0:
+                    speakInEnglish("Now Playing:");
+                    speakInJapanese(title);
+                    speakInEnglish("By");
+                    speakInJapanese(artist);
+                    break;
+                case 1:
+                    speakInEnglish("And Now:");
+                    speakInJapanese(title);
+                    speakInEnglish("By");
+                    speakInJapanese(artist);
+                    break;
+                case 2:
+                    speakInEnglish("Playing:");
+                    speakInJapanese(title);
+                    speakInEnglish("By");
+                    speakInJapanese(artist);
+                    break;
+                case 3:
+                    speakInJapanese(string.Format(phrase, artist, title));
+                    break;
+            }
+
+            builder.AppendLine("</speak>");
+
+            return new Tuple<string, int>(builder.ToString(), phrase.Length * 500);
+        }
 
         private static void SetCarModeStatus(bool isConnected)
         {
@@ -230,20 +285,6 @@ namespace Neptunium.Managers
                 if (CarModeManagerCarModeStatusChanged != null)
                     CarModeManagerCarModeStatusChanged(null, new CarModeManagerCarModeStatusChangedEventArgs(isConnected));
             }
-        }
-
-        private static string GetRandomNowPlayingText()
-        {
-            var phrases = new string[] {
-                "Now Playing: {1} by {0}",
-                "And Now: {1} by {0}",
-                "Playing: {1} by {0}",
-                "君が{0}の{1}を聞いています"
-            };
-            var randomizer = new Random(DateTime.Now.Millisecond);
-            var index = randomizer.Next(0, phrases.Length - 1);
-
-            return phrases[index];
         }
 
         public static async Task SelectDeviceAsync(Windows.Foundation.Rect uiArea)
