@@ -105,9 +105,12 @@ namespace Neptunium.ViewModel
         {
             await App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync((IsInCarMode ? "Car Mode Activated" : "Car Mode Deactivated"), 3000);
+                if (ShowCarModeStatusButton != IsInCarMode)
+                {
+                    IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync((IsInCarMode ? "Car Mode Activated" : "Car Mode Deactivated"), 3000);
 
-                ShowCarModeStatusButton = IsInCarMode;
+                    ShowCarModeStatusButton = IsInCarMode;
+                }
             });
         }
 
