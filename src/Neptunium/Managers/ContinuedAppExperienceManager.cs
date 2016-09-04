@@ -55,7 +55,7 @@ namespace Neptunium.Managers
 
             StopPlayingStationOnThisDeviceAfterSuccessfulHandoff = (bool)ApplicationData.Current.LocalSettings.Values[StopPlayingMusicAfterGoodHandoff];
 
-            RemoteSystemAccess = await RemoteSystem.RequestAccessAsync();
+            RemoteSystemAccess = await await App.Dispatcher.RunAsync(() => RemoteSystem.RequestAccessAsync());
 
             if (RemoteSystemAccess == RemoteSystemAccessStatus.Allowed)
             {
@@ -267,8 +267,13 @@ namespace Neptunium.Managers
 
         private static async Task<List<Tuple<RemoteSystem, StationModel, AppServiceConnection>>> DetectStreamingDevicesAsync()
         {
+            if (!IsInitialized)
+                await InitializeAsync();
+
             if (!StationDataManager.IsInitialized)
                 await StationDataManager.InitializeAsync();
+
+            if (RemoteSystemAccess != RemoteSystemAccessStatus.Allowed) return null;
 
             await Task.Run(() => watcherLock.WaitOne());
 
