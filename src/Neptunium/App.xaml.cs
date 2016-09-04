@@ -124,9 +124,6 @@ namespace Neptunium
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
 
-            if (!ContinuedAppExperienceManager.IsInitialized)
-                await ContinuedAppExperienceManager.InitializeAsync();
-
             //initialize app settings
             //todo add all settings
 
@@ -179,6 +176,10 @@ namespace Neptunium
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
                 Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+
+            if (!ContinuedAppExperienceManager.IsInitialized)
+                await ContinuedAppExperienceManager.InitializeAsync();
+
         }
 
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
