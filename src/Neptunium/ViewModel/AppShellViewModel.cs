@@ -130,6 +130,9 @@ namespace Neptunium.ViewModel
 
             CarModeManager.CarModeManagerCarModeStatusChanged += CarModeManager_CarModeManagerCarModeStatusChanged;
 
+            if (!CarModeManager.IsInitialized)
+                await CarModeManager.InitializeAsync();
+
             StationMediaPlayer.ConnectingStatusChanged += StationMediaPlayer_ConnectingStatusChanged;
 
             BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
