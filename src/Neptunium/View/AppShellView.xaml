@@ -356,9 +356,21 @@
                         </StackPanel>
                     </Grid>
 
-                    <Grid x:Name="snackBarGrid" Grid.Row="1"/>
+                    <Grid x:Name="snackBarGrid" Grid.Row="1">
+                        <Grid.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </Grid.Transitions>
+                    </Grid>
 
                     <Grid x:Name="inlineFrameGrid" Grid.Row="2">
+                        <Grid.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </Grid.Transitions>
+                        
                         <Frame x:Name="inlineFrame">
                             <Frame.ContentTransitions>
                                 <TransitionCollection>
