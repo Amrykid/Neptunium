@@ -24,9 +24,6 @@
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="nep" />
         </uap:Extension>
-        <uap:Extension Category="windows.appService">
-          <uap3:AppService Name="com.Amrykid.CAEAppService" SupportsRemoteSystems="true"/>
-        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
@@ -35,6 +32,7 @@
     <uap3:Capability Name="backgroundMediaPlayback" />
     <uap3:Capability Name="remoteSystem" />
     <DeviceCapability Name="bluetooth" />
+    <DeviceCapability Name="microphone" />
     <DeviceCapability Name="radios" />
   </Capabilities>
 </Package>

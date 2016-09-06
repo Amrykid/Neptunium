@@ -22,6 +22,8 @@ namespace Neptunium.ViewModel
                 if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
                 {
 #endif
+                try
+                {
                     await CarModeManager.SelectDeviceAsync(Windows.UI.Xaml.Window.Current.Bounds);
 
                     if (CarModeManager.SelectedDevice != null)
@@ -29,7 +31,10 @@ namespace Neptunium.ViewModel
                         SelectedBluetoothDevice = CarModeManager.SelectedDevice?.Name;
 
                         ClearCarModeDeviceCommand.SetCanExecute(CarModeManager.SelectedDevice != null);
-                    } else { SelectedBluetoothDevice = "None"; }
+                    }
+                    else { SelectedBluetoothDevice = "None"; }
+                }
+                catch (Exception) { }
 #if RELEASE
                 }
 #endif

@@ -131,7 +131,7 @@ namespace Neptunium.Managers
             StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
 
             japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
-                x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female);
+                x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female && x.DisplayName.Contains("Haruka"));
 
             IsInitialized = true;
 
@@ -191,23 +191,26 @@ namespace Neptunium.Managers
 
                 double initialVolume = StationMediaPlayer.Volume;
 
-                var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Artist, e.Title, japaneseFemaleVoice != null && ShouldUseJapaneseVoice);
-                var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData.Item1);
-
-                await CrystalApplication.Dispatcher.RunWhenIdleAsync(async () =>
+                try
                 {
-                    var media = new MediaElement();
+                    var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Artist, e.Title, japaneseFemaleVoice != null && ShouldUseJapaneseVoice);
+                    var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData.Item1);
 
-                    media.Volume = 1.0;
-                    media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Alerts; //setting this to alerts automatically fades out music
-                    media.SetSource(stream, stream.ContentType);
-                    media.Play();
+                    await CrystalApplication.Dispatcher.RunWhenIdleAsync(async () =>
+                    {
+                        var media = new MediaElement();
 
-                    await Task.Delay((int)TimeSpan.FromSeconds(10).TotalMilliseconds);
+                        media.Volume = 1.0;
+                        media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Alerts; //setting this to alerts automatically fades out music
+                        media.SetSource(stream, stream.ContentType);
+                        media.Play();
 
-                    stream.Dispose();
-                });
+                        await Task.Delay((int)TimeSpan.FromSeconds(10).TotalMilliseconds);
 
+                        stream.Dispose();
+                    });
+                }
+                catch (Exception) { }
 
             }
         }
@@ -245,31 +248,45 @@ namespace Neptunium.Managers
                 //var voice = (japaneseVoiceAvailable ? japaneseFemaleVoice : SpeechSynthesizer.DefaultVoice);
 
                 //builder.AppendLine("<voice xml:lang='" + voice.Language + "' name='" + voice.DisplayName + "'>");
+                builder.AppendLine("<s>");
                 builder.AppendLine("<voice" + (japaneseVoiceAvailable ? " name='" + japaneseFemaleVoice.DisplayName + "'" : "") + ">");
 
                 builder.AppendLine(text);
                 builder.AppendLine("</voice>");
+                builder.AppendLine("</s>");
             };
 
             switch (index)
             {
                 case 0:
                     speakInEnglish("Now Playing:");
+
                     speakInJapanese(title);
+
                     speakInEnglish("By");
+
                     speakInJapanese(artist);
+
                     break;
                 case 1:
                     speakInEnglish("And Now:");
+
                     speakInJapanese(title);
+
                     speakInEnglish("By");
+
                     speakInJapanese(artist);
+
                     break;
                 case 2:
                     speakInEnglish("Playing:");
+
                     speakInJapanese(title);
+
                     speakInEnglish("By");
+
                     speakInJapanese(artist);
+
                     break;
                 case 3:
                     speakInJapanese(string.Format(phrase, artist, title));
