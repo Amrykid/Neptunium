@@ -232,16 +232,21 @@ namespace Neptunium.Managers
             if (index == 3 && !japaneseVoiceAvailable)
                 index = 1;
 
-            builder.AppendLine(@"<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='" + englishVoice.Language + "'>");
+            builder.AppendLine(@"<?xml version='1.0' encoding='ISO-8859-1'?>");
+            builder.AppendLine(@"<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='en-US'>");
+            builder.AppendLine("<voice gender='female'>");
 
             Action<string> speakInEnglish = (text) =>
-            {                
-                builder.AppendLine("<voice name=\"" + englishVoice.DisplayName + "\">" + text + "</voice>");
+            {
+                builder.AppendLine(text);
             };
             Action<string> speakInJapanese = (text) =>
             {
-               builder.AppendLine("<voice name=\"" +
-                                        (japaneseVoiceAvailable ? japaneseFemaleVoice.DisplayName : SpeechSynthesizer.DefaultVoice.DisplayName) + "\">");
+                //var voice = (japaneseVoiceAvailable ? japaneseFemaleVoice : SpeechSynthesizer.DefaultVoice);
+
+                //builder.AppendLine("<voice xml:lang='" + voice.Language + "' name='" + voice.DisplayName + "'>");
+                builder.AppendLine("<voice" + (japaneseVoiceAvailable ? " name='" + japaneseFemaleVoice.DisplayName + "'" : "") + ">");
+
                 builder.AppendLine(text);
                 builder.AppendLine("</voice>");
             };
@@ -271,6 +276,7 @@ namespace Neptunium.Managers
                     break;
             }
 
+            builder.AppendLine("</voice>");
             builder.AppendLine("</speak>");
 
             return new Tuple<string, int>(builder.ToString(), phrase.Length * 500);
