@@ -6,7 +6,7 @@
 	url = https://git01.codeplex.com/winrtxamltoolkit
 [submodule "lib/MusicBrainz"]
 	path = lib/MusicBrainz
-	url = https://github.com/avatar29A/MusicBrainz.git
+url=https://github.com/Amrykid/MusicBrainz.git
 [submodule "lib/Kimono"]
 	path = lib/Kimono
 	url = https://github.com/Amrykid/Kimono.git
