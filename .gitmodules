@@ -3,7 +3,7 @@
 	url = https://github.com/dotMorten/WindowsStateTriggers.git
 [submodule "lib/winrtxamltoolkit"]
 	path = lib/winrtxamltoolkit
-	url = https://git01.codeplex.com/winrtxamltoolkit
+url=https://github.com/xyzzer/WinRTXamlToolkit.git
 [submodule "lib/MusicBrainz"]
 	path = lib/MusicBrainz
 url=https://github.com/Amrykid/MusicBrainz.git
