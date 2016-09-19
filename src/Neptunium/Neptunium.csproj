@@ -196,15 +196,15 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Crystal\src\Crystal3\Crystal3.csproj">
+    <ProjectReference Include="..\..\lib\Crystal\src\Crystal3\Crystal3.csproj">
       <Project>{e7ac86be-e1f7-42e4-8da0-7e1ebef1130b}</Project>
       <Name>Crystal3</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Kimono\src\Kimono\Kimono.csproj">
+    <ProjectReference Include="..\..\lib\Kimono\src\Kimono\Kimono.csproj">
       <Project>{329833b1-79b7-4724-b9a2-0629d735bea1}</Project>
       <Name>Kimono</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Kukkii\src\Kukkii\Kukkii.csproj">
+    <ProjectReference Include="..\..\lib\Kukkii\src\Kukkii\Kukkii.csproj">
       <Project>{c05d6334-a960-4289-8104-7b554e987f0a}</Project>
       <Name>Kukkii</Name>
     </ProjectReference>
