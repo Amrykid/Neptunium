@@ -7,3 +7,12 @@
 [submodule "lib/MusicBrainz"]
 	path = lib/MusicBrainz
 	url = https://github.com/avatar29A/MusicBrainz.git
+[submodule "lib/Kimono"]
+	path = lib/Kimono
+	url = https://github.com/Amrykid/Kimono.git
+[submodule "lib/Crystal"]
+	path = lib/Crystal
+	url = https://github.com/Amrykid/Crystal.git
+[submodule "lib/Kukkii"]
+	path = lib/Kukkii
+	url = https://github.com/Amrykid/Kukkii.git

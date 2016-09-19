@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crystal3", "..\Crystal\src\Crystal3\Crystal3.csproj", "{E7AC86BE-E1F7-42E4-8DA0-7E1EBEF1130B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crystal3", "lib\Crystal\src\Crystal3\Crystal3.csproj", "{E7AC86BE-E1F7-42E4-8DA0-7E1EBEF1130B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "References", "References", "{F6BEB515-FBD7-48BD-B69A-6C6FBA875A68}"
 EndProject
@@ -13,13 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptunium.MediaSourceStream
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neptunium.Shared", "src\Neptunium.Shared\Neptunium.Shared.csproj", "{8006955B-8D3F-494F-98C6-7610A7E1B1A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kimono", "..\Kimono\src\Kimono\Kimono.csproj", "{329833B1-79B7-4724-B9A2-0629D735BEA1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kimono", "lib\Kimono\src\Kimono\Kimono.csproj", "{329833B1-79B7-4724-B9A2-0629D735BEA1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinRTXamlToolkit", "lib\winrtxamltoolkit\WinRTXamlToolkit\WinRTXamlToolkit.csproj", "{FFB67E2D-F098-48D9-8BF6-B4355C18CD80}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hqub.MusicBrainz.API.Portable", "lib\MusicBrainz\Hqub.MusicBrainz\Hqub.MusicBrainz.API.Portable\Hqub.MusicBrainz.API.Portable.csproj", "{08D4701E-168C-43D1-9C6E-34B079CFD934}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kukkii", "..\Kukkii\src\Kukkii\Kukkii.csproj", "{C05D6334-A960-4289-8104-7B554E987F0A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kukkii", "lib\Kukkii\src\Kukkii\Kukkii.csproj", "{C05D6334-A960-4289-8104-7B554E987F0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
