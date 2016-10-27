@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="250mm"
+   height="250mm"
+   viewBox="0 0 885.82677 885.82677"
+   id="svg4158"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="classic-neptunium-logo-remake.svg">
+  <defs
+     id="defs4160" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#000000"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="1"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="531.8492"
+     inkscape:cy="326.06249"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1600"
+     inkscape:window-height="837"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4163">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-166.53543)">
+    <g
+       id="g5297"
+       transform="matrix(0.8994987,0,0,0.92865846,106.09925,39.838874)">
+      <flowRoot
+         transform="matrix(6.7892142,0,0,5.4151528,-1017.77,-1157.7548)"
+         style="font-style:normal;font-weight:normal;font-size:180px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="flowRoot5285"
+         xml:space="preserve"><flowRegion
+           id="flowRegion5287"><rect
+             style="font-size:180px;fill:#ffffff"
+             y="198.92305"
+             x="149.50258"
+             height="456.58896"
+             width="557.60419"
+             id="rect5289" /></flowRegion><flowPara
+           id="flowPara5291">N</flowPara></flowRoot>      <ellipse
+         ry="84.476501"
+         rx="140.0349"
+         cy="926.09314"
+         cx="90.913742"
+         id="path5295"
+         style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.73232961;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+  </g>
+</svg>
