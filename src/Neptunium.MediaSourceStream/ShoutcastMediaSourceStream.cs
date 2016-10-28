@@ -291,6 +291,7 @@ namespace Neptunium.MediaSourceStream
             try
             {
                 MediaStreamSample sample = null;
+                uint sampleLength = 0;
 
                 request.ReportSampleProgress(25);
 
@@ -318,12 +319,16 @@ namespace Neptunium.MediaSourceStream
                     {
                         case StreamAudioFormat.MP3:
                             {
-                                sample = await ParseMP3SampleAsync(partial: true, partialBytes: partialFrame);
+                                Tuple<MediaStreamSample, uint> result = await ParseMP3SampleAsync(partial: true, partialBytes: partialFrame);
+                                sample = result.Item1;
+                                sampleLength = result.Item2;
                             }
                             break;
                         case StreamAudioFormat.AAC:
                             {
-                                sample = await ParseAACSampleAsync(partial: true, partialBytes: partialFrame);
+                                Tuple<MediaStreamSample, uint> result = await ParseAACSampleAsync(partial: true, partialBytes: partialFrame);
+                                sample = result.Item1;
+                                sampleLength = result.Item2;
                             }
                             break;
                     }
@@ -339,27 +344,31 @@ namespace Neptunium.MediaSourceStream
                         case StreamAudioFormat.MP3:
                             {
                                 //mp3
-                                sample = await ParseMP3SampleAsync();
+                                Tuple<MediaStreamSample, uint> result = await ParseMP3SampleAsync();
+                                sample = result.Item1;
+                                sampleLength = result.Item2;
                                 //await MediaStreamSample.CreateFromStreamAsync(socket.InputStream, bitRate, new TimeSpan(0, 0, 1));
                             }
                             break;
                         case StreamAudioFormat.AAC:
                             {
-                                sample = await ParseAACSampleAsync();
+                                Tuple<MediaStreamSample, uint> result = await ParseAACSampleAsync();
+                                sample = result.Item1;
+                                sampleLength = result.Item2;
                             }
                             break;
                     }
 
                     try
                     {
-                        if (sample == null || sample.Buffer == null) //bug: on RELEASE builds, sample.Buffer causes the app to die due to a possible .NET Native bug
+                        if (sample == null || sampleLength == 0) //bug: on RELEASE builds, sample.Buffer causes the app to die due to a possible .NET Native bug
                         {
                             MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.DecodeError);
                             deferral.Complete();
                             return;
                         }
                         else
-                            metadataPos += sample.Buffer.Length;
+                            metadataPos += sampleLength;
                     }
                     catch (Exception) { }
                 }
@@ -442,7 +451,7 @@ namespace Neptunium.MediaSourceStream
             }
         }
 
-        private async Task<MediaStreamSample> ParseMP3SampleAsync(bool partial = false, byte[] partialBytes = null)
+        private async Task<Tuple<MediaStreamSample, uint>> ParseMP3SampleAsync(bool partial = false, byte[] partialBytes = null)
         {
             //http://www.mpgedit.org/mpgedit/mpeg_format/MP3Format.html
 
@@ -474,7 +483,7 @@ namespace Neptunium.MediaSourceStream
                 {
                     Disconnect();
                     MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.ConnectionToServerLost);
-                    return await Task.FromResult<MediaStreamSample>(null);
+                    return new Tuple<MediaStreamSample, uint>(null, 0);
                 }
                 else if (read < mp3_sampleSize)
                 {
@@ -497,12 +506,12 @@ namespace Neptunium.MediaSourceStream
             timeOffSet = timeOffSet.Add(mp3_sampleDuration);
 
 
-            return sample;
+            return new Tuple<MediaStreamSample,uint>(sample, mp3_sampleSize);
 
             //return null;
         }
 
-        private async Task<MediaStreamSample> ParseAACSampleAsync(bool partial = false, byte[] partialBytes = null)
+        private async Task<Tuple<MediaStreamSample, uint>> ParseAACSampleAsync(bool partial = false, byte[] partialBytes = null)
         {
 
             IBuffer buffer = null;
@@ -528,7 +537,7 @@ namespace Neptunium.MediaSourceStream
             timeOffSet = timeOffSet.Add(aac_sampleDuration);
 
 
-            return sample;
+            return new Tuple<MediaStreamSample, uint>(sample, aac_sampleSize);
         }
 
         public event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
