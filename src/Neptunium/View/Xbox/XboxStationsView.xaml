@@ -21,11 +21,6 @@
                     <AddDeleteThemeTransition />
                 </TransitionCollection>
             </ListView.Transitions>
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsStackPanel Orientation="Horizontal" />
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="0" Height="60">
