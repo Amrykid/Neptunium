@@ -25,6 +25,8 @@ namespace Neptunium.MediaSourceStream
         public Windows.Media.Core.MediaStreamSource MediaStreamSource { get; private set; }
         public ShoutcastStationInfo StationInfo { get; private set; }
 
+        public bool ShouldGetMetadata { get; private set; }
+
         StreamSocket socket = null;
         DataWriter socketWriter = null;
         DataReader socketReader = null;
@@ -94,10 +96,12 @@ namespace Neptunium.MediaSourceStream
 
             await HandleConnection(_relativePath);
         }
-        public async Task<MediaStreamSource> ConnectAsync(uint sampleRate = 44100, string relativePath = ";")
+        public async Task<MediaStreamSource> ConnectAsync(uint sampleRate = 44100, string relativePath = ";", bool getMetadata = true)
         {
             try
             {
+                ShouldGetMetadata = getMetadata;
+
                 await HandleConnection(relativePath);
                 //AudioEncodingProperties obtainedProperties = await GetEncodingPropertiesAsync();
 
@@ -224,7 +228,10 @@ namespace Neptunium.MediaSourceStream
                 socketReader = new DataReader(socket.InputStream);
 
                 socketWriter.WriteString("GET /" + relativePath + " HTTP/1.1" + Environment.NewLine);
-                socketWriter.WriteString("Icy-MetaData: 1" + Environment.NewLine);
+
+                if (ShouldGetMetadata)
+                    socketWriter.WriteString("Icy-MetaData: 1" + Environment.NewLine);
+
                 socketWriter.WriteString("User-Agent: Neptunium (http://github.com/Amrykid)" + Environment.NewLine);
                 socketWriter.WriteString(Environment.NewLine);
                 await socketWriter.StoreAsync();
@@ -387,7 +394,8 @@ namespace Neptunium.MediaSourceStream
 
                     var metadata = socketReader.ReadString((uint)metaDataInfo);
 
-                    ParseSongMetadata(metadata);
+                    if (ShouldGetMetadata)
+                        ParseSongMetadata(metadata);
                 }
 
                 byteOffset = 0;
