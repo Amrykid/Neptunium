@@ -58,6 +58,7 @@ namespace Neptunium
 
             //For Xbox One
             this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
+            ElementSoundPlayer.State = ElementSoundPlayerState.Auto;
 
             CoreInit();
 
