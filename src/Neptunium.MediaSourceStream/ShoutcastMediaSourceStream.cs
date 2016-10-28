@@ -469,11 +469,13 @@ namespace Neptunium.MediaSourceStream
 
             IBuffer buffer = null;
             MediaStreamSample sample = null;
+            uint sampleLength = 0;
 
             if (partial)
             {
                 buffer = partialBytes.AsBuffer();
-                byteOffset += mp3_sampleSize - (ulong)partialBytes.Length;
+                sampleLength = mp3_sampleSize - (uint)partialBytes.Length;
+                byteOffset += sampleLength;
             }
             else
             {
@@ -497,6 +499,8 @@ namespace Neptunium.MediaSourceStream
 
                     byteOffset += mp3_sampleSize;
                 }
+
+                sampleLength = mp3_sampleSize;
             }
 
             sample = MediaStreamSample.CreateFromBuffer(buffer, timeOffSet);
@@ -506,7 +510,7 @@ namespace Neptunium.MediaSourceStream
             timeOffSet = timeOffSet.Add(mp3_sampleDuration);
 
 
-            return new Tuple<MediaStreamSample,uint>(sample, mp3_sampleSize);
+            return new Tuple<MediaStreamSample,uint>(sample, sampleLength);
 
             //return null;
         }
@@ -516,11 +520,13 @@ namespace Neptunium.MediaSourceStream
 
             IBuffer buffer = null;
             MediaStreamSample sample = null;
+            uint sampleLength = 0;
 
             if (partial)
             {
                 buffer = partialBytes.AsBuffer();
-                byteOffset += aac_sampleSize - (ulong)partialBytes.Length;
+                sampleLength = aac_sampleSize - (uint)partialBytes.Length;
+                byteOffset += sampleLength;
             }
             else
             {
@@ -528,6 +534,7 @@ namespace Neptunium.MediaSourceStream
                 buffer = socketReader.ReadBuffer(aac_sampleSize);
 
                 byteOffset += aac_sampleSize;
+                sampleLength = aac_sampleSize;
             }
 
             sample = MediaStreamSample.CreateFromBuffer(buffer, timeOffSet);
@@ -537,7 +544,7 @@ namespace Neptunium.MediaSourceStream
             timeOffSet = timeOffSet.Add(aac_sampleDuration);
 
 
-            return new Tuple<MediaStreamSample, uint>(sample, aac_sampleSize);
+            return new Tuple<MediaStreamSample, uint>(sample, sampleLength);
         }
 
         public event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
