@@ -235,6 +235,8 @@ namespace Neptunium.View
 
             GoHome();
 
+            FeedbackButton.Visibility = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported() ? Visibility.Visible : Visibility.Collapsed;
+
             foreach (RadioButton rb in RootSplitViewPaneStackPanel.Children.Where(x => x is RadioButton))
             {
                 rb.Click += new RoutedEventHandler((sender2, e2) =>
@@ -347,6 +349,12 @@ namespace Neptunium.View
             var parentPopup = parentFlyout.Parent as Popup;
 
             parentPopup.IsOpen = false;
+        }
+
+        private async void FeedbackButton_Click(object sender, RoutedEventArgs e)
+        {
+            var launcher = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.GetDefault();
+            await launcher.LaunchAsync();
         }
     }
 }

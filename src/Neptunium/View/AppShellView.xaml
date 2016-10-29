@@ -138,8 +138,8 @@
                         <Setter Target="inlineFrameGrid.(Grid.Row)" Value="1" />
                     </VisualState.Setters>
                 </VisualState>
-                
-                
+
+
                 <VisualState x:Name="DesktopVisualState">
                     <VisualState.StateTriggers>
                         <wst:CompositeStateTrigger Operator="And">
@@ -259,13 +259,18 @@
 
         <SplitView x:Name="RootSplitView" Margin="0 0 0 0" DisplayMode="CompactInline">
             <SplitView.Pane>
-                <StackPanel x:Name="RootSplitViewPaneStackPanel">
-                    <StackPanel.Resources>
-                        <Style TargetType="TextBlock" BasedOn="{StaticResource SplitViewTextBlockStyle}" />
-                        <Style TargetType="RadioButton" BasedOn="{StaticResource SplitViewRadioButtonStyle}" />
-                    </StackPanel.Resources>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel x:Name="RootSplitViewPaneStackPanel" Grid.Row="0">
+                        <StackPanel.Resources>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource SplitViewTextBlockStyle}" />
+                            <Style TargetType="RadioButton" BasedOn="{StaticResource SplitViewRadioButtonStyle}" />
+                        </StackPanel.Resources>
 
-                    <ToggleButton x:Name="TogglePaneButton"
+                        <ToggleButton x:Name="TogglePaneButton"
                               TabIndex="1"
                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                               Style="{StaticResource SplitViewTogglePaneButtonStyle}"
@@ -273,32 +278,45 @@
                               AutomationProperties.Name="Menu"
                               ToolTipService.ToolTip="Menu" />
 
-                    <!-- font family = Segoe MDL2 Assets -->
-                    <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Stations"
+                        <!-- font family = Segoe MDL2 Assets -->
+                        <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Stations"
                                  Command="{Binding GoToStationsViewCommand}" x:Name="stationsNavButton">
-                        <RadioButton.Tag>
-                            <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
-                        </RadioButton.Tag>
-                    </RadioButton>
-                    <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Now Playing"
+                            <RadioButton.Tag>
+                                <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                            </RadioButton.Tag>
+                        </RadioButton>
+                        <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Now Playing"
                                  Command="{Binding GoToNowPlayingViewCommand}" x:Name="nowPlayingNavButton">
-                        <RadioButton.Tag>
-                            <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
-                        </RadioButton.Tag>
-                    </RadioButton>
-                    <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Song History"
+                            <RadioButton.Tag>
+                                <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                            </RadioButton.Tag>
+                        </RadioButton>
+                        <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Song History"
                                  Command="{Binding GoToSongHistoryViewCommand}" x:Name="songHistoryNavButton">
-                        <RadioButton.Tag>
-                            <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
-                        </RadioButton.Tag>
-                    </RadioButton>
-                    <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Settings"
+                            <RadioButton.Tag>
+                                <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                            </RadioButton.Tag>
+                        </RadioButton>
+                        <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Settings"
                                  Command="{Binding GoToSettingsViewCommand}" x:Name="settingsNavButton">
-                        <RadioButton.Tag>
-                            <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
-                        </RadioButton.Tag>
-                    </RadioButton>
-                </StackPanel>
+                            <RadioButton.Tag>
+                                <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                            </RadioButton.Tag>
+                        </RadioButton>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1">
+                        <StackPanel.Resources>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource SplitViewTextBlockStyle}" />
+                        </StackPanel.Resources>
+
+                        <Button Content="Feedback" Style="{StaticResource SplitViewButtonStyle}" x:Name="FeedbackButton" Visibility="Collapsed" Click="FeedbackButton_Click">
+                            <Button.Tag>
+                                <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                            </Button.Tag>
+                        </Button>
+                    </StackPanel>
+                </Grid>
             </SplitView.Pane>
 
             <SplitView.Content>
@@ -307,7 +325,7 @@
                         <RowDefinition x:Name="CurrentPaneTitleRow" Height="75" />
                         <RowDefinition x:Name="SplitViewContentGrid_SecondRow" Height="Auto" />
                         <RowDefinition x:Name="SplitViewContentGrid_ThirdRow" Height="*" />
-                        
+
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0">
@@ -370,7 +388,7 @@
                                 <RepositionThemeTransition />
                             </TransitionCollection>
                         </Grid.Transitions>
-                        
+
                         <Frame x:Name="inlineFrame">
                             <Frame.ContentTransitions>
                                 <TransitionCollection>
