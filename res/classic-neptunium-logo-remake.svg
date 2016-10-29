@@ -15,7 +15,10 @@
    id="svg4158"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="classic-neptunium-logo-remake.svg">
+   sodipodi:docname="classic-neptunium-logo-remake.svg"
+   inkscape:export-filename="C:\Users\Alex\Documents\Visual Studio 2015\Projects\Neptunium\src\Neptunium\Assets\StoreLogo.scale-100.png"
+   inkscape:export-xdpi="5.0799999"
+   inkscape:export-ydpi="5.0799999">
   <defs
      id="defs4160" />
   <sodipodi:namedview
@@ -23,10 +26,10 @@
      pagecolor="#000000"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="1"
+     inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.49497475"
-     inkscape:cx="531.8492"
+     inkscape:cx="-247.98856"
      inkscape:cy="326.06249"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -55,7 +58,7 @@
      transform="translate(0,-166.53543)">
     <g
        id="g5297"
-       transform="matrix(0.8994987,0,0,0.92865846,106.09925,39.838874)">
+       transform="matrix(0.8994987,0,0,0.92865846,108.09941,38.26613)">
       <flowRoot
          transform="matrix(6.7892142,0,0,5.4151528,-1017.77,-1157.7548)"
          style="font-style:normal;font-weight:normal;font-size:180px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
