@@ -30,11 +30,7 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
-#if RELEASE
             carModePivot.Visibility = CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile ? Visibility.Visible : Visibility.Collapsed;
-#else
-            carModePivot.Visibility = Visibility.Visible;
-#endif
         }
 
         private void UpdateCarModeStatusIndicator(bool isInCarMode)
