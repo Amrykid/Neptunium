@@ -19,6 +19,8 @@ namespace Neptunium.Fragments
         {
             AvailableDevices = ContinuedAppExperienceManager.RemoteSystemsList;
             ContinuedAppExperienceManager.RemoteSystemsListUpdated += ContinuedAppExperienceManager_RemoteSystemsListUpdated;
+
+            IsBusy = true;
         }
 
         private void ContinuedAppExperienceManager_RemoteSystemsListUpdated(object sender, EventArgs e)
@@ -27,6 +29,8 @@ namespace Neptunium.Fragments
             {
                 AvailableDevices = ContinuedAppExperienceManager.RemoteSystemsList;
                 //RaisePropertyChanged(nameof(AvailableDevices));
+
+                IsBusy = false;
             });
         }
 

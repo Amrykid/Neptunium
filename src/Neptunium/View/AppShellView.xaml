@@ -72,7 +72,7 @@
                         <RowDefinition Height="50" />
                     </Grid.RowDefinitions>
 
-                    <ProgressBar IsIndeterminate="True" Grid.Row="0" />
+                    <ProgressBar IsIndeterminate="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" />
 
                     <ListView x:Name="HandOffDeviceFlyout_DeviceListView" IsItemClickEnabled="True" Grid.Row="1" 
                               ItemsSource="{Binding AvailableDevices, UpdateSourceTrigger=PropertyChanged}"
@@ -411,7 +411,7 @@
 
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="Connecting..." />
-                <ProgressRing Height="50" Width="50"  IsActive="True"/>
+                <ProgressRing Height="50" Width="50" IsActive="True"/>
             </StackPanel>
         </Grid>
     </Grid>
