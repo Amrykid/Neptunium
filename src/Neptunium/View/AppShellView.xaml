@@ -125,7 +125,7 @@
                         <Setter Target="CurrentPaneTitleRow.Height" Value="45" />
 
                         <Setter Target="upperAppBar.Visibility" Value="Collapsed" />
-                        <Setter Target="lowerAppBar.Visibility" Value="Visible" />
+                        <Setter Target="lowerAppBar.Visibility" Value="Collapsed" />
 
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource XboxAppBarStyle}" />
                         <Setter Target="inlineFrame.Margin" Value="0" />
@@ -420,7 +420,7 @@
         <CommandBar x:Name="upperAppBar" Style="{StaticResource ComAppBarStyle}">
             <CommandBar.PrimaryCommands>
                 <AppBarButton Icon="Play" Label="Play" Tag="PlayPause" Command="{Binding PlayCommand}" />
-                <AppBarButton Label="Handoff" Icon="Remote" Flyout="{StaticResource HandOffDeviceFlyout}" />
+                <AppBarButton Label="Handoff" Icon="Remote" x:Name="upperAppBarHandOffButton" Flyout="{StaticResource HandOffDeviceFlyout}" />
                 <AppBarButton Label="Sleep Timer" Icon="Clock" Flyout="{StaticResource SleepTimerDeviceFlyout}" />
             </CommandBar.PrimaryCommands>
         </CommandBar>
@@ -431,7 +431,7 @@
                 <AppBarButton Icon="Play" Label="Play" Tag="PlayPause" Command="{Binding PlayCommand}" />
             </CommandBar.PrimaryCommands>
             <CommandBar.SecondaryCommands>
-                <AppBarButton Label="Handoff" Icon="Remote" Flyout="{StaticResource HandOffDeviceFlyout}" />
+                <AppBarButton Label="Handoff" Icon="Remote" x:Name="lowerAppBarHandOffButton" Flyout="{StaticResource HandOffDeviceFlyout}" />
                 <AppBarButton Label="Sleep Timer" Icon="Clock" Flyout="{StaticResource SleepTimerDeviceFlyout}" />
             </CommandBar.SecondaryCommands>
         </CommandBar>

@@ -3,6 +3,7 @@ using Crystal3.Model;
 using Crystal3.Navigation;
 using Neptunium.Fragments;
 using Neptunium.Logging;
+using Neptunium.Media;
 using Neptunium.MediaSourceStream;
 using Neptunium.Services.SnackBar;
 using Neptunium.ViewModel;
@@ -66,7 +67,7 @@ namespace Neptunium.View
         {
             if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
             {
-                switch(e.Key)
+                switch (e.Key)
                 {
                     case Windows.System.VirtualKey.GamepadView:
                         RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen; //when a controller presses the view button, toggle the splitview.
@@ -80,21 +81,8 @@ namespace Neptunium.View
                         }
                         break;
                     case Windows.System.VirtualKey.GamepadY:
-                        if (lowerAppBar.IsOpen)
-                        {
-                            lowerAppBar.IsOpen = false;
-                            inlineFrame.Focus(FocusState.Programmatic);
-                        }
-                        else
-                        {
-                            lowerAppBar.IsOpen = true;
-
-                            var lowerBarBtn = lowerAppBar.PrimaryCommands.FirstOrDefault(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
-                            if (lowerBarBtn != null)
-                            {
-                                lowerBarBtn.Focus(FocusState.Programmatic);
-                            }
-                        }
+                        if (StationMediaPlayer.IsPlaying)
+                            lowerAppBarHandOffButton.Flyout.ShowAt(upperAppBar);
                         break;
                     case Windows.System.VirtualKey.GamepadX:
                         {
@@ -106,14 +94,14 @@ namespace Neptunium.View
                                 inlineNavService.GoBack();
                         }
                         break;
-                        
+
                 }
             }
         }
 
         private void AppShellView_Unloaded(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
         private void AppShellView_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
@@ -152,7 +140,7 @@ namespace Neptunium.View
                     lowerBarBtn = lowerAppBar.SecondaryCommands.FirstOrDefault(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
                 }
 
-                foreach (var PlayPauseButton in new AppBarButton[]{ upperBarBtn, lowerBarBtn})
+                foreach (var PlayPauseButton in new AppBarButton[] { upperBarBtn, lowerBarBtn })
                 {
                     switch (sender.PlaybackSession.PlaybackState)
                     {
@@ -312,7 +300,7 @@ namespace Neptunium.View
         {
             Debug.WriteLine("State Change: " + (e.OldState == null ? "null" : e.OldState.Name) + " -> " + e.NewState.Name);
 
-           
+
         }
 
         private void HandOffDeviceFlyout_DeviceListView_ItemClick(object sender, ItemClickEventArgs e)
