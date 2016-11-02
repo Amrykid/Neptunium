@@ -252,36 +252,11 @@ namespace Neptunium.View
             {
                 RefreshMediaButtons(BackgroundMediaPlayer.Current);
             });
-
-            //App.Dispatcher.RunAsync(() =>
-            //{
-            //    //https://channel9.msdn.com/Events/Build/2015/3-733
-            //    if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            //    {
-            //        //http://stackoverflow.com/questions/30262923/hiding-status-bar-white-bar-at-top-of-windows-10-universal-app-on-phone
-            //        var statusBar = StatusBar.GetForCurrentView();
-            //        statusBar.BackgroundColor = (Application.Current.Resources["AppThemeBrush"] as SolidColorBrush).Color;
-            //        statusBar.ForegroundColor = Colors.White;
-            //        statusBar.BackgroundOpacity = 1.0;
-            //    }
-            //});
         }
 
         private void HandleUI()
         {
-            var stateGroup = VisualStateManager.GetVisualStateGroups(RootGrid).FirstOrDefault();
-
-            //if (stateGroup != null)
-            //{
-            //    VisualState appropriateState = stateGroup.States.First(x =>
-            //    {
-            //        var trigger = x.StateTriggers.FirstOrDefault() as W;
-
-            //        return trigger.MinWindowWidth <= Window.Current.Bounds.Width;
-            //    });
-
-            //    VisualStateManager.GoToState(this, appropriateState.Name, false);
-            //}
+            
         }
 
         private void GoHome()
