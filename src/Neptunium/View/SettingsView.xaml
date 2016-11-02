@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Pivot>
+        <Pivot x:Name="mainPivot">
             <PivotItem Header="General">
                 <StackPanel>
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Notifications" />
@@ -19,7 +19,7 @@
                               IsChecked="{Binding ShouldStopPlayingAfterSuccessfulHandoff, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </PivotItem>
-            <PivotItem Header="Car Mode" x:Name="carModePivot" Visibility="Collapsed">
+            <PivotItem Header="Car Mode" x:Name="carModePivotItem">
                 <StackPanel>
                     <TextBlock FontSize="26" FontFamily="{ThemeResource SymbolThemeFontFamily}" Margin="5 0 0 5">
                             <Span>
