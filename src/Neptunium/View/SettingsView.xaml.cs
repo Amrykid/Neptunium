@@ -40,40 +40,35 @@ namespace Neptunium.View
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-
-#if RELEASE
             if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
-#endif
                 UpdateCarModeStatusIndicator(CarModeManager.IsInCarMode);
 
                 CarModeManager.CarModeManagerCarModeStatusChanged += CarModeManager_CarModeManagerCarModeStatusChanged;
-#if RELEASE
             }
-#endif
 
             base.OnNavigatedTo(e);
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-#if RELEASE
             if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
-#endif
                 CarModeManager.CarModeManagerCarModeStatusChanged -= CarModeManager_CarModeManagerCarModeStatusChanged;
-#if RELEASE
             }
-#endif
+
             base.OnNavigatingFrom(e);
         }
 
         private void CarModeManager_CarModeManagerCarModeStatusChanged(object sender, CarModeManagerCarModeStatusChangedEventArgs e)
         {
-            App.Dispatcher.RunWhenIdleAsync(() =>
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
-                UpdateCarModeStatusIndicator(e.IsInCarMode);
-            });
+                App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    UpdateCarModeStatusIndicator(e.IsInCarMode);
+                });
+            }
         }
     }
 }

@@ -82,42 +82,34 @@ namespace Neptunium.ViewModel
             get { return GetPropertyValue<bool>(); }
             set { SetPropertyValue<bool>(value: value); }
         }
-#endregion
+        #endregion
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-#if RELEASE
+            ShouldStopPlayingAfterSuccessfulHandoff = ContinuedAppExperienceManager.StopPlayingStationOnThisDeviceAfterSuccessfulHandoff;
+
+            ShouldShowSongNofitications = (bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications];
+
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
-#endif
                 CarModeAnnounceSongs = CarModeManager.ShouldAnnounceSongs;
                 SelectedBluetoothDevice = CarModeManager.SelectedDevice?.Name ?? "None";
                 ClearCarModeDeviceCommand.SetCanExecute(CarModeManager.SelectedDevice != null);
                 JapaneseVoiceForSongAnnouncements = CarModeManager.ShouldUseJapaneseVoice;
-#if RELEASE
             }
-#endif
-
-            ShouldStopPlayingAfterSuccessfulHandoff = ContinuedAppExperienceManager.StopPlayingStationOnThisDeviceAfterSuccessfulHandoff;
-
-            ShouldShowSongNofitications = (bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications];
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-#if RELEASE
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-            {
-#endif
-                CarModeManager.SetShouldAnnounceSongs(CarModeAnnounceSongs);
-                CarModeManager.SetShouldUseJapaneseVoice(JapaneseVoiceForSongAnnouncements);
-#if RELEASE
-            }
-#endif
-
             ContinuedAppExperienceManager.SetStopPlayingStationOnThisDeviceAfterSuccessfulHandoff(ShouldStopPlayingAfterSuccessfulHandoff);
 
             ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] = ShouldShowSongNofitications;
+
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            {
+                CarModeManager.SetShouldAnnounceSongs(CarModeAnnounceSongs);
+                CarModeManager.SetShouldUseJapaneseVoice(JapaneseVoiceForSongAnnouncements);
+            }
         }
     }
 }
