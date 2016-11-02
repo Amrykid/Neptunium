@@ -40,11 +40,15 @@ namespace Neptunium.View.Xbox
 
         private void StationsListBox_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            try
+            if (args.NewValue != null)
             {
-                StationsListBox.SelectedIndex = 0;
+                try
+                {
+                    StationsListBox.Focus(FocusState.Programmatic);
+                    StationsListBox.SelectedIndex = 0;
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
         }
     }
 }
