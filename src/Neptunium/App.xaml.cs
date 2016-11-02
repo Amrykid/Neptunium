@@ -249,7 +249,7 @@ namespace Neptunium
 
         internal static bool GetIfPrimaryWindowVisible()
         {
-            return Windows.UI.Xaml.Window.Current.Visible || isInBackground;
+            return Windows.UI.Xaml.Window.Current.Visible || !isInBackground;
         }
         internal static async Task<bool> GetIfPrimaryWindowVisibleAsync()
         {
