@@ -34,6 +34,7 @@ using Windows.System.RemoteSystems;
 using Kukkii;
 using Windows.System;
 using Windows.Networking.Connectivity;
+using Windows.Gaming.Input;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -114,6 +115,16 @@ namespace Neptunium
         protected override void OnConfigure()
         {
             base.OnConfigure();
+
+            //            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
+            //            {
+            //#if DEBUG
+            //                if (Gamepad.Gamepads.Count > 0)
+            //                {
+            //                    this.Options.OverridePlatform(Crystal3.Core.Platform.Xbox);
+            //                }
+            //#endif
+            //            }
 
             this.Options.HandleSystemBackNavigation = CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox;
         }
@@ -268,7 +279,7 @@ namespace Neptunium
         }
         public static bool IsUnrestrictiveInternetConnection()
         {
-            var profile =NetworkInformation.GetInternetConnectionProfile();
+            var profile = NetworkInformation.GetInternetConnectionProfile();
             if (profile != null)
             {
                 var cost = profile.GetConnectionCost();
