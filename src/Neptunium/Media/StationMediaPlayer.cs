@@ -59,6 +59,18 @@ namespace Neptunium.Media
             await Task.CompletedTask;
         }
 
+        internal static void Pause()
+        {
+            if (CurrentStation != null && IsPlaying)
+                BackgroundMediaPlayer.Current.Pause();
+        }
+
+        internal static void Play()
+        {
+            if (CurrentStation != null && !IsPlaying)
+                BackgroundMediaPlayer.Current.Play();
+        }
+
         private static void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
         {
             

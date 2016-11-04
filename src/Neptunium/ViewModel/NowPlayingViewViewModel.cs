@@ -39,6 +39,17 @@ namespace Neptunium.ViewModel
             {
                 await Launcher.LaunchUriAsync(new Uri("https://musicbrainz.org/release/" + CurrentSongAlbumData.AlbumID));
             });
+
+            PlayPauseCommand = new RelayCommand(item =>
+            {
+                if (StationMediaPlayer.IsPlaying)
+                    StationMediaPlayer.Pause();
+                else
+                    StationMediaPlayer.Play();
+            });
+
+            NextStationCommand = new RelayCommand(item => { });
+            PreviousStationCommand = new RelayCommand(item => { });
         }
 
         private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, EventArgs e)
