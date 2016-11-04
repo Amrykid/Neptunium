@@ -1,4 +1,5 @@
 ﻿using Crystal3.Navigation;
+using Neptunium.Media;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,44 @@ namespace Neptunium.View.Xbox
         public XboxNowPlayingView()
         {
             this.InitializeComponent();
+        }
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            StationMediaPlayer.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
+
+            base.OnNavigatedFrom(e);
+        }
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            StationMediaPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+            SetPlaybackButtonState(StationMediaPlayer.PlaybackSession);
+
+            base.OnNavigatedTo(e);
+        }
+
+        private void PlaybackSession_PlaybackStateChanged(Windows.Media.Playback.MediaPlaybackSession sender, object args)
+        {
+            SetPlaybackButtonState(sender);
+        }
+
+        private void SetPlaybackButtonState(Windows.Media.Playback.MediaPlaybackSession sender)
+        {
+            if (sender == null) return;
+
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                switch (sender.PlaybackState)
+                {
+                    case Windows.Media.Playback.MediaPlaybackState.Playing:
+                    case Windows.Media.Playback.MediaPlaybackState.Opening:
+                    case Windows.Media.Playback.MediaPlaybackState.Buffering:
+                        PlayPauseButton.Content = new SymbolIcon(Symbol.Pause);
+                        break;
+                    case Windows.Media.Playback.MediaPlaybackState.Paused:
+                        PlayPauseButton.Content = new SymbolIcon(Symbol.Play);
+                        break;
+                }
+            });
         }
     }
 }

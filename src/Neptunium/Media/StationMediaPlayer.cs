@@ -64,6 +64,11 @@ namespace Neptunium.Media
             
         }
 
+        public static MediaPlaybackSession PlaybackSession
+        {
+            get { return BackgroundMediaPlayer.Current?.PlaybackSession; }
+        }
+
         public static void Deinitialize()
         {
             if (!IsInitialized) return;

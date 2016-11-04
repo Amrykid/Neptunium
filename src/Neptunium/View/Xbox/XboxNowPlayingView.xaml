@@ -21,7 +21,7 @@
                             VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="40 0 0 40">
                 <TextBlock Text="Select a station to begin streaming." VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" FontSize="25" />
             </Grid>
-            <Grid x:Name="NowPlayingInfoGrid" Margin="40 0 0 40"
+            <Grid x:Name="NowPlayingInfoGrid" Margin="40 0 0 85"
               Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
               HorizontalAlignment="Left" VerticalAlignment="Bottom" 
               Height="150" Width="Auto">
@@ -29,11 +29,15 @@
                     <ColumnDefinition Width="150" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="150" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
 
-                <Image Grid.Column="0" Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
+                <Image Grid.Column="0" Grid.Row="0" Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
                        Width="150" Height="150" />
 
-                <Grid Grid.Column="1" Margin="20 0 0 0">
+                <Grid Grid.Column="1" Grid.Row="0" Margin="20 0 0 0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="35" />
                         <RowDefinition Height="Auto" />
@@ -44,6 +48,25 @@
                     <TextBlock Grid.Row="1" Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" Style="{ThemeResource TitleTextBlockStyle}" />
                     <TextBlock Grid.Row="2" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" Style="{ThemeResource SubtitleTextBlockStyle}" FontSize="18" LineHeight="22" />
                 </Grid>
+
+                <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1">
+                    <StackPanel.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="Margin" Value="20 0 0 0" />
+                            <Setter Property="Height" Value="80" />
+                            <Setter Property="Width" Value="80" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button Command="{Binding PreviousStationCommand}">
+                        <SymbolIcon Symbol="Previous" />
+                    </Button>
+                    <Button x:Name="PlayPauseButton" Command="{Binding PlayPauseCommand, UpdateSourceTrigger=PropertyChanged}">
+                        <SymbolIcon Symbol="Play" />
+                    </Button>
+                    <Button Command="{Binding NextStationCommand}">
+                        <SymbolIcon Symbol="Next" />
+                    </Button>
+                </StackPanel>
             </Grid>
         </Grid>
     </Grid>

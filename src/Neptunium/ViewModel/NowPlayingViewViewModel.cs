@@ -243,5 +243,9 @@ namespace Neptunium.ViewModel
         public AlbumData CurrentSongAlbumData { get { return GetPropertyValue<AlbumData>(); } set { SetPropertyValue<AlbumData>(value: value); } }
 
         public string NowPlayingBackgroundImage { get { return GetPropertyValue<string>(); } set { SetPropertyValue<string>(value: value); } }
+
+        public RelayCommand PlayPauseCommand { get; private set; }
+        public RelayCommand PreviousStationCommand { get; private set; }
+        public RelayCommand NextStationCommand { get; private set; }
     }
 }
