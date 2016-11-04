@@ -108,7 +108,18 @@ namespace Neptunium.Managers
 
         private static void RemoteSystemWatcher_RemoteSystemUpdated(RemoteSystemWatcher sender, RemoteSystemUpdatedEventArgs args)
         {
+            if (!systemList.Any(x => x.Id == args.RemoteSystem.Id))
+            {
+                systemList.Add(args.RemoteSystem);
+            }
+            else
+            {
+                int index = systemList.IndexOf(systemList.First(x => x.Id == args.RemoteSystem.Id));
+                systemList[index] = args.RemoteSystem;
+            }
 
+            if (RemoteSystemsListUpdated != null)
+                RemoteSystemsListUpdated(null, EventArgs.Empty);
         }
 
         private static void RemoteSystemWatcher_RemoteSystemRemoved(RemoteSystemWatcher sender, RemoteSystemRemovedEventArgs args)
