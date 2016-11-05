@@ -17,7 +17,7 @@ namespace Neptunium.Fragments
     {
         internal HandOffFlyoutViewFragment()
         {
-            AvailableDevices = ContinuedAppExperienceManager.RemoteSystemsList;
+            AvailableDevices = new ObservableCollection<RemoteSystem>(ContinuedAppExperienceManager.RemoteSystemsList);
             ContinuedAppExperienceManager.RemoteSystemsListUpdated += ContinuedAppExperienceManager_RemoteSystemsListUpdated;
 
             IsBusy = true;
@@ -27,7 +27,7 @@ namespace Neptunium.Fragments
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                AvailableDevices = ContinuedAppExperienceManager.RemoteSystemsList;
+                AvailableDevices = new ObservableCollection<RemoteSystem>(ContinuedAppExperienceManager.RemoteSystemsList);
                 //RaisePropertyChanged(nameof(AvailableDevices));
 
                 IsBusy = false;
@@ -77,10 +77,10 @@ namespace Neptunium.Fragments
             ContinuedAppExperienceManager.RemoteSystemsListUpdated -= ContinuedAppExperienceManager_RemoteSystemsListUpdated;
         }
 
-        public ReadOnlyObservableCollection<RemoteSystem> AvailableDevices
+        public ObservableCollection<RemoteSystem> AvailableDevices
         {
-            get { return GetPropertyValue<ReadOnlyObservableCollection<RemoteSystem>>(); }
-            set { SetPropertyValue<ReadOnlyObservableCollection<RemoteSystem>>(value: value); }
+            get { return GetPropertyValue<ObservableCollection<RemoteSystem>>(); }
+            set { SetPropertyValue<ObservableCollection<RemoteSystem>>(value: value); }
         }
     }
 }

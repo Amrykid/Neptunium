@@ -138,7 +138,8 @@ namespace Neptunium.Managers
 
         private static void RemoteSystemWatcher_RemoteSystemAdded(RemoteSystemWatcher sender, RemoteSystemAddedEventArgs args)
         {
-            systemList.Add(args.RemoteSystem);
+            if (!systemList.Any(x => x.Id == args.RemoteSystem.Id))
+                systemList.Add(args.RemoteSystem);
 
             if (RemoteSystemsListUpdated != null)
                 RemoteSystemsListUpdated(null, EventArgs.Empty);
