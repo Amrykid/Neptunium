@@ -116,15 +116,15 @@ namespace Neptunium
         {
             base.OnConfigure();
 
-            //            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
-            //            {
-            //#if DEBUG
-            //                if (Gamepad.Gamepads.Count > 0)
-            //                {
-            //                    this.Options.OverridePlatform(Crystal3.Core.Platform.Xbox);
-            //                }
-            //#endif
-            //            }
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
+            {
+#if DEBUG
+                if (Gamepad.Gamepads.Count > 0)
+                {
+                    this.Options.OverridePlatform(Crystal3.Core.Platform.Xbox);
+                }
+#endif
+            }
 
             this.Options.HandleSystemBackNavigation = CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox;
         }

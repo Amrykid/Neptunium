@@ -5,6 +5,7 @@
     xmlns:local="using:Neptunium.View.Xbox"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wrtk="using:WinRTXamlToolkit.Controls"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
@@ -21,33 +22,33 @@
                     <AddDeleteThemeTransition />
                 </TransitionCollection>
             </ListView.Transitions>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <wrtk:WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="0" Height="60">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="55" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+                    <Grid Margin="5 5" Height="150" Width="150">
+                        <Grid.Background>
+                            <ImageBrush Opacity=".45">
+                                <ImageBrush.ImageSource>
+                                    <BitmapImage UriSource="{Binding Logo}" />
+                                </ImageBrush.ImageSource>
+                            </ImageBrush>
+                        </Grid.Background>
 
-                        <Image Height="55" Width="55" Grid.Column="0">
-                            <Image.Source>
-                                <BitmapImage UriSource="{Binding Logo}" DecodePixelWidth="55" DecodePixelHeight="55" />
-                            </Image.Source>
-                        </Image>
-
-                        <Grid Grid.Column="1" Margin="0 0 0 0" Padding="10 0 10 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="60">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Text="{Binding Name}" Grid.Row="0" Style="{ThemeResource BaseTextBlockStyle}" 
-                                   Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                            <TextBlock Text="{Binding Description}" Grid.Row="1" 
-                                   Style="{ThemeResource BodyTextBlockStyle}" 
-                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
-
-                        </Grid>
+                        <TextBlock Margin="0 0 0 0" VerticalAlignment="Center"
+                                   TextAlignment="Center"
+                                   HorizontalAlignment="Center" TextWrapping="WrapWholeWords">
+                                    <Span>
+                                        <Run Text="{Binding Name}" FontSize="18" FontWeight="SemiBold" 
+                                             Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                                        <LineBreak />
+                                        <Run Text="{Binding Description}" FontSize="15"
+                                             Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
+                                    </Span>
+                        </TextBlock>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
