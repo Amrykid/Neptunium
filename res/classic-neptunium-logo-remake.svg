@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.91 r13725"
    sodipodi:docname="classic-neptunium-logo-remake.svg"
-   inkscape:export-filename="C:\Users\Alex\Documents\Visual Studio 2015\Projects\Neptunium\src\Neptunium\Assets\StoreLogo.scale-100.png"
-   inkscape:export-xdpi="5.0799999"
-   inkscape:export-ydpi="5.0799999">
+   inkscape:export-filename="C:\Users\Alex\Documents\Visual Studio 2015\Projects\Neptunium\src\Neptunium\Assets\NewStoreLogo.scale-200.png"
+   inkscape:export-xdpi="10.16"
+   inkscape:export-ydpi="10.16">
   <defs
      id="defs4160" />
   <sodipodi:namedview
@@ -29,7 +29,7 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.49497475"
-     inkscape:cx="-247.98856"
+     inkscape:cx="433.10364"
      inkscape:cy="326.06249"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -47,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -58,7 +58,7 @@
      transform="translate(0,-166.53543)">
     <g
        id="g5297"
-       transform="matrix(0.8994987,0,0,0.92865846,108.09941,38.26613)">
+       transform="matrix(0.58368411,0,0,0.60260586,225.65282,238.80875)">
       <flowRoot
          transform="matrix(6.7892142,0,0,5.4151528,-1017.77,-1157.7548)"
          style="font-style:normal;font-weight:normal;font-size:180px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
