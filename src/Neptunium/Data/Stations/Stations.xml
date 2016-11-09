@@ -26,6 +26,16 @@
     </Streams>
   </Station>
   <Station>
+    <Name>Ani-Station</Name>
+    <Description>Listen for Anime Openings, Endings, OST</Description>
+    <Logo><![CDATA[https://scontent-atl3-1.xx.fbcdn.net/v/t1.0-9/13770512_1716434165285420_1996521440200989773_n.png?oh=65374511c2d1126bfdd385e86b93f591&oe=58D10065]]></Logo>
+    <Site>http://ani-station.playtheradio.com/index.cfm</Site>
+    <Genres>Anime; J-Pop; Soundtracks</Genres>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100">http://listen.radionomy.com:80/Ani-Station</Stream>
+    </Streams>
+  </Station>
+  <Station>
     <Name>Japan-A-Radio</Name>
     <Description>The best Japanese music from JPOP to Anime Soundtracks.</Description>
     <Logo>http://www.japanaradio.com/images/logo02.png</Logo>
