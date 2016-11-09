@@ -97,7 +97,7 @@ namespace Neptunium.Data
                     stationList.Add(station);
                 }
 
-                Stations = stationList.ToArray();
+                Stations = stationList.OrderBy(x => x.Name).ToArray();
 
                 IsInitialized = true;
 
