@@ -36,6 +36,36 @@
     </Streams>
   </Station>
   <Station>
+    <Name>J1 Radio</Name>
+    <Description>Japan's Hottest Hits</Description>
+    <Logo><![CDATA[http://j1fm.tokyo/images/listenbox_j1.jpg]]></Logo>
+    <Site>http://en.j1fm.com/</Site>
+    <Genres>J-Pop; J-Rock; Pop</Genres>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://cabhs30.sonixcast.com:9774/</Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>J1 XTRA</Name>
+    <Description>Greatest Hits - 1990s 2000s</Description>
+    <Logo><![CDATA[http://j1fm.tokyo/images/listenbox-j1x_90.jpg]]></Logo>
+    <Site>http://en.j1fm.com/</Site>
+    <Genres>J-Pop; J-Rock; Pop</Genres>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://cabhs31.sonixcast.com:20080/</Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>J1 GOLD</Name>
+    <Description>Greatest Hits - 1990s 2000s</Description>
+    <Logo><![CDATA[http://j1fm.tokyo/images/listenbox-j1g.jpg]]></Logo>
+    <Site>http://en.j1fm.com/</Site>
+    <Genres>Enka; J-Pop; Pop</Genres>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100">http://streaming.radionomy.com/J1GOLDJapanOldies?lang=en-US%2cen%3bq%3d0.7%2cja%3bq%3d0.3</Stream>
+    </Streams>
+  </Station>
+  <Station>
     <Name>Japan-A-Radio</Name>
     <Description>The best Japanese music from JPOP to Anime Soundtracks.</Description>
     <Logo>http://www.japanaradio.com/images/logo02.png</Logo>
