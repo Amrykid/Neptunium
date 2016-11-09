@@ -17,10 +17,12 @@ namespace Neptunium.Fragments
     {
         internal HandOffFlyoutViewFragment()
         {
-            AvailableDevices = new ObservableCollection<RemoteSystem>(ContinuedAppExperienceManager.RemoteSystemsList);
             ContinuedAppExperienceManager.RemoteSystemsListUpdated += ContinuedAppExperienceManager_RemoteSystemsListUpdated;
 
             IsBusy = true;
+
+            if (ContinuedAppExperienceManager.RemoteSystemsList != null)
+                AvailableDevices = new ObservableCollection<RemoteSystem>(ContinuedAppExperienceManager.RemoteSystemsList);
         }
 
         private void ContinuedAppExperienceManager_RemoteSystemsListUpdated(object sender, EventArgs e)
