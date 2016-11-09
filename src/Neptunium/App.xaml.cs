@@ -69,12 +69,12 @@ namespace Neptunium
 
         private static volatile bool isInBackground = false;
 
-        public override Task OnForegroundingAsync()
+        protected override Task OnForegroundingAsync()
         {
             isInBackground = false;
             return base.OnForegroundingAsync();
         }
-        public override Task OnBackgroundingAsync()
+        protected override Task OnBackgroundingAsync()
         {
             isInBackground = true;
             return base.OnBackgroundingAsync();
@@ -292,7 +292,7 @@ namespace Neptunium
             return true;
         }
 
-        public override async Task OnSuspendingAsync()
+        protected override async Task OnSuspendingAsync()
         {
             LogManager.Info(typeof(App), "Application Suspending");
 
@@ -302,7 +302,7 @@ namespace Neptunium
             await base.OnSuspendingAsync();
         }
 
-        public override async Task OnResumingAsync()
+        protected override async Task OnResumingAsync()
         {
             //await LogManager.InitializeAsync();
 
