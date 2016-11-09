@@ -137,9 +137,16 @@ namespace Neptunium.ViewModel
 
             BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
 
-            ContinuedAppExperienceManager.CheckForReverseHandoffOpportunities();
+            ContinuedAppExperienceManager.RemoteSystemsListUpdated += ContinuedAppExperienceManager_RemoteSystemsListUpdated;
 
             await UpdateCarModeButtonStatusAsync(CarModeManager.IsInCarMode);
+        }
+
+        private void ContinuedAppExperienceManager_RemoteSystemsListUpdated(object sender, EventArgs e)
+        {
+            ContinuedAppExperienceManager.RemoteSystemsListUpdated -= ContinuedAppExperienceManager_RemoteSystemsListUpdated;
+            ContinuedAppExperienceManager.CheckForReverseHandoffOpportunities();
+            ContinuedAppExperienceManager.RemoteSystemsListUpdated += ContinuedAppExperienceManager_RemoteSystemsListUpdated;
         }
 
         private void Current_CurrentStateChanged(MediaPlayer sender, object args)
