@@ -119,21 +119,6 @@
     </Streams>
   </Station>
   <Station>
-    <Name>J1 Radio</Name>
-    <Description>Japan's Hottest Hits</Description>
-    <Logo>
-      <![CDATA[https://scontent-dfw1-1.xx.fbcdn.net/v/t1.0-9/10897867_10153650152509386_7707399943066538257_n.jpg?oh=ea2b44d0aa0a54ef316bbc1d4fb21f3d&oe=57F1D14C]]>
-    </Logo>
-    <Background><![CDATA[https://scontent-dfw1-1.xx.fbcdn.net/v/t1.0-9/10858627_10153592863194386_7716539785810170138_n.jpg?oh=35a826ffca40f5d4bff542a2dc04428d&oe=58045ACB]]></Background>
-    <Site>http://en.j1fm.com/</Site>
-    <Genres>J-Pop;J-Rock</Genres>
-    <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html?sid=1">
-        http://cabhs30.sonixcast.com:9774/
-      </Stream>
-    </Streams>
-  </Station>
-  <Station>
     <Name>70s-90s J-pop Stream</Name>
     <Description></Description>
     <Logo>
