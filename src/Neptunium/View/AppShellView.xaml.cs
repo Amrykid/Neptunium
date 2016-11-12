@@ -59,7 +59,19 @@ namespace Neptunium.View
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
 
-            IoC.Current.Register<ISnackBarService>(new SnackBarService(snackBarGrid));
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                IoC.Current.Register<ISnackBarService>(new SnackBarService(xboxSnackBarGrid));
+
+#if DEBUG
+                if (Crystal3.CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
+                    VisualStateManager.GoToState(this, XboxVisualState.Name, true);
+#endif
+            }
+            else
+            {
+                IoC.Current.Register<ISnackBarService>(new SnackBarService(snackBarGrid));
+            }
 
         }
 
@@ -256,7 +268,7 @@ namespace Neptunium.View
 
         private void HandleUI()
         {
-            
+
         }
 
         private void GoHome()

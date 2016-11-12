@@ -134,7 +134,8 @@
 
                         <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="*" />
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
-                        <Setter Target="snackBarGrid.(Grid.Row)" Value="2" />
+                        <Setter Target="snackBarGrid.Visibility" Value="Collapsed" />
+                        <Setter Target="xboxSnackBarGrid.Visibility" Value="Visible" />
                         <Setter Target="inlineFrameGrid.(Grid.Row)" Value="1" />
                     </VisualState.Setters>
                 </VisualState>
@@ -172,6 +173,8 @@
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
                         <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
+                        <Setter Target="xboxSnackBarGrid.Visibility" Value="Collapsed" />
+                        <Setter Target="snackBarGrid.Visibility" Value="Visible" />
 
                         <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="*" />
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
@@ -212,6 +215,8 @@
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
                         <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
+                        <Setter Target="xboxSnackBarGrid.Visibility" Value="Collapsed" />
+                        <Setter Target="snackBarGrid.Visibility" Value="Visible" />
 
                         <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="*" />
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
@@ -250,6 +255,8 @@
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
                         <Setter Target="MobileIconMenu.Visibility" Value="Visible" />
+                        <Setter Target="xboxSnackBarGrid.Visibility" Value="Collapsed" />
+                        <Setter Target="snackBarGrid.Visibility" Value="Visible" />
 
                         <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="Auto" />
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="*" />
@@ -403,6 +410,14 @@
                                 </TransitionCollection>
                             </Frame.ContentTransitions>
                         </Frame>
+                    </Grid>
+
+                    <Grid x:Name="xboxSnackBarGrid" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="300" Margin="0 0 100 100">
+                        <Grid.Transitions>
+                            <TransitionCollection>
+                                <PaneThemeTransition />
+                            </TransitionCollection>
+                        </Grid.Transitions>
                     </Grid>
                 </Grid>
             </SplitView.Content>
