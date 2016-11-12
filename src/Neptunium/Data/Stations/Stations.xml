@@ -37,6 +37,7 @@
   </Station>
   <Station>
     <Name>J1 Radio</Name>
+    <StationGroup>J1</StationGroup>
     <Description>Japan's Hottest Hits</Description>
     <Logo><![CDATA[http://j1fm.tokyo/images/listenbox_j1.jpg]]></Logo>
     <Site>http://en.j1fm.com/</Site>
@@ -47,6 +48,7 @@
   </Station>
   <Station>
     <Name>J1 XTRA</Name>
+    <StationGroup>J1</StationGroup>
     <Description>Greatest Hits - 1990s 2000s</Description>
     <Logo><![CDATA[http://j1fm.tokyo/images/listenbox-j1x_90.jpg]]></Logo>
     <Site>http://en.j1fm.com/</Site>
@@ -57,6 +59,7 @@
   </Station>
   <Station>
     <Name>J1 GOLD</Name>
+    <StationGroup>J1</StationGroup>
     <Description>Greatest Hits - 1990s 2000s</Description>
     <Logo><![CDATA[http://j1fm.tokyo/images/listenbox-j1g.jpg]]></Logo>
     <Site>http://en.j1fm.com/</Site>
