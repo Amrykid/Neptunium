@@ -199,4 +199,36 @@
       </Stream>
     </Streams>
   </Station>
+  <Station>
+    <Name>Big B Radio - JPop</Name>
+    <StationGroup>Big B Radio</StationGroup>
+    <Description><![CDATA[J-POP]]></Description>
+    <Logo>
+      <![CDATA[http://cdn-radiotime-logos.tunein.com/s135097q.png]]>
+    </Logo>
+    <Site>http://bigbradio.net/jpop/</Site>
+    <Genres><![CDATA[J-Pop]]></Genres>
+    <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://38.107.243.18:8014/
+      </Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>Big B Radio - KPop</Name>
+    <StationGroup>Big B Radio</StationGroup>
+    <Description><![CDATA[K-POP]]></Description>
+    <Logo>
+      <![CDATA[http://cdn-radiotime-logos.tunein.com/s135096q.png]]>
+    </Logo>
+    <Site>http://bigbradio.net/kpop/</Site>
+    <Genres><![CDATA[K-Pop]]></Genres>
+    <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://38.107.243.18:8018/
+      </Stream>
+    </Streams>
+  </Station>
 </Stations>            
