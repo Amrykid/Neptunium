@@ -15,5 +15,6 @@ namespace Neptunium.MediaSourceStream
 
         public string StationName { get; internal set; }
         public string StationGenre { get; internal set; }
+        public string StationDescription { get; internal set; }
     }
 }

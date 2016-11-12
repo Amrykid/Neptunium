@@ -298,6 +298,12 @@ namespace Neptunium.MediaSourceStream
             StationInfo.StationName = headers.First(x => x.Key == "ICY-NAME").Value;
             StationInfo.StationGenre = headers.First(x => x.Key == "ICY-GENRE").Value;
 
+            if (headers.Any(x => x.Key.ToUpper() == "ICY-DESCRIPTION"))
+                StationInfo.StationDescription = headers.First(x => x.Key.ToUpper() == "ICY-DESCRIPTION").Value;
+
+            if (StationInfoChanged != null)
+                StationInfoChanged(this, EventArgs.Empty);
+
             bitRate = uint.Parse(headers.FirstOrDefault(x => x.Key == "ICY-BR").Value);
             metadataInt = uint.Parse(headers.First(x => x.Key == "ICY-METAINT").Value);
             contentType = headers.First(x => x.Key == "CONTENT-TYPE").Value.ToUpper().Trim() == "AUDIO/MPEG" ? StreamAudioFormat.MP3 : StreamAudioFormat.AAC;
@@ -585,6 +591,7 @@ namespace Neptunium.MediaSourceStream
             return new Tuple<MediaStreamSample, uint>(sample, sampleLength);
         }
 
+        public event EventHandler StationInfoChanged;
         public event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
     }
 }

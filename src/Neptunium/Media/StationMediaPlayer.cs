@@ -14,6 +14,8 @@ using System.Diagnostics;
 using System.Threading;
 using Windows.Web.Http;
 using Windows.Storage.Streams;
+using Neptunium.Services.SnackBar;
+using Crystal3.InversionOfControl;
 
 namespace Neptunium.Media
 {
@@ -73,7 +75,7 @@ namespace Neptunium.Media
 
         private static void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
         {
-            
+
         }
 
         public static MediaPlaybackSession PlaybackSession
@@ -202,6 +204,7 @@ namespace Neptunium.Media
             {
                 if (currentStationMSSWrapper != null && (currentStationServerType == StationModelStreamServerType.Shoutcast || currentStationServerType == StationModelStreamServerType.Icecast))
                 {
+                    currentStationMSSWrapper.StationInfoChanged -= CurrentStationMSSWrapper_StationInfoChanged;
                     currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
                     if (currentStationMSSWrapper.MediaStreamSource != null)
@@ -248,6 +251,7 @@ namespace Neptunium.Media
                 currentStationMSSWrapper = new ShoutcastMediaSourceStream(new Uri(stream.Url), ConvertServerTypeToMediaServerType(currentStationServerType));
 
                 currentStationMSSWrapper.MetadataChanged += CurrentStationMSSWrapper_MetadataChanged;
+                currentStationMSSWrapper.StationInfoChanged += CurrentStationMSSWrapper_StationInfoChanged;
 
 
                 try
@@ -272,6 +276,7 @@ namespace Neptunium.Media
                     }
                     else
                     {
+                        currentStationMSSWrapper.StationInfoChanged -= CurrentStationMSSWrapper_StationInfoChanged;
                         currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
                         if (currentStationMSSWrapper.MediaStreamSource != null)
@@ -280,6 +285,7 @@ namespace Neptunium.Media
                 }
                 catch (Exception)
                 {
+                    currentStationMSSWrapper.StationInfoChanged -= CurrentStationMSSWrapper_StationInfoChanged;
                     currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
                     if (currentStationMSSWrapper.MediaStreamSource != null)
@@ -302,9 +308,23 @@ namespace Neptunium.Media
             return IsPlaying;
         }
 
+        private static async void CurrentStationMSSWrapper_StationInfoChanged(object sender, EventArgs e)
+        {
+            //show a message from the station if any. usually this only applies to radionomy stations.
+            if (currentStationMSSWrapper != null)
+            {
+                if (currentStationMSSWrapper.StationInfo != null)
+                {
+                    var station = currentStationMSSWrapper.StationInfo;
+                    if (!string.IsNullOrWhiteSpace(station.StationDescription))
+                        await IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync(station.StationName + " - " + station.StationDescription, 6000);
+                }
+            }
+        }
+
         private static ShoutcastServerType ConvertServerTypeToMediaServerType(StationModelStreamServerType currentStationServerType)
         {
-            switch(currentStationServerType)
+            switch (currentStationServerType)
             {
                 case StationModelStreamServerType.Shoutcast:
                     return ShoutcastServerType.Shoutcast;
