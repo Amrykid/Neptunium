@@ -105,7 +105,6 @@ namespace Neptunium.Fragments
                     CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo.ToString();
                 }
 
-
                 try
                 {
                     if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)

@@ -256,31 +256,49 @@ namespace Neptunium.Media
 
                 try
                 {
-                    if (await currentStationMSSWrapper.ConnectAsync(stream.SampleRate, stream.RelativePath) != null)
-                    {
-#pragma warning disable CS0618 // Type or member is obsolete
-                        BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
-#pragma warning restore CS0618 // Type or member is obsolete
-
-                        BackgroundMediaPlayer.Current.Play();
-
-                        currentStationMSSWrapper.MediaStreamSource.Closed += MediaStreamSource_Closed;
-
-                        currentTrack = "Unknown Song";
-                        currentArtist = "Unknown Artist";
-
-                        //UpdateNowPlaying(currentTrack, currentArtist);
-                        SongMetadata = null;
-
-                        if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
-                    }
-                    else
-                    {
+                    Action CleanUp = () => {
                         currentStationMSSWrapper.StationInfoChanged -= CurrentStationMSSWrapper_StationInfoChanged;
                         currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
                         if (currentStationMSSWrapper.MediaStreamSource != null)
                             currentStationMSSWrapper.MediaStreamSource.Closed -= MediaStreamSource_Closed;
+                    };
+
+                    var connectTask = currentStationMSSWrapper.ConnectAsync(stream.SampleRate, stream.RelativePath);
+                    var timeoutTask = Task.Delay(10000);
+                    var resultTask = await Task.WhenAny(connectTask, timeoutTask);
+                    if (resultTask == connectTask)
+                    {
+                        if (await connectTask != null)
+                        {
+#pragma warning disable CS0618 // Type or member is obsolete
+                            BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
+#pragma warning restore CS0618 // Type or member is obsolete
+
+                            BackgroundMediaPlayer.Current.Play();
+
+                            currentStationMSSWrapper.MediaStreamSource.Closed += MediaStreamSource_Closed;
+
+                            currentTrack = "Unknown Song";
+                            currentArtist = "Unknown Artist";
+
+                            //UpdateNowPlaying(currentTrack, currentArtist);
+                            SongMetadata = null;
+
+                            if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+                        }
+                        else
+                        {
+                            CleanUp();
+                        }
+                    }
+                    else
+                    {
+                        CleanUp();
+
+                        //timeout.
+
+                        if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
                     }
                 }
                 catch (Exception)
