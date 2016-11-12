@@ -184,7 +184,7 @@
       </Stream>
     </Streams>
   </Station>
-  <!--<Station>
+  <Station>
     <Name>J-Pop Project Radio</Name>
     <Description><![CDATA[J-POP]]></Description>
     <Logo>
@@ -194,9 +194,9 @@
     <Genres><![CDATA[J-Pop]]></Genres>
     <Background></Background>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
-        http://listen128.radionomy.com/j-popprojectradio
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Radionomy">
+        http://streaming.radionomy.com/J-PopProjectRadio
       </Stream>
     </Streams>
-  </Station>-->
+  </Station>
 </Stations>            
