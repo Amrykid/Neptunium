@@ -33,6 +33,7 @@ namespace Neptunium.MediaSourceStream
         private volatile bool connected = false;
         private string _relativePath = ";";
         private uint _sampleRate = 44100;
+        private ShoutcastServerType serverType = ShoutcastServerType.Shoutcast;
 
         Uri streamUrl = null;
 
@@ -78,11 +79,13 @@ namespace Neptunium.MediaSourceStream
         UInt32 aac_sampleSize = 16;
         TimeSpan aac_sampleDuration = new TimeSpan(0, 0, 0, 0, 70);
 
-        public ShoutcastMediaSourceStream(Uri url)
+        public ShoutcastMediaSourceStream(Uri url, ShoutcastServerType stationServerType = ShoutcastServerType.Shoutcast)
         {
             StationInfo = new ShoutcastStationInfo();
 
             streamUrl = url;
+
+            serverType = stationServerType;
 
             socket = new StreamSocket();
         }
@@ -227,11 +230,25 @@ namespace Neptunium.MediaSourceStream
                 socketWriter = new DataWriter(socket.OutputStream);
                 socketReader = new DataReader(socket.InputStream);
 
-                socketWriter.WriteString("GET /" + relativePath + " HTTP/1.1" + Environment.NewLine);
+                //todo figure out how to resolve http requests better to get rid of this hack.
+                String httpPath = "";
+
+                if (streamUrl.Host.Contains("radionomy.com") || serverType == ShoutcastServerType.Radionomy)
+                {
+                    httpPath = streamUrl.LocalPath;
+                    serverType = ShoutcastServerType.Radionomy;
+                }
+                else
+                {
+                    httpPath = "/" + relativePath;
+                }
+
+                socketWriter.WriteString("GET " + httpPath + " HTTP/1.1" + Environment.NewLine);
 
                 if (ShouldGetMetadata)
                     socketWriter.WriteString("Icy-MetaData: 1" + Environment.NewLine);
 
+                socketWriter.WriteString("Connection: Keep-Alive" + Environment.NewLine);
                 socketWriter.WriteString("User-Agent: Neptunium (http://github.com/Amrykid)" + Environment.NewLine);
                 socketWriter.WriteString(Environment.NewLine);
                 await socketWriter.StoreAsync();
@@ -242,6 +259,22 @@ namespace Neptunium.MediaSourceStream
                 {
                     await socketReader.LoadAsync(1);
                     response += socketReader.ReadString(1);
+                }
+
+                if (response.StartsWith("HTTP/1.0 302"))
+                {
+                    socketReader.Dispose();
+                    socketWriter.Dispose();
+                    socket.Dispose();
+
+                    var parsedResponse = ParseHttpResponseToKeyPairArray(response.Split(new string[] { "\r\n" }, StringSplitOptions.None).Skip(1).ToArray());
+
+                    socket = new StreamSocket();
+                    streamUrl = new Uri(parsedResponse.First(x => x.Key.ToLower() == "location").Value);
+
+                    await HandleConnection(relativePath);
+
+                    return;
                 }
 
                 ParseResponse(response);
@@ -260,7 +293,19 @@ namespace Neptunium.MediaSourceStream
         private void ParseResponse(string response)
         {
             string[] responseSplitByLine = response.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-            var headers = responseSplitByLine.Where(line => line.Contains(":")).Select(line =>
+            KeyValuePair<string, string>[] headers = ParseHttpResponseToKeyPairArray(responseSplitByLine);
+
+            StationInfo.StationName = headers.First(x => x.Key == "ICY-NAME").Value;
+            StationInfo.StationGenre = headers.First(x => x.Key == "ICY-GENRE").Value;
+
+            bitRate = uint.Parse(headers.FirstOrDefault(x => x.Key == "ICY-BR").Value);
+            metadataInt = uint.Parse(headers.First(x => x.Key == "ICY-METAINT").Value);
+            contentType = headers.First(x => x.Key == "CONTENT-TYPE").Value.ToUpper().Trim() == "AUDIO/MPEG" ? StreamAudioFormat.MP3 : StreamAudioFormat.AAC;
+        }
+
+        private static KeyValuePair<string, string>[] ParseHttpResponseToKeyPairArray(string[] responseSplitByLine)
+        {
+            return responseSplitByLine.Where(line => line.Contains(":")).Select(line =>
             {
                 string header = line.Substring(0, line.IndexOf(":"));
                 string value = line.Substring(line.IndexOf(":") + 1);
@@ -269,13 +314,6 @@ namespace Neptunium.MediaSourceStream
 
                 return pair;
             }).ToArray();
-
-            StationInfo.StationName = headers.First(x => x.Key == "ICY-NAME").Value;
-            StationInfo.StationGenre = headers.First(x => x.Key == "ICY-GENRE").Value;
-
-            bitRate = uint.Parse(headers.FirstOrDefault(x => x.Key == "ICY-BR").Value);
-            metadataInt = uint.Parse(headers.First(x => x.Key == "ICY-METAINT").Value);
-            contentType = headers.First(x => x.Key == "CONTENT-TYPE").Value.ToUpper().Trim() == "AUDIO/MPEG" ? StreamAudioFormat.MP3 : StreamAudioFormat.AAC;
         }
 
         private async void MediaStreamSource_SampleRequested(Windows.Media.Core.MediaStreamSource sender, Windows.Media.Core.MediaStreamSourceSampleRequestedEventArgs args)

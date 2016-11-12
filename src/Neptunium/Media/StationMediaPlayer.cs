@@ -243,9 +243,9 @@ namespace Neptunium.Media
                     return false;
                 }
             }
-            else if ((currentStationServerType == StationModelStreamServerType.Shoutcast || currentStationServerType == StationModelStreamServerType.Icecast))
+            else if ((currentStationServerType == StationModelStreamServerType.Shoutcast || currentStationServerType == StationModelStreamServerType.Radionomy))
             {
-                currentStationMSSWrapper = new ShoutcastMediaSourceStream(new Uri(stream.Url));
+                currentStationMSSWrapper = new ShoutcastMediaSourceStream(new Uri(stream.Url), ConvertServerTypeToMediaServerType(currentStationServerType));
 
                 currentStationMSSWrapper.MetadataChanged += CurrentStationMSSWrapper_MetadataChanged;
 
@@ -300,6 +300,19 @@ namespace Neptunium.Media
                 UpdateThumbnail(station);
 
             return IsPlaying;
+        }
+
+        private static ShoutcastServerType ConvertServerTypeToMediaServerType(StationModelStreamServerType currentStationServerType)
+        {
+            switch(currentStationServerType)
+            {
+                case StationModelStreamServerType.Shoutcast:
+                    return ShoutcastServerType.Shoutcast;
+                case StationModelStreamServerType.Radionomy:
+                    return ShoutcastServerType.Radionomy;
+                default:
+                    return ShoutcastServerType.Shoutcast;
+            }
         }
 
         private static void UpdateThumbnail(StationModel station)

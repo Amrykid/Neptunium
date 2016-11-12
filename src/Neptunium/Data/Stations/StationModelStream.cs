@@ -31,6 +31,7 @@ namespace Neptunium.Data
         Direct = 0,
         Shoutcast = 1,
         Icecast = 1,
-        Other = 2
+        Other = 2,
+        Radionomy = 3
     }
 }

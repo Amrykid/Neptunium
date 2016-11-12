@@ -65,7 +65,7 @@
     <Site>http://en.j1fm.com/</Site>
     <Genres>Enka; J-Pop; Pop</Genres>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100">http://streaming.radionomy.com/J1GOLDJapanOldies?lang=en-US%2cen%3bq%3d0.7%2cja%3bq%3d0.3</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" ServerType="Radionomy">http://streaming.radionomy.com/J1GOLDJapanOldies?lang=en-US%2cen%3bq%3d0.7%2cja%3bq%3d0.3</Stream>
     </Streams>
   </Station>
   <Station>
