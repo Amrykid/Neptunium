@@ -29,7 +29,7 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Margin="5 5" Height="150" Width="150">
+                    <Grid Margin="2" Height="150" Width="150">
                         <Grid.Background>
                             <ImageBrush Opacity=".45">
                                 <ImageBrush.ImageSource>
