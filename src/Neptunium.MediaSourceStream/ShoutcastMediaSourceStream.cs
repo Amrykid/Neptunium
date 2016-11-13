@@ -248,6 +248,7 @@ namespace Neptunium.MediaSourceStream
                 if (ShouldGetMetadata)
                     socketWriter.WriteString("Icy-MetaData: 1" + Environment.NewLine);
 
+                socketWriter.WriteString("Host: " + streamUrl.Host + Environment.NewLine);
                 socketWriter.WriteString("Connection: Keep-Alive" + Environment.NewLine);
                 socketWriter.WriteString("User-Agent: Neptunium (http://github.com/Amrykid)" + Environment.NewLine);
                 socketWriter.WriteString(Environment.NewLine);
