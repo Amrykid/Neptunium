@@ -231,4 +231,100 @@
       </Stream>
     </Streams>
   </Station>
+  <Station>
+    <Name>J-Pop Christmas - asia DREAM radio</Name>
+    <StationGroup>asia DREAM radio</StationGroup>
+    <Description><![CDATA[J-Pop Christmas]]></Description>
+    <Logo>
+      <![CDATA[http://www.asiadreamradio.com/stations/images/stations/jc2_g161i2.png]]>
+    </Logo>
+    <Site>http://www.asiadreamradio.com/stations/index.html</Site>
+    <Genres><![CDATA[J-Pop; Christmas]]></Genres>
+    <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://149.56.23.7:20278/stream
+      </Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>J-Pop Powerplay - asia DREAM radio</Name>
+    <StationGroup>asia DREAM radio</StationGroup>
+    <Description><![CDATA[Japanese Pop]]></Description>
+    <Logo>
+      <![CDATA[http://www.asiadreamradio.com/stations/images/stations/powerplayjpop16_g161i0.jpg]]>
+    </Logo>
+    <Site>http://www.asiadreamradio.com/stations/index.html</Site>
+    <Genres><![CDATA[J-Pop; Pop]]></Genres>
+    <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://cabhs30.sonixcast.com:9628/stream
+      </Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>J-Pop Powerplay Kawaii - asia DREAM radio</Name>
+    <StationGroup>asia DREAM radio</StationGroup>
+    <Description><![CDATA[J-Pop Powerplay Kawaii]]></Description>
+    <Logo>
+      <![CDATA[http://www.asiadreamradio.com/stations/images/stations/ppkawaii_g67i5.jpg]]>
+    </Logo>
+    <Site>http://www.asiadreamradio.com/stations/index.html</Site>
+    <Genres><![CDATA[J-Pop; Kawaii]]></Genres>
+    <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://149.56.23.7:20002/stream
+      </Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>J-Club Powerplay HipHop - asia DREAM radio</Name>
+    <StationGroup>asia DREAM radio</StationGroup>
+    <Description><![CDATA[J-Club Powerplay HipHop]]></Description>
+    <Logo>
+      <![CDATA[http://www.asiadreamradio.com/stations/images/stations/jclubhiphop_g67i2.jpg]]>
+    </Logo>
+    <Site>http://www.asiadreamradio.com/stations/index.html</Site>
+    <Genres><![CDATA[J-Pop; HipHop]]></Genres>
+    <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://192.99.62.212:9260/stream
+      </Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>Japan Hits - Asia DREAM Radio</Name>
+    <StationGroup>asia DREAM radio</StationGroup>
+    <Description><![CDATA[Japan Hits]]></Description>
+    <Logo>
+      <![CDATA[http://www.asiadreamradio.com/stations/images/stations/japanhits_g67i1.jpg]]>
+    </Logo>
+    <Site>http://www.asiadreamradio.com/stations/index.html</Site>
+    <Genres><![CDATA[J-Pop; J-Rock; Pop; Hits]]></Genres>
+    <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://192.99.62.212:9764/stream
+      </Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>J-Rock Powerplay - asia DREAM radio</Name>
+    <StationGroup>asia DREAM radio</StationGroup>
+    <Description><![CDATA[Japanese Rock]]></Description>
+    <Logo>
+      <![CDATA[http://www.asiadreamradio.com/stations/images/stations/jrockpowerplay-2_g67i3.jpg]]>
+    </Logo>
+    <Site>http://www.asiadreamradio.com/stations/index.html</Site>
+    <Genres><![CDATA[J-Rock; Rock; Hits]]></Genres>
+    <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://192.99.62.212:9508/stream
+      </Stream>
+    </Streams>
+  </Station>
 </Stations>            
