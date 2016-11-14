@@ -66,7 +66,7 @@
                             <Run Text="{Binding Name}" FontSize="18" FontWeight="SemiBold" 
                                  Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
                             <LineBreak />
-                            <Run Text="{Binding Description}" FontSize="15"
+                            <Run Text="{Binding Description}" FontSize="14"
                                  Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
                         </Span>
                     </TextBlock>
@@ -126,7 +126,7 @@
         </ListBox>
 
         <GridView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" x:Name="StationsGridView" 
-                  Visibility="Collapsed" ItemTemplate="{StaticResource WrapItemTemplate}"  Margin="20 0">
+                  Visibility="Collapsed" ItemTemplate="{StaticResource WrapItemTemplate}"  Margin="20 0 0 0">
             <GridView.Transitions>
                 <TransitionCollection>
                     <ContentThemeTransition />
