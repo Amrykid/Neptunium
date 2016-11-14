@@ -35,6 +35,7 @@ using Kukkii;
 using Windows.System;
 using Windows.Networking.Connectivity;
 using Windows.Gaming.Input;
+using Kimono.Controls.SnackBar;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -138,6 +139,8 @@ namespace Neptunium
 
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
+
+            SnackBarAppearance.Opacity = CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox ? 1.0 : 0.8;
 
             //initialize app settings
             //todo add all settings
