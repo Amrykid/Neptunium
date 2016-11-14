@@ -243,6 +243,8 @@ namespace Neptunium.Media
                 }
                 catch (Exception)
                 {
+                    playStationResetEvent.Release();
+
                     return false;
                 }
             }

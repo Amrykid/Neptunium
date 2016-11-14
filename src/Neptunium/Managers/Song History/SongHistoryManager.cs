@@ -69,6 +69,7 @@ namespace Neptunium.Managers
             try
             {
                 if (StationMediaPlayer.CurrentStation.StationMessages.Any(x => x == e.Title)) return;
+                if (e.Artist == "Unknown Artist" && e.Title == "Unknown Song") return;
                 //add a new song to the metadata when the song changes.
 
                 var historyItem = new SongHistoryItem();
