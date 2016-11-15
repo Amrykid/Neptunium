@@ -240,10 +240,16 @@ namespace Neptunium.Media
                     UpdateNowPlaying(currentTrack, currentArtist);
 
                     if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+
+                    if (ConnectingStatusChanged != null)
+                        ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
                 }
                 catch (Exception)
                 {
                     playStationResetEvent.Release();
+
+                    if (ConnectingStatusChanged != null)
+                        ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
 
                     return false;
                 }

@@ -1,4 +1,5 @@
 ﻿using Crystal3.Navigation;
+using Neptunium.Media;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -56,6 +57,28 @@ namespace Neptunium.View.Xbox
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             StationsListBox.Focus(FocusState.Pointer);
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            StationMediaPlayer.ConnectingStatusChanged += StationMediaPlayer_ConnectingStatusChanged;
+
+            base.OnNavigatedTo(e);
+        }
+
+        private void StationMediaPlayer_ConnectingStatusChanged(object sender, StationMediaPlayerConnectingStatusChangedEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                this.IsEnabled = !e.IsConnecting;
+            });
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            StationMediaPlayer.ConnectingStatusChanged -= StationMediaPlayer_ConnectingStatusChanged;
+
+            base.OnNavigatedFrom(e);
         }
     }
 }
