@@ -36,6 +36,7 @@ using Windows.System;
 using Windows.Networking.Connectivity;
 using Windows.Gaming.Input;
 using Kimono.Controls.SnackBar;
+using Microsoft.HockeyApp;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -66,6 +67,8 @@ namespace Neptunium
 
             Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
             Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;
+
+            Microsoft.HockeyApp.HockeyClient.Current.Configure("2f0ab4c93b2341a0a4bbbd5ec98917f9");
         }
 
         private static volatile bool isInBackground = false;
