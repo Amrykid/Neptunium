@@ -143,7 +143,16 @@ namespace Neptunium
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
 
-            SnackBarAppearance.Opacity = CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox ? 1.0 : 0.8;
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                SnackBarAppearance.Opacity = 1.0;
+                SnackBarAppearance.MessageFontSize = 14;
+            }
+            else
+            {
+                SnackBarAppearance.Opacity = 0.8;
+                SnackBarAppearance.MessageFontSize = 12;
+            }
 
             //initialize app settings
             //todo add all settings
