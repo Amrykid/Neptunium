@@ -167,19 +167,26 @@ namespace Neptunium.ViewModel
             App.Dispatcher.RunWhenIdleAsync(() => IsBusy = e.IsConnecting);
         }
 
-        private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, EventArgs e)
+        private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs e)
         {
             StationMediaPlayer.BackgroundAudioError -= ShoutcastStationMediaPlayer_BackgroundAudioError; //throttle error messages
+
+            string title = "What the goodness?!";
+            string message = "An error occured while trying stream this station.";
+            if (e.Exception != null)
+            {
+                message += "\r\nReason: " + e.Exception.Message;
+            }
 
             bool appVisible = await App.GetIfPrimaryWindowVisibleAsync();
 
             if (appVisible)
             {
-                await IoC.Current.Resolve<IMessageDialogService>().ShowAsync("What the goodness?!", "An error occured while trying stream this station.");
+                await IoC.Current.Resolve<IMessageDialogService>().ShowAsync(message, title);
             }
             else
             {
-                ShowMediaErrorNotification("What the goodness?!", "An error occured while trying stream this station.");
+                ShowMediaErrorNotification(title, message);
             }
 
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;

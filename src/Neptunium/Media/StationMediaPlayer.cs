@@ -315,7 +315,8 @@ namespace Neptunium.Media
 
                         //timeout.
 
-                        if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
+                        if (BackgroundAudioError != null)
+                            BackgroundAudioError(null, new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs() { Station = station, Exception = new Exception("Timed out") });
                     }
                 }
                 catch (Exception ex)
@@ -328,7 +329,8 @@ namespace Neptunium.Media
 
                     HockeyClient.Current.TrackException(ex);
 
-                    if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
+                    if (BackgroundAudioError != null)
+                        BackgroundAudioError(null, new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs() { Station = station, Exception = ex });
                 }
 
                 if (lastStream != null) lastStream.Disconnect();
@@ -399,7 +401,11 @@ namespace Neptunium.Media
                 case Windows.Media.Core.MediaStreamSourceClosedReason.Done:
                     break;
                 default:
-                    if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
+                    if (BackgroundAudioError != null)
+                        BackgroundAudioError(null, 
+                            new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs() {
+                                Station = CurrentStation,
+                                Exception = new Exception("Reason: " + Enum.GetName(typeof(MediaStreamSourceClosedReason), args.Request.Reason)) });
                     break;
             }
 
@@ -443,7 +449,7 @@ namespace Neptunium.Media
 
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
         public static event EventHandler CurrentStationChanged;
-        public static event EventHandler BackgroundAudioError;
+        public static event EventHandler<ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs> BackgroundAudioError;
         public static event EventHandler<StationMediaPlayerConnectingStatusChangedEventArgs> ConnectingStatusChanged;
     }
 }
