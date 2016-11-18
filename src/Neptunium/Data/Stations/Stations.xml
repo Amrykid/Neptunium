@@ -118,7 +118,7 @@
     <Genres>Anime; J-Pop</Genres>
     <Background>http://1.bp.blogspot.com/-Ij-IW-Gpwcw/VUyEgLzhlyI/AAAAAAAACYg/xh7KhIcU6qE/s1600/radio-vocaloid.png</Background>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="">http://streaming.radionomy.com/RadioVocaloid</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="" ServerType="Radionomy">http://streaming.radionomy.com/RadioVocaloid</Stream>
     </Streams>
   </Station>
   <!--<Station>
