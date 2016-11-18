@@ -8,7 +8,7 @@
     <Site>http://www.animeamaze.com/#</Site>
     <Genres>Anime; J-Pop</Genres>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://199.187.121.124:10007/</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://stream.theradiator.org:10008/</Stream>
     </Streams>
     <StationMessages>
       <Message>AnimeAMAZE - Triple-M - AnimeAMAZE Internet Radio</Message>
@@ -121,9 +121,9 @@
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="">http://streaming.radionomy.com/RadioVocaloid</Stream>
     </Streams>
   </Station>
-  <Station>
+  <!--<Station>
     <Name>70s-90s J-pop Stream</Name>
-    <Description></Description>
+    <Description>JPOP Japanese 70s 80s 90s</Description>
     <Logo>
       <![CDATA[https://pbs.twimg.com/profile_images/1887887294/Twitter_Icon.jpg]]>
     </Logo>
@@ -132,10 +132,10 @@
     <Background></Background>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="64" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html?sid=1">
-        http://198.178.123.14:7002
+        http://s5.voscast.com:7002
       </Stream>
     </Streams>
-  </Station>
+  </Station>-->
   <Station>
     <Name>J-Jams</Name>
     <Description><![CDATA[Modern J-POP and R&B]]></Description>
@@ -211,7 +211,7 @@
     <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
-        http://38.107.243.18:8014/
+        http://64.71.79.181:8018/
       </Stream>
     </Streams>
   </Station>
@@ -227,7 +227,7 @@
     <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
-        http://38.107.243.18:8018/
+        http://64.71.79.181:8040/
       </Stream>
     </Streams>
   </Station>
