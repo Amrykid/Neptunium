@@ -68,7 +68,10 @@ namespace Neptunium
             Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
             Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;
 
-            Microsoft.HockeyApp.HockeyClient.Current.Configure("2f0ab4c93b2341a0a4bbbd5ec98917f9");
+            Microsoft.HockeyApp.HockeyClient.Current.Configure("2f0ab4c93b2341a0a4bbbd5ec98917f9", new TelemetryConfiguration()
+            {
+                EnableDiagnostics = true
+            });
         }
 
         private static volatile bool isInBackground = false;
@@ -163,34 +166,22 @@ namespace Neptunium
 #else
                 ApplicationData.Current.LocalSettings.Values.Add(AppSettings.ShowSongNotifications, true);
 #endif
-
             await LogManager.InitializeAsync();
             await StationMediaPlayer.InitializeAsync();
 
             await SongHistoryManager.InitializeAsync();
 
             Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/0.1 ( amrykid@gmail.com )";
-
-            LogManager.Info(typeof(App), "CoreInitialization Complete");
         }
 
-        private async void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             e.Handled = true;
 
-            LogManager.Log(typeof(App), "BEGIN Unhandled Exception");
-            LogManager.Error(typeof(App), e.Exception.ToString());
-            LogManager.Error(typeof(App), e.Exception.StackTrace);
+            Microsoft.HockeyApp.HockeyClient.Current.TrackException(e.Exception);
+            Microsoft.HockeyApp.HockeyClient.Current.Flush();
 
-            if (e.Exception.InnerException != null)
-                LogManager.Error(typeof(App), e.Exception.InnerException.ToString());
-
-            LogManager.Error(typeof(App), e.Message);
-            LogManager.Log(typeof(App), "END Unhandled Exception");
-
-            await Task.Delay(50);
-
-            //Application.Current.Exit();
+            Application.Current.Exit();
         }
 
         private async Task PostUIInitAsync()

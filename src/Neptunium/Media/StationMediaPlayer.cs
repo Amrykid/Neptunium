@@ -16,6 +16,9 @@ using Windows.Web.Http;
 using Windows.Storage.Streams;
 using Neptunium.Services.SnackBar;
 using Crystal3.InversionOfControl;
+using Microsoft.HockeyApp;
+using Microsoft.HockeyApp.DataContracts;
+using Windows.Media.Core;
 
 namespace Neptunium.Media
 {
@@ -195,8 +198,11 @@ namespace Neptunium.Media
         public static async Task<bool> PlayStationAsync(StationModel station)
         {
             if (station == currentStationModel && IsPlaying) return true;
+            if (station == null) return false;
 
             await playStationResetEvent.WaitAsync();
+
+            TracePlayStationAsyncCall(station);
 
             ShoutcastMediaSourceStream lastStream = null;
 
@@ -244,12 +250,14 @@ namespace Neptunium.Media
                     if (ConnectingStatusChanged != null)
                         ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     playStationResetEvent.Release();
 
                     if (ConnectingStatusChanged != null)
                         ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
+
+                    HockeyClient.Current.TrackException(ex);
 
                     return false;
                 }
@@ -264,7 +272,8 @@ namespace Neptunium.Media
 
                 try
                 {
-                    Action CleanUp = () => {
+                    Action CleanUp = () =>
+                    {
                         currentStationMSSWrapper.StationInfoChanged -= CurrentStationMSSWrapper_StationInfoChanged;
                         currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
@@ -309,13 +318,15 @@ namespace Neptunium.Media
                         if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     currentStationMSSWrapper.StationInfoChanged -= CurrentStationMSSWrapper_StationInfoChanged;
                     currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
 
                     if (currentStationMSSWrapper.MediaStreamSource != null)
                         currentStationMSSWrapper.MediaStreamSource.Closed -= MediaStreamSource_Closed;
+
+                    HockeyClient.Current.TrackException(ex);
 
                     if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
                 }
@@ -332,6 +343,13 @@ namespace Neptunium.Media
                 UpdateThumbnail(station);
 
             return IsPlaying;
+        }
+
+        private static void TracePlayStationAsyncCall(StationModel station)
+        {
+            EventTelemetry et = new EventTelemetry("PlayStationAsync");
+            et.Properties.Add("Station", station.Name);
+            HockeyClient.Current.TrackEvent(et);
         }
 
         private static async void CurrentStationMSSWrapper_StationInfoChanged(object sender, EventArgs e)
@@ -384,6 +402,10 @@ namespace Neptunium.Media
                     if (BackgroundAudioError != null) BackgroundAudioError(null, EventArgs.Empty);
                     break;
             }
+
+            EventTelemetry et = new EventTelemetry("MediaStreamSource_Closed");
+            et.Properties.Add("Reason", Enum.GetName(typeof(MediaStreamSourceClosedReason), args.Request.Reason));
+            HockeyClient.Current.TrackEvent(et);
         }
 
         private static void CurrentStationMSSWrapper_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
@@ -412,6 +434,11 @@ namespace Neptunium.Media
 
             if (MetadataChanged != null)
                 MetadataChanged(null, new ShoutcastMediaSourceStreamMetadataChangedEventArgs(currentTrack, currentArtist));
+
+            EventTelemetry et = new EventTelemetry("UpdateNowPlaying");
+            et.Properties.Add("CurrentTrack", currentTrack);
+            et.Properties.Add("CurrentArtist", currentArtist);
+            HockeyClient.Current.TrackEvent(et);
         }
 
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
