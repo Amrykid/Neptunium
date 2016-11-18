@@ -264,7 +264,7 @@ namespace Neptunium.Media
             }
             else if ((currentStationServerType == StationModelStreamServerType.Shoutcast || currentStationServerType == StationModelStreamServerType.Radionomy))
             {
-                currentStationMSSWrapper = new ShoutcastMediaSourceStream(new Uri(stream.Url), ConvertServerTypeToMediaServerType(currentStationServerType));
+                currentStationMSSWrapper = new ShoutcastMediaSourceStream(new Uri(stream.Url.Trim()), ConvertServerTypeToMediaServerType(currentStationServerType));
 
                 currentStationMSSWrapper.MetadataChanged += CurrentStationMSSWrapper_MetadataChanged;
                 currentStationMSSWrapper.StationInfoChanged += CurrentStationMSSWrapper_StationInfoChanged;

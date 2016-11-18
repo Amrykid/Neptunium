@@ -101,46 +101,43 @@ namespace Neptunium.MediaSourceStream
         }
         public async Task<MediaStreamSource> ConnectAsync(uint sampleRate = 44100, string relativePath = ";", bool getMetadata = true)
         {
-            try
+
+            ShouldGetMetadata = getMetadata;
+
+            await HandleConnection(relativePath);
+            //AudioEncodingProperties obtainedProperties = await GetEncodingPropertiesAsync();
+
+            if (connected == false) return null;
+
+            switch (contentType)
             {
-                ShouldGetMetadata = getMetadata;
-
-                await HandleConnection(relativePath);
-                //AudioEncodingProperties obtainedProperties = await GetEncodingPropertiesAsync();
-
-                switch (contentType)
-                {
-                    case StreamAudioFormat.MP3:
-                        {
-                            MediaStreamSource = new Windows.Media.Core.MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(sampleRate, 2, (uint)bitRate)));
-                            //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(48000, 2, (uint)bitRate)));
-                            //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(32000, 2, (uint)bitRate)));
-                            //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(24000, 2, (uint)bitRate)));
-                            //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(22050, 2, (uint)bitRate)));
-                        }
-                        break;
-                    case StreamAudioFormat.AAC:
-                        {
-                            MediaStreamSource = new MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateAac(sampleRate, 2, (uint)bitRate)));
-                        }
-                        break;
-                }
-
-                MediaStreamSource.SampleRequested += MediaStreamSource_SampleRequested;
-                MediaStreamSource.CanSeek = false;
-                MediaStreamSource.Starting += MediaStreamSource_Starting;
-                MediaStreamSource.Closed += MediaStreamSource_Closed;
-
-                connected = true;
-                _relativePath = relativePath;
-                _sampleRate = sampleRate;
-
-                return MediaStreamSource;
+                case StreamAudioFormat.MP3:
+                    {
+                        MediaStreamSource = new Windows.Media.Core.MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(sampleRate, 2, (uint)bitRate)));
+                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(48000, 2, (uint)bitRate)));
+                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(32000, 2, (uint)bitRate)));
+                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(24000, 2, (uint)bitRate)));
+                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(22050, 2, (uint)bitRate)));
+                    }
+                    break;
+                case StreamAudioFormat.AAC:
+                    {
+                        MediaStreamSource = new MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateAac(sampleRate, 2, (uint)bitRate)));
+                    }
+                    break;
             }
-            catch (Exception ex)
-            {
-                throw new Exception("Connection error.", ex);
-            }
+
+            MediaStreamSource.SampleRequested += MediaStreamSource_SampleRequested;
+            MediaStreamSource.CanSeek = false;
+            MediaStreamSource.Starting += MediaStreamSource_Starting;
+            MediaStreamSource.Closed += MediaStreamSource_Closed;
+
+            connected = true;
+            _relativePath = relativePath;
+            _sampleRate = sampleRate;
+
+            return MediaStreamSource;
+
         }
 
         private async Task<AudioEncodingProperties> GetEncodingPropertiesAsync()
@@ -230,55 +227,7 @@ namespace Neptunium.MediaSourceStream
                 socketWriter = new DataWriter(socket.OutputStream);
                 socketReader = new DataReader(socket.InputStream);
 
-                //todo figure out how to resolve http requests better to get rid of this hack.
-                String httpPath = "";
-
-                if (streamUrl.Host.Contains("radionomy.com") || serverType == ShoutcastServerType.Radionomy)
-                {
-                    httpPath = streamUrl.LocalPath;
-                    serverType = ShoutcastServerType.Radionomy;
-                }
-                else
-                {
-                    httpPath = "/" + relativePath;
-                }
-
-                socketWriter.WriteString("GET " + httpPath + " HTTP/1.1" + Environment.NewLine);
-
-                if (ShouldGetMetadata)
-                    socketWriter.WriteString("Icy-MetaData: 1" + Environment.NewLine);
-
-                socketWriter.WriteString("Host: " + streamUrl.Host + Environment.NewLine);
-                socketWriter.WriteString("Connection: Keep-Alive" + Environment.NewLine);
-                socketWriter.WriteString("User-Agent: Neptunium (http://github.com/Amrykid)" + Environment.NewLine);
-                socketWriter.WriteString(Environment.NewLine);
-                await socketWriter.StoreAsync();
-                await socketWriter.FlushAsync();
-
-                string response = string.Empty;
-                while (!response.EndsWith(Environment.NewLine + Environment.NewLine))
-                {
-                    await socketReader.LoadAsync(1);
-                    response += socketReader.ReadString(1);
-                }
-
-                if (response.StartsWith("HTTP/1.0 302"))
-                {
-                    socketReader.Dispose();
-                    socketWriter.Dispose();
-                    socket.Dispose();
-
-                    var parsedResponse = ParseHttpResponseToKeyPairArray(response.Split(new string[] { "\r\n" }, StringSplitOptions.None).Skip(1).ToArray());
-
-                    socket = new StreamSocket();
-                    streamUrl = new Uri(parsedResponse.First(x => x.Key.ToLower() == "location").Value);
-
-                    await HandleConnection(relativePath);
-
-                    return;
-                }
-
-                ParseResponse(response);
+                connected = true;
             }
             catch (Exception ex)
             {
@@ -287,8 +236,69 @@ namespace Neptunium.MediaSourceStream
                 if (MediaStreamSource != null)
                     MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.FailedToConnectToServer);
                 else
-                    throw new Exception("Inner exception", ex);
+                    throw new Exception("Connection Error", ex);
+
+                return;
             }
+
+            //todo figure out how to resolve http requests better to get rid of this hack.
+            String httpPath = "";
+
+            if (streamUrl.Host.Contains("radionomy.com") || serverType == ShoutcastServerType.Radionomy)
+            {
+                httpPath = streamUrl.LocalPath;
+                serverType = ShoutcastServerType.Radionomy;
+            }
+            else
+            {
+                httpPath = "/" + relativePath;
+            }
+
+            socketWriter.WriteString("GET " + httpPath + " HTTP/1.1" + Environment.NewLine);
+
+            if (ShouldGetMetadata)
+                socketWriter.WriteString("Icy-MetaData: 1" + Environment.NewLine);
+
+            socketWriter.WriteString("Host: " + streamUrl.Host + Environment.NewLine);
+            socketWriter.WriteString("Connection: Keep-Alive" + Environment.NewLine);
+            socketWriter.WriteString("User-Agent: Neptunium (http://github.com/Amrykid)" + Environment.NewLine);
+            socketWriter.WriteString(Environment.NewLine);
+            await socketWriter.StoreAsync();
+            await socketWriter.FlushAsync();
+
+            string response = string.Empty;
+            while (!response.EndsWith(Environment.NewLine + Environment.NewLine))
+            {
+                await socketReader.LoadAsync(1);
+                response += socketReader.ReadString(1);
+            }
+
+            if (response.StartsWith("HTTP/1.0 302"))
+            {
+                socketReader.Dispose();
+                socketWriter.Dispose();
+                socket.Dispose();
+
+                var parsedResponse = ParseHttpResponseToKeyPairArray(response.Split(new string[] { "\r\n" }, StringSplitOptions.None).Skip(1).ToArray());
+
+                socket = new StreamSocket();
+                streamUrl = new Uri(parsedResponse.First(x => x.Key.ToLower() == "location").Value);
+
+                await HandleConnection(relativePath);
+
+                return;
+            }
+            else if (response.StartsWith("ICY 401")) //ICY 401 Service Unavailable
+            {
+                if (MediaStreamSource != null)
+                    MediaStreamSource.NotifyError(MediaStreamSourceErrorStatus.FailedToConnectToServer);
+                else
+                    throw new Exception("Station is unavailable at this time. Maybe they're down for maintainence?");
+
+                return;
+            }
+
+            ParseResponse(response);
         }
 
         private void ParseResponse(string response)
@@ -555,7 +565,7 @@ namespace Neptunium.MediaSourceStream
             timeOffSet = timeOffSet.Add(mp3_sampleDuration);
 
 
-            return new Tuple<MediaStreamSample,uint>(sample, sampleLength);
+            return new Tuple<MediaStreamSample, uint>(sample, sampleLength);
 
             //return null;
         }
