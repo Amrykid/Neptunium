@@ -24,6 +24,12 @@
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="nep" />
         </uap:Extension>
+        <uap3:Extension Category="windows.appService">
+          <uap3:AppService Name="com.Amrykid.CAEAppService" SupportsRemoteSystems="true" />
+        </uap3:Extension>
+        <!--<uap3:Extension Category="windows.appService">
+          <uap3:AppService Name="com.Amrykid.CAEAppService" SupportsRemoteSystems="true" />
+        </uap3:Extension>-->
       </Extensions>
     </Application>
   </Applications>
