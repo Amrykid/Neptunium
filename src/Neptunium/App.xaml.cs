@@ -37,6 +37,7 @@ using Windows.Networking.Connectivity;
 using Windows.Gaming.Input;
 using Kimono.Controls.SnackBar;
 using Microsoft.HockeyApp;
+using Windows.UI.Xaml.Media.Animation;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -150,11 +151,13 @@ namespace Neptunium
             {
                 SnackBarAppearance.Opacity = 1.0;
                 SnackBarAppearance.MessageFontSize = 14;
+                SnackBarAppearance.Transition = new PopupThemeTransition();
             }
             else
             {
                 SnackBarAppearance.Opacity = 0.8;
                 SnackBarAppearance.MessageFontSize = 12;
+                SnackBarAppearance.Transition = new AddDeleteThemeTransition();
             }
 
             //initialize app settings
