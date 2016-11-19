@@ -106,7 +106,13 @@ namespace Neptunium.Managers
                             data.Album = firstRelease.Title;
                             data.AlbumID = firstRelease.Id;
                             if (!string.IsNullOrWhiteSpace(firstRelease.Date))
-                                data.ReleaseDate = DateTime.Parse(firstRelease.Date);
+                            {
+                                try
+                                {
+                                    data.ReleaseDate = DateTime.Parse(firstRelease.Date);
+                                }
+                                catch (FormatException) { }
+                            }
 
                             return data;
                         }
@@ -114,7 +120,7 @@ namespace Neptunium.Managers
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }
