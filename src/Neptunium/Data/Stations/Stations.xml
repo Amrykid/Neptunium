@@ -232,7 +232,7 @@
     </Streams>
   </Station>
   <Station>
-    <Name>J-Pop Christmas - asia DREAM radio</Name>
+    <Name>J-Pop Christmas</Name>
     <StationGroup>asia DREAM radio</StationGroup>
     <Description><![CDATA[J-Pop Christmas]]></Description>
     <Logo>
@@ -248,7 +248,7 @@
     </Streams>
   </Station>
   <Station>
-    <Name>J-Pop Powerplay - asia DREAM radio</Name>
+    <Name>J-Pop Powerplay</Name>
     <StationGroup>asia DREAM radio</StationGroup>
     <Description><![CDATA[Japanese Pop]]></Description>
     <Logo>
@@ -264,7 +264,7 @@
     </Streams>
   </Station>
   <Station>
-    <Name>J-Pop Powerplay Kawaii - asia DREAM radio</Name>
+    <Name>J-Pop Powerplay Kawaii</Name>
     <StationGroup>asia DREAM radio</StationGroup>
     <Description><![CDATA[J-Pop Powerplay Kawaii]]></Description>
     <Logo>
@@ -280,7 +280,7 @@
     </Streams>
   </Station>
   <Station>
-    <Name>J-Club Powerplay HipHop - asia DREAM radio</Name>
+    <Name>J-Club Powerplay HipHop</Name>
     <StationGroup>asia DREAM radio</StationGroup>
     <Description><![CDATA[J-Club Powerplay HipHop]]></Description>
     <Logo>
@@ -296,7 +296,7 @@
     </Streams>
   </Station>
   <Station>
-    <Name>Japan Hits - Asia DREAM Radio</Name>
+    <Name>Japan Hits</Name>
     <StationGroup>asia DREAM radio</StationGroup>
     <Description><![CDATA[Japan Hits]]></Description>
     <Logo>
@@ -312,7 +312,7 @@
     </Streams>
   </Station>
   <Station>
-    <Name>J-Rock Powerplay - asia DREAM radio</Name>
+    <Name>J-Rock Powerplay</Name>
     <StationGroup>asia DREAM radio</StationGroup>
     <Description><![CDATA[Japanese Rock]]></Description>
     <Logo>
