@@ -41,6 +41,9 @@ namespace Neptunium.View.Xbox
             StationMediaPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
             SetPlaybackButtonState(StationMediaPlayer.PlaybackSession);
 
+            if (this.Focus(FocusState.Programmatic))
+                PlayPauseButton.Focus(FocusState.Pointer);
+
             base.OnNavigatedTo(e);
         }
 
