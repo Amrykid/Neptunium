@@ -297,6 +297,10 @@ namespace Neptunium.MediaSourceStream
 
                 return;
             }
+            else if (response.StartsWith("HTTP/1.1 503")) //HTTP/1.1 503 Server limit reached
+            {
+                throw new Exception("Station is unavailable at this time. The maximum amount of listeners has been reached.");
+            }
 
             ParseResponse(response);
         }
