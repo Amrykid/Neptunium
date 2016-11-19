@@ -9,7 +9,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.IO;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
@@ -17,6 +19,8 @@ using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.System;
 using Windows.System.RemoteSystems;
+using Crystal3.Navigation;
+using Crystal3;
 
 namespace Neptunium.Managers
 {
@@ -49,6 +53,14 @@ namespace Neptunium.Managers
 
             if (!IsSupported) return;
 
+            if (!await CheckRemoteAppServiceEnabledAsync())
+            {
+                //app service listing got removed while building for store.
+
+                App.MessageQueue.Enqueue("Handoff functionality is disabled.");
+                
+                return;
+            }
 
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(StopPlayingMusicAfterGoodHandoff))
                 ApplicationData.Current.LocalSettings.Values.Add(StopPlayingMusicAfterGoodHandoff, true);
@@ -68,6 +80,39 @@ namespace Neptunium.Managers
             }
 
             IsInitialized = true;
+        }
+
+        private static async Task<bool> CheckRemoteAppServiceEnabledAsync()
+        {
+            //Package.appxmanifest -> AppxManifest.xml upon installation
+            var manifestFile = await Package.Current.InstalledLocation.GetFileAsync("AppxManifest.xml");
+            var winrtStream = await manifestFile.OpenReadAsync();
+            var realStream = winrtStream.AsStreamForRead();
+            XDocument document = XDocument.Load(realStream);
+            XNamespace packageNamespace = "http://schemas.microsoft.com/appx/manifest/foundation/windows10";
+            var packageElement = document.Element(packageNamespace + "Package");
+            var applicationsElement = packageElement.Element(packageNamespace + "Applications");
+            var applicationElement = applicationsElement.Element(packageNamespace + "Application");
+            var extensions = applicationElement.Element(packageNamespace + "Extensions").Elements();
+
+            bool result = extensions.Any(x =>
+            {
+                if (x.HasAttributes)
+                {
+                    XAttribute attr = x.Attribute("Category");
+                    if (attr?.Value == "windows.appService")
+                    {
+                        return ((XElement)x.FirstNode).Attribute("SupportsRemoteSystems") != null;
+                    }
+                }
+
+                return false;
+            });
+
+            realStream.Dispose();
+            winrtStream.Dispose();
+
+            return result;
         }
 
         public static async void StartWatchingForRemoteSystems()

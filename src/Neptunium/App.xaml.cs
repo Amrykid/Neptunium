@@ -49,6 +49,7 @@ namespace Neptunium
     sealed partial class App : CrystalApplication
     {
         public static BackgroundAccessStatus BackgroundAccess { get; private set; }
+        public static Queue<string> MessageQueue { get; private set; } = new Queue<string>();
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code

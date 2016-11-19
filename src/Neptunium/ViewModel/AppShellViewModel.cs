@@ -139,6 +139,9 @@ namespace Neptunium.ViewModel
 
             ContinuedAppExperienceManager.RemoteSystemsListUpdated += ContinuedAppExperienceManager_RemoteSystemsListUpdated;
 
+            while (App.MessageQueue.Count > 0)
+                await IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync(App.MessageQueue.Dequeue());
+
             await UpdateCarModeButtonStatusAsync(CarModeManager.IsInCarMode);
         }
 
