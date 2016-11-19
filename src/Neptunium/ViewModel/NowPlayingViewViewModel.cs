@@ -125,7 +125,7 @@ namespace Neptunium.ViewModel
                 {
                     var artistData = await SongMetadataManager.FindArtistDataAsync(artist);
 
-                    if (artistData != null)
+                    if (artistData != null && !string.IsNullOrWhiteSpace(artistData?.ArtistID))
                     {
                         await App.Dispatcher.RunWhenIdleAsync(() =>
                         {
