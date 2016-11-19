@@ -126,15 +126,15 @@ namespace Neptunium
 
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
             {
-//#if DEBUG
-//                //however over .Count twice with a breakpoint once to force system to recognize xbox one controller.
-//                if (Debugger.IsAttached)
-//                    Debugger.Break();
-//                if (Gamepad.Gamepads.Count > 0)
-//                {
-//                    this.Options.OverridePlatform(Crystal3.Core.Platform.Xbox);
-//                }
-//#endif
+                //#if DEBUG
+                //                //however over .Count twice with a breakpoint once to force system to recognize xbox one controller.
+                //                if (Debugger.IsAttached)
+                //                    Debugger.Break();
+                //                if (Gamepad.Gamepads.Count > 0)
+                //                {
+                //                    this.Options.OverridePlatform(Crystal3.Core.Platform.Xbox);
+                //                }
+                //#endif
             }
 
             this.Options.HandleSystemBackNavigation = true;
@@ -146,19 +146,6 @@ namespace Neptunium
 
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
-
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
-            {
-                SnackBarAppearance.Opacity = 1.0;
-                SnackBarAppearance.MessageFontSize = 14;
-                SnackBarAppearance.Transition = new PopupThemeTransition();
-            }
-            else
-            {
-                SnackBarAppearance.Opacity = 0.8;
-                SnackBarAppearance.MessageFontSize = 12;
-                SnackBarAppearance.Transition = new AddDeleteThemeTransition();
-            }
 
             //initialize app settings
             //todo add all settings
@@ -183,23 +170,33 @@ namespace Neptunium
 
             Microsoft.HockeyApp.HockeyClient.Current.TrackException(e.Exception);
             Microsoft.HockeyApp.HockeyClient.Current.Flush();
-
-            Application.Current.Exit();
         }
 
         private async Task PostUIInitAsync()
         {
-#if RELEASE
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-#endif
-            if (!CarModeManager.IsInitialized)
-                await CarModeManager.InitializeAsync();
-
-            //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                SnackBarAppearance.Opacity = 1.0;
+                SnackBarAppearance.MessageFontSize = 14;
+                SnackBarAppearance.Transition = new PopupThemeTransition();
+
                 Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+            }
+            else
+            {
+                SnackBarAppearance.Opacity = 0.8;
+                SnackBarAppearance.MessageFontSize = 12;
+                SnackBarAppearance.Transition = new AddDeleteThemeTransition();
+            }
+
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            {
+                if (!CarModeManager.IsInitialized)
+                    await CarModeManager.InitializeAsync();
+            }
+
+            //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
 
             if (!ContinuedAppExperienceManager.IsInitialized)
                 await ContinuedAppExperienceManager.InitializeAsync();

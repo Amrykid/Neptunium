@@ -81,59 +81,65 @@ namespace Neptunium.Managers
         {
             if (IsInitialized) return;
 
-#if RELESE
             if (Crystal3.CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Mobile) return;
-#endif
 
-            //Pull the selected bluetooth device from settings if it exists
-            if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
+
+            try
             {
-                var deviceID = ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] as string;
-
-                if (!string.IsNullOrWhiteSpace(deviceID))
+                radioAccess = await await App.Dispatcher.RunWhenIdleAsync(() =>
                 {
-                    SelectedDevice = await DeviceInformation.CreateFromIdAsync(deviceID);
+                    return Radio.RequestAccessAsync();
+                });
 
-                    if (SelectedDevice != null)
+                //Pull the selected bluetooth device from settings if it exists
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
+                {
+                    var deviceID = ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] as string;
+
+                    if (!string.IsNullOrWhiteSpace(deviceID))
                     {
-                        radioAccess = await await App.Dispatcher.RunWhenIdleAsync(() =>
+                        SelectedDevice = await DeviceInformation.CreateFromIdAsync(deviceID);
+
+                        if (SelectedDevice != null)
                         {
-                            return Radio.RequestAccessAsync();
-                        });
-
-                        if (radioAccess == RadioAccessStatus.Allowed)
-                        {
-                            btRadio = (await Radio.GetRadiosAsync()).First(x => x.Kind == RadioKind.Bluetooth);
-
-                            if (btRadio.State == RadioState.On)
+                            if (radioAccess == RadioAccessStatus.Allowed)
                             {
-                                SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
+                                btRadio = (await Radio.GetRadiosAsync()).First(x => x.Kind == RadioKind.Bluetooth);
 
-                                SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
+                                if (btRadio.State == RadioState.On)
+                                {
+                                    SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
 
-                                SetCarModeStatus(SelectedDeviceObj.ConnectionStatus == BluetoothConnectionStatus.Connected);
-                            }
-                            else
-                            {
-                                btRadio.StateChanged += BtRadio_StateChanged;
+                                    SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
+
+                                    SetCarModeStatus(SelectedDeviceObj.ConnectionStatus == BluetoothConnectionStatus.Connected);
+                                }
+                                else
+                                {
+                                    btRadio.StateChanged += BtRadio_StateChanged;
+                                }
                             }
                         }
                     }
                 }
+
+
+                CreateSettings();
+
+                ShouldAnnounceSongs = (bool)ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs];
+                ShouldUseJapaneseVoice = (bool)ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements];
+
+                StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
+
+                japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
+                    x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female && x.DisplayName.Contains("Haruka"));
+
+                IsInitialized = true;
             }
-
-
-            CreateSettings();
-
-            ShouldAnnounceSongs = (bool)ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs];
-            ShouldUseJapaneseVoice = (bool)ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements];
-
-            StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
-
-            japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
-                x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female && x.DisplayName.Contains("Haruka"));
-
-            IsInitialized = true;
+            catch (Exception ex)
+            {
+                Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex);
+            }
 
         }
 
