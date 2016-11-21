@@ -197,8 +197,6 @@ namespace Neptunium.Managers
 
         internal static void SetStopPlayingStationOnThisDeviceAfterSuccessfulHandoff(bool shouldStopPlayingAfterSuccessfulHandoff)
         {
-            if (!IsInitialized) throw new InvalidOperationException();
-
             StopPlayingStationOnThisDeviceAfterSuccessfulHandoff = shouldStopPlayingAfterSuccessfulHandoff;
 
             ApplicationData.Current.LocalSettings.Values[StopPlayingMusicAfterGoodHandoff] = shouldStopPlayingAfterSuccessfulHandoff;
