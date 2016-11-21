@@ -114,6 +114,7 @@
     <Compile Include="Managers\Song History\SongHistoryManagerItemAddedEventArgs.cs" />
     <Compile Include="Managers\Song History\SongHistoryManagerItemRemovedEventArgs.cs" />
     <Compile Include="Managers\Song Metadata\SongMetadataManagerFoundArtistMetadataEventArgs.cs" />
+    <Compile Include="MediaElementExtensions.cs" />
     <Compile Include="Model\AlbumData.cs" />
     <Compile Include="Data\History\HistoryItemModel.cs" />
     <Compile Include="Data\Stations\StationDataManager.cs" />

@@ -1,4 +1,5 @@
 ﻿using Crystal3;
+using Microsoft.HockeyApp;
 using Neptunium.Media;
 using System;
 using System.Collections.Generic;
@@ -200,28 +201,40 @@ namespace Neptunium.Managers
                 try
                 {
                     var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Artist, e.Title, japaneseFemaleVoice != null && ShouldUseJapaneseVoice);
-                    var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData.Item1);
+                    var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
 
-                    await CrystalApplication.Dispatcher.RunWhenIdleAsync(async () =>
+                    await StationMediaPlayer.FadeVolumeDownToAsync(0.1);
+
+                    await await CrystalApplication.Dispatcher.RunWhenIdleAsync(async () =>
                     {
                         var media = new MediaElement();
 
                         media.Volume = 1.0;
                         media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Alerts; //setting this to alerts automatically fades out music
                         media.SetSource(stream, stream.ContentType);
+
+                        Task mediaOpenTask = media.WaitForMediaOpenAsync();
+
                         media.Play();
 
-                        await Task.Delay((int)TimeSpan.FromSeconds(10).TotalMilliseconds);
+                        await mediaOpenTask;
+
+                        await Task.Delay((int)media.NaturalDuration.TimeSpan.TotalMilliseconds);
 
                         stream.Dispose();
                     });
+
+                    await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume);
                 }
-                catch (Exception) { }
+                catch (Exception ex)
+                {
+                    HockeyClient.Current.TrackException(ex);
+                }
 
             }
         }
 
-        private static Tuple<string, int> GenerateSongAnnouncementSsml(string artist, string title, bool japaneseVoiceAvailable)
+        private static string GenerateSongAnnouncementSsml(string artist, string title, bool japaneseVoiceAvailable)
         {
             StringBuilder builder = new StringBuilder();
 
@@ -255,7 +268,7 @@ namespace Neptunium.Managers
 
                 //builder.AppendLine("<voice xml:lang='" + voice.Language + "' name='" + voice.DisplayName + "'>");
                 builder.AppendLine("<s>");
-                builder.AppendLine("<voice" + (japaneseVoiceAvailable ? " name='" + japaneseFemaleVoice.DisplayName + "'" : "") + ">");
+                builder.AppendLine("<voice" + (japaneseVoiceAvailable ? " name='" + japaneseFemaleVoice.DisplayName + "'" : " gender='female'") + ">");
 
                 builder.AppendLine(text);
                 builder.AppendLine("</voice>");
@@ -302,7 +315,7 @@ namespace Neptunium.Managers
             builder.AppendLine("</voice>");
             builder.AppendLine("</speak>");
 
-            return new Tuple<string, int>(builder.ToString(), phrase.Length * 500);
+            return builder.ToString();
         }
 
         private static void SetCarModeStatus(bool isConnected)
