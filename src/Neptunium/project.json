@@ -1,9 +1,6 @@
 ﻿{
   "dependencies": {
     "HockeySDK.UWP": "4.1.5",
-    "Microsoft.ApplicationInsights": "1.0.0",
-    "Microsoft.ApplicationInsights.PersistenceChannel": "1.0.0",
-    "Microsoft.ApplicationInsights.WindowsApps": "1.0.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "NotificationsExtensions.Win10": "14332.0.2",
     "Win2D.uwp": "1.19.0",
