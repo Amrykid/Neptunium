@@ -121,7 +121,7 @@
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="" ServerType="Radionomy">http://streaming.radionomy.com/RadioVocaloid</Stream>
     </Streams>
   </Station>
-  <!--<Station>
+  <Station>
     <Name>70s-90s J-pop Stream</Name>
     <Description>JPOP Japanese 70s 80s 90s</Description>
     <Logo>
@@ -131,11 +131,11 @@
     <Genres>J-Pop;J-Rock</Genres>
     <Background></Background>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="64" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html?sid=1">
+      <Stream ContentType="audio/mpeg" Bitrate="64" SampleRate="22050" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html?sid=1">
         http://s5.voscast.com:7002
       </Stream>
     </Streams>
-  </Station>-->
+  </Station>
   <Station>
     <Name>J-Jams</Name>
     <Description><![CDATA[Modern J-POP and R&B]]></Description>
