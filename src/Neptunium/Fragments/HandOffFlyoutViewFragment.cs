@@ -50,16 +50,18 @@ namespace Neptunium.Fragments
                     if (results)
                     {
                         await IoC.Current.Resolve<IMessageDialogService>()
-                            .ShowAsync("YAY!", 
+                            .ShowAsync( 
                                 string.Format("Hand off was successful. '{0}' should begin playing on '{1}' shortly.",
-                                    StationMediaPlayer.CurrentStation.Name, device.DisplayName));
+                                    StationMediaPlayer.CurrentStation.Name, device.DisplayName),
+                                "YAY!");
                     }
                     else
                     {
                         await IoC.Current.Resolve<IMessageDialogService>()
-                            .ShowAsync("Uh-oh!",
+                            .ShowAsync(
                                 string.Format("Hand off failed. Unable to get '{0}' playing on '{1}'.",
-                                    StationMediaPlayer.CurrentStation.Name, device.DisplayName));
+                                    StationMediaPlayer.CurrentStation.Name, device.DisplayName),
+                                "Uh-oh!");
                     }
                 }
                 catch (Exception ex)
