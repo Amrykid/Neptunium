@@ -127,10 +127,15 @@ namespace Neptunium.ViewModel
             StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
 
-            CarModeManager.CarModeManagerCarModeStatusChanged += CarModeManager_CarModeManagerCarModeStatusChanged;
+            if (CrystalApplication.GetDevicePlatform() == Platform.Mobile)
+            {
+                CarModeManager.CarModeManagerCarModeStatusChanged += CarModeManager_CarModeManagerCarModeStatusChanged;
 
-            if (!CarModeManager.IsInitialized)
-                await CarModeManager.InitializeAsync();
+                if (!CarModeManager.IsInitialized)
+                    await CarModeManager.InitializeAsync();
+
+                UpdateCarModeButtonStatusAsync(CarModeManager.IsInCarMode).Forget();
+            }
 
             StationMediaPlayer.ConnectingStatusChanged += StationMediaPlayer_ConnectingStatusChanged;
 
@@ -140,8 +145,6 @@ namespace Neptunium.ViewModel
 
             while (App.MessageQueue.Count > 0)
                 await IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync(App.MessageQueue.Dequeue());
-
-            await UpdateCarModeButtonStatusAsync(CarModeManager.IsInCarMode);
 
 #if RELEASE
             var storeContext = StoreContext.GetDefault();
