@@ -136,6 +136,7 @@ namespace Neptunium.Managers
                 var artistQuery = new Hqub.MusicBrainz.API.QueryParameters<Hqub.MusicBrainz.API.Entities.Artist>();
                 //artistQuery.Add("inc", "url-rels");
                 artistQuery.Add("artist", artistName);
+                artistQuery.Add("alias", artistName);
                 artistQuery.Add("country", "JP");
 
                 var artistResults = await Artist.SearchAsync(artistQuery);

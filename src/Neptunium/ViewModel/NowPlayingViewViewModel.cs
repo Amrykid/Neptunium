@@ -28,6 +28,7 @@ using Crystal3.UI.Commands;
 using Windows.System;
 using System.Diagnostics;
 using Neptunium.Managers;
+using Microsoft.HockeyApp.DataContracts;
 
 namespace Neptunium.ViewModel
 {
@@ -136,6 +137,11 @@ namespace Neptunium.ViewModel
                     {
                         if (NowPlayingBackgroundImage == null)
                         {
+                            TraceTelemetry trace = new TraceTelemetry("Failed song data lookup.", Microsoft.HockeyApp.SeverityLevel.Information);
+                            trace.Properties.Add(new KeyValuePair<string, string>("Artist", artist));
+                            trace.Properties.Add(new KeyValuePair<string, string>("Song", title));
+                            Microsoft.HockeyApp.HockeyClient.Current.TrackTrace(trace);
+
                             await App.Dispatcher.RunWhenIdleAsync(() =>
                             {
                                 NowPlayingBackgroundImage = CurrentStation.Background;
