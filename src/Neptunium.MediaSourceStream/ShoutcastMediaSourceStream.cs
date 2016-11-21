@@ -105,9 +105,10 @@ namespace Neptunium.MediaSourceStream
             ShouldGetMetadata = getMetadata;
 
             await HandleConnection(relativePath);
-            //AudioEncodingProperties obtainedProperties = await GetEncodingPropertiesAsync();
 
             if (connected == false) return null;
+
+            //AudioEncodingProperties obtainedProperties = await GetEncodingPropertiesAsync();
 
             switch (contentType)
             {
@@ -155,6 +156,8 @@ namespace Neptunium.MediaSourceStream
                         await socketReader.LoadAsync(mp3_sampleSize);
                         buffer = socketReader.ReadBuffer(mp3_sampleSize);
                         byteOffset += mp3_sampleSize;
+
+                        //todo find the sync bits for mp3 because it doesn't seem like we're receiving a full frame initially.
 
                         byte[] bytesHeader = buffer.ToArray(0, 5); //first four bytes
 
