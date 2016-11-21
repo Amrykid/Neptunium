@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wrtk="using:WinRTXamlToolkit.Controls"
+    xmlns:uwpcon="using:Microsoft.Toolkit.Uwp.UI.Controls"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
@@ -43,11 +44,11 @@
                             <RowDefinition Height="50" />
                         </Grid.RowDefinitions>
                         
-                        <Image Height="125" Width="125" Grid.Row="0" Stretch="Fill" VerticalAlignment="Top">
-                            <Image.Source>
+                        <uwpcon:ImageEx Height="125" Width="125" Grid.Row="0" Stretch="Fill" VerticalAlignment="Top" IsCacheEnabled="True">
+                            <uwpcon:ImageEx.Source>
                                 <BitmapImage UriSource="{Binding Logo}" />
-                            </Image.Source>
-                        </Image>
+                            </uwpcon:ImageEx.Source>
+                        </uwpcon:ImageEx>
 
                         <TextBlock Margin="5 0"
                                    TextAlignment="Center"

@@ -8,6 +8,7 @@
     xmlns:controls="using:Neptunium.Controls"
     xmlns:winrt="using:WinRTXamlToolkit.Controls"
     xmlns:conv="using:Crystal3.UI.Converters"
+    xmlns:uwpcon="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -24,11 +25,11 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Image Height="55" Width="55" Grid.Column="0">
-                        <Image.Source>
+                    <uwpcon:ImageEx Height="55" Width="55" Grid.Column="0" IsCacheEnabled="True">
+                        <uwpcon:ImageEx.Source>
                             <BitmapImage UriSource="{Binding Logo}" DecodePixelWidth="55" DecodePixelHeight="55" />
-                        </Image.Source>
-                    </Image>
+                        </uwpcon:ImageEx.Source>
+                    </uwpcon:ImageEx>
 
                     <Grid Grid.Column="1" Margin="0 0 0 0" Padding="10 0 10 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="60">
                         <Grid.RowDefinitions>
