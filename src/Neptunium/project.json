@@ -2,7 +2,7 @@
   "dependencies": {
     "HockeySDK.UWP": "4.1.5",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
-    "NotificationsExtensions.Win10": "14332.0.2",
+    "Microsoft.Toolkit.Uwp.Notifications": "1.2.0",
     "Win2D.uwp": "1.19.0",
     "WindowsStateTriggers": "1.1.0"
   },

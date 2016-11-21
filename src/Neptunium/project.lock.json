@@ -255,6 +255,14 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
+      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+        "compile": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        }
+      },
       "Microsoft.VisualBasic/10.0.1": {
         "dependencies": {
           "System.Collections": "4.0.11",
@@ -297,14 +305,6 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
-        }
-      },
-      "NotificationsExtensions.Win10/14332.0.2": {
-        "compile": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
-        },
-        "runtime": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
         }
       },
       "runtime.native.System.IO.Compression/4.1.0": {
@@ -2297,6 +2297,14 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
+      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+        "compile": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        }
+      },
       "Microsoft.VisualBasic/10.0.1": {
         "dependencies": {
           "System.Collections": "4.0.11",
@@ -2340,14 +2348,6 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
-        }
-      },
-      "NotificationsExtensions.Win10/14332.0.2": {
-        "compile": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
-        },
-        "runtime": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
         }
       },
       "runtime.any.System.Collections/4.0.11": {
@@ -4462,6 +4462,14 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
+      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+        "compile": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        }
+      },
       "Microsoft.VisualBasic/10.0.1": {
         "dependencies": {
           "System.Collections": "4.0.11",
@@ -4505,14 +4513,6 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
-        }
-      },
-      "NotificationsExtensions.Win10/14332.0.2": {
-        "compile": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
-        },
-        "runtime": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
         }
       },
       "runtime.aot.System.Collections/4.0.10": {
@@ -6668,6 +6668,14 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
+      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+        "compile": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        }
+      },
       "Microsoft.VisualBasic/10.0.1": {
         "dependencies": {
           "System.Collections": "4.0.11",
@@ -6711,14 +6719,6 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
-        }
-      },
-      "NotificationsExtensions.Win10/14332.0.2": {
-        "compile": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
-        },
-        "runtime": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
         }
       },
       "runtime.any.System.Collections/4.0.11": {
@@ -8842,6 +8842,14 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
+      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+        "compile": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        }
+      },
       "Microsoft.VisualBasic/10.0.1": {
         "dependencies": {
           "System.Collections": "4.0.11",
@@ -8885,14 +8893,6 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
-        }
-      },
-      "NotificationsExtensions.Win10/14332.0.2": {
-        "compile": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
-        },
-        "runtime": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
         }
       },
       "runtime.aot.System.Collections/4.0.10": {
@@ -11053,6 +11053,14 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
+      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+        "compile": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        }
+      },
       "Microsoft.VisualBasic/10.0.1": {
         "dependencies": {
           "System.Collections": "4.0.11",
@@ -11096,14 +11104,6 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
-        }
-      },
-      "NotificationsExtensions.Win10/14332.0.2": {
-        "compile": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
-        },
-        "runtime": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
         }
       },
       "runtime.any.System.Collections/4.0.11": {
@@ -13227,6 +13227,14 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
+      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+        "compile": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
+        }
+      },
       "Microsoft.VisualBasic/10.0.1": {
         "dependencies": {
           "System.Collections": "4.0.11",
@@ -13270,14 +13278,6 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
-        }
-      },
-      "NotificationsExtensions.Win10/14332.0.2": {
-        "compile": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
-        },
-        "runtime": {
-          "lib/uap10.0/NotificationsExtensions.Win10.dll": {}
         }
       },
       "runtime.aot.System.Collections/4.0.10": {
@@ -15476,6 +15476,29 @@
         "runtime.json"
       ]
     },
+    "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+      "sha512": "YbCSSxNytBG+WWHsvyvnPupE2W2r4IiXogpy0HJ9yhF5qoC1SpgGnYR772fg25ny2fqG1q13NIy8ULYx8Y7zBg==",
+      "type": "package",
+      "files": [
+        "Microsoft.Toolkit.Uwp.Notifications.1.2.0.nupkg.sha512",
+        "Microsoft.Toolkit.Uwp.Notifications.nuspec",
+        "build/native/Microsoft.Toolkit.Uwp.Notifications.targets",
+        "lib/dotnet/Microsoft.Toolkit.Uwp.Notifications.dll",
+        "lib/dotnet/Microsoft.Toolkit.Uwp.Notifications.pdb",
+        "lib/dotnet/Microsoft.Toolkit.Uwp.Notifications.xml",
+        "lib/native/Microsoft.Toolkit.Uwp.Notifications.pdb",
+        "lib/native/Microsoft.Toolkit.Uwp.Notifications.pri",
+        "lib/native/Microsoft.Toolkit.Uwp.Notifications.winmd",
+        "lib/native/Microsoft.Toolkit.Uwp.Notifications.winmd.xml",
+        "lib/native/Microsoft.Toolkit.Uwp.Notifications.xml",
+        "lib/portable-net40+sl50+win+wpa81+wp80/Microsoft.Toolkit.Uwp.Notifications.dll",
+        "lib/portable-net40+sl50+win+wpa81+wp80/Microsoft.Toolkit.Uwp.Notifications.pdb",
+        "lib/portable-net40+sl50+win+wpa81+wp80/Microsoft.Toolkit.Uwp.Notifications.xml",
+        "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll",
+        "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.pdb",
+        "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.xml"
+      ]
+    },
     "Microsoft.VisualBasic/10.0.1": {
       "sha512": "HpNyOf/4Tp2lh4FyywB55VITk0SqVxEjDzsVDDyF1yafDN6Bq18xcHowzCPINyYHUTgGcEtmpYiRsFdSo0KKdQ==",
       "type": "package",
@@ -15574,29 +15597,6 @@
         "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll",
         "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.xml",
         "tools/install.ps1"
-      ]
-    },
-    "NotificationsExtensions.Win10/14332.0.2": {
-      "sha512": "UN5yNMpYIs06ULFSGkNYINN/ZtqK19wt3IbotUvH7rlGPVOcbvNvM2Jzxs9wZAolX97L5/Y4u+6twFP0oeXk2A==",
-      "type": "package",
-      "files": [
-        "NotificationsExtensions.Win10.14332.0.2.nupkg.sha512",
-        "NotificationsExtensions.Win10.nuspec",
-        "build/native/NotificationsExtensions.Win10.targets",
-        "lib/dotnet/NotificationsExtensions.Win10.dll",
-        "lib/dotnet/NotificationsExtensions.Win10.pdb",
-        "lib/dotnet/NotificationsExtensions.Win10.xml",
-        "lib/native/NotificationsExtensions.pdb",
-        "lib/native/NotificationsExtensions.pri",
-        "lib/native/NotificationsExtensions.winmd",
-        "lib/native/NotificationsExtensions.winmd.xml",
-        "lib/native/NotificationsExtensions.xml",
-        "lib/portable-net45+sl50+win+wpa81+wp80/NotificationsExtensions.Win10.dll",
-        "lib/portable-net45+sl50+win+wpa81+wp80/NotificationsExtensions.Win10.pdb",
-        "lib/portable-net45+sl50+win+wpa81+wp80/NotificationsExtensions.Win10.xml",
-        "lib/uap10.0/NotificationsExtensions.Win10.XML",
-        "lib/uap10.0/NotificationsExtensions.Win10.dll",
-        "lib/uap10.0/NotificationsExtensions.Win10.pdb"
       ]
     },
     "runtime.any.System.Collections/4.0.11": {
@@ -21370,7 +21370,7 @@
     "": [
       "HockeySDK.UWP >= 4.1.5",
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.2.2",
-      "NotificationsExtensions.Win10 >= 14332.0.2",
+      "Microsoft.Toolkit.Uwp.Notifications >= 1.2.0",
       "Win2D.uwp >= 1.19.0",
       "WindowsStateTriggers >= 1.1.0"
     ],
