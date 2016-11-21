@@ -24,6 +24,7 @@ using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Navigation;
+using Windows.Services.Store;
 
 namespace Neptunium.ViewModel
 {
@@ -141,6 +142,19 @@ namespace Neptunium.ViewModel
                 await IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync(App.MessageQueue.Dequeue());
 
             await UpdateCarModeButtonStatusAsync(CarModeManager.IsInCarMode);
+
+#if RELEASE
+            var storeContext = StoreContext.GetDefault();
+            if (storeContext != null)
+            {
+                var updates = await storeContext.GetAppAndOptionalStorePackageUpdatesAsync();
+                
+                if (updates.Count > 0)
+                {
+                    await IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync("There is an update available for this application.");
+                }
+            }
+#endif
         }
 
         private void ContinuedAppExperienceManager_RemoteSystemsListUpdated(object sender, EventArgs e)
