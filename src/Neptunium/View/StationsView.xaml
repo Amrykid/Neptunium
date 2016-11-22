@@ -50,27 +50,32 @@
         <DataTemplate x:Key="WrapItemTemplate">
             <winrt:ListItemButton Command="{Binding Source={StaticResource AppCommands}, Path=PlayStationCommand}" 
                                   CommandParameter="{Binding}"
-                                  Margin="5 5" Height="150" Width="150">
-                <Grid>
-                    <Grid.Background>
-                        <ImageBrush Opacity=".45">
-                            <ImageBrush.ImageSource>
-                                <BitmapImage UriSource="{Binding Logo}" />
-                            </ImageBrush.ImageSource>
-                        </ImageBrush>
-                    </Grid.Background>
+                                  Margin="5 5" Height="200" Width="125">
+                <Grid Width="125" Height="200">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="125" />
+                        <RowDefinition MaxHeight="35" Height="Auto" />
+                        <RowDefinition Height="25" />
+                    </Grid.RowDefinitions>
 
-                    <TextBlock x:Name="stationName" Margin="0 0 0 0" VerticalAlignment="Center"
-                               TextAlignment="Center"
-                               HorizontalAlignment="Center" TextWrapping="WrapWholeWords">
-                        <Span>
-                            <Run Text="{Binding Name}" FontSize="18" FontWeight="SemiBold" 
-                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                            <LineBreak />
-                            <Run Text="{Binding Description}" FontSize="14"
-                                 Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
-                        </Span>
-                    </TextBlock>
+                    <uwpcon:ImageEx Height="125" Width="125" Grid.Row="0" Stretch="Fill" VerticalAlignment="Top" IsCacheEnabled="True">
+                        <uwpcon:ImageEx.Source>
+                            <BitmapImage UriSource="{Binding Logo}" />
+                        </uwpcon:ImageEx.Source>
+                    </uwpcon:ImageEx>
+
+                    <TextBlock TextAlignment="Left"
+                               Grid.Row="1" TextWrapping="WrapWholeWords"
+                               Text="{Binding Name}" FontSize="13" 
+                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+
+                    <TextBlock Grid.Row="2" Text="{Binding Genres[0]}"
+                               FontSize="13"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding Description}" />
+                    </ToolTipService.ToolTip>
                 </Grid>
             </winrt:ListItemButton>
         </DataTemplate>
