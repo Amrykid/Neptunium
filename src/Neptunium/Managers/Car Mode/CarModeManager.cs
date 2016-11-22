@@ -92,6 +92,12 @@ namespace Neptunium.Managers
                     return Radio.RequestAccessAsync();
                 });
 
+                //we're not allowed to access radios so stop here.
+                if (radioAccess != RadioAccessStatus.Allowed) return;
+
+                //there aren't any bluetooth radios so stop here.
+                if ((await Radio.GetRadiosAsync()).Where(x => x.Kind == RadioKind.Bluetooth).Count() == 0) return;
+
                 //Pull the selected bluetooth device from settings if it exists
                 if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
                 {
