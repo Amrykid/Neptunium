@@ -57,10 +57,6 @@ namespace Neptunium
         /// </summary>
         public App()
         {
-#if DEBUG
-            Application.Current.UnhandledException += Current_UnhandledException;
-#endif
-
             //For Xbox One
             this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
             ElementSoundPlayer.State = ElementSoundPlayerState.Auto;
@@ -70,10 +66,12 @@ namespace Neptunium
             Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
             Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;
 
+#if !DEBUG
             Microsoft.HockeyApp.HockeyClient.Current.Configure("2f0ab4c93b2341a0a4bbbd5ec98917f9", new TelemetryConfiguration()
             {
                 EnableDiagnostics = true
             });
+#endif
         }
 
         private static volatile bool isInBackground = false;
@@ -163,14 +161,6 @@ namespace Neptunium
             await SongHistoryManager.InitializeAsync();
 
             Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/0.1 ( amrykid@gmail.com )";
-        }
-
-        private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            e.Handled = true;
-
-            Microsoft.HockeyApp.HockeyClient.Current.TrackException(e.Exception);
-            Microsoft.HockeyApp.HockeyClient.Current.Flush();
         }
 
         private async Task PostUIInitAsync()
