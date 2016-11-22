@@ -290,6 +290,8 @@ namespace Neptunium.Managers
             {
                 var streamingDevices = await DetectStreamingDevicesAsync();
 
+                if (streamingDevices == null) return; //nothing to see here.
+
                 if (streamingDevices.Count > 0)
                 {
                     if (streamingDevices.Count == 1)
