@@ -112,6 +112,7 @@
       <DependentUpon>StationItemControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Fragments\SleepTimerFlyoutViewFragment.cs" />
+    <Compile Include="Fragments\StationInfoViewSongHistoryFragment.cs" />
     <Compile Include="Managers\Song History\SongHistoryManagerItemAddedEventArgs.cs" />
     <Compile Include="Managers\Song History\SongHistoryManagerItemRemovedEventArgs.cs" />
     <Compile Include="Managers\Song Metadata\SongMetadataManagerFoundArtistMetadataEventArgs.cs" />
@@ -135,7 +136,7 @@
     <Compile Include="Media\ShoutcastSongInfo.cs" />
     <Compile Include="Media\StationMediaPlayer.cs" />
     <Compile Include="Media\StationMediaPlayerConnectingStatusChangedEventArgs.cs" />
-    <Compile Include="Old-Hanasu\ShoutcastInformationService.cs" />
+    <Compile Include="Data\ShoutcastInformationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\SnackBar\ISnackBarService.cs" />
     <Compile Include="Services\SnackBar\SnackBarService.cs" />
@@ -148,6 +149,9 @@
     <Compile Include="ViewModel\StationsViewViewModel.cs" />
     <Compile Include="View\AppShellView.xaml.cs">
       <DependentUpon>AppShellView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Fragments\StationInfoViewSongHistoryFragmentView.xaml.cs">
+      <DependentUpon>StationInfoViewSongHistoryFragmentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\NowPlayingView.xaml.cs">
       <DependentUpon>NowPlayingView.xaml</DependentUpon>
@@ -297,6 +301,10 @@
     <Page Include="View\AppShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Fragments\StationInfoViewSongHistoryFragmentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\NowPlayingView.xaml">
       <SubType>Designer</SubType>

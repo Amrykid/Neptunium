@@ -6,11 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Crystal3.Navigation;
 using Neptunium.Data;
+using Neptunium.Fragments;
 
 namespace Neptunium.ViewModel
 {
     public class StationInfoViewModel : UIViewModelBase
     {
+        public StationInfoViewModel()
+        {
+            SongHistory = new StationInfoViewSongHistoryFragment();
+        }
+
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             if (e.Direction == CrystalNavigationDirection.Forward || e.Direction == CrystalNavigationDirection.Refresh)
@@ -26,6 +32,8 @@ namespace Neptunium.ViewModel
                     StationModel station = StationDataManager.Stations.FirstOrDefault(x => x.Name == stationName);
 
                     Station = station;
+
+                    SongHistory.Invoke(this, station);
                 }
 
                 IsBusy = false;
@@ -39,5 +47,7 @@ namespace Neptunium.ViewModel
             get { return GetPropertyValue<StationModel>(); }
             private set { SetPropertyValue<StationModel>(value: value); }
         }
+
+        public StationInfoViewSongHistoryFragment SongHistory { get; private set; }
     }
 }

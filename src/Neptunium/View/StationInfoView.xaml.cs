@@ -92,6 +92,20 @@ namespace Neptunium.View
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            SongHistoryPanel.MessageReceived += SongHistoryPanel_MessageReceived;
+        }
+
+        private void SongHistoryPanel_MessageReceived(object sender, Crystal3.UI.FragmentContentViewer.FragmentContentViewerUIMessageReceivedEventArgs e)
+        {
+            switch(e.Message.ToLower())
+            {
+                case "show":
+                    SongHistoryPanel.Visibility = Visibility.Visible;
+                    break;
+                case "hide":
+                    SongHistoryPanel.Visibility = Visibility.Collapsed;
+                    break;
+            }
         }
 
         private void Page_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
@@ -115,6 +129,8 @@ namespace Neptunium.View
 
             if (stationLogoStream != null)
                 stationLogoStream.Dispose();
+
+            SongHistoryPanel.MessageReceived -= SongHistoryPanel_MessageReceived;
         }
 
         private async void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

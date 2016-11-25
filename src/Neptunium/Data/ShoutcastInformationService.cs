@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Neptunium.Old_Hanasu
+namespace Neptunium.Data
 {
     public static class ShoutcastService
     {
@@ -37,9 +37,10 @@ namespace Neptunium.Old_Hanasu
             //return false;
         }
 
-        public static async Task<ObservableCollection<ShoutcastSongHistoryItem>> GetShoutcastStationSongHistoryAsync(StationModel station, string url)
+        public static async Task<ObservableCollection<ShoutcastSongHistoryItem>> GetShoutcastStationSongHistoryAsync(StationModel station)
         {
-            var items = await GetShoutcastStationSongHistoryOld(station, url);
+            string url = station.Streams.First().Url;
+            var items = await GetShoutcastStationSongHistoryInternalAsync(url);
 
             var coll = new ObservableCollection<ShoutcastSongHistoryItem>();
 
@@ -49,7 +50,7 @@ namespace Neptunium.Old_Hanasu
 
             return coll;
         }
-        public static async Task<Dictionary<string, string>> GetShoutcastStationSongHistoryOld(StationModel station, string url)
+        private static async Task<Dictionary<string, string>> GetShoutcastStationSongHistoryInternalAsync(string url)
         {
 
             if (url.EndsWith("/") == false)

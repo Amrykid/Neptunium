@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uwpcon="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:cui="using:Crystal3.UI"
+    xmlns:wnrttk="using:WinRTXamlToolkit.Controls"
     Loaded="Page_Loaded"
     DataContextChanged="Page_DataContextChanged"
     Unloaded="Page_Unloaded"
@@ -58,6 +60,13 @@
                                   CommandParameter="{Binding Station}" />
                 </StackPanel>
             </RelativePanel>
+        </Grid>
+
+        <Grid x:Name="BodyRow" Grid.Row="1">
+            <wnrttk:WrapPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                <cui:FragmentContentViewer x:Name="SongHistoryPanel"
+                    Fragment="{Binding SongHistory, UpdateSourceTrigger=PropertyChanged}" />
+            </wnrttk:WrapPanel>
         </Grid>
 
         <VisualStateManager.VisualStateGroups>

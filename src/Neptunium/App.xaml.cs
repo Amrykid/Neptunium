@@ -38,6 +38,8 @@ using Windows.Gaming.Input;
 using Kimono.Controls.SnackBar;
 using Microsoft.HockeyApp;
 using Windows.UI.Xaml.Media.Animation;
+using Neptunium.Fragments;
+using Neptunium.View.Fragments;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -161,6 +163,8 @@ namespace Neptunium
             await SongHistoryManager.InitializeAsync();
 
             Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/0.1 ( amrykid@gmail.com )";
+
+            FragmentManager.RegisterFragmentView<StationInfoViewSongHistoryFragment, StationInfoViewSongHistoryFragmentView>();
         }
 
         private async Task PostUIInitAsync()
