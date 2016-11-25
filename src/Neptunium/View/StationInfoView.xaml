@@ -114,7 +114,7 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="HeaderRowDef.Height" Value="250" />
+                        <Setter Target="HeaderRowDef.Height" Value="275" />
                         
                         <Setter Target="StationLogo.(RelativePanel.AlignTopWithPanel)" Value="True" />
                         <Setter Target="StationLogo.(RelativePanel.AlignLeftWithPanel)" Value="False" />
@@ -137,7 +137,7 @@
 
                         <Setter Target="ButtonPanel.(RelativePanel.RightOf)" Value="" />
                         <Setter Target="ButtonPanel.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True" />
-                        <Setter Target="ButtonPanel.(RelativePanel.Below)" Value="StationDescBlock" />
+                        <Setter Target="ButtonPanel.(RelativePanel.Below)" Value="" />
                         <Setter Target="ButtonPanel.(RelativePanel.AlignBottomWith)" Value="" />
                         <Setter Target="ButtonPanel.(RelativePanel.AlignBottomWithPanel)" Value="True" />
                         <Setter Target="ButtonPanel.VerticalAlignment" Value="Top" />

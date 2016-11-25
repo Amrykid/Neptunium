@@ -39,7 +39,7 @@ namespace Neptunium.Data
 
         public static async Task<ObservableCollection<ShoutcastSongHistoryItem>> GetShoutcastStationSongHistoryAsync(StationModel station)
         {
-            string url = station.Streams.First().Url;
+            string url = station.Streams.First().Url.Trim(); ;
             var items = await GetShoutcastStationSongHistoryInternalAsync(url);
 
             var coll = new ObservableCollection<ShoutcastSongHistoryItem>();

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,28 +26,31 @@ namespace Neptunium.Fragments
 
                 if (station != null)
                 {
-                    IsBusy = true;
-                    if (station.Streams.First().ServerType != StationModelStreamServerType.Direct)
+                    if (App.IsInternetConnected())
                     {
-                        try
+                        IsBusy = true;
+                        if (station.Streams.First().ServerType != StationModelStreamServerType.Direct)
                         {
-                            UI.SendMessageToUI("show");
-
-                            var items = await ShoutcastService.GetShoutcastStationSongHistoryAsync(station);
-                            HistoryItems = new ObservableCollection<HistoryItemModel>(items.Select(item =>
+                            try
                             {
-                                var newItem = new HistoryItemModel();
-                                newItem.Song = item.Song;
-                                newItem.Time = item.LocalizedTime;
-                                return newItem;
-                            }));
+                                UI.SendMessageToUI("show");
 
-                            IsBusy = false;
-                            return;
-                        }
-                        catch (Exception)
-                        {
+                                var items = await ShoutcastService.GetShoutcastStationSongHistoryAsync(station);
+                                HistoryItems = new ObservableCollection<HistoryItemModel>(items.Select(item =>
+                                {
+                                    var newItem = new HistoryItemModel();
+                                    newItem.Song = item.Song;
+                                    newItem.Time = item.LocalizedTime;
+                                    return newItem;
+                                }));
 
+                                IsBusy = false;
+                                return;
+                            }
+                            catch (HttpRequestException)
+                            {
+
+                            }
                         }
                     }
                 }
