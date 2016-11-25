@@ -1,7 +1,9 @@
 ﻿using Crystal3.InversionOfControl;
+using Crystal3.Navigation;
 using Crystal3.UI.Commands;
 using Neptunium.Data;
 using Neptunium.Media;
+using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,8 +34,16 @@ namespace Neptunium
                     }
 
                 }, station => station != null);
+
+            GoToStationCommand = new RelayCommand(station =>
+            {
+                WindowManager.GetNavigationManagerForCurrentWindow()
+                .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
+                .NavigateTo<StationInfoViewModel>(((StationModel)station).Name);
+            }, station => station != null);
         }
 
+        public RelayCommand GoToStationCommand { get; private set; }
         public RelayCommand PlayStationCommand { get; private set; }
     }
 }

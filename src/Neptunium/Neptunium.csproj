@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="ApplicationCommands.cs" />
     <Compile Include="AppSettings.cs" />
+    <Compile Include="ColorUtilities.cs" />
     <Compile Include="Controls\StationItemControl.xaml.cs">
       <DependentUpon>StationItemControl.xaml</DependentUpon>
     </Compile>
@@ -143,6 +144,7 @@
     <Compile Include="ViewModel\SettingsViewViewModel.cs" />
     <Compile Include="Media\ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs.cs" />
     <Compile Include="ViewModel\SongHistoryViewModel.cs" />
+    <Compile Include="ViewModel\StationInfoViewModel.cs" />
     <Compile Include="ViewModel\StationsViewViewModel.cs" />
     <Compile Include="View\AppShellView.xaml.cs">
       <DependentUpon>AppShellView.xaml</DependentUpon>
@@ -155,6 +157,9 @@
     </Compile>
     <Compile Include="View\SongHistoryView.xaml.cs">
       <DependentUpon>SongHistoryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\StationInfoView.xaml.cs">
+      <DependentUpon>StationInfoView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\StationsView.xaml.cs">
       <DependentUpon>StationsView.xaml</DependentUpon>
@@ -302,6 +307,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\SongHistoryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\StationInfoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

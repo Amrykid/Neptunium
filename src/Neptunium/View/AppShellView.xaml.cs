@@ -217,10 +217,22 @@ namespace Neptunium.View
                 }
                 else
                 {
+                    foreach (RadioButton button in RootSplitViewPaneStackPanel.Children.Where(x => x is RadioButton))
+                        button.IsChecked = false;
+
                     Debug.WriteLine("WARNING: Unimplemented navigation case - " + viewModelType.FullName);
                 }
 
-                CurrentPaneTitle.Text = ((RadioButton)RootSplitViewPaneStackPanel.Children.Where(x => x is RadioButton).First(x => (bool)((RadioButton)x).IsChecked)).Content as string;
+                string title = ((RadioButton)RootSplitViewPaneStackPanel.Children.Where(x => x is RadioButton).FirstOrDefault(x => (bool)((RadioButton)x).IsChecked))?.Content as string;
+                if (string.IsNullOrWhiteSpace(title))
+                {
+                    if (viewModelType == typeof(StationInfoViewModel))
+                    {
+                        title = "Station Info";
+                    }
+                }
+
+                CurrentPaneTitle.Text = title;           
             });
         }
 
