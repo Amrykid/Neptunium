@@ -1,4 +1,5 @@
-﻿using Crystal3.Navigation;
+﻿using Crystal3;
+using Crystal3.Navigation;
 using Microsoft.Graphics.Canvas.Effects;
 using Neptunium.ViewModel;
 using System;
@@ -29,7 +30,7 @@ namespace Neptunium.View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    [Crystal3.Navigation.NavigationViewModel(typeof(StationInfoViewModel), NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile)]
+    [Crystal3.Navigation.NavigationViewModel(typeof(StationInfoViewModel))]
     public sealed partial class StationInfoView : Page
     {
         private SpriteVisual glassVisual;
@@ -42,6 +43,12 @@ namespace Neptunium.View
             this.InitializeComponent();
             blurColor = Color.FromArgb(255, 245, 245, 245);
             //InitializeFrostedGlass(GlassHost);
+
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                bannerBar.Visibility = Visibility.Visible;
+                bannerBar.BannerText = "Please the Menu button on your controller to play this station.";
+            }
         }
 
         private void InitializeFrostedGlass(UIElement glassHost)
@@ -97,7 +104,7 @@ namespace Neptunium.View
 
         private void SongHistoryPanel_MessageReceived(object sender, Crystal3.UI.FragmentContentViewer.FragmentContentViewerUIMessageReceivedEventArgs e)
         {
-            switch(e.Message.ToLower())
+            switch (e.Message.ToLower())
             {
                 case "show":
                     SongHistoryPanel.Visibility = Visibility.Visible;
@@ -183,6 +190,17 @@ namespace Neptunium.View
 
                     BackDropGridImageBrush.ImageSource = new BitmapImage(new Uri(imgSrc));
                 }
+            }
+        }
+
+        private void Page_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Windows.System.VirtualKey.GamepadMenu:
+                    if (playButton.Command.CanExecute(playButton.CommandParameter))
+                        playButton.Command.Execute(playButton.CommandParameter);
+                    break;
             }
         }
     }

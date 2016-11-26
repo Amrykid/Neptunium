@@ -7,16 +7,19 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uwpcon="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:cui="using:Crystal3.UI"
+    xmlns:ki="using:Kimono.Controls"
     xmlns:wnrttk="using:WinRTXamlToolkit.Controls"
     Loaded="Page_Loaded"
     DataContextChanged="Page_DataContextChanged"
     Unloaded="Page_Unloaded"
+    KeyDown="Page_KeyDown"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="200" x:Name="HeaderRowDef" />
             <RowDefinition Height="*" x:Name="BodyRowDef" />
+            <RowDefinition Height="Auto" x:Name="SnackBarRowDef" />
         </Grid.RowDefinitions>
 
         <Grid x:Name="HeaderRow">
@@ -56,6 +59,7 @@
                             VerticalAlignment="Top"
                             Margin="0 10 0 0">
                     <AppBarButton Icon="Play" Label="Play station" 
+                                  x:Name="playButton"
                                   Command="{Binding Source={StaticResource AppCommands}, Path=PlayStationCommand}" 
                                   CommandParameter="{Binding Station}" />
                 </StackPanel>
@@ -68,6 +72,8 @@
                     Fragment="{Binding SongHistory, UpdateSourceTrigger=PropertyChanged}" />
             </wnrttk:WrapPanel>
         </Grid>
+
+        <ki:BannerBar x:Name="bannerBar" Grid.Row="2" Visibility="Collapsed" />
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
