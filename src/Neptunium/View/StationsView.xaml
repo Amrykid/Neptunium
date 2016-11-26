@@ -31,7 +31,7 @@
                         </uwpcon:ImageEx.Source>
                     </uwpcon:ImageEx>
 
-                    <Grid Grid.Column="1" Margin="0 0 0 0" Padding="10 0 10 0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="60">
+                    <Grid Grid.Column="1" Margin="0 0 0 0" Padding="10 0 10 0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="60">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="20" />
                             <RowDefinition Height="*" />
@@ -39,11 +39,15 @@
 
                         <TextBlock Text="{Binding Name}" Grid.Row="0" Style="{ThemeResource BaseTextBlockStyle}" 
                                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                        <TextBlock Text="{Binding Description}" Grid.Row="1" TextTrimming="WordEllipsis" 
+                        <TextBlock Text="{Binding Genres[0]}" Grid.Row="1" TextTrimming="WordEllipsis" 
                                    Style="{ThemeResource BodyTextBlockStyle}" 
                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
 
                     </Grid>
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding Description}" />
+                    </ToolTipService.ToolTip>
                 </Grid>
             </winrt:ListItemButton>
         </DataTemplate>
