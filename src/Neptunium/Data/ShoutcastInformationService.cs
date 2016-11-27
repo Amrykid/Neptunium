@@ -39,7 +39,11 @@ namespace Neptunium.Data
 
         public static async Task<ObservableCollection<ShoutcastSongHistoryItem>> GetShoutcastStationSongHistoryAsync(StationModel station)
         {
-            string url = station.Streams.First().Url.Trim(); ;
+            string url = station.Streams.First().Url.Trim();
+            if (url.EndsWith("/") == false)
+                url += "/";
+            url += "played.html";
+
             var items = await GetShoutcastStationSongHistoryInternalAsync(url);
 
             var coll = new ObservableCollection<ShoutcastSongHistoryItem>();
@@ -52,11 +56,6 @@ namespace Neptunium.Data
         }
         private static async Task<Dictionary<string, string>> GetShoutcastStationSongHistoryInternalAsync(string url)
         {
-
-            if (url.EndsWith("/") == false)
-                url += "/";
-            url += "played.html";
-
             var html = await GetHtmlAsync(url);
 
             var songtable = Regex.Matches(html, "<table.+?>.+?</table>", RegexOptions.Singleline)[1];
