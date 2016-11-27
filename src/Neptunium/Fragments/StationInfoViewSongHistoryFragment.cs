@@ -28,28 +28,31 @@ namespace Neptunium.Fragments
                 {
                     if (App.IsInternetConnected())
                     {
-                        IsBusy = true;
-                        if (station.Streams.First().ServerType != StationModelStreamServerType.Direct)
+                        if (station.Streams.Any())
                         {
-                            try
+                            IsBusy = true;
+                            if (station.Streams.First().ServerType == StationModelStreamServerType.Shoutcast || station.Streams.First().ServerType == StationModelStreamServerType.Radionomy)
                             {
-                                UI.SendMessageToUI("show");
-
-                                var items = await ShoutcastService.GetShoutcastStationSongHistoryAsync(station);
-                                HistoryItems = new ObservableCollection<HistoryItemModel>(items.Select(item =>
+                                try
                                 {
-                                    var newItem = new HistoryItemModel();
-                                    newItem.Song = item.Song;
-                                    newItem.Time = item.LocalizedTime;
-                                    return newItem;
-                                }));
+                                    UI.SendMessageToUI("show");
 
-                                IsBusy = false;
-                                return;
-                            }
-                            catch (HttpRequestException)
-                            {
+                                    var items = await ShoutcastService.GetShoutcastStationSongHistoryAsync(station);
+                                    HistoryItems = new ObservableCollection<HistoryItemModel>(items.Select(item =>
+                                    {
+                                        var newItem = new HistoryItemModel();
+                                        newItem.Song = item.Song;
+                                        newItem.Time = item.LocalizedTime;
+                                        return newItem;
+                                    }));
 
+                                    IsBusy = false;
+                                    return;
+                                }
+                                catch (HttpRequestException)
+                                {
+
+                                }
                             }
                         }
                     }
