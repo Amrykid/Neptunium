@@ -262,7 +262,9 @@ namespace Neptunium.Media
                     return false;
                 }
             }
-            else if ((currentStationServerType == StationModelStreamServerType.Shoutcast || currentStationServerType == StationModelStreamServerType.Radionomy))
+            else if (currentStationServerType == StationModelStreamServerType.Shoutcast 
+                    || currentStationServerType == StationModelStreamServerType.Radionomy
+                    || currentStationServerType == StationModelStreamServerType.Icecast)
             {
                 currentStationMSSWrapper = new ShoutcastMediaSourceStream(new Uri(stream.Url.Trim()), ConvertServerTypeToMediaServerType(currentStationServerType));
 

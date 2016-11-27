@@ -28,10 +28,10 @@ namespace Neptunium.Data
 
     public enum StationModelStreamServerType
     {
+        Other = -1,
         Direct = 0,
         Shoutcast = 1,
-        Icecast = 1,
-        Other = 2,
-        Radionomy = 3
+        Icecast = 2, //very similar to shoutcast
+        Radionomy = 3, //shoutcast with quirks on top
     }
 }
