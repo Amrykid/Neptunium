@@ -31,7 +31,7 @@ namespace Neptunium.Fragments
                         if (station.Streams.Any())
                         {
                             IsBusy = true;
-                            if (station.Streams.First().ServerType == StationModelStreamServerType.Shoutcast || station.Streams.First().ServerType == StationModelStreamServerType.Radionomy)
+                            if (station.Streams.First().ServerType == StationModelStreamServerType.Shoutcast)
                             {
                                 try
                                 {
@@ -53,6 +53,10 @@ namespace Neptunium.Fragments
                                 {
 
                                 }
+                            }
+                            else
+                            {
+                                UI.SendMessageToUI("hide");
                             }
                         }
                     }

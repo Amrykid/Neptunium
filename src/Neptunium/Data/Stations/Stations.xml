@@ -32,7 +32,7 @@
     <Site>http://ani-station.playtheradio.com/index.cfm</Site>
     <Genres>Anime; J-Pop; Soundtracks</Genres>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100">http://listen.radionomy.com:80/Ani-Station</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" ServerType="Radionomy">http://listen.radionomy.com:80/Ani-Station</Stream>
     </Streams>
   </Station>
   <Station>
