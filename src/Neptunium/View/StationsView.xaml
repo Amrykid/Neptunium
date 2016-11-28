@@ -97,6 +97,7 @@
                     <VisualState.Setters>
                         <Setter Target="StationsListBox.Visibility" Value="Collapsed" />
                         <Setter Target="StationsGridView.Visibility" Value="Visible" />
+                        <Setter Target="PageTitleBlock.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="TabletVisualState">
@@ -107,6 +108,7 @@
                     <VisualState.Setters>
                         <Setter Target="StationsListBox.Visibility" Value="Collapsed" />
                         <Setter Target="StationsGridView.Visibility" Value="Visible" />
+                        <Setter Target="PageTitleBlock.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -117,16 +119,28 @@
                     <VisualState.Setters>
                         <Setter Target="StationsListBox.Visibility" Value="Visible" />
                         <Setter Target="StationsGridView.Visibility" Value="Collapsed" />
+                        <Setter Target="PageTitleBlock.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Margin="20 0" Style="{ThemeResource SubheaderTextBlockStyle}" 
+                   Height="45" Grid.Row="0" 
+                   Visibility="Collapsed" Text="Stations" x:Name="PageTitleBlock" />
+
+
         <ListBox ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" x:Name="StationsListBox" 
                  Visibility="Visible" ItemTemplate="{StaticResource ListItemTemplate}" 
                  Background="Transparent"
                  Margin="0 0 0 0"
-                 ItemsPanel="{StaticResource ListItemsPanelTemplate}">
+                 ItemsPanel="{StaticResource ListItemsPanelTemplate}"
+                 Grid.Row="1">
             <ListBox.Transitions>
                 <TransitionCollection>
                     <ContentThemeTransition />
@@ -136,7 +150,8 @@
         </ListBox>
 
         <GridView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" x:Name="StationsGridView" 
-                  Visibility="Collapsed" ItemTemplate="{StaticResource WrapItemTemplate}"  Margin="20 0 0 0">
+                  Visibility="Collapsed" ItemTemplate="{StaticResource WrapItemTemplate}"  Margin="20 0 0 0"
+                  Grid.Row="1">
             <GridView.Transitions>
                 <TransitionCollection>
                     <ContentThemeTransition />
