@@ -108,9 +108,13 @@
     <Compile Include="ApplicationCommands.cs" />
     <Compile Include="AppSettings.cs" />
     <Compile Include="ColorUtilities.cs" />
+    <Compile Include="Controls\GlassPanel.xaml.cs">
+      <DependentUpon>GlassPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\StationItemControl.xaml.cs">
       <DependentUpon>StationItemControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\Stations\StationSupplementaryDataManager.cs" />
     <Compile Include="Fragments\SleepTimerFlyoutViewFragment.cs" />
     <Compile Include="Fragments\StationInfoViewSongHistoryFragment.cs" />
     <Compile Include="Managers\Song History\SongHistoryManagerItemAddedEventArgs.cs" />
@@ -290,6 +294,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\GlassPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\StationItemControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

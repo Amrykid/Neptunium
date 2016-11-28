@@ -8,6 +8,7 @@
     xmlns:uwpcon="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:cui="using:Crystal3.UI"
     xmlns:ki="using:Kimono.Controls"
+    xmlns:nepcon="using:Neptunium.Controls"
     xmlns:wnrttk="using:WinRTXamlToolkit.Controls"
     Loaded="Page_Loaded"
     DataContextChanged="Page_DataContextChanged"
@@ -28,8 +29,8 @@
                     <ImageBrush x:Name="BackDropGridImageBrush" Opacity=".45" Stretch="Fill">
                     </ImageBrush>
                 </Grid.Background>
-
-                <Canvas x:Name="GlassHost" />
+                
+                <nepcon:GlassPanel x:Name="GlassPanel" />
             </Grid>
             <RelativePanel>
                 <uwpcon:ImageEx x:Name="StationLogo"

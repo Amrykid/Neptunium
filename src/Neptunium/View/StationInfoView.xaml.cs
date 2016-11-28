@@ -1,6 +1,7 @@
 ﻿using Crystal3;
 using Crystal3.Navigation;
 using Microsoft.Graphics.Canvas.Effects;
+using Neptunium.Data.Stations;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -33,68 +34,19 @@ namespace Neptunium.View
     [Crystal3.Navigation.NavigationViewModel(typeof(StationInfoViewModel))]
     public sealed partial class StationInfoView : Page
     {
-        private SpriteVisual glassVisual;
         private StationInfoViewModel viewModel = null;
-        private IRandomAccessStream stationLogoStream = null;
         private Color blurColor = Color.FromArgb(255, 245, 245, 245);
 
         public StationInfoView()
         {
             this.InitializeComponent();
             blurColor = Color.FromArgb(255, 245, 245, 245);
-            //InitializeFrostedGlass(GlassHost);
 
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
             {
                 bannerBar.Visibility = Visibility.Visible;
                 bannerBar.BannerText = "Please the Menu button on your controller to play this station.";
             }
-        }
-
-        private void InitializeFrostedGlass(UIElement glassHost)
-        {
-            //https://msdn.microsoft.com/en-us/windows/uwp/graphics/using-the-visual-layer-with-xaml
-
-            Visual hostVisual = ElementCompositionPreview.GetElementVisual(glassHost);
-            Compositor compositor = hostVisual.Compositor;
-
-            // Create a glass effect, requires Win2D NuGet package
-            var glassEffect = new GaussianBlurEffect
-            {
-                BlurAmount = 10.0f, //original value: 15.0f
-                BorderMode = EffectBorderMode.Hard,
-                Source = new ArithmeticCompositeEffect
-                {
-                    MultiplyAmount = 0,
-                    Source1Amount = 0.5f,
-                    Source2Amount = 0.5f,
-                    Source1 = new CompositionEffectSourceParameter("backdropBrush"),
-                    Source2 = new ColorSourceEffect
-                    {
-                        Color = blurColor
-                    }
-                }
-            };
-
-            //  Create an instance of the effect and set its source to a CompositionBackdropBrush
-            var effectFactory = compositor.CreateEffectFactory(glassEffect);
-            var backdropBrush = compositor.CreateBackdropBrush();
-            var effectBrush = effectFactory.CreateBrush();
-
-            effectBrush.SetSourceParameter("backdropBrush", backdropBrush);
-
-            // Create a Visual to contain the frosted glass effect
-            glassVisual = compositor.CreateSpriteVisual();
-            glassVisual.Brush = effectBrush;
-
-            // Add the blur as a child of the host in the visual tree
-            ElementCompositionPreview.SetElementChildVisual(glassHost, glassVisual);
-
-            // Make sure size of glass host and glass visual always stay in sync
-            var bindSizeAnimation = compositor.CreateExpressionAnimation("hostVisual.Size");
-            bindSizeAnimation.SetReferenceParameter("hostVisual", hostVisual);
-
-            glassVisual.StartAnimation("Size", bindSizeAnimation);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -131,12 +83,6 @@ namespace Neptunium.View
             if (viewModel != null)
                 viewModel.PropertyChanged -= ViewModel_PropertyChanged;
 
-            if (glassVisual != null)
-                glassVisual.Dispose();
-
-            if (stationLogoStream != null)
-                stationLogoStream.Dispose();
-
             SongHistoryPanel.MessageReceived -= SongHistoryPanel_MessageReceived;
         }
 
@@ -152,31 +98,19 @@ namespace Neptunium.View
 
                 if (string.IsNullOrWhiteSpace(imgSrc))
                 {
-                    ElementCompositionPreview.SetElementChildVisual(GlassHost, null); //turn off the glass
+                    //turn off the glass
 
-                    if (glassVisual != null)
-                    {
-                        glassVisual.Dispose();
-                        glassVisual = null;
-                    }
+                    GlassPanel.TurnOffGlass();
                 }
                 else
                 {
-                    if (glassVisual != null)
-                    {
-                        glassVisual.Dispose();
-                        glassVisual = null;
-                    }
+                    
 
 
                     //setup to use glass with a blur of the dominant color from the station logo
                     try
                     {
-                        var streamRef = RandomAccessStreamReference.CreateFromUri(new Uri(imgSrc));
-                        stationLogoStream = await streamRef.OpenReadAsync();
-                        blurColor = await ColorUtilities.GetDominantColorAsync(stationLogoStream);
-
-                        stationLogoStream.Dispose();
+                        blurColor = await StationSupplementaryDataManager.GetStationLogoDominantColorAsync(viewModel.Station);
                     }
                     catch (Exception)
                     {
@@ -184,9 +118,9 @@ namespace Neptunium.View
                         blurColor = Color.FromArgb(255, 245, 245, 245);
                     }
 
-                    InitializeFrostedGlass(GlassHost);
+                    //turn on glass
 
-                    ElementCompositionPreview.SetElementChildVisual(GlassHost, glassVisual); //turn on glass
+                    GlassPanel.ChangeBlurColor(blurColor);
 
                     BackDropGridImageBrush.ImageSource = new BitmapImage(new Uri(imgSrc));
                 }
