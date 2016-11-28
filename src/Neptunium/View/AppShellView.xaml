@@ -119,10 +119,9 @@
 
                         <Setter Target="SplitViewContentGrid.Background" Value="Transparent" />
 
-                        <Setter Target="MobileTogglePaneButton.Visibility" Value="Visible" />
-                        <Setter Target="CurrentPaneTitle.Margin" Value="20 0" />
-                        <Setter Target="CurrentPaneTitle.Style" Value="{ThemeResource SubheaderTextBlockStyle}" />
-                        <Setter Target="CurrentPaneTitleRow.Height" Value="45" />
+                        <Setter Target="MobileTogglePaneButton.Visibility" Value="Collapsed" />
+                        <Setter Target="CurrentPaneTitleRow.Height" Value="0" />
+                        <Setter Target="CurrentPaneTitle.Visibility" Value="Collapsed" />
 
                         <Setter Target="upperAppBar.Visibility" Value="Collapsed" />
                         <Setter Target="lowerAppBar.Visibility" Value="Collapsed" />
@@ -161,9 +160,8 @@
                         <Setter Target="SplitViewContentGrid.Background" Value="Transparent" />
 
                         <Setter Target="MobileTogglePaneButton.Visibility" Value="Collapsed" />
-                        <Setter Target="CurrentPaneTitle.Margin" Value="20 0" />
-                        <Setter Target="CurrentPaneTitle.Style" Value="{ThemeResource SubheaderTextBlockStyle}" />
-                        <Setter Target="CurrentPaneTitleRow.Height" Value="45" />
+                        <Setter Target="CurrentPaneTitleRow.Height" Value="0" />
+                        <Setter Target="CurrentPaneTitle.Visibility" Value="Collapsed" />
 
                         <Setter Target="upperAppBar.Visibility" Value="Visible" />
                         <Setter Target="lowerAppBar.Visibility" Value="Collapsed" />
@@ -203,9 +201,8 @@
                         <Setter Target="SplitViewContentGrid.Background" Value="Transparent" />
 
                         <Setter Target="MobileTogglePaneButton.Visibility" Value="Collapsed" />
-                        <Setter Target="CurrentPaneTitle.Margin" Value="20 0" />
-                        <Setter Target="CurrentPaneTitle.Style" Value="{ThemeResource SubheaderTextBlockStyle}" />
-                        <Setter Target="CurrentPaneTitleRow.Height" Value="45" />
+                        <Setter Target="CurrentPaneTitleRow.Height" Value="0" />
+                        <Setter Target="CurrentPaneTitle.Visibility" Value="Collapsed" />
 
                         <Setter Target="upperAppBar.Visibility" Value="Visible" />
                         <Setter Target="lowerAppBar.Visibility" Value="Collapsed" />
@@ -246,6 +243,7 @@
                         <Setter Target="CurrentPaneTitle.FontSize" Value="18" />
                         <Setter Target="CurrentPaneTitle.FontWeight" Value="Bold" />
                         <Setter Target="CurrentPaneTitleRow.Height" Value="50" />
+                        <Setter Target="CurrentPaneTitle.Visibility" Value="Visible" />
 
                         <Setter Target="upperAppBar.Visibility" Value="Collapsed" />
                         <Setter Target="lowerAppBar.Visibility" Value="Visible" />
@@ -332,7 +330,7 @@
             <SplitView.Content>
                 <Grid x:Name="SplitViewContentGrid" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
                     <Grid.RowDefinitions>
-                        <RowDefinition x:Name="CurrentPaneTitleRow" Height="75" />
+                        <RowDefinition x:Name="CurrentPaneTitleRow" Height="50" />
                         <RowDefinition x:Name="SplitViewContentGrid_SecondRow" Height="Auto" />
                         <RowDefinition x:Name="SplitViewContentGrid_ThirdRow" Height="*" />
 
@@ -355,7 +353,13 @@
                                     AutomationProperties.Name="Menu"
                                     ToolTipService.ToolTip="Menu" />
 
-                        <TextBlock x:Name="CurrentPaneTitle" Grid.Column="1" Style="{ThemeResource SubheaderTextBlockStyle}" />
+                        <TextBlock x:Name="CurrentPaneTitle" Grid.Column="1"
+                                   Margin="15 12.5"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Height="50"
+                                   Visibility="Visible"
+                                   Style="{ThemeResource SubheaderTextBlockStyle}" />
 
                         <StackPanel x:Name="MobileIconMenu" Visibility="Visible" Orientation="Horizontal" Grid.Column="2">
                             <StackPanel.Resources>
