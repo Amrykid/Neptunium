@@ -152,26 +152,25 @@ namespace Neptunium.View
                     lowerBarBtn = lowerAppBar.SecondaryCommands.FirstOrDefault(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
                 }
 
-                foreach (var PlayPauseButton in new AppBarButton[] { lowerBarBtn })
+
+                switch (sender.PlaybackSession.PlaybackState)
                 {
-                    switch (sender.PlaybackSession.PlaybackState)
-                    {
-                        case MediaPlaybackState.Playing:
-                        case MediaPlaybackState.Opening:
-                        case MediaPlaybackState.Buffering:
-                            PlayPauseButton.Icon = new SymbolIcon(Symbol.Pause);
-                            PlayPauseButton.Label = "Pause";
-                            PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PauseCommand;
-                            break;
-                        case MediaPlaybackState.Paused:
-                        case MediaPlaybackState.None:
-                        default:
-                            PlayPauseButton.Icon = new SymbolIcon(Symbol.Play);
-                            PlayPauseButton.Label = "Play";
-                            PlayPauseButton.Command = (this.DataContext as AppShellViewModel).PlayCommand;
-                            break;
-                    }
+                    case MediaPlaybackState.Playing:
+                    case MediaPlaybackState.Opening:
+                    case MediaPlaybackState.Buffering:
+                        lowerBarBtn.Icon = new SymbolIcon(Symbol.Pause);
+                        lowerBarBtn.Label = "Pause";
+                        lowerBarBtn.Command = (this.DataContext as AppShellViewModel).PauseCommand;
+                        break;
+                    case MediaPlaybackState.Paused:
+                    case MediaPlaybackState.None:
+                    default:
+                        lowerBarBtn.Icon = new SymbolIcon(Symbol.Play);
+                        lowerBarBtn.Label = "Play";
+                        lowerBarBtn.Command = (this.DataContext as AppShellViewModel).PlayCommand;
+                        break;
                 }
+
             }
         }
 
@@ -232,7 +231,7 @@ namespace Neptunium.View
                     }
                 }
 
-                CurrentPaneTitle.Text = title;           
+                CurrentPaneTitle.Text = title;
             });
         }
 
