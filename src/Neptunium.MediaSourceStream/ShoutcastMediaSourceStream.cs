@@ -276,7 +276,7 @@ namespace Neptunium.MediaSourceStream
                 response += socketReader.ReadString(1);
             }
 
-            if (response.StartsWith("HTTP/1.0 302"))
+            if (response.StartsWith("HTTP/1.0 302") || response.StartsWith("HTTP/1.1 302"))
             {
                 socketReader.Dispose();
                 socketWriter.Dispose();
