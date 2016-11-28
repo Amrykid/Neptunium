@@ -18,13 +18,13 @@
             </Grid.Background>
 
             <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}"
-                            VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="40 0 0 40">
+                  VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="40 0 0 40">
                 <TextBlock Text="Select a station to begin streaming." VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" FontSize="25" />
             </Grid>
             <Grid x:Name="NowPlayingInfoGrid" Margin="40 0 0 85"
-              Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
-              HorizontalAlignment="Left" VerticalAlignment="Bottom" 
-              Height="150" Width="Auto">
+                  Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
+                  HorizontalAlignment="Left" VerticalAlignment="Bottom" 
+                  Height="150" Width="Auto">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150" />
                     <ColumnDefinition Width="*" />

@@ -5,6 +5,7 @@
     xmlns:local="using:Neptunium.View"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:nepcon="using:Neptunium.Controls"
     mc:Ignorable="d" Loaded="Page_Loaded" DataContextChanged="Page_DataContextChanged" Unloaded="Page_Unloaded">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -60,7 +61,7 @@
                         </ImageBrush>
                     </Grid.Background>
 
-                    <Canvas x:Name="GlassHost" />
+                    <nepcon:GlassPanel x:Name="GlassPanel" />
                 </Grid>
 
                 <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
