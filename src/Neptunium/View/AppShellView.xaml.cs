@@ -94,7 +94,7 @@ namespace Neptunium.View
                         break;
                     case Windows.System.VirtualKey.GamepadY:
                         if (StationMediaPlayer.IsPlaying)
-                            lowerAppBarHandOffButton.Flyout.ShowAt(upperAppBar);
+                            lowerAppBarHandOffButton.Flyout.ShowAt(lowerAppBar);
                         break;
                     case Windows.System.VirtualKey.GamepadX:
                         {
@@ -144,7 +144,7 @@ namespace Neptunium.View
         {
             if (this.DataContext != null)
             {
-                var upperBarBtn = upperAppBar.PrimaryCommands.First(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
+                //var upperBarBtn = upperAppBar.PrimaryCommands.First(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
                 var lowerBarBtn = lowerAppBar.PrimaryCommands.FirstOrDefault(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
                 if (lowerBarBtn == null)
                 {
@@ -152,7 +152,7 @@ namespace Neptunium.View
                     lowerBarBtn = lowerAppBar.SecondaryCommands.FirstOrDefault(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
                 }
 
-                foreach (var PlayPauseButton in new AppBarButton[] { upperBarBtn, lowerBarBtn })
+                foreach (var PlayPauseButton in new AppBarButton[] { lowerBarBtn })
                 {
                     switch (sender.PlaybackSession.PlaybackState)
                     {
@@ -261,16 +261,6 @@ namespace Neptunium.View
                 });
 
             }
-
-#if DEBUG
-            //NOTE: Keep commands in sync so that this code won't crash the app. Crashing the app/breaking the debugger helps me enforce that I should keep the commands the same.
-
-            if ((lowerAppBar.PrimaryCommands.Count + lowerAppBar.SecondaryCommands.Count) != (upperAppBar.PrimaryCommands.Count + upperAppBar.SecondaryCommands.Count))
-                if (Debugger.IsAttached)
-                    Debugger.Break();
-                else
-                    throw new Exception();
-#endif
 
             App.Dispatcher.RunAsync(() =>
             {

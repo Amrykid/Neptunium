@@ -123,7 +123,6 @@
                         <Setter Target="CurrentPaneTitleRow.Height" Value="0" />
                         <Setter Target="CurrentPaneTitle.Visibility" Value="Collapsed" />
 
-                        <Setter Target="upperAppBar.Visibility" Value="Collapsed" />
                         <Setter Target="lowerAppBar.Visibility" Value="Collapsed" />
 
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource XboxAppBarStyle}" />
@@ -163,10 +162,9 @@
                         <Setter Target="CurrentPaneTitleRow.Height" Value="0" />
                         <Setter Target="CurrentPaneTitle.Visibility" Value="Collapsed" />
 
-                        <Setter Target="upperAppBar.Visibility" Value="Visible" />
-                        <Setter Target="lowerAppBar.Visibility" Value="Collapsed" />
+                        <Setter Target="lowerAppBar.Visibility" Value="Visible" />
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
-                        <Setter Target="lowerAppBar.IsDynamicOverflowEnabled" Value="True" />
+                        <Setter Target="lowerAppBar.IsDynamicOverflowEnabled" Value="False" />
 
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
@@ -204,10 +202,9 @@
                         <Setter Target="CurrentPaneTitleRow.Height" Value="0" />
                         <Setter Target="CurrentPaneTitle.Visibility" Value="Collapsed" />
 
-                        <Setter Target="upperAppBar.Visibility" Value="Visible" />
-                        <Setter Target="lowerAppBar.Visibility" Value="Collapsed" />
+                        <Setter Target="lowerAppBar.Visibility" Value="Visible" />
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
-                        <Setter Target="lowerAppBar.IsDynamicOverflowEnabled" Value="True" />
+                        <Setter Target="lowerAppBar.IsDynamicOverflowEnabled" Value="False" />
 
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
@@ -245,7 +242,6 @@
                         <Setter Target="CurrentPaneTitleRow.Height" Value="50" />
                         <Setter Target="CurrentPaneTitle.Visibility" Value="Visible" />
 
-                        <Setter Target="upperAppBar.Visibility" Value="Collapsed" />
                         <Setter Target="lowerAppBar.Visibility" Value="Visible" />
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
                         <Setter Target="lowerAppBar.IsDynamicOverflowEnabled" Value="False" />
@@ -438,15 +434,6 @@
         </Grid>
     </Grid>
 
-    <Page.TopAppBar>
-        <CommandBar x:Name="upperAppBar" Style="{StaticResource ComAppBarStyle}">
-            <CommandBar.PrimaryCommands>
-                <AppBarButton Icon="Play" Label="Play" Tag="PlayPause" Command="{Binding PlayCommand}" />
-                <AppBarButton Label="Handoff" Icon="Remote" x:Name="upperAppBarHandOffButton" Flyout="{StaticResource HandOffDeviceFlyout}" />
-                <AppBarButton Label="Sleep Timer" Icon="Clock" Flyout="{StaticResource SleepTimerDeviceFlyout}" />
-            </CommandBar.PrimaryCommands>
-        </CommandBar>
-    </Page.TopAppBar>
     <Page.BottomAppBar>
         <CommandBar x:Name="lowerAppBar" Style="{StaticResource ComAppBarStyle}" IsDynamicOverflowEnabled="False">
             <CommandBar.PrimaryCommands>
