@@ -78,7 +78,8 @@ namespace Neptunium.Media
 
         private static void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
         {
-
+            if (IsPlayingChanged != null)
+                IsPlayingChanged(null, EventArgs.Empty);
         }
 
         public static MediaPlaybackSession PlaybackSession
@@ -453,5 +454,6 @@ namespace Neptunium.Media
         public static event EventHandler CurrentStationChanged;
         public static event EventHandler<ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs> BackgroundAudioError;
         public static event EventHandler<StationMediaPlayerConnectingStatusChangedEventArgs> ConnectingStatusChanged;
+        public static event EventHandler IsPlayingChanged;
     }
 }
