@@ -28,7 +28,7 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Text="{Binding Song, Mode=OneTime}" Grid.Column="0" />
+                            <TextBlock Text="{Binding Song, Mode=OneTime}" TextWrapping="WrapWholeWords" Grid.Column="0" />
 
                             <TextBlock Text="{Binding Time, Mode=OneTime}" Grid.Column="1" />
                         </Grid>
