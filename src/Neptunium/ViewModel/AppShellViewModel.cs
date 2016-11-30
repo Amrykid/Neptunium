@@ -7,7 +7,6 @@ using Crystal3.UI.Commands;
 using Crystal3.UI.MessageDialog;
 using Neptunium.Data;
 using Neptunium.Fragments;
-using Neptunium.Logging;
 using Neptunium.Managers;
 using Neptunium.Media;
 using Neptunium.Services.SnackBar;
@@ -33,8 +32,6 @@ namespace Neptunium.ViewModel
         private NavigationService InlineNavigationService = null;
         public AppShellViewModel()
         {
-            LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel .ctor");
-
             if (!IoC.Current.IsRegistered<IMessageDialogService>())
                 IoC.Current.Register<IMessageDialogService>(new DefaultMessageDialogService());
 
@@ -115,8 +112,6 @@ namespace Neptunium.ViewModel
 
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel OnNavigatedTo");
-
             InlineNavigationService = Crystal3.Navigation.WindowManager.GetNavigationManagerForCurrentWindow()
                 .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two);
 
@@ -213,15 +208,11 @@ namespace Neptunium.ViewModel
 
         private void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)
         {
-            LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_CurrentStationChanged");
-
             UpdateLiveTile();
         }
 
         private async void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
-            LogManager.Info(typeof(AppShellViewModel), "AppShellViewModel ShoutcastStationMediaPlayer_MetadataChanged");
-
             if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //don't play that pre-defined station message that happens every so often.
 
             if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] == true)

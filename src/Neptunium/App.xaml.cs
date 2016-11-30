@@ -23,7 +23,6 @@ using Neptunium.Shared;
 using Windows.Media.Playback;
 using System.Diagnostics;
 using Neptunium.Media;
-using Neptunium.Logging;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Email;
 using Neptunium.Managers;
@@ -152,12 +151,8 @@ namespace Neptunium
             //todo add all settings
 
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.ShowSongNotifications))
-#if RELEASE
                 ApplicationData.Current.LocalSettings.Values.Add(AppSettings.ShowSongNotifications, false);
-#else
-                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.ShowSongNotifications, true);
-#endif
-            await LogManager.InitializeAsync();
+
             await StationMediaPlayer.InitializeAsync();
 
             await SongHistoryManager.InitializeAsync();
@@ -202,7 +197,6 @@ namespace Neptunium
         {
             await PostUIInitAsync();
 
-            LogManager.Info(typeof(App), "Application Launching");
             WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.NavigateTo<AppShellViewModel>();
 
@@ -297,8 +291,6 @@ namespace Neptunium
 
         protected override async Task OnSuspendingAsync()
         {
-            LogManager.Info(typeof(App), "Application Suspending");
-
             ContinuedAppExperienceManager.StopWatchingForRemoteSystems();
             await SongHistoryManager.FlushAsync();
 
@@ -307,9 +299,6 @@ namespace Neptunium
 
         protected override async Task OnResumingAsync()
         {
-            //await LogManager.InitializeAsync();
-
-            LogManager.Info(typeof(App), "Application Resuming");
 
             if (ContinuedAppExperienceManager.RemoteSystemAccess == RemoteSystemAccessStatus.Unspecified)
                 await ContinuedAppExperienceManager.InitializeAsync();

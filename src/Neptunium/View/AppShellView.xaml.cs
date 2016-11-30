@@ -2,7 +2,6 @@
 using Crystal3.Model;
 using Crystal3.Navigation;
 using Neptunium.Fragments;
-using Neptunium.Logging;
 using Neptunium.Media;
 using Neptunium.MediaSourceStream;
 using Neptunium.Services.SnackBar;
@@ -43,8 +42,6 @@ namespace Neptunium.View
         private NavigationService inlineNavService = null;
         public AppShellView()
         {
-            LogManager.Info(typeof(AppShellView), "AppShellView ctor");
-
             this.InitializeComponent();
 
             inlineNavService = WindowManager.GetNavigationManagerForCurrentWindow()
@@ -118,7 +115,7 @@ namespace Neptunium.View
 
         private void AppShellView_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            LogManager.Info(typeof(AppShellView), "DataContextChanged: " + (args.NewValue == null ? "null" : args.NewValue.GetType().FullName));
+           
         }
 
         private async void Current_Resuming(object sender, object e)
@@ -176,8 +173,6 @@ namespace Neptunium.View
 
         private void AppShellView_NavigationServicePreNavigatedSignaled(object sender, NavigationServicePreNavigatedSignaledEventArgs e)
         {
-            LogManager.Info(typeof(AppShellView), "AppShellView_NavigationServicePreNavigatedSignaled");
-
             RefreshNavigationSplitViewState(e.ViewModel);
         }
 
