@@ -37,7 +37,8 @@ namespace Neptunium.View.Xbox
             var appCommands = (App.Current.Resources["AppCommands"] as ApplicationCommands);
             var item = e.ClickedItem;
 
-            appCommands.PlayStationCommand.Execute(item);
+            if (appCommands.GoToStationCommand.CanExecute(item))
+                appCommands.GoToStationCommand.Execute(item);
         }
 
         private void StationsListBox_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
