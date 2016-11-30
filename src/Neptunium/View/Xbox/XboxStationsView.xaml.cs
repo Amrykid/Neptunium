@@ -49,7 +49,10 @@ namespace Neptunium.View.Xbox
             {
                 try
                 {
-                    StationsListBox.SelectedIndex = 0;
+                    if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
+                        StationsListBox.SelectedItem = StationMediaPlayer.CurrentStation;
+                    else
+                        StationsListBox.SelectedIndex = 0;
                 }
                 catch (Exception) { }
             }
