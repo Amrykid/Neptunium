@@ -22,7 +22,6 @@ namespace Neptunium.Managers
             if (IsInitialized) return;
 
             StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
-            SongMetadataManager.FoundAlbumMetadata += SongMetadataManager_FoundMetadata;
 
             songHistoryCollection = await CookieJar.DeviceCache.PeekObjectAsync<ObservableCollection<SongHistoryItem>>("SongHistory", () => new ObservableCollection<SongHistoryItem>());
             SongHistory = new ReadOnlyObservableCollection<SongHistoryItem>(songHistoryCollection);
@@ -45,47 +44,24 @@ namespace Neptunium.Managers
             await CookieJar.DeviceCache.FlushAsync();
         }
 
-        private static async void SongMetadataManager_FoundMetadata(object sender, SongMetadataManagerFoundAlbumMetadataEventArgs e)
+
+        private static async void StationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
-            try
-            {
-                if (songHistoryCollection.Any(x => x.Artist == e.QueiredArtist && x.Track == e.QueriedTrack))
-                {
-                    var item = songHistoryCollection.First(x => x.Artist == e.QueiredArtist && x.Track == e.QueriedTrack);
-                    var index = songHistoryCollection.IndexOf(item);
+            if (StationMediaPlayer.CurrentStation.StationMessages.Any(x => x == e.Title)) return;
+            if (e.Artist == "Unknown Artist" && e.Title == "Unknown Song") return;
+            //add a new song to the metadata when the song changes.
 
-                    item.Album = e.FoundAlbumData;
+            var historyItem = new SongHistoryItem();
+            historyItem.Track = e.Title;
+            historyItem.Artist = e.Artist;
+            historyItem.Station = StationMediaPlayer.CurrentStation.Name;
+            historyItem.DatePlayed = DateTime.Now;
 
-                    songHistoryCollection[index] = item;
+            songHistoryCollection.Insert(0, historyItem);
 
-                    await FlushAsync();
-                }
-            }
-            catch (Exception) { }
-        }
+            ItemAdded?.Invoke(null, new SongHistoryManagerItemAddedEventArgs() { AddedItem = historyItem });
 
-        private static void StationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
-        {
-            try
-            {
-                if (StationMediaPlayer.CurrentStation.StationMessages.Any(x => x == e.Title)) return;
-                if (e.Artist == "Unknown Artist" && e.Title == "Unknown Song") return;
-                //add a new song to the metadata when the song changes.
-
-                var historyItem = new SongHistoryItem();
-                historyItem.Track = e.Title;
-                historyItem.Artist = e.Artist;
-                historyItem.Station = StationMediaPlayer.CurrentStation.Name;
-                historyItem.DatePlayed = DateTime.Now;
-
-                songHistoryCollection.Insert(0, historyItem);
-
-                ItemAdded?.Invoke(null, new SongHistoryManagerItemAddedEventArgs() { AddedItem = historyItem });
-            }
-            catch (Exception ex)
-            {
-
-            }
+            await FlushAsync();
         }
 
         public static event EventHandler<SongHistoryManagerItemAddedEventArgs> ItemAdded;

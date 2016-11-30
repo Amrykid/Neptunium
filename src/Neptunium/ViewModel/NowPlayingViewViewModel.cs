@@ -108,55 +108,45 @@ namespace Neptunium.ViewModel
                 NowPlayingBackgroundImage = null;
             });
 
-            try
-            {
-                var albumData = await SongMetadataManager.FindAlbumDataAsync(title, artist);
 
-                if (albumData != null && !string.IsNullOrWhiteSpace(albumData?.AlbumCoverUrl))
+            var albumData = await SongMetadataManager.FindAlbumDataAsync(title, artist);
+
+            if (albumData != null && !string.IsNullOrWhiteSpace(albumData?.AlbumCoverUrl))
+            {
+                await UpdateAlbumDataFromTaskAsync(albumData);
+                await App.Dispatcher.RunWhenIdleAsync(() =>
                 {
-                    await UpdateAlbumDataFromTaskAsync(albumData);
+                    NowPlayingBackgroundImage = albumData?.AlbumCoverUrl;
+                });
+            }
+            else
+            {
+                var artistData = await SongMetadataManager.FindArtistDataAsync(artist);
+
+                if (artistData != null && !string.IsNullOrWhiteSpace(artistData?.ArtistID))
+                {
                     await App.Dispatcher.RunWhenIdleAsync(() =>
                     {
-                        NowPlayingBackgroundImage = albumData?.AlbumCoverUrl;
+                        NowPlayingBackgroundImage = artistData?.ArtistImage;
                     });
                 }
                 else
                 {
-                    var artistData = await SongMetadataManager.FindArtistDataAsync(artist);
-
-                    if (artistData != null && !string.IsNullOrWhiteSpace(artistData?.ArtistID))
+                    if (NowPlayingBackgroundImage == null)
                     {
+                        TraceTelemetry trace = new TraceTelemetry("Failed song data lookup.", Microsoft.HockeyApp.SeverityLevel.Information);
+                        trace.Properties.Add(new KeyValuePair<string, string>("Artist", artist));
+                        trace.Properties.Add(new KeyValuePair<string, string>("Song", title));
+                        Microsoft.HockeyApp.HockeyClient.Current.TrackTrace(trace);
+
                         await App.Dispatcher.RunWhenIdleAsync(() =>
                         {
-                            NowPlayingBackgroundImage = artistData?.ArtistImage;
+                            NowPlayingBackgroundImage = CurrentStation.Background;
                         });
                     }
-                    else
-                    {
-                        if (NowPlayingBackgroundImage == null)
-                        {
-                            TraceTelemetry trace = new TraceTelemetry("Failed song data lookup.", Microsoft.HockeyApp.SeverityLevel.Information);
-                            trace.Properties.Add(new KeyValuePair<string, string>("Artist", artist));
-                            trace.Properties.Add(new KeyValuePair<string, string>("Song", title));
-                            Microsoft.HockeyApp.HockeyClient.Current.TrackTrace(trace);
-
-                            await App.Dispatcher.RunWhenIdleAsync(() =>
-                            {
-                                NowPlayingBackgroundImage = CurrentStation.Background;
-                            });
-                        }
-                    }
                 }
-
-
             }
-            catch (Exception)
-            {
-                await App.Dispatcher.RunWhenIdleAsync(() =>
-                {
-                    NowPlayingBackgroundImage = CurrentStation.Background;
-                });
-            }
+
         }
 
         private async Task UpdateAlbumDataFromTaskAsync(AlbumData albumData)

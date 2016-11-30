@@ -58,7 +58,8 @@ namespace Neptunium.Managers
                 //app service listing got removed while building for store.
 
                 App.MessageQueue.Enqueue("Handoff functionality is disabled.");
-                
+                IsSupported = false;
+
                 return;
             }
 
@@ -118,6 +119,7 @@ namespace Neptunium.Managers
         public static async void StartWatchingForRemoteSystems()
         {
             if (!IsSupported) return;
+            if (!IsInitialized) return;
 
             if (RemoteSystemAccess == RemoteSystemAccessStatus.Allowed && !IsRunning)
             {
@@ -139,6 +141,7 @@ namespace Neptunium.Managers
         public static void StopWatchingForRemoteSystems()
         {
             if (!IsSupported) return;
+            if (!IsInitialized) return;
 
             if (remoteSystemWatcher != null && IsRunning)
             {
@@ -208,32 +211,29 @@ namespace Neptunium.Managers
         {
             if (!IsSupported) return null;
 
-            try
+            string ver = string.Format("{0}.{1}.{2}.{3}",
+                Package.Current.Id.Version.Major,
+                Package.Current.Id.Version.Minor,
+                Package.Current.Id.Version.Build,
+                Package.Current.Id.Version.Revision);
+            AppServiceConnection connection = new AppServiceConnection();
+            connection.AppServiceName = ContinuedAppExperienceAppServiceName;
+            connection.PackageFamilyName = AppPackageName;
+            var status = await connection.OpenRemoteAsync(new RemoteSystemConnectionRequest(device));
+
+            if (status == AppServiceConnectionStatus.Success)
             {
-                string ver = string.Format("{0}.{1}.{2}.{3}", Package.Current.Id.Version.Major, Package.Current.Id.Version.Minor, Package.Current.Id.Version.Build, Package.Current.Id.Version.Revision);
-                AppServiceConnection connection = new AppServiceConnection();
-                connection.AppServiceName = ContinuedAppExperienceAppServiceName;
-                connection.PackageFamilyName = AppPackageName;
-                var status = await connection.OpenRemoteAsync(new RemoteSystemConnectionRequest(device));
+                var response = await connection.SendMessageAsync(data);
 
-                if (status == AppServiceConnectionStatus.Success)
-                {
-                    var response = await connection.SendMessageAsync(data);
-
-                    if (!keepAlive)
-                        connection.Dispose();
-
-                    return new Tuple<AppServiceResponse, AppServiceConnection>(response, keepAlive ? connection : null);
-                }
-                else
-                {
+                if (!keepAlive)
                     connection.Dispose();
 
-                    return null;
-                }
+                return new Tuple<AppServiceResponse, AppServiceConnection>(response, keepAlive ? connection : null);
             }
-            catch (Exception)
+            else
             {
+                connection.Dispose();
+
                 return null;
             }
         }
@@ -241,6 +241,7 @@ namespace Neptunium.Managers
         private static async Task<AppServiceResponse> SendDataToDeviceOverExistingConnectionAsync(AppServiceConnection connection, ValueSet data, bool keepAlive = true)
         {
             if (!IsSupported) return null;
+            if (!IsInitialized) return null;
 
             var response = await connection.SendMessageAsync(data);
 
@@ -253,7 +254,7 @@ namespace Neptunium.Managers
 
         private static async Task<RemoteLaunchUriStatus> LaunchAppOnDeviceAsync(RemoteSystem device, string args)
         {
-            if (!IsSupported) throw new Exception("Not supported.");
+            if (!IsSupported) return RemoteLaunchUriStatus.Unknown;
 
             RemoteSystemConnectionRequest request = new RemoteSystemConnectionRequest(device);
             return await RemoteLauncher.LaunchUriAsync(request, new Uri("nep:" + args));
@@ -261,31 +262,32 @@ namespace Neptunium.Managers
 
         public static async Task<bool> HandoffStationToRemoteDeviceAsync(RemoteSystem device, StationModel station)
         {
-            if (!IsSupported) throw new Exception("Not supported.");
+            if (!IsSupported) return false;
 
-            try
+            var data = new ValueSet();
+            data.Add("Command", "Play-Station");
+            data.Add("Station", station.Name);
+
+            var status = await LaunchAppOnDeviceAsync(device, "play-station?station=" + station.Name);
+
+            if (status == RemoteLaunchUriStatus.Success)
             {
-                var data = new ValueSet();
-                data.Add("Command", "Play-Station");
-                data.Add("Station", station.Name);
-
-                var status = await LaunchAppOnDeviceAsync(device, "play-station?station=" + station.Name);
-
-                if ((status == RemoteLaunchUriStatus.Success) && StopPlayingStationOnThisDeviceAfterSuccessfulHandoff)
+                if (StopPlayingStationOnThisDeviceAfterSuccessfulHandoff)
                 {
                     StationMediaPlayer.Stop();
                 }
 
                 return true;
             }
-            catch (Exception ex)
-            {
-                return false;
-            }
+
+            return false;
         }
 
         public static async void CheckForReverseHandoffOpportunities()
         {
+            if (!IsInitialized)
+                await InitializeAsync();
+
             if (IsSupported)
             {
                 var streamingDevices = await DetectStreamingDevicesAsync();
@@ -316,7 +318,7 @@ namespace Neptunium.Managers
                     }
                     else
                     {
-                        await IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync("You have multiple devices streaming.", 3000);
+                        await IoC.Current.ResolveDefault<ISnackBarService>()?.ShowSnackAsync("You have multiple devices streaming.", 3000);
                     }
                 }
             }
@@ -326,6 +328,8 @@ namespace Neptunium.Managers
         {
             if (!IsInitialized)
                 await InitializeAsync();
+
+            if (!IsSupported) return null;
 
             if (!StationDataManager.IsInitialized)
                 await StationDataManager.InitializeAsync();
@@ -341,34 +345,31 @@ namespace Neptunium.Managers
 
             foreach (var system in systemList.ToArray())
             {
-                try
+
+                var result = await SendDataToDeviceAsync(system, packet, keepAlive: true);
+
+                if (result != null)
                 {
-                    var result = await SendDataToDeviceAsync(system, packet, keepAlive: true);
-
-                    if (result != null)
+                    var response = result.Item1;
+                    var connection = result.Item2;
+                    if (response != null)
                     {
-                        var response = result.Item1;
-                        var connection = result.Item2;
-                        if (response != null)
+                        if (response.Status == AppServiceResponseStatus.Success)
                         {
-                            if (response.Status == AppServiceResponseStatus.Success)
+                            var responseMsg = response.Message;
+
+                            if (responseMsg["Status"].ToString() == "OK")
                             {
-                                var responseMsg = response.Message;
-
-                                if (responseMsg["Status"].ToString() == "OK")
+                                if (bool.Parse(responseMsg["IsPlaying"].ToString()) == true)
                                 {
-                                    if (bool.Parse(responseMsg["IsPlaying"].ToString()) == true)
-                                    {
-                                        var station = StationDataManager.Stations.FirstOrDefault(x => x.Name == responseMsg["CurrentStation"].ToString());
+                                    var station = StationDataManager.Stations.FirstOrDefault(x => x.Name == responseMsg["CurrentStation"].ToString());
 
-                                        devices.Add(new Tuple<RemoteSystem, StationModel, AppServiceConnection>(system, station, connection));
-                                    }
+                                    devices.Add(new Tuple<RemoteSystem, StationModel, AppServiceConnection>(system, station, connection));
                                 }
                             }
                         }
                     }
                 }
-                catch (Exception) { }
             }
 
             return devices;

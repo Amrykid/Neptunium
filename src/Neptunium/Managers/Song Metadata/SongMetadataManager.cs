@@ -19,24 +19,17 @@ namespace Neptunium.Managers
             if (await CookieJar.DeviceCache.ContainsObjectAsync(key))
                 await CookieJar.DeviceCache.PeekObjectAsync<ArtistData>(key);
 
-            try
+            var artistData = await TryFindArtistOnMusicBrainzAsync(cleanedArtist);
+
+            if (artistData != null)
             {
-                var artistData = await TryFindArtistOnMusicBrainzAsync(cleanedArtist);
+                await CookieJar.DeviceCache.InsertObjectAsync<ArtistData>(key, artistData);
 
-                if (artistData != null)
-                {
-                    await CookieJar.DeviceCache.InsertObjectAsync<ArtistData>(key, artistData);
+                await CookieJar.DeviceCache.FlushAsync();
 
-                    await CookieJar.DeviceCache.FlushAsync();
-
-                    FoundArtistMetadata?.Invoke(null, new SongMetadataManagerFoundArtistMetadataEventArgs() { });
-                }
+                FoundArtistMetadata?.Invoke(null, new SongMetadataManagerFoundArtistMetadataEventArgs() { });
 
                 return artistData;
-            }
-            catch (Exception)
-            {
-
             }
 
             return null;
@@ -51,25 +44,21 @@ namespace Neptunium.Managers
             if (await CookieJar.DeviceCache.ContainsObjectAsync(key))
                 return await CookieJar.DeviceCache.PeekObjectAsync<AlbumData>(key);
 
-            try
+            var albumData = await TryFindAlbumOnMusicBrainzAsync(cleanedTrack, cleanedArtist);
+
+            if (albumData != null)
             {
-                var albumData = await TryFindAlbumOnMusicBrainzAsync(cleanedTrack, cleanedArtist);
+                await CookieJar.DeviceCache.InsertObjectAsync<AlbumData>(key, albumData);
 
-                if (albumData != null)
-                {
-                    await CookieJar.DeviceCache.InsertObjectAsync<AlbumData>(key, albumData);
+                if (!await CookieJar.DeviceCache.ContainsObjectAsync("ARTIST:" + albumData.Artist))
+                    await CookieJar.DeviceCache.InsertObjectAsync("ARTIST:" + albumData.Artist, new ArtistData() { Name = albumData.Artist, ArtistID = albumData.ArtistID });
 
-                    if (!await CookieJar.DeviceCache.ContainsObjectAsync("ARTIST:" + albumData.Artist))
-                        await CookieJar.DeviceCache.InsertObjectAsync("ARTIST:" + albumData.Artist, new ArtistData() { Name = albumData.Artist, ArtistID = albumData.ArtistID });
+                await CookieJar.DeviceCache.FlushAsync();
 
-                    await CookieJar.DeviceCache.FlushAsync();
-
-                    FoundAlbumMetadata?.Invoke(null, new SongMetadataManagerFoundAlbumMetadataEventArgs() { FoundAlbumData = albumData, QueriedTrack = cleanedTrack, QueiredArtist = cleanedArtist });
-                }
+                FoundAlbumMetadata?.Invoke(null, new SongMetadataManagerFoundAlbumMetadataEventArgs() { FoundAlbumData = albumData, QueriedTrack = cleanedTrack, QueiredArtist = cleanedArtist });
 
                 return albumData;
             }
-            catch (Exception) { }
 
             return null;
         }
@@ -77,15 +66,17 @@ namespace Neptunium.Managers
         private static async Task<AlbumData> TryFindAlbumOnMusicBrainzAsync(string track, string artist)
         {
             AlbumData data = new AlbumData();
-            try
+
+
+            var recordingQuery = new Hqub.MusicBrainz.API.QueryParameters<Hqub.MusicBrainz.API.Entities.Recording>();
+            recordingQuery.Add("artistname", artist);
+            recordingQuery.Add("country", "JP");
+            recordingQuery.Add("recording", track);
+
+            var recordings = await Recording.SearchAsync(recordingQuery);
+
+            if (recordings?.QueryCount > 0)
             {
-                var recordingQuery = new Hqub.MusicBrainz.API.QueryParameters<Hqub.MusicBrainz.API.Entities.Recording>();
-                recordingQuery.Add("artistname", artist);
-                recordingQuery.Add("country", "JP");
-                recordingQuery.Add("recording", track);
-
-                var recordings = await Recording.SearchAsync(recordingQuery);
-
                 foreach (var potentialRecording in recordings?.Items)
                 {
                     if (potentialRecording.Title.ToLower().StartsWith(track.ToLower()))
@@ -94,12 +85,9 @@ namespace Neptunium.Managers
 
                         if (firstRelease != null)
                         {
-                            try
-                            {
-                                //data.AlbumCoverUrl = CoverArtArchive.GetCoverArtUri(firstRelease.Id)?.ToString();
-                                data.AlbumCoverUrl = "http://coverartarchive.org/release/" + firstRelease.Id + "/front-250.jpg";
-                            }
-                            catch (Exception) { }
+
+                            //data.AlbumCoverUrl = CoverArtArchive.GetCoverArtUri(firstRelease.Id)?.ToString();
+                            data.AlbumCoverUrl = "http://coverartarchive.org/release/" + firstRelease?.Id + "/front-250.jpg";
 
                             data.Artist = potentialRecording.Credits.First().Artist.Name;
                             data.ArtistID = potentialRecording.Credits.First().Artist.Id;
@@ -118,11 +106,6 @@ namespace Neptunium.Managers
                         }
                     }
                 }
-
-            }
-            catch (Exception ex)
-            {
-                return null;
             }
 
             return null;
@@ -131,49 +114,36 @@ namespace Neptunium.Managers
         private static async Task<ArtistData> TryFindArtistOnMusicBrainzAsync(string artistName)
         {
             ArtistData data = new ArtistData();
-            try
+
+            var artistQuery = new Hqub.MusicBrainz.API.QueryParameters<Hqub.MusicBrainz.API.Entities.Artist>();
+            //artistQuery.Add("inc", "url-rels");
+            artistQuery.Add("artist", artistName);
+            artistQuery.Add("alias", artistName);
+            artistQuery.Add("country", "JP");
+
+            var artistResults = await Artist.SearchAsync(artistQuery);
+
+            var artist = artistResults?.Items.FirstOrDefault();
+
+            if (artist != null)
             {
-                var artistQuery = new Hqub.MusicBrainz.API.QueryParameters<Hqub.MusicBrainz.API.Entities.Artist>();
-                //artistQuery.Add("inc", "url-rels");
-                artistQuery.Add("artist", artistName);
-                artistQuery.Add("alias", artistName);
-                artistQuery.Add("country", "JP");
+                data.Name = artist.Name;
+                data.Gender = artist.Gender;
+                data.ArtistID = artist.Id;
 
-                var artistResults = await Artist.SearchAsync(artistQuery);
+                var browsingData = await Artist.GetAsync(artist.Id, "url-rels");
 
-                var artist = artistResults?.Items.FirstOrDefault();
-
-                if (artist != null)
+                if (browsingData != null)
                 {
-                    data.Name = artist.Name;
-                    data.Gender = artist.Gender;
-                    data.ArtistID = artist.Id;
-
-                    await Task.Delay(200);
-
-                    try
+                    if (browsingData.RelationLists != null)
                     {
-                        var browsingData = await Artist.GetAsync(artist.Id, "url-rels");
-
-                        if (browsingData != null)
-                        {
-                            if (browsingData.RelationLists != null)
-                            {
-                                var imageRel = browsingData.RelationLists.Items.FirstOrDefault(x => x.Type == "image");
-                                if (imageRel != null)
-                                    data.ArtistImage = imageRel.Target;
-                            }
-                        }
+                        var imageRel = browsingData.RelationLists.Items.FirstOrDefault(x => x.Type == "image");
+                        if (imageRel != null)
+                            data.ArtistImage = imageRel.Target;
                     }
-                    catch (Exception) { }
-
-                    return data;
                 }
 
-            }
-            catch (Exception)
-            {
-
+                return data;
             }
 
             return null;

@@ -141,7 +141,7 @@ namespace Neptunium.ViewModel
             while (App.MessageQueue.Count > 0)
                 await IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync(App.MessageQueue.Dequeue());
 
-#if RELEASE
+#if !DEBUG
             var storeContext = StoreContext.GetDefault();
             if (storeContext != null)
             {
@@ -229,15 +229,13 @@ namespace Neptunium.ViewModel
 
         internal void ShowMediaErrorNotification(string title, string message)
         {
-            try
+            ToastContent content = new ToastContent()
             {
-                ToastContent content = new ToastContent()
+                Visual = new ToastVisual()
                 {
-                    Visual = new ToastVisual()
+                    BindingGeneric = new ToastBindingGeneric()
                     {
-                        BindingGeneric = new ToastBindingGeneric()
-                        {
-                            Children =
+                        Children =
                             {
                                 new AdaptiveText()
                                 {
@@ -250,59 +248,52 @@ namespace Neptunium.ViewModel
                                     HintStyle = AdaptiveTextStyle.Body
                                 }
                             },
-                        }
                     }
-                };
+                }
+            };
 
-                XmlDocument doc = content.GetXml();
-                ToastNotification notification = new ToastNotification(doc);
-                notification.NotificationMirroring = NotificationMirroring.Disabled;
-                notification.Tag = "mediaError";
+            XmlDocument doc = content.GetXml();
+            ToastNotification notification = new ToastNotification(doc);
+            notification.NotificationMirroring = NotificationMirroring.Disabled;
+            notification.Tag = "mediaError";
 
-                ToastNotificationManager.CreateToastNotifier().Show(notification);
-
-            }
-            catch (Exception)
-            {
-
-            }
+            ToastNotificationManager.CreateToastNotifier().Show(notification);
         }
 
         internal void ShowSongNotification()
         {
-            try
+
+            if (StationMediaPlayer.IsPlaying && StationMediaPlayer.SongMetadata != null)
             {
-                if (StationMediaPlayer.IsPlaying && StationMediaPlayer.SongMetadata != null)
+                var nowPlaying = StationMediaPlayer.SongMetadata;
+
+                var toastHistory = ToastNotificationManager.History.GetHistory();
+
+                if (toastHistory.Count > 0)
                 {
-                    var nowPlaying = StationMediaPlayer.SongMetadata;
+                    var latestToast = toastHistory.FirstOrDefault();
 
-                    var toastHistory = ToastNotificationManager.History.GetHistory();
-
-                    if (toastHistory.Count > 0)
+                    if (latestToast != null)
                     {
-                        var latestToast = toastHistory.FirstOrDefault();
+                        var track = latestToast.Content.LastChild.FirstChild.FirstChild.FirstChild.LastChild.InnerText as string;
 
-                        if (latestToast != null)
-                        {
-                            var track = latestToast.Content.LastChild.FirstChild.FirstChild.FirstChild.LastChild.InnerText as string;
-
-                            if (track == nowPlaying.Track) return;
-                        }
+                        if (track == nowPlaying.Track) return;
                     }
+                }
 
-                    ToastContent content = new ToastContent()
+                ToastContent content = new ToastContent()
+                {
+                    Launch = "nowPlaying",
+                    Audio = new ToastAudio()
                     {
-                        Launch = "nowPlaying",
-                        Audio = new ToastAudio()
+                        Silent = true,
+                    },
+                    Duration = CrystalApplication.GetDevicePlatform() == Platform.Mobile ? ToastDuration.Short : ToastDuration.Long,
+                    Visual = new ToastVisual()
+                    {
+                        BindingGeneric = new ToastBindingGeneric()
                         {
-                            Silent = true,
-                        },
-                        Duration = CrystalApplication.GetDevicePlatform() == Platform.Mobile ? ToastDuration.Short : ToastDuration.Long,
-                        Visual = new ToastVisual()
-                        {
-                            BindingGeneric = new ToastBindingGeneric()
-                            {
-                                Children =
+                            Children =
                                 {
                                     new AdaptiveText()
                                     {
@@ -315,27 +306,22 @@ namespace Neptunium.ViewModel
                                         HintStyle = AdaptiveTextStyle.Body
                                     }
                                 },
-                                HeroImage = new ToastGenericHeroImage()
-                                {
-                                    Source = StationMediaPlayer.CurrentStation?.Logo,
-                                    AlternateText = StationMediaPlayer.CurrentStation?.Name,
-                                },
-                            }
+                            HeroImage = new ToastGenericHeroImage()
+                            {
+                                Source = StationMediaPlayer.CurrentStation?.Logo,
+                                AlternateText = StationMediaPlayer.CurrentStation?.Name,
+                            },
                         }
-                    };
+                    }
+                };
 
-                    XmlDocument doc = content.GetXml();
-                    ToastNotification notification = new ToastNotification(doc);
-                    notification.NotificationMirroring = NotificationMirroring.Disabled;
-                    notification.Tag = "nowPlaying";
-                    notification.ExpirationTime = DateTime.Now.AddMinutes(5); //songs usually aren't this long.
+                XmlDocument doc = content.GetXml();
+                ToastNotification notification = new ToastNotification(doc);
+                notification.NotificationMirroring = NotificationMirroring.Disabled;
+                notification.Tag = "nowPlaying";
+                notification.ExpirationTime = DateTime.Now.AddMinutes(5); //songs usually aren't this long.
 
-                    ToastNotificationManager.CreateToastNotifier().Show(notification);
-                }
-            }
-            catch (Exception)
-            {
-
+                ToastNotificationManager.CreateToastNotifier().Show(notification);
             }
         }
 

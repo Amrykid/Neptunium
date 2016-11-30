@@ -84,70 +84,61 @@ namespace Neptunium.Managers
 
             if (Crystal3.CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Mobile) return;
 
-
-            try
+            radioAccess = await await App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                radioAccess = await await App.Dispatcher.RunWhenIdleAsync(() =>
+                return Radio.RequestAccessAsync();
+            });
+
+            //we're not allowed to access radios so stop here.
+            if (radioAccess != RadioAccessStatus.Allowed) return;
+
+            //there aren't any bluetooth radios so stop here.
+            if ((await Radio.GetRadiosAsync()).Where(x => x.Kind == RadioKind.Bluetooth).Count() == 0) return;
+
+            //Pull the selected bluetooth device from settings if it exists
+            if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
+            {
+                var deviceID = ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] as string;
+
+                if (!string.IsNullOrWhiteSpace(deviceID))
                 {
-                    return Radio.RequestAccessAsync();
-                });
+                    SelectedDevice = await DeviceInformation.CreateFromIdAsync(deviceID);
 
-                //we're not allowed to access radios so stop here.
-                if (radioAccess != RadioAccessStatus.Allowed) return;
-
-                //there aren't any bluetooth radios so stop here.
-                if ((await Radio.GetRadiosAsync()).Where(x => x.Kind == RadioKind.Bluetooth).Count() == 0) return;
-
-                //Pull the selected bluetooth device from settings if it exists
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
-                {
-                    var deviceID = ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] as string;
-
-                    if (!string.IsNullOrWhiteSpace(deviceID))
+                    if (SelectedDevice != null)
                     {
-                        SelectedDevice = await DeviceInformation.CreateFromIdAsync(deviceID);
-
-                        if (SelectedDevice != null)
+                        if (radioAccess == RadioAccessStatus.Allowed)
                         {
-                            if (radioAccess == RadioAccessStatus.Allowed)
+                            btRadio = (await Radio.GetRadiosAsync()).First(x => x.Kind == RadioKind.Bluetooth);
+
+                            if (btRadio.State == RadioState.On)
                             {
-                                btRadio = (await Radio.GetRadiosAsync()).First(x => x.Kind == RadioKind.Bluetooth);
+                                SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
 
-                                if (btRadio.State == RadioState.On)
-                                {
-                                    SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
+                                SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
 
-                                    SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
-
-                                    SetCarModeStatus(SelectedDeviceObj.ConnectionStatus == BluetoothConnectionStatus.Connected);
-                                }
-                                else
-                                {
-                                    btRadio.StateChanged += BtRadio_StateChanged;
-                                }
+                                SetCarModeStatus(SelectedDeviceObj.ConnectionStatus == BluetoothConnectionStatus.Connected);
+                            }
+                            else
+                            {
+                                btRadio.StateChanged += BtRadio_StateChanged;
                             }
                         }
                     }
                 }
-
-
-                CreateSettings();
-
-                ShouldAnnounceSongs = (bool)ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs];
-                ShouldUseJapaneseVoice = (bool)ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements];
-
-                StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
-
-                japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
-                    x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female && x.DisplayName.Contains("Haruka"));
-
-                IsInitialized = true;
-            }
-            catch (Exception ex)
-            {
-                Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex);
             }
 
+
+            CreateSettings();
+
+            ShouldAnnounceSongs = (bool)ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs];
+            ShouldUseJapaneseVoice = (bool)ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements];
+
+            StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
+
+            japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
+                x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female && x.DisplayName.Contains("Haruka"));
+
+            IsInitialized = true;
         }
 
         private static void SelectedDeviceObj_ConnectionStatusChanged(BluetoothDevice sender, object args)
@@ -204,38 +195,31 @@ namespace Neptunium.Managers
 
                 double initialVolume = StationMediaPlayer.Volume;
 
-                try
+                var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Artist, e.Title, japaneseFemaleVoice != null && ShouldUseJapaneseVoice);
+                var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
+
+                await StationMediaPlayer.FadeVolumeDownToAsync(0.1);
+
+                await await CrystalApplication.Dispatcher.RunWhenIdleAsync(async () =>
                 {
-                    var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Artist, e.Title, japaneseFemaleVoice != null && ShouldUseJapaneseVoice);
-                    var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
+                    var media = new MediaElement();
 
-                    await StationMediaPlayer.FadeVolumeDownToAsync(0.1);
+                    media.Volume = 1.0;
+                    media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Alerts; //setting this to alerts automatically fades out music
+                    media.SetSource(stream, stream.ContentType);
 
-                    await await CrystalApplication.Dispatcher.RunWhenIdleAsync(async () =>
-                    {
-                        var media = new MediaElement();
+                    Task mediaOpenTask = media.WaitForMediaOpenAsync();
 
-                        media.Volume = 1.0;
-                        media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Alerts; //setting this to alerts automatically fades out music
-                        media.SetSource(stream, stream.ContentType);
+                    media.Play();
 
-                        Task mediaOpenTask = media.WaitForMediaOpenAsync();
+                    await mediaOpenTask;
 
-                        media.Play();
+                    await Task.Delay((int)media.NaturalDuration.TimeSpan.TotalMilliseconds);
 
-                        await mediaOpenTask;
+                    stream.Dispose();
+                });
 
-                        await Task.Delay((int)media.NaturalDuration.TimeSpan.TotalMilliseconds);
-
-                        stream.Dispose();
-                    });
-
-                    await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume);
-                }
-                catch (Exception ex)
-                {
-                    HockeyClient.Current.TrackException(ex);
-                }
+                await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume);
 
             }
         }
@@ -354,15 +338,15 @@ namespace Neptunium.Managers
 
             if (selection != null)
             {
-                try
+                if (SelectedDeviceObj != null)
+                    SelectedDeviceObj.ConnectionStatusChanged -= SelectedDeviceObj_ConnectionStatusChanged;
+
+                SelectedDevice = selection;
+
+                SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
+
+                if (SelectedDeviceObj != null)
                 {
-                    if (SelectedDeviceObj != null)
-                        SelectedDeviceObj.ConnectionStatusChanged -= SelectedDeviceObj_ConnectionStatusChanged;
-
-                    SelectedDevice = selection;
-
-                    SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
-
                     SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
 
                     if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
@@ -370,7 +354,6 @@ namespace Neptunium.Managers
 
                     SetCarModeStatus(SelectedDeviceObj.ConnectionStatus == BluetoothConnectionStatus.Connected);
                 }
-                catch (Exception) { }
             }
         }
 
