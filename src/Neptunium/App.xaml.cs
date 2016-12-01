@@ -67,12 +67,27 @@ namespace Neptunium
             Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
             Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;
 
-#if !DEBUG
-            Microsoft.HockeyApp.HockeyClient.Current.Configure("2f0ab4c93b2341a0a4bbbd5ec98917f9", new TelemetryConfiguration()
+
+            if (!Debugger.IsAttached)
             {
-                EnableDiagnostics = true
-            });
-#endif
+                App.Current.UnhandledException += Current_UnhandledException;
+
+                Microsoft.HockeyApp.HockeyClient.Current.Configure("2f0ab4c93b2341a0a4bbbd5ec98917f9", new TelemetryConfiguration()
+                {
+                    EnableDiagnostics = true
+                }).SetExceptionDescriptionLoader((Exception ex) =>
+                {
+                    return "Exception HResult: " + ex.HResult.ToString();
+                });
+            }
+        }
+
+        private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            HockeyClient.Current.TrackException(e.Exception);
+            HockeyClient.Current.Flush();
+
+            e.Handled = true;
         }
 
         private static volatile bool isInBackground = false;
