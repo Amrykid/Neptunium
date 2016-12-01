@@ -97,6 +97,7 @@
                         <Setter Target="StationLogo.Height" Value="150" />
                         <Setter Target="StationLogo.Width" Value="150" />
                         <Setter Target="StationLogo.Margin" Value="15 0 0 0" />
+                        <Setter Target="StationLogo.Stretch" Value="UniformToFill" />
 
                         <Setter Target="StationTitleBlock.Margin" Value="10 0 0 0" />
                         <Setter Target="StationTitleBlock.(RelativePanel.Below)" Value="" />
@@ -137,6 +138,7 @@
                         <Setter Target="StationLogo.Height" Value="100" />
                         <Setter Target="StationLogo.Width" Value="100" />
                         <Setter Target="StationLogo.Margin" Value="0 10 0 0" />
+                        <Setter Target="StationLogo.Stretch" Value="Uniform" />
 
                         <Setter Target="StationTitleBlock.Margin" Value="0 10 0 0" />
                         <Setter Target="StationTitleBlock.(RelativePanel.Below)" Value="StationLogo" />
