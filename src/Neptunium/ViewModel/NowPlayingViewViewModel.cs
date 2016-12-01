@@ -100,51 +100,62 @@ namespace Neptunium.ViewModel
 
         private async Task UpdateBackgroundImageAsync(string title, string artist)
         {
-            if (App.GetDevicePlatform() != Platform.Xbox)
-                if (!App.IsUnrestrictiveInternetConnection()) return;
-
-            await App.Dispatcher.RunWhenIdleAsync(() =>
+            try
             {
-                NowPlayingBackgroundImage = null;
-            });
+                if (App.GetDevicePlatform() != Platform.Xbox)
+                    if (!App.IsUnrestrictiveInternetConnection()) return;
 
-
-            var albumData = await SongMetadataManager.FindAlbumDataAsync(title, artist);
-
-            if (albumData != null && !string.IsNullOrWhiteSpace(albumData?.AlbumCoverUrl))
-            {
-                await UpdateAlbumDataFromTaskAsync(albumData);
                 await App.Dispatcher.RunWhenIdleAsync(() =>
                 {
-                    NowPlayingBackgroundImage = albumData?.AlbumCoverUrl;
+                    NowPlayingBackgroundImage = null;
                 });
-            }
-            else
-            {
-                var artistData = await SongMetadataManager.FindArtistDataAsync(artist);
 
-                if (artistData != null && !string.IsNullOrWhiteSpace(artistData?.ArtistID))
+
+                var albumData = await SongMetadataManager.FindAlbumDataAsync(title, artist);
+
+                if (albumData != null && !string.IsNullOrWhiteSpace(albumData?.AlbumCoverUrl))
                 {
+                    await UpdateAlbumDataFromTaskAsync(albumData);
                     await App.Dispatcher.RunWhenIdleAsync(() =>
                     {
-                        NowPlayingBackgroundImage = artistData?.ArtistImage;
+                        NowPlayingBackgroundImage = albumData?.AlbumCoverUrl;
                     });
                 }
                 else
                 {
-                    if (NowPlayingBackgroundImage == null)
-                    {
-                        TraceTelemetry trace = new TraceTelemetry("Failed song data lookup.", Microsoft.HockeyApp.SeverityLevel.Information);
-                        trace.Properties.Add(new KeyValuePair<string, string>("Artist", artist));
-                        trace.Properties.Add(new KeyValuePair<string, string>("Song", title));
-                        Microsoft.HockeyApp.HockeyClient.Current.TrackTrace(trace);
+                    var artistData = await SongMetadataManager.FindArtistDataAsync(artist);
 
+                    if (artistData != null && !string.IsNullOrWhiteSpace(artistData?.ArtistID))
+                    {
                         await App.Dispatcher.RunWhenIdleAsync(() =>
                         {
-                            NowPlayingBackgroundImage = CurrentStation.Background;
+                            NowPlayingBackgroundImage = artistData?.ArtistImage;
                         });
                     }
+                    else
+                    {
+                        if (NowPlayingBackgroundImage == null)
+                        {
+                            TraceTelemetry trace = new TraceTelemetry("Failed song data lookup.", Microsoft.HockeyApp.SeverityLevel.Information);
+                            trace.Properties.Add(new KeyValuePair<string, string>("Artist", artist));
+                            trace.Properties.Add(new KeyValuePair<string, string>("Song", title));
+                            Microsoft.HockeyApp.HockeyClient.Current.TrackTrace(trace);
+
+                            await App.Dispatcher.RunWhenIdleAsync(() =>
+                            {
+                                NowPlayingBackgroundImage = CurrentStation.Background;
+                            });
+                        }
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Dictionary<string, string> info = new Dictionary<string, string>();
+                info.Add("Message", "Failed song data lookup.");
+                info.Add("Artist", artist);
+                info.Add("Song", title);
+                Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, info);
             }
 
         }
