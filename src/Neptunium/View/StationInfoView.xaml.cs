@@ -52,6 +52,11 @@ namespace Neptunium.View
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             SongHistoryPanel.MessageReceived += SongHistoryPanel_MessageReceived;
+
+            if (this.DataContext != null)
+            {
+                HandleBlur();
+            }
         }
 
         private void SongHistoryPanel_MessageReceived(object sender, Crystal3.UI.FragmentContentViewer.FragmentContentViewerUIMessageReceivedEventArgs e)
@@ -90,40 +95,7 @@ namespace Neptunium.View
         {
             if (e.PropertyName == "Station" && Windows.Networking.Connectivity.NetworkInformation.GetInternetConnectionProfile() != null)
             {
-                viewModel = (this.DataContext as StationInfoViewModel);
-
-                if (viewModel.Station == null) return;
-
-                var imgSrc = viewModel.Station.Logo;
-
-                if (string.IsNullOrWhiteSpace(imgSrc))
-                {
-                    //turn off the glass
-
-                    GlassPanel.TurnOffGlass();
-                }
-                else
-                {
-                    
-
-
-                    //setup to use glass with a blur of the dominant color from the station logo
-                    try
-                    {
-                        blurColor = await StationSupplementaryDataManager.GetStationLogoDominantColorAsync(viewModel.Station);
-                    }
-                    catch (Exception)
-                    {
-                        //set the default blur color.
-                        blurColor = Color.FromArgb(255, 245, 245, 245);
-                    }
-
-                    //turn on glass
-
-                    GlassPanel.ChangeBlurColor(blurColor);
-
-                    BackDropGridImageBrush.ImageSource = new BitmapImage(new Uri(imgSrc));
-                }
+                HandleBlur();
             }
         }
 
@@ -135,6 +107,43 @@ namespace Neptunium.View
                     if (playButton.Command.CanExecute(playButton.CommandParameter))
                         playButton.Command.Execute(playButton.CommandParameter);
                     break;
+            }
+        }
+
+        private async void HandleBlur()
+        {
+            viewModel = (this.DataContext as StationInfoViewModel);
+
+            if (viewModel == null) return;
+
+            if (viewModel.Station == null) return;
+
+            var imgSrc = viewModel.Station.Logo;
+
+            if (string.IsNullOrWhiteSpace(imgSrc))
+            {
+                //turn off the glass
+
+                GlassPanel.TurnOffGlass();
+            }
+            else
+            {
+                //setup to use glass with a blur of the dominant color from the station logo
+                try
+                {
+                    blurColor = await StationSupplementaryDataManager.GetStationLogoDominantColorAsync(viewModel.Station);
+                }
+                catch (Exception)
+                {
+                    //set the default blur color.
+                    blurColor = Color.FromArgb(255, 245, 245, 245);
+                }
+
+                //turn on glass
+
+                GlassPanel.ChangeBlurColor(blurColor);
+
+                BackDropGridImageBrush.ImageSource = new BitmapImage(new Uri(imgSrc));
             }
         }
     }
