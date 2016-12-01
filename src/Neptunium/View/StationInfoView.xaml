@@ -13,7 +13,6 @@
     Loaded="Page_Loaded"
     DataContextChanged="Page_DataContextChanged"
     Unloaded="Page_Unloaded"
-    KeyDown="Page_KeyDown"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">

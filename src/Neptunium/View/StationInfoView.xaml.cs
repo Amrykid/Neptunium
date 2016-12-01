@@ -40,12 +40,28 @@ namespace Neptunium.View
         public StationInfoView()
         {
             this.InitializeComponent();
+            this.KeyDown += StationInfoView_KeyDown;
             blurColor = Color.FromArgb(255, 245, 245, 245);
 
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
             {
                 bannerBar.Visibility = Visibility.Visible;
                 bannerBar.BannerText = "Please the Menu button on your controller to play this station.";
+            }
+        }
+
+        private void StationInfoView_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                switch (e.Key)
+                {
+                    case Windows.System.VirtualKey.GamepadMenu:
+                        if (playButton.Command.CanExecute(playButton.CommandParameter))
+                            playButton.Command.Execute(playButton.CommandParameter);
+                        e.Handled = true;
+                        break;
+                }
             }
         }
 
@@ -56,6 +72,12 @@ namespace Neptunium.View
             if (this.DataContext != null)
             {
                 HandleBlur();
+            }
+
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                this.Focus(FocusState.Programmatic);
+                playButton.Focus(FocusState.Pointer);
             }
         }
 
@@ -89,6 +111,7 @@ namespace Neptunium.View
                 viewModel.PropertyChanged -= ViewModel_PropertyChanged;
 
             SongHistoryPanel.MessageReceived -= SongHistoryPanel_MessageReceived;
+            this.KeyDown -= StationInfoView_KeyDown;
         }
 
         private async void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -96,17 +119,6 @@ namespace Neptunium.View
             if (e.PropertyName == "Station" && Windows.Networking.Connectivity.NetworkInformation.GetInternetConnectionProfile() != null)
             {
                 HandleBlur();
-            }
-        }
-
-        private void Page_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Windows.System.VirtualKey.GamepadMenu:
-                    if (playButton.Command.CanExecute(playButton.CommandParameter))
-                        playButton.Command.Execute(playButton.CommandParameter);
-                    break;
             }
         }
 

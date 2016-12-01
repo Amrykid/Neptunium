@@ -88,10 +88,12 @@ namespace Neptunium.View
                             if (currentNavItem != null)
                                 currentNavItem.Focus(FocusState.Programmatic);
                         }
+                        e.Handled = true;
                         break;
                     case Windows.System.VirtualKey.GamepadY:
                         if (StationMediaPlayer.IsPlaying)
                             lowerAppBarHandOffButton.Flyout.ShowAt(lowerAppBar);
+                        e.Handled = true;
                         break;
                     case Windows.System.VirtualKey.GamepadX:
                         {
@@ -101,6 +103,8 @@ namespace Neptunium.View
                                 inlineNavService.NavigateTo<NowPlayingViewViewModel>();
                             else if (inlineNavService.CanGoBackward)
                                 inlineNavService.GoBack();
+
+                            e.Handled = true;
                         }
                         break;
 
