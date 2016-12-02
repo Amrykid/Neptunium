@@ -78,6 +78,22 @@ namespace Neptunium.Media
 
         private static void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
         {
+            switch(sender.PlaybackState)
+            {
+                case MediaPlaybackState.None:
+                    smtc.PlaybackStatus = MediaPlaybackStatus.Closed;
+                    break;
+                case MediaPlaybackState.Opening:
+                    smtc.PlaybackStatus = MediaPlaybackStatus.Changing;
+                    break;
+                case MediaPlaybackState.Paused:
+                    smtc.PlaybackStatus = MediaPlaybackStatus.Paused;
+                    break;
+                case MediaPlaybackState.Playing:
+                    smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
+                    break;
+            }
+
             if (IsPlayingChanged != null)
                 IsPlayingChanged(null, EventArgs.Empty);
         }
