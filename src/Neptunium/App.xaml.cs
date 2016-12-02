@@ -155,9 +155,30 @@ namespace Neptunium
             this.Options.HandleSystemBackNavigation = true;
         }
 
+        private static async Task TryInitOrHealCookieContainerAsync(Kukkii.Core.IPersistentCookieContainer container)
+        {
+            if (container == null) return;
+
+            try
+            {
+                await container.InitializeAsync();
+            }
+            catch (CacheCannotBeLoadedException)
+            {
+                await container.RegenerateCacheAsync();
+
+                var msg = "Regenerating data...";
+                if (App.MessageQueue.Contains(msg))
+                    App.MessageQueue.Enqueue(msg);
+            }
+        }
+
         private static async void CoreInit()
         {
             CookieJar.ApplicationName = "Neptunium";
+
+            await TryInitOrHealCookieContainerAsync(CookieJar.Device);
+            await TryInitOrHealCookieContainerAsync(CookieJar.DeviceCache);
 
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
