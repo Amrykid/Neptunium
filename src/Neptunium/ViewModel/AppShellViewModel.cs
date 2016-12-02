@@ -186,9 +186,21 @@ namespace Neptunium.ViewModel
 
             string title = "What the goodness?!";
             string message = "An error occured while trying stream this station.";
-            if (e.Exception != null)
+
+            if (e.ClosedReason == Windows.Media.Core.MediaStreamSourceClosedReason.AppReportedError)
             {
-                message += "\r\nReason: " + e.Exception.Message;
+                if (!App.IsInternetConnected())
+                {
+                    //assume its because we lost our internet connection.
+                    message = "We lost our connection to the internet!";
+                }
+                else
+                {
+                    if (e.Exception != null)
+                    {
+                        message += "\r\n" + e.Exception.Message;
+                    }
+                }
             }
 
             bool appVisible = await App.GetIfPrimaryWindowVisibleAsync();

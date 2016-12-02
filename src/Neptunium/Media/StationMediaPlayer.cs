@@ -424,7 +424,9 @@ namespace Neptunium.Media
                         BackgroundAudioError(null, 
                             new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs() {
                                 Station = CurrentStation,
-                                Exception = new Exception("Reason: " + Enum.GetName(typeof(MediaStreamSourceClosedReason), args.Request.Reason)) });
+                                Exception = new Exception("Reason: " + Enum.GetName(typeof(MediaStreamSourceClosedReason), args.Request.Reason)),
+                                ClosedReason = args.Request.Reason
+                            });
                     break;
             }
 

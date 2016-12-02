@@ -10,6 +10,7 @@ using Windows.Media.MediaProperties;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Networking.Connectivity;
 
 namespace Neptunium.MediaSourceStream
 {
@@ -216,8 +217,7 @@ namespace Neptunium.MediaSourceStream
 
         private void MediaStreamSource_Starting(MediaStreamSource sender, MediaStreamSourceStartingEventArgs args)
         {
-            //args.Request.SetActualStartPosition(timeOffSet);
-            //args.Request.
+            
         }
 
         private async Task HandleConnection(string relativePath)
@@ -340,9 +340,27 @@ namespace Neptunium.MediaSourceStream
             }).ToArray();
         }
 
+        private static bool IsInternetConnected()
+        {
+            ConnectionProfile connections = NetworkInformation.GetInternetConnectionProfile();
+            bool internet = (connections != null) &&
+                (connections.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess);
+            return internet;
+        }
+
         private async void MediaStreamSource_SampleRequested(Windows.Media.Core.MediaStreamSource sender, Windows.Media.Core.MediaStreamSourceSampleRequestedEventArgs args)
         {
             var request = args.Request;
+
+            if (!IsInternetConnected())
+            {
+                connected = false;
+                Disconnect();
+                sender.NotifyError(MediaStreamSourceErrorStatus.ConnectionToServerLost);
+                return;
+            }
+
+
             var deferral = request.GetDeferral();
 
             if (!connected)

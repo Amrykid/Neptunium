@@ -1,5 +1,6 @@
 ﻿using Neptunium.Data;
 using System;
+using Windows.Media.Core;
 
 namespace Neptunium.Media
 {
@@ -7,5 +8,6 @@ namespace Neptunium.Media
     {
         public StationModel Station { get; set; }
         public Exception Exception { get; set; }
+        public MediaStreamSourceClosedReason ClosedReason { get; internal set; }
     }
 }
