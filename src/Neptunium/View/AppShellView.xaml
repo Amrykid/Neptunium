@@ -119,9 +119,10 @@
 
                         <Setter Target="SplitViewContentGrid.Background" Value="Transparent" />
 
-                        <Setter Target="MobileTogglePaneButton.Visibility" Value="Collapsed" />
-                        <Setter Target="CurrentPaneTitleRow.Height" Value="0" />
+                        <Setter Target="MobileTogglePaneButton.Visibility" Value="Visible" />
+                        <Setter Target="CurrentPaneTitleRow.Height" Value="50" />
                         <Setter Target="CurrentPaneTitle.Visibility" Value="Collapsed" />
+                        <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
 
                         <Setter Target="lowerAppBar.Visibility" Value="Collapsed" />
 
@@ -134,7 +135,8 @@
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
                         <Setter Target="snackBarGrid.Visibility" Value="Collapsed" />
                         <Setter Target="xboxSnackBarGrid.Visibility" Value="Visible" />
-                        <Setter Target="inlineFrameGrid.(Grid.Row)" Value="1" />
+                        <Setter Target="inlineFrameGrid.(Grid.Row)" Value="0" />
+                        <Setter Target="inlineFrameGrid.(Grid.RowSpan)" Value="2" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -161,6 +163,7 @@
                         <Setter Target="MobileTogglePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="CurrentPaneTitleRow.Height" Value="0" />
                         <Setter Target="CurrentPaneTitle.Visibility" Value="Collapsed" />
+                        <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
 
                         <Setter Target="lowerAppBar.Visibility" Value="Visible" />
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
@@ -176,6 +179,7 @@
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
                         <Setter Target="snackBarGrid.(Grid.Row)" Value="2" />
                         <Setter Target="inlineFrameGrid.(Grid.Row)" Value="1" />
+                        <Setter Target="inlineFrameGrid.(Grid.RowSpan)" Value="1" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -201,6 +205,7 @@
                         <Setter Target="MobileTogglePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="CurrentPaneTitleRow.Height" Value="0" />
                         <Setter Target="CurrentPaneTitle.Visibility" Value="Collapsed" />
+                        <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
 
                         <Setter Target="lowerAppBar.Visibility" Value="Visible" />
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
@@ -216,6 +221,7 @@
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
                         <Setter Target="snackBarGrid.(Grid.Row)" Value="2" />
                         <Setter Target="inlineFrameGrid.(Grid.Row)" Value="1" />
+                        <Setter Target="inlineFrameGrid.(Grid.RowSpan)" Value="1" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -241,6 +247,7 @@
                         <Setter Target="CurrentPaneTitle.FontWeight" Value="Bold" />
                         <Setter Target="CurrentPaneTitleRow.Height" Value="50" />
                         <Setter Target="CurrentPaneTitle.Visibility" Value="Visible" />
+                        <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
 
                         <Setter Target="lowerAppBar.Visibility" Value="Visible" />
                         <Setter Target="lowerAppBar.Style" Value="{StaticResource ComAppBarStyle}" />
@@ -256,6 +263,7 @@
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="*" />
                         <Setter Target="snackBarGrid.(Grid.Row)" Value="1" />
                         <Setter Target="inlineFrameGrid.(Grid.Row)" Value="2" />
+                        <Setter Target="inlineFrameGrid.(Grid.RowSpan)" Value="1" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -332,6 +340,34 @@
 
                     </Grid.RowDefinitions>
 
+                    <Grid x:Name="snackBarGrid" Grid.Row="1">
+                        <Grid.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </Grid.Transitions>
+                    </Grid>
+
+                    <Grid x:Name="inlineFrameGrid" Grid.Row="2">
+                        <Grid.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </Grid.Transitions>
+
+                        <Frame x:Name="inlineFrame">
+                            <Frame.ContentTransitions>
+                                <TransitionCollection>
+                                    <NavigationThemeTransition>
+                                        <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                                            <EntranceNavigationTransitionInfo />
+                                        </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                                    </NavigationThemeTransition>
+                                </TransitionCollection>
+                            </Frame.ContentTransitions>
+                        </Frame>
+                    </Grid>
+
                     <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -382,34 +418,6 @@
                             <Button x:Name="CarModeButton" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                     Content="" Visibility="{Binding ShowCarModeStatusButton, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}"/>
                         </StackPanel>
-                    </Grid>
-
-                    <Grid x:Name="snackBarGrid" Grid.Row="1">
-                        <Grid.Transitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition />
-                            </TransitionCollection>
-                        </Grid.Transitions>
-                    </Grid>
-
-                    <Grid x:Name="inlineFrameGrid" Grid.Row="2">
-                        <Grid.Transitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition />
-                            </TransitionCollection>
-                        </Grid.Transitions>
-
-                        <Frame x:Name="inlineFrame">
-                            <Frame.ContentTransitions>
-                                <TransitionCollection>
-                                    <NavigationThemeTransition>
-                                        <NavigationThemeTransition.DefaultNavigationTransitionInfo>
-                                            <EntranceNavigationTransitionInfo />
-                                        </NavigationThemeTransition.DefaultNavigationTransitionInfo>
-                                    </NavigationThemeTransition>
-                                </TransitionCollection>
-                            </Frame.ContentTransitions>
-                        </Frame>
                     </Grid>
 
                     <Grid x:Name="xboxSnackBarGrid" Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="300" Margin="0 0 100 100">

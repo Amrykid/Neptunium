@@ -11,37 +11,15 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="TabletVisualState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="720" />
-                    </VisualState.StateTriggers>
-
-                    <VisualState.Setters>
-                        <Setter Target="PageTitleBlock.Visibility" Value="Visible" />
-                    </VisualState.Setters>
-                </VisualState>
-
-                <VisualState x:Name="PhoneVisualState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="PageTitleBlock.Visibility" Value="Collapsed" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock Margin="20 0" Style="{ThemeResource SubheaderTextBlockStyle}" 
+        <TextBlock Margin="50,0,20,0" Style="{ThemeResource SubheaderTextBlockStyle}" 
                    Height="45" Grid.Row="0" 
-                   Visibility="Collapsed" Text="Stations" x:Name="PageTitleBlock" />
+                   Visibility="Visible" Text="Stations" x:Name="PageTitleBlock" />
 
         <ListView Grid.Row="1"
                   ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" 

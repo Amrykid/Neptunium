@@ -33,6 +33,14 @@ namespace Neptunium.View
 
             if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Mobile)
                 mainPivot.Items.Remove(carModePivotItem);
+
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+#if DEBUG
+                if (Crystal3.CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
+                    VisualStateManager.GoToState(this, XboxVisualState.Name, true);
+#endif
+            }
         }
 
         private void UpdateCarModeStatusIndicator(bool isInCarMode)

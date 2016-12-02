@@ -27,6 +27,14 @@ namespace Neptunium.View
         public SongHistoryView()
         {
             this.InitializeComponent();
+
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+#if DEBUG
+                if (Crystal3.CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
+                    VisualStateManager.GoToState(this, XboxVisualState.Name, true);
+#endif
+            }
         }
     }
 }
