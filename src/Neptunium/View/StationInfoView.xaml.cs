@@ -47,6 +47,11 @@ namespace Neptunium.View
             {
                 bannerBar.Visibility = Visibility.Visible;
                 bannerBar.BannerText = "Press the Menu button on your controller to play this station.";
+
+#if DEBUG
+                if (Crystal3.CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
+                    VisualStateManager.GoToState(this, XboxVisualState.Name, true);
+#endif
             }
         }
 

@@ -10,6 +10,7 @@
     xmlns:ki="using:Kimono.Controls"
     xmlns:nepcon="using:Neptunium.Controls"
     xmlns:wnrttk="using:WinRTXamlToolkit.Controls"
+    xmlns:wst="using:WindowsStateTriggers"
     Loaded="Page_Loaded"
     DataContextChanged="Page_DataContextChanged"
     Unloaded="Page_Unloaded"
@@ -82,9 +83,55 @@
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
+                <VisualState x:Name="XboxVisualState">
+                    <VisualState.Setters>
+                        <Setter Target="HeaderRowDef.Height" Value="200" />
+
+                        <Setter Target="StationLogo.(RelativePanel.AlignTopWithPanel)" Value="False" />
+                        <Setter Target="StationLogo.(RelativePanel.AlignLeftWithPanel)" Value="False" />
+                        <Setter Target="StationLogo.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="False" />
+                        <Setter Target="StationLogo.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True" />
+                        <Setter Target="StationLogo.Height" Value="150" />
+                        <Setter Target="StationLogo.Width" Value="150" />
+                        <Setter Target="StationLogo.Margin" Value="50 0 0 0" />
+                        <Setter Target="StationLogo.Stretch" Value="UniformToFill" />
+
+                        <Setter Target="StationTitleBlock.Margin" Value="10 0 0 0" />
+                        <Setter Target="StationTitleBlock.(RelativePanel.Below)" Value="" />
+                        <Setter Target="StationTitleBlock.(RelativePanel.RightOf)" Value="StationLogo" />
+                        <Setter Target="StationTitleBlock.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True" />
+                        <Setter Target="StationTitleBlock.(RelativePanel.AlignVerticalCenterWithPanel)" Value="True" />
+                        <Setter Target="StationTitleBlock.(RelativePanel.AlignTopWith)" Value="StationLogo" />
+
+                        <Setter Target="StationDescBlock.Margin" Value="10 0 0 0" />
+                        <Setter Target="StationDescBlock.(RelativePanel.Below)" Value="StationTitleBlock" />
+                        <Setter Target="StationDescBlock.(RelativePanel.RightOf)" Value="StationLogo" />
+                        <Setter Target="StationDescBlock.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True" />
+
+                        <Setter Target="ButtonPanel.(RelativePanel.RightOf)" Value="StationLogo" />
+                        <Setter Target="ButtonPanel.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="False" />
+                        <Setter Target="ButtonPanel.(RelativePanel.Below)" Value="StationDescBlock" />
+                        <Setter Target="ButtonPanel.(RelativePanel.AlignBottomWithPanel)" Value="False" />
+                        <Setter Target="ButtonPanel.(RelativePanel.AlignBottomWith)" Value="StationLogo" />
+                        <Setter Target="ButtonPanel.VerticalAlignment" Value="Bottom" />
+                        <Setter Target="ButtonPanel.Margin" Value="10 0 0 0" />
+
+                        <Setter Target="scrollViewer.VerticalScrollMode" Value="Disabled" />
+                        <Setter Target="scrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+                    </VisualState.Setters>
+                    <VisualState.StateTriggers>
+                        <wst:DeviceFamilyStateTrigger DeviceFamily="Xbox" />
+                    </VisualState.StateTriggers>
+                </VisualState>
                 <VisualState x:Name="TabletVisualState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="720" />
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:AdaptiveTrigger MinWindowWidth="720" />
+                            <wst:CompositeStateTrigger Operator="Or">
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
+                            </wst:CompositeStateTrigger>
+                        </wst:CompositeStateTrigger>
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
@@ -126,7 +173,13 @@
 
                 <VisualState x:Name="PhoneVisualState">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:AdaptiveTrigger MinWindowWidth="0" />
+                            <wst:CompositeStateTrigger Operator="Or">
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
+                            </wst:CompositeStateTrigger>
+                        </wst:CompositeStateTrigger>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="HeaderRowDef.Height" Value="275" />
