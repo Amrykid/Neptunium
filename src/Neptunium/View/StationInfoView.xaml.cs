@@ -46,7 +46,7 @@ namespace Neptunium.View
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
             {
                 bannerBar.Visibility = Visibility.Visible;
-                bannerBar.BannerText = "Please the Menu button on your controller to play this station.";
+                bannerBar.BannerText = "Press the Menu button on your controller to play this station.";
             }
         }
 
