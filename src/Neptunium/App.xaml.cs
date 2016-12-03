@@ -86,10 +86,13 @@ namespace Neptunium
 
         private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            HockeyClient.Current.TrackException(e.Exception);
-            HockeyClient.Current.Flush();
+            if (!Debugger.IsAttached)
+            {
+                HockeyClient.Current.TrackException(e.Exception);
+                HockeyClient.Current.Flush();
 
-            e.Handled = true;
+                e.Handled = true;
+            }
         }
 
         private static volatile bool isInBackground = false;
