@@ -40,6 +40,7 @@ using Windows.UI.Xaml.Media.Animation;
 using Neptunium.Fragments;
 using Neptunium.View.Fragments;
 using Windows.ApplicationModel.ExtendedExecution;
+using Windows.UI.Notifications;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -337,6 +338,8 @@ namespace Neptunium
                 ContinuedAppExperienceManager.StopWatchingForRemoteSystems();
                 await SongHistoryManager.FlushAsync();
 
+                //clears the tile if we're suspending.
+                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
 
                 if (extendedAccess == ExtendedExecutionResult.Allowed)
                 {
