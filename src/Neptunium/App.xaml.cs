@@ -39,6 +39,7 @@ using Microsoft.HockeyApp;
 using Windows.UI.Xaml.Media.Animation;
 using Neptunium.Fragments;
 using Neptunium.View.Fragments;
+using Windows.ApplicationModel.ExtendedExecution;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -327,8 +328,21 @@ namespace Neptunium
 
         protected override async Task OnSuspendingAsync()
         {
-            ContinuedAppExperienceManager.StopWatchingForRemoteSystems();
-            await SongHistoryManager.FlushAsync();
+            using (ExtendedExecutionSession session = new ExtendedExecutionSession())
+            {
+                session.Reason = ExtendedExecutionReason.SavingData;
+
+                var extendedAccess = await session.RequestExtensionAsync();
+
+                ContinuedAppExperienceManager.StopWatchingForRemoteSystems();
+                await SongHistoryManager.FlushAsync();
+
+
+                if (extendedAccess == ExtendedExecutionResult.Allowed)
+                {
+                    await Task.WhenAll(CookieJar.DeviceCache.FlushAsync(), CookieJar.Device.FlushAsync());
+                }
+            }
 
             await base.OnSuspendingAsync();
         }
