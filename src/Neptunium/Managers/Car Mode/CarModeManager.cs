@@ -340,7 +340,7 @@ namespace Neptunium.Managers
             }
         }
 
-        public static async Task SelectDeviceAsync(Windows.Foundation.Rect uiArea)
+        public static async Task<DeviceInformation> SelectDeviceAsync(Windows.Foundation.Rect uiArea)
         {
             if (!IsInitialized) throw new InvalidOperationException();
 
@@ -357,25 +357,36 @@ namespace Neptunium.Managers
 
             var selection = await picker.PickSingleDeviceAsync(uiArea);
 
-            if (selection != null)
+            try
             {
-                if (SelectedDeviceObj != null)
-                    SelectedDeviceObj.ConnectionStatusChanged -= SelectedDeviceObj_ConnectionStatusChanged;
-
-                SelectedDevice = selection;
-
-                SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
-
-                if (SelectedDeviceObj != null)
+                if (selection != null)
                 {
-                    SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
+                    if (SelectedDeviceObj != null)
+                        SelectedDeviceObj.ConnectionStatusChanged -= SelectedDeviceObj_ConnectionStatusChanged;
 
-                    if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
-                        ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] = SelectedDevice.Id;
+                    SelectedDevice = selection;
 
-                    SetCarModeStatus(SelectedDeviceObj.ConnectionStatus == BluetoothConnectionStatus.Connected);
+                    SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
+
+                    if (SelectedDeviceObj != null)
+                    {
+                        SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
+
+                        if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
+                            ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] = SelectedDevice.Id;
+
+                        SetCarModeStatus(SelectedDeviceObj.ConnectionStatus == BluetoothConnectionStatus.Connected);
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+#if !DEBUG
+                HockeyClient.Current.TrackException(ex);
+#endif
+            }
+
+            return selection;
         }
 
         public static void ClearDevice()

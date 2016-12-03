@@ -24,13 +24,13 @@ namespace Neptunium.ViewModel
 #endif
                 try
                 {
-                    await CarModeManager.SelectDeviceAsync(Windows.UI.Xaml.Window.Current.Bounds);
+                    var selection = await CarModeManager.SelectDeviceAsync(Windows.UI.Xaml.Window.Current.Bounds);
 
-                    if (CarModeManager.SelectedDevice != null)
+                    if (selection != null)
                     {
-                        SelectedBluetoothDevice = CarModeManager.SelectedDevice?.Name;
+                        SelectedBluetoothDevice = selection.Name;
 
-                        ClearCarModeDeviceCommand.SetCanExecute(CarModeManager.SelectedDevice != null);
+                        ClearCarModeDeviceCommand.SetCanExecute(selection != null);
                     }
                     else { SelectedBluetoothDevice = "None"; }
                 }

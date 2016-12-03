@@ -192,7 +192,7 @@ namespace Neptunium
             //todo add all settings
 
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.ShowSongNotifications))
-                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.ShowSongNotifications, false);
+                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.ShowSongNotifications, true);
 
             await StationMediaPlayer.InitializeAsync();
 
