@@ -19,6 +19,7 @@ using Crystal3.InversionOfControl;
 using Microsoft.HockeyApp;
 using Microsoft.HockeyApp.DataContracts;
 using Windows.Media.Core;
+using Windows.Networking.Connectivity;
 
 namespace Neptunium.Media
 {
@@ -28,11 +29,14 @@ namespace Neptunium.Media
         private static string currentTrack = "Title";
         private static string currentArtist = "Artist";
         private static StationModelStreamServerType currentStationServerType;
+        private static StationModelStream currentStream = null;
 
         private static StationModel currentStationModel = null;
         private static SystemMediaTransportControls smtc;
 
         private static SemaphoreSlim playStationResetEvent = new SemaphoreSlim(1);
+
+        private static ConnectionProfile internetConnectionProfile = null;
 
 
         public static bool IsInitialized { get; private set; }
@@ -78,7 +82,7 @@ namespace Neptunium.Media
 
         private static void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
         {
-            switch(sender.PlaybackState)
+            switch (sender.PlaybackState)
             {
                 case MediaPlaybackState.None:
                     smtc.PlaybackStatus = MediaPlaybackStatus.Closed;
@@ -223,16 +227,17 @@ namespace Neptunium.Media
 
             ShoutcastMediaSourceStream lastStream = null;
 
-            if (IsPlaying)
+
+            if (currentStationMSSWrapper != null && (currentStationServerType == StationModelStreamServerType.Shoutcast || currentStationServerType == StationModelStreamServerType.Icecast))
             {
-                if (currentStationMSSWrapper != null && (currentStationServerType == StationModelStreamServerType.Shoutcast || currentStationServerType == StationModelStreamServerType.Icecast))
+                currentStationMSSWrapper.StationInfoChanged -= CurrentStationMSSWrapper_StationInfoChanged;
+                currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
+
+                if (currentStationMSSWrapper.MediaStreamSource != null)
+                    currentStationMSSWrapper.MediaStreamSource.Closed -= MediaStreamSource_Closed;
+
+                if (IsPlaying)
                 {
-                    currentStationMSSWrapper.StationInfoChanged -= CurrentStationMSSWrapper_StationInfoChanged;
-                    currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
-
-                    if (currentStationMSSWrapper.MediaStreamSource != null)
-                        currentStationMSSWrapper.MediaStreamSource.Closed -= MediaStreamSource_Closed;
-
                     BackgroundMediaPlayer.Current.Pause();
                 }
             }
@@ -247,15 +252,21 @@ namespace Neptunium.Media
 
             var stream = station.Streams.First();
 
+            currentStream = stream;
+
             currentStationServerType = stream.ServerType;
 
             if (currentStationServerType == StationModelStreamServerType.Direct)
             {
                 try
                 {
+#pragma warning disable CS0618 // Type or member is obsolete
                     BackgroundMediaPlayer.Current.SetUriSource(new Uri(stream.Url));
+#pragma warning restore CS0618 // Type or member is obsolete
 
                     BackgroundMediaPlayer.Current.Play();
+
+                    internetConnectionProfile = NetworkInformation.GetInternetConnectionProfile();
 
                     currentTrack = "Unknown Song";
                     currentArtist = "Unknown Artist";
@@ -271,6 +282,9 @@ namespace Neptunium.Media
                 {
                     playStationResetEvent.Release();
 
+                    currentStream = null;
+                    internetConnectionProfile = null;
+
                     if (ConnectingStatusChanged != null)
                         ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
 
@@ -279,7 +293,7 @@ namespace Neptunium.Media
                     return false;
                 }
             }
-            else if (currentStationServerType == StationModelStreamServerType.Shoutcast 
+            else if (currentStationServerType == StationModelStreamServerType.Shoutcast
                     || currentStationServerType == StationModelStreamServerType.Radionomy
                     || currentStationServerType == StationModelStreamServerType.Icecast)
             {
@@ -298,6 +312,10 @@ namespace Neptunium.Media
 
                         if (currentStationMSSWrapper.MediaStreamSource != null)
                             currentStationMSSWrapper.MediaStreamSource.Closed -= MediaStreamSource_Closed;
+
+
+                        currentStream = null;
+                        internetConnectionProfile = null;
                     };
 
                     var connectTask = currentStationMSSWrapper.ConnectAsync(stream.SampleRate, stream.RelativePath);
@@ -312,6 +330,8 @@ namespace Neptunium.Media
 #pragma warning restore CS0618 // Type or member is obsolete
 
                             BackgroundMediaPlayer.Current.Play();
+
+                            internetConnectionProfile = NetworkInformation.GetInternetConnectionProfile();
 
                             currentStationMSSWrapper.MediaStreamSource.Closed += MediaStreamSource_Closed;
 
@@ -346,7 +366,9 @@ namespace Neptunium.Media
                     if (currentStationMSSWrapper.MediaStreamSource != null)
                         currentStationMSSWrapper.MediaStreamSource.Closed -= MediaStreamSource_Closed;
 
+#if !DEBUG
                     HockeyClient.Current.TrackException(ex);
+#endif
 
                     if (BackgroundAudioError != null)
                         BackgroundAudioError(null, new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs() { Station = station, Exception = ex });
@@ -368,9 +390,12 @@ namespace Neptunium.Media
 
         private static void TracePlayStationAsyncCall(StationModel station)
         {
+
+#if !DEBUG
             EventTelemetry et = new EventTelemetry("PlayStationAsync");
             et.Properties.Add("Station", station.Name);
             HockeyClient.Current.TrackEvent(et);
+#endif
         }
 
         private static async void CurrentStationMSSWrapper_StationInfoChanged(object sender, EventArgs e)
@@ -413,21 +438,73 @@ namespace Neptunium.Media
             }
         }
 
-        private static void MediaStreamSource_Closed(Windows.Media.Core.MediaStreamSource sender, Windows.Media.Core.MediaStreamSourceClosedEventArgs args)
+        private static async void MediaStreamSource_Closed(Windows.Media.Core.MediaStreamSource sender, Windows.Media.Core.MediaStreamSourceClosedEventArgs args)
         {
-            switch (args.Request.Reason)
+            sender.Closed -= MediaStreamSource_Closed;
+
+            //if the connection is different from before, try and reconnect automatically.
+            await Task.Delay(1000); //give system time to update
+            var profile = NetworkInformation.GetInternetConnectionProfile();
+            if (internetConnectionProfile != null && profile != null && args.Request.Reason == MediaStreamSourceClosedReason.AppReportedError)
             {
-                case Windows.Media.Core.MediaStreamSourceClosedReason.Done:
-                    break;
-                default:
-                    if (BackgroundAudioError != null)
-                        BackgroundAudioError(null, 
-                            new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs() {
-                                Station = CurrentStation,
-                                Exception = new Exception("Reason: " + Enum.GetName(typeof(MediaStreamSourceClosedReason), args.Request.Reason)),
-                                ClosedReason = args.Request.Reason
-                            });
-                    break;
+                if (internetConnectionProfile.ProfileName != profile.ProfileName)
+                {
+                    //networks changed. e.g. we dropped from wifi and went cellular
+
+                    var cost = profile.GetConnectionCost();
+
+                    bool unrestrictive = cost.NetworkCostType == NetworkCostType.Unrestricted
+                        || (cost.NetworkCostType == NetworkCostType.Fixed && cost.ApproachingDataLimit == false);
+
+                    if (unrestrictive)
+                    {
+                        //we should be good to go with reconnecting.
+
+                        if (currentStationMSSWrapper != null)
+                        {
+                            if (BackgroundAudioReconnecting != null)
+                                BackgroundAudioReconnecting(null, EventArgs.Empty);
+
+                            try
+                            {
+                                await currentStationMSSWrapper.ReconnectAsync();
+
+#pragma warning disable CS0618 // Type or member is obsolete
+                                BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
+#pragma warning restore CS0618 // Type or member is obsolete
+                                BackgroundMediaPlayer.Current.Play();
+                            }
+                            catch (Exception)
+                            {
+                                //reconnect fail
+                                //todo show message
+                            }
+
+                            currentStationMSSWrapper.MediaStreamSource.Closed += MediaStreamSource_Closed;             
+                        }
+
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                switch (args.Request.Reason)
+                {
+                    case Windows.Media.Core.MediaStreamSourceClosedReason.Done:
+                        break;
+                    default:
+                        if (BackgroundAudioError != null)
+                            BackgroundAudioError(null,
+                                new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs()
+                                {
+                                    Station = CurrentStation,
+                                    Exception = new Exception("Reason: " + Enum.GetName(typeof(MediaStreamSourceClosedReason), args.Request.Reason)),
+                                    ClosedReason = args.Request.Reason,
+                                    NetworkConnectionProfile = internetConnectionProfile
+                                });
+                        break;
+                }
             }
 
             EventTelemetry et = new EventTelemetry("MediaStreamSource_Closed");
@@ -470,6 +547,7 @@ namespace Neptunium.Media
 
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
         public static event EventHandler CurrentStationChanged;
+        public static event EventHandler BackgroundAudioReconnecting;
         public static event EventHandler<ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs> BackgroundAudioError;
         public static event EventHandler<StationMediaPlayerConnectingStatusChangedEventArgs> ConnectingStatusChanged;
         public static event EventHandler IsPlayingChanged;

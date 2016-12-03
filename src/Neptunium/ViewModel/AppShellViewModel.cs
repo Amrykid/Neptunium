@@ -24,6 +24,7 @@ using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Navigation;
 using Windows.Services.Store;
+using Windows.Networking.Connectivity;
 
 namespace Neptunium.ViewModel
 {
@@ -121,6 +122,7 @@ namespace Neptunium.ViewModel
             StationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
             StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
+            StationMediaPlayer.BackgroundAudioReconnecting += StationMediaPlayer_BackgroundAudioReconnecting;
 
             if (CrystalApplication.GetDevicePlatform() == Platform.Mobile)
             {
@@ -153,6 +155,23 @@ namespace Neptunium.ViewModel
                 }
             }
 #endif
+        }
+
+        private async void StationMediaPlayer_BackgroundAudioReconnecting(object sender, EventArgs e)
+        {
+            string title = "Heads up!";
+            string message = "Network change detected! Reconnecting!";
+
+            bool appVisible = await App.GetIfPrimaryWindowVisibleAsync();
+
+            if (appVisible)
+            {
+                await await App.Dispatcher.RunWhenIdleAsync(() => IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync(message));
+            }
+            else
+            {
+                ShowMediaInfoNotification(title, message);
+            }
         }
 
         private void ContinuedAppExperienceManager_RemoteSystemsListUpdated(object sender, EventArgs e)
@@ -268,6 +287,39 @@ namespace Neptunium.ViewModel
             ToastNotification notification = new ToastNotification(doc);
             notification.NotificationMirroring = NotificationMirroring.Disabled;
             notification.Tag = "mediaError";
+
+            ToastNotificationManager.CreateToastNotifier().Show(notification);
+        }
+
+        internal void ShowMediaInfoNotification(string title, string message)
+        {
+            ToastContent content = new ToastContent()
+            {
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                            {
+                                new AdaptiveText()
+                                {
+                                    Text = title,
+                                    HintStyle = AdaptiveTextStyle.Title,
+                                },
+                                new AdaptiveText()
+                                {
+                                    Text = message,
+                                    HintStyle = AdaptiveTextStyle.Body
+                                }
+                            },
+                    }
+                }
+            };
+
+            XmlDocument doc = content.GetXml();
+            ToastNotification notification = new ToastNotification(doc);
+            notification.NotificationMirroring = NotificationMirroring.Disabled;
+            notification.Tag = "mediaInfo";
 
             ToastNotificationManager.CreateToastNotifier().Show(notification);
         }

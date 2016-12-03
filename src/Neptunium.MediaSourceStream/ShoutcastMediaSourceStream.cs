@@ -98,7 +98,19 @@ namespace Neptunium.MediaSourceStream
 
             metadataPos = 0;
 
-            await HandleConnection(_relativePath);
+            try
+            {
+                socketWriter.Dispose();
+                socketReader.Dispose();
+                socket.Dispose();
+            }
+            catch (Exception) { }
+
+            connected = false;
+
+            socket = new StreamSocket();
+
+            await ConnectAsync(_sampleRate, _relativePath, ShouldGetMetadata);
         }
         public async Task<MediaStreamSource> ConnectAsync(uint sampleRate = 44100, string relativePath = ";", bool getMetadata = true)
         {

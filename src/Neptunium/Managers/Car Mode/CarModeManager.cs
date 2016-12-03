@@ -134,6 +134,7 @@ namespace Neptunium.Managers
             ShouldUseJapaneseVoice = (bool)ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements];
 
             StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
+            StationMediaPlayer.BackgroundAudioReconnecting += StationMediaPlayer_BackgroundAudioReconnecting;
 
             japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
                 x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female && x.DisplayName.Contains("Haruka"));
@@ -185,6 +186,21 @@ namespace Neptunium.Managers
             return false;
         }
 
+        private static async void StationMediaPlayer_BackgroundAudioReconnecting(object sender, EventArgs e)
+        {
+            if (ShouldAnnounceSongs && IsInCarMode)
+            {
+                double initialVolume = StationMediaPlayer.Volume;
+
+                var englishVoice = SpeechSynthesizer.AllVoices.Where(x => x.Language.ToLower().StartsWith("en")).First(x => x.Gender == VoiceGender.Female);
+                speechSynth.Voice = englishVoice;
+
+                var stream = await speechSynth.SynthesizeTextToStreamAsync("Reconnecting... One moment please.");
+
+                await PlayAnnouncementAudioStreamAsync(stream);
+            }
+        }
+
         private static async void StationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
             if (ShouldAnnounceSongs && IsInCarMode)
@@ -200,28 +216,33 @@ namespace Neptunium.Managers
 
                 await StationMediaPlayer.FadeVolumeDownToAsync(0.1);
 
-                await await CrystalApplication.Dispatcher.RunWhenIdleAsync(async () =>
-                {
-                    var media = new MediaElement();
-
-                    media.Volume = 1.0;
-                    media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Alerts; //setting this to alerts automatically fades out music
-                    media.SetSource(stream, stream.ContentType);
-
-                    Task mediaOpenTask = media.WaitForMediaOpenAsync();
-
-                    media.Play();
-
-                    await mediaOpenTask;
-
-                    await Task.Delay((int)media.NaturalDuration.TimeSpan.TotalMilliseconds);
-
-                    stream.Dispose();
-                });
+                await PlayAnnouncementAudioStreamAsync(stream);
 
                 await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume);
 
             }
+        }
+
+        private static async Task PlayAnnouncementAudioStreamAsync(SpeechSynthesisStream stream)
+        {
+            await await CrystalApplication.Dispatcher.RunWhenIdleAsync(async () =>
+            {
+                var media = new MediaElement();
+
+                media.Volume = 1.0;
+                media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Alerts; //setting this to alerts automatically fades out music
+                media.SetSource(stream, stream.ContentType);
+
+                Task mediaOpenTask = media.WaitForMediaOpenAsync();
+
+                media.Play();
+
+                await mediaOpenTask;
+
+                await Task.Delay((int)media.NaturalDuration.TimeSpan.TotalMilliseconds);
+
+                stream.Dispose();
+            });
         }
 
         private static string GenerateSongAnnouncementSsml(string artist, string title, bool japaneseVoiceAvailable)
