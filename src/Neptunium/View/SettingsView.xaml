@@ -65,11 +65,14 @@
         <Pivot x:Name="mainPivot" Grid.Row="1">
             <PivotItem Header="General">
                 <StackPanel>
+                    <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Metadata" />
+                    <CheckBox Content="Fetch metadata when the song changes." IsChecked="{Binding ShouldFetchSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Notifications" />
-                    <CheckBox Content="Show Song Notifications" IsChecked="{Binding ShouldShowSongNofitications, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <CheckBox Content="Show song notifications" IsChecked="{Binding ShouldShowSongNofitications, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                     
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Continuous App Experience (Handoff)" />
-                    <CheckBox Content="Stop playing on this device after successful handoff" 
+                    <CheckBox Content="Stop playing on this device after successful handoff." 
                               IsChecked="{Binding ShouldStopPlayingAfterSuccessfulHandoff, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </PivotItem>

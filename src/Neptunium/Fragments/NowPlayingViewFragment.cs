@@ -2,6 +2,7 @@
 using Crystal3.Model;
 using Crystal3.Navigation;
 using Neptunium.Data;
+using Neptunium.Managers.Songs;
 using Neptunium.Media;
 using Neptunium.Services.SnackBar;
 using Neptunium.ViewModel;
@@ -32,12 +33,40 @@ namespace Neptunium.Fragments
         {
             CurrentStation = StationMediaPlayer.CurrentStation;
 
-            StationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
+            SongManager.SongChanged += SongManager_SongChanged;
             StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
 
             if (StationMediaPlayer.SongMetadata != null)
                 SongMetadata = StationMediaPlayer.SongMetadata.Track + " by " + StationMediaPlayer.SongMetadata.Artist;
+        }
+
+        private async void SongManager_SongChanged(object sender, SongManagerSongChangedEventArgs e)
+        {
+            await App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                SongMetadata = e.Metadata.Track + " by " + e.Metadata.Artist;
+
+
+                CurrentSong = e.Metadata.Track;
+                CurrentArtist = e.Metadata.Artist;
+
+                if (StationMediaPlayer.CurrentStation != null)
+                {
+                    CurrentStation = StationMediaPlayer.CurrentStation;
+                    CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo.ToString();
+                }
+
+                try
+                {
+                    if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+                    {
+                        if (!WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two).IsNavigatedTo<NowPlayingViewViewModel>())
+                            IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync("Now Playing: " + SongMetadata, 6000);
+                    }
+                }
+                catch (Exception) { }
+            });
         }
 
         private async void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)
@@ -73,48 +102,6 @@ namespace Neptunium.Fragments
                 CurrentStationLogo = null;
             });
 
-        }
-
-        private async void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
-        {
-            if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //ignore that pre-defined station message that happens every so often.
-
-            if (!string.IsNullOrWhiteSpace(e.Title) && string.IsNullOrWhiteSpace(e.Artist))
-            {
-                //station message got through.
-
-#if DEBUG
-                if (Debugger.IsAttached)
-                    Debugger.Break();
-#else
-                return;
-#endif
-            }
-
-            await App.Dispatcher.RunWhenIdleAsync(() =>
-            {
-                SongMetadata = e.Title + " by " + e.Artist;
-
-
-                CurrentSong = e.Title;
-                CurrentArtist = e.Artist;
-
-                if (StationMediaPlayer.CurrentStation != null)
-                {
-                    CurrentStation = StationMediaPlayer.CurrentStation;
-                    CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo.ToString();
-                }
-
-                try
-                {
-                    if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
-                    {
-                        if (!WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two).IsNavigatedTo<NowPlayingViewViewModel>())
-                            IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync("Now Playing: " + SongMetadata, 6000);
-                    }
-                }
-                catch (Exception) { }
-            });
         }
 
         public override void Dispose()

@@ -41,6 +41,7 @@ using Neptunium.Fragments;
 using Neptunium.View.Fragments;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.UI.Notifications;
+using Neptunium.Managers.Songs;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -193,10 +194,12 @@ namespace Neptunium
 
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.ShowSongNotifications))
                 ApplicationData.Current.LocalSettings.Values.Add(AppSettings.ShowSongNotifications, true);
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.TryToFindSongMetadata))
+                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.TryToFindSongMetadata, true);
 
             await StationMediaPlayer.InitializeAsync();
 
-            await SongHistoryManager.InitializeAsync();
+            await SongManager.InitializeAsync();
 
             Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/0.1 ( amrykid@gmail.com )";
 
@@ -339,7 +342,7 @@ namespace Neptunium
                 var extendedAccess = await session.RequestExtensionAsync();
 
                 ContinuedAppExperienceManager.StopWatchingForRemoteSystems();
-                await SongHistoryManager.FlushAsync();
+                await SongManager.FlushAsync();
 
                 //clears the tile if we're suspending.
                 TileUpdateManager.CreateTileUpdaterForApplication().Clear();

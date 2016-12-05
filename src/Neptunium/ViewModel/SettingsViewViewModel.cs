@@ -60,6 +60,12 @@ namespace Neptunium.ViewModel
             set { SetPropertyValue<bool>(value: value); }
         }
 
+        public bool ShouldFetchSongMetadata
+        {
+            get { return GetPropertyValue<bool>(); }
+            set { SetPropertyValue<bool>(value: value); }
+        }
+
         #region Car Mode Settings
 
         public RelayCommand PickCarModeDeviceCommand { get; private set; }
@@ -90,6 +96,8 @@ namespace Neptunium.ViewModel
 
             ShouldShowSongNofitications = (bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications];
 
+            ShouldFetchSongMetadata = (bool)ApplicationData.Current.LocalSettings.Values[AppSettings.TryToFindSongMetadata];
+
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
                 CarModeAnnounceSongs = CarModeManager.ShouldAnnounceSongs;
@@ -104,6 +112,8 @@ namespace Neptunium.ViewModel
             ContinuedAppExperienceManager.SetStopPlayingStationOnThisDeviceAfterSuccessfulHandoff(ShouldStopPlayingAfterSuccessfulHandoff);
 
             ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] = ShouldShowSongNofitications;
+
+            ApplicationData.Current.LocalSettings.Values[AppSettings.TryToFindSongMetadata] = ShouldFetchSongMetadata;
 
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {

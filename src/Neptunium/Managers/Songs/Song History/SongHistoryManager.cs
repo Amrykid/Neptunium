@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 
 namespace Neptunium.Managers
 {
-    public static class SongHistoryManager
+    public class SongHistoryManager
     {
-        public static bool IsInitialized { get; private set; }
+        public bool IsInitialized { get; private set; }
 
-        public static ReadOnlyObservableCollection<SongHistoryItem> SongHistory { get; private set; }
-        private static ObservableCollection<SongHistoryItem> songHistoryCollection = null;
+        public ReadOnlyObservableCollection<SongHistoryItem> SongHistory { get; private set; }
+        private ObservableCollection<SongHistoryItem> songHistoryCollection = null;
 
-        public static async Task InitializeAsync()
+        public async Task InitializeAsync()
         {
             if (IsInitialized) return;
 
@@ -38,14 +38,14 @@ namespace Neptunium.Managers
             await Task.CompletedTask;
         }
 
-        public static async Task FlushAsync()
+        public async Task FlushAsync()
         {
             await CookieJar.DeviceCache.UpdateObjectAsync<ObservableCollection<SongHistoryItem>>("SongHistory", songHistoryCollection);
             await CookieJar.DeviceCache.FlushAsync();
         }
 
 
-        private static async void StationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
+        private async void StationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
             if (StationMediaPlayer.CurrentStation.StationMessages.Any(x => x == e.Title)) return;
             if (e.Artist == "Unknown Artist" && e.Title == "Unknown Song") return;
@@ -64,7 +64,7 @@ namespace Neptunium.Managers
             await FlushAsync();
         }
 
-        public static event EventHandler<SongHistoryManagerItemAddedEventArgs> ItemAdded;
-        public static event EventHandler<SongHistoryManagerItemRemovedEventArgs> ItemRemoved;
+        public event EventHandler<SongHistoryManagerItemAddedEventArgs> ItemAdded;
+        public event EventHandler<SongHistoryManagerItemRemovedEventArgs> ItemRemoved;
     }
 }

@@ -118,9 +118,12 @@
     <Compile Include="Data\Stations\StationSupplementaryDataManager.cs" />
     <Compile Include="Fragments\SleepTimerFlyoutViewFragment.cs" />
     <Compile Include="Fragments\StationInfoViewSongHistoryFragment.cs" />
-    <Compile Include="Managers\Song History\SongHistoryManagerItemAddedEventArgs.cs" />
-    <Compile Include="Managers\Song History\SongHistoryManagerItemRemovedEventArgs.cs" />
-    <Compile Include="Managers\Song Metadata\SongMetadataManagerFoundArtistMetadataEventArgs.cs" />
+    <Compile Include="Managers\Songs\MusicBrainzSongMetadata.cs" />
+    <Compile Include="Managers\Songs\Song History\SongHistoryManagerItemAddedEventArgs.cs" />
+    <Compile Include="Managers\Songs\Song History\SongHistoryManagerItemRemovedEventArgs.cs" />
+    <Compile Include="Managers\Songs\SongManager.cs" />
+    <Compile Include="Managers\Songs\SongManagerSongChangedEventArgs.cs" />
+    <Compile Include="Managers\Songs\SongMetadata.cs" />
     <Compile Include="MediaElementExtensions.cs" />
     <Compile Include="Model\AlbumData.cs" />
     <Compile Include="Data\History\HistoryItemModel.cs" />
@@ -134,9 +137,8 @@
     <Compile Include="Managers\ContinuedAppExperienceManager.cs" />
     <Compile Include="Model\ArtistData.cs" />
     <Compile Include="Model\SongHistoryItem.cs" />
-    <Compile Include="Managers\Song History\SongHistoryManager.cs" />
-    <Compile Include="Managers\Song Metadata\SongMetadataManager.cs" />
-    <Compile Include="Managers\Song Metadata\SongMetadataManagerFoundAlbumMetadataEventArgs.cs" />
+    <Compile Include="Managers\Songs\Song History\SongHistoryManager.cs" />
+    <Compile Include="Managers\Songs\SongMetadataManager.cs" />
     <Compile Include="Media\ShoutcastSongInfo.cs" />
     <Compile Include="Media\StationMediaPlayer.cs" />
     <Compile Include="Media\StationMediaPlayerConnectingStatusChangedEventArgs.cs" />

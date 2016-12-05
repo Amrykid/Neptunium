@@ -25,6 +25,7 @@ using Windows.UI.Notifications;
 using Windows.UI.Xaml.Navigation;
 using Windows.Services.Store;
 using Windows.Networking.Connectivity;
+using Neptunium.Managers.Songs;
 
 namespace Neptunium.ViewModel
 {
@@ -89,8 +90,6 @@ namespace Neptunium.ViewModel
             SleepTimerViewFragment = new SleepTimerFlyoutViewFragment();
 
             WindowManager.GetStatusManagerForCurrentWindow().NormalStatusText = "Neptunium"; //"Hanasu Alpha";
-
-            UpdateLiveTile();
         }
 
         private async void CarModeManager_CarModeManagerCarModeStatusChanged(object sender, CarModeManagerCarModeStatusChangedEventArgs e)
@@ -119,7 +118,7 @@ namespace Neptunium.ViewModel
             if (!StationMediaPlayer.IsInitialized)
                 await StationMediaPlayer.InitializeAsync();
 
-            StationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
+            SongManager.SongChanged += SongManager_SongChanged;
             StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
             StationMediaPlayer.BackgroundAudioReconnecting += StationMediaPlayer_BackgroundAudioReconnecting;
@@ -155,6 +154,20 @@ namespace Neptunium.ViewModel
                 }
             }
 #endif
+        }
+
+        private async void SongManager_SongChanged(object sender, SongManagerSongChangedEventArgs e)
+        {
+            if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] == true)
+            {
+                await App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    if (!App.GetIfPrimaryWindowVisible())
+                        ShowSongNotification(e.Metadata);
+                });
+            }
+
+            UpdateLiveTile(e.Metadata);
         }
 
         private async void StationMediaPlayer_BackgroundAudioReconnecting(object sender, EventArgs e)
@@ -239,23 +252,7 @@ namespace Neptunium.ViewModel
 
         private void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)
         {
-            UpdateLiveTile();
-        }
-
-        private async void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
-        {
-            if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //don't play that pre-defined station message that happens every so often.
-
-            if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] == true)
-            {
-                await App.Dispatcher.RunWhenIdleAsync(() =>
-                {
-                    if (!App.GetIfPrimaryWindowVisible())
-                        ShowSongNotification();
-                });
-            }
-
-            UpdateLiveTile();
+            TileUpdateManager.CreateTileUpdaterForApplication().Clear();
         }
 
         internal void ShowMediaErrorNotification(string title, string message)
@@ -324,13 +321,10 @@ namespace Neptunium.ViewModel
             ToastNotificationManager.CreateToastNotifier().Show(notification);
         }
 
-        internal void ShowSongNotification()
+        internal void ShowSongNotification(SongMetadata nowPlaying)
         {
-
-            if (StationMediaPlayer.IsPlaying && StationMediaPlayer.SongMetadata != null)
+            if (StationMediaPlayer.IsPlaying)
             {
-                var nowPlaying = StationMediaPlayer.SongMetadata;
-
                 var toastHistory = ToastNotificationManager.History.GetHistory();
 
                 if (toastHistory.Count > 0)
@@ -389,7 +383,7 @@ namespace Neptunium.ViewModel
             }
         }
 
-        public static void UpdateLiveTile()
+        public static void UpdateLiveTile(SongMetadata nowPlaying)
         {
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
 
@@ -397,8 +391,6 @@ namespace Neptunium.ViewModel
 
             if (StationMediaPlayer.IsPlaying && StationMediaPlayer.SongMetadata != null)
             {
-                var nowPlaying = StationMediaPlayer.SongMetadata;
-
                 bindingContent = new TileBindingContentAdaptive()
                 {
                     PeekImage = new TilePeekImage()

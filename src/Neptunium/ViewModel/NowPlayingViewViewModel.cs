@@ -27,6 +27,7 @@ using Windows.System;
 using System.Diagnostics;
 using Neptunium.Managers;
 using Microsoft.HockeyApp.DataContracts;
+using Neptunium.Managers.Songs;
 
 namespace Neptunium.ViewModel
 {
@@ -63,103 +64,6 @@ namespace Neptunium.ViewModel
 
         }
 
-        private async void ShoutcastStationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
-        {
-            if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //ignore that pre-defined station message that happens every so often.
-
-            if (!string.IsNullOrWhiteSpace(e.Title) && string.IsNullOrWhiteSpace(e.Artist))
-            {
-                //station message got through.
-
-#if DEBUG
-                if (Debugger.IsAttached)
-                    Debugger.Break();
-#else
-                return;
-#endif
-            }
-
-            await App.Dispatcher.RunWhenIdleAsync(() =>
-            {
-                SongMetadata = e.Title + " by " + e.Artist;
-
-                CurrentSong = e.Title;
-                CurrentArtist = e.Artist;
-
-                if (StationMediaPlayer.CurrentStation != null)
-                {
-                    CurrentStation = StationMediaPlayer.CurrentStation;
-                    CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo?.ToString();
-                }
-
-                CurrentSongAlbumData = null;
-            });
-
-            await UpdateBackgroundImageAsync(e.Title, e.Artist);
-        }
-
-        private async Task UpdateBackgroundImageAsync(string title, string artist)
-        {
-            try
-            {
-                if (App.GetDevicePlatform() != Platform.Xbox)
-                    if (!App.IsUnrestrictiveInternetConnection()) return;
-
-                await App.Dispatcher.RunWhenIdleAsync(() =>
-                {
-                    NowPlayingBackgroundImage = null;
-                });
-
-
-                var albumData = await SongMetadataManager.FindAlbumDataAsync(title, artist);
-
-                if (albumData != null && !string.IsNullOrWhiteSpace(albumData?.AlbumCoverUrl))
-                {
-                    await UpdateAlbumDataFromTaskAsync(albumData);
-                    await App.Dispatcher.RunWhenIdleAsync(() =>
-                    {
-                        NowPlayingBackgroundImage = albumData?.AlbumCoverUrl;
-                    });
-                }
-                else
-                {
-                    var artistData = await SongMetadataManager.FindArtistDataAsync(artist);
-
-                    if (artistData != null && !string.IsNullOrWhiteSpace(artistData?.ArtistID))
-                    {
-                        await App.Dispatcher.RunWhenIdleAsync(() =>
-                        {
-                            NowPlayingBackgroundImage = artistData?.ArtistImage;
-                        });
-                    }
-                    else
-                    {
-                        if (NowPlayingBackgroundImage == null)
-                        {
-                            TraceTelemetry trace = new TraceTelemetry("Failed song data lookup.", Microsoft.HockeyApp.SeverityLevel.Information);
-                            trace.Properties.Add(new KeyValuePair<string, string>("Artist", artist));
-                            trace.Properties.Add(new KeyValuePair<string, string>("Song", title));
-                            Microsoft.HockeyApp.HockeyClient.Current.TrackTrace(trace);
-
-                            await App.Dispatcher.RunWhenIdleAsync(() =>
-                            {
-                                NowPlayingBackgroundImage = CurrentStation.Background;
-                            });
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Dictionary<string, string> info = new Dictionary<string, string>();
-                info.Add("Message", "Failed song data lookup.");
-                info.Add("Artist", artist);
-                info.Add("Song", title);
-                Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, info);
-            }
-
-        }
-
         private async Task UpdateAlbumDataFromTaskAsync(AlbumData albumData)
         {
             //todo figure out what to do with this
@@ -169,23 +73,7 @@ namespace Neptunium.ViewModel
                 {
                     CurrentSongAlbumData = albumData;
 
-                    //var displayUp = BackgroundMediaPlayer.Current.SystemMediaTransportControls.DisplayUpdater;
-
-                    //if (CurrentSongAlbumData != null)
-                    //{
-                    //    displayUp.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentSongAlbumData.AlbumCoverUrl));
-                    //}
-                    //else
-                    //{
-                    //    if (!string.IsNullOrWhiteSpace(CurrentStationLogo))
-                    //        displayUp.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentStationLogo));
-                    //    else
-                    //        displayUp.Thumbnail = null;
-                    //}
-
                     ViewAlbumOnMusicBrainzCommand.SetCanExecute(CurrentSongAlbumData != null);
-
-                    //displayUp.Update();
                 }
                 catch (Exception) { }
             });
@@ -209,7 +97,7 @@ namespace Neptunium.ViewModel
             });
         }
 
-        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             CurrentStation = StationMediaPlayer.CurrentStation;
 
@@ -223,17 +111,40 @@ namespace Neptunium.ViewModel
 
                 SongMetadata = StationMediaPlayer.SongMetadata.Track + " by " + StationMediaPlayer.SongMetadata.Artist;
 
-                UpdateBackgroundImageAsync(StationMediaPlayer.SongMetadata.Track, StationMediaPlayer.SongMetadata.Artist).Forget();
+                if (App.GetDevicePlatform() != Platform.Xbox)
+                    if (!App.IsUnrestrictiveInternetConnection()) return;
+                NowPlayingBackgroundImage = (await SongManager.GetSongBackgroundAsync(SongManager.CurrentSong)).ToString();
             }
 
-            StationMediaPlayer.MetadataChanged += ShoutcastStationMediaPlayer_MetadataChanged;
+            SongManager.SongChanged += SongManager_SongChanged;
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-            StationMediaPlayer.MetadataChanged -= ShoutcastStationMediaPlayer_MetadataChanged;
+            SongManager.SongChanged -= SongManager_SongChanged;
             StationMediaPlayer.CurrentStationChanged -= ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError -= ShoutcastStationMediaPlayer_BackgroundAudioError;
+        }
+
+        private async void SongManager_SongChanged(object sender, SongManagerSongChangedEventArgs e)
+        {
+            await App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                SongMetadata = e.Metadata.Track + " by " + e.Metadata.Artist;
+
+                CurrentSong = e.Metadata.Track;
+                CurrentArtist = e.Metadata.Artist;
+
+                if (StationMediaPlayer.CurrentStation != null)
+                {
+                    CurrentStation = StationMediaPlayer.CurrentStation;
+                    CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo?.ToString();
+                }
+
+                CurrentSongAlbumData = null;
+            });
+
+            NowPlayingBackgroundImage = (await SongManager.GetSongBackgroundAsync(SongManager.CurrentSong)).ToString();
         }
 
         public ManualRelayCommand ViewAlbumOnMusicBrainzCommand { get; private set; }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Crystal3.Navigation;
+using Neptunium.Managers.Songs;
 
 namespace Neptunium.ViewModel
 {
@@ -16,21 +17,21 @@ namespace Neptunium.ViewModel
         {
             try
             {
-                SongHistory = new ObservableCollection<SongHistoryItem>(SongHistoryManager.SongHistory);
+                SongHistory = new ObservableCollection<SongHistoryItem>(SongManager.HistoryManager.SongHistory);
             }
             catch (Exception)
             {
                 SongHistory = new ObservableCollection<SongHistoryItem>();
             }
 
-            SongHistoryManager.ItemAdded += SongHistoryManager_ItemAdded;
-            SongHistoryManager.ItemRemoved += SongHistoryManager_ItemRemoved;
+            SongManager.HistoryManager.ItemAdded += SongHistoryManager_ItemAdded;
+            SongManager.HistoryManager.ItemRemoved += SongHistoryManager_ItemRemoved;
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-            SongHistoryManager.ItemAdded -= SongHistoryManager_ItemAdded;
-            SongHistoryManager.ItemRemoved -= SongHistoryManager_ItemRemoved;
+            SongManager.HistoryManager.ItemAdded -= SongHistoryManager_ItemAdded;
+            SongManager.HistoryManager.ItemRemoved -= SongHistoryManager_ItemRemoved;
         }
 
         private void SongHistoryManager_ItemRemoved(object sender, SongHistoryManagerItemRemovedEventArgs e)

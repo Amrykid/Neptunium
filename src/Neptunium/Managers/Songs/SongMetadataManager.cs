@@ -9,61 +9,9 @@ using System.Threading.Tasks;
 
 namespace Neptunium.Managers
 {
-    public static class SongMetadataManager
+    public class SongMetadataManager
     {
-        internal static async Task<ArtistData> FindArtistDataAsync(string artist)
-        {
-            string cleanedArtist = artist.Trim();
-            string key = "ARTIST:" + cleanedArtist;
-
-            if (await CookieJar.DeviceCache.ContainsObjectAsync(key))
-                await CookieJar.DeviceCache.PeekObjectAsync<ArtistData>(key);
-
-            var artistData = await TryFindArtistOnMusicBrainzAsync(cleanedArtist);
-
-            if (artistData != null)
-            {
-                await CookieJar.DeviceCache.InsertObjectAsync<ArtistData>(key, artistData);
-
-                await CookieJar.DeviceCache.FlushAsync();
-
-                FoundArtistMetadata?.Invoke(null, new SongMetadataManagerFoundArtistMetadataEventArgs() { });
-
-                return artistData;
-            }
-
-            return null;
-        }
-        internal static async Task<AlbumData> FindAlbumDataAsync(string title, string artist)
-        {
-            string cleanedArtist = artist.Trim();
-            string cleanedTrack = title.Trim();
-
-            string key = "ALBUM:" + cleanedArtist + "|" + cleanedTrack;
-
-            if (await CookieJar.DeviceCache.ContainsObjectAsync(key))
-                return await CookieJar.DeviceCache.PeekObjectAsync<AlbumData>(key);
-
-            var albumData = await TryFindAlbumOnMusicBrainzAsync(cleanedTrack, cleanedArtist);
-
-            if (albumData != null)
-            {
-                await CookieJar.DeviceCache.InsertObjectAsync<AlbumData>(key, albumData);
-
-                if (!await CookieJar.DeviceCache.ContainsObjectAsync("ARTIST:" + albumData.Artist))
-                    await CookieJar.DeviceCache.InsertObjectAsync("ARTIST:" + albumData.Artist, new ArtistData() { Name = albumData.Artist, ArtistID = albumData.ArtistID });
-
-                await CookieJar.DeviceCache.FlushAsync();
-
-                FoundAlbumMetadata?.Invoke(null, new SongMetadataManagerFoundAlbumMetadataEventArgs() { FoundAlbumData = albumData, QueriedTrack = cleanedTrack, QueiredArtist = cleanedArtist });
-
-                return albumData;
-            }
-
-            return null;
-        }
-
-        private static async Task<AlbumData> TryFindAlbumOnMusicBrainzAsync(string track, string artist)
+        public async Task<AlbumData> TryFindAlbumOnMusicBrainzAsync(string track, string artist)
         {
             AlbumData data = new AlbumData();
 
@@ -111,7 +59,53 @@ namespace Neptunium.Managers
             return null;
         }
 
-        private static async Task<ArtistData> TryFindArtistOnMusicBrainzAsync(string artistName)
+        internal async Task<MusicBrainzSongMetadata> GetMusicBrainzDataAsync(string title, string artist)
+        {
+            MusicBrainzSongMetadata metadata = new MusicBrainzSongMetadata();
+
+            var albumData = await TryFindAlbumOnMusicBrainzAsync(title, artist);
+            if (albumData != null)
+            {
+                metadata.Album = albumData;
+            }
+
+            if (albumData != null)
+            {
+                //get the artist via artist id
+                metadata.Artist = await GetArtistOnMusicBrainzAsync(albumData.ArtistID);
+            }
+            else
+            {
+                metadata.Artist = await TryFindArtistOnMusicBrainzAsync(artist);
+            }
+
+            return metadata;
+        }
+
+        public async Task<ArtistData> GetArtistOnMusicBrainzAsync(string artistID)
+        {
+            ArtistData data = new ArtistData();
+
+            var artistData = await Artist.GetAsync(artistID, "url-rels");
+
+            if (artistData != null)
+            {
+                data.Name = artistData.Name;
+                data.Gender = artistData.Gender;
+                data.ArtistID = artistData.Id;
+
+                if (artistData.RelationLists != null)
+                {
+                    var imageRel = artistData.RelationLists.Items.FirstOrDefault(x => x.Type == "image");
+                    if (imageRel != null)
+                        data.ArtistImage = imageRel.Target;
+                }
+            }
+
+            return null;
+        }
+
+        public async Task<ArtistData> TryFindArtistOnMusicBrainzAsync(string artistName)
         {
             ArtistData data = new ArtistData();
 
@@ -148,8 +142,5 @@ namespace Neptunium.Managers
 
             return null;
         }
-
-        public static event EventHandler<SongMetadataManagerFoundAlbumMetadataEventArgs> FoundAlbumMetadata;
-        public static event EventHandler<SongMetadataManagerFoundArtistMetadataEventArgs> FoundArtistMetadata;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Crystal3;
 using Microsoft.HockeyApp;
+using Neptunium.Managers.Songs;
 using Neptunium.Media;
 using System;
 using System.Collections.Generic;
@@ -133,13 +134,33 @@ namespace Neptunium.Managers
             ShouldAnnounceSongs = (bool)ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs];
             ShouldUseJapaneseVoice = (bool)ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements];
 
-            StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
+            SongManager.SongChanged += SongManager_SongChanged;
             StationMediaPlayer.BackgroundAudioReconnecting += StationMediaPlayer_BackgroundAudioReconnecting;
 
             japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
                 x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female && x.DisplayName.Contains("Haruka"));
 
             IsInitialized = true;
+        }
+
+        private static async void SongManager_SongChanged(object sender, SongManagerSongChangedEventArgs e)
+        {
+            if (ShouldAnnounceSongs && IsInCarMode)
+            {
+                if (lastPlayedSongMetadata == e.Metadata.Track) return;
+
+                double initialVolume = StationMediaPlayer.Volume;
+
+                var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, japaneseFemaleVoice != null && ShouldUseJapaneseVoice);
+                var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
+
+                await StationMediaPlayer.FadeVolumeDownToAsync(0.1);
+
+                await PlayAnnouncementAudioStreamAsync(stream);
+
+                await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume);
+
+            }
         }
 
         private static void SelectedDeviceObj_ConnectionStatusChanged(BluetoothDevice sender, object args)
@@ -198,28 +219,6 @@ namespace Neptunium.Managers
                 var stream = await speechSynth.SynthesizeTextToStreamAsync("Reconnecting... One moment please.");
 
                 await PlayAnnouncementAudioStreamAsync(stream);
-            }
-        }
-
-        private static async void StationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
-        {
-            if (ShouldAnnounceSongs && IsInCarMode)
-            {
-                if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //don't play that pre-defined station message that happens every so often.
-
-                if (lastPlayedSongMetadata == e.Title) return;
-
-                double initialVolume = StationMediaPlayer.Volume;
-
-                var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Artist, e.Title, japaneseFemaleVoice != null && ShouldUseJapaneseVoice);
-                var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
-
-                await StationMediaPlayer.FadeVolumeDownToAsync(0.1);
-
-                await PlayAnnouncementAudioStreamAsync(stream);
-
-                await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume);
-
             }
         }
 
