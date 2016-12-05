@@ -58,6 +58,11 @@ namespace Neptunium.Managers.Songs
             metadata.Track = e.Title;
             metadata.Artist = e.Artist;
 
+            PreSongChanged?.Invoke(null, new SongManagerSongChangedEventArgs()
+            {
+                Metadata = metadata,
+            });
+
             string storageKey = "SONG|" + metadata.GetHashCode();
 
             bool cachedSong = false;
@@ -87,6 +92,7 @@ namespace Neptunium.Managers.Songs
             }
         }
 
+        public static event EventHandler<SongManagerSongChangedEventArgs> PreSongChanged;
         public static event EventHandler<SongManagerSongChangedEventArgs> SongChanged;
 
         internal static Task FlushAsync()

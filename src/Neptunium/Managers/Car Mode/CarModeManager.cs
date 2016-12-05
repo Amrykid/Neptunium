@@ -134,7 +134,7 @@ namespace Neptunium.Managers
             ShouldAnnounceSongs = (bool)ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs];
             ShouldUseJapaneseVoice = (bool)ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements];
 
-            SongManager.SongChanged += SongManager_SongChanged;
+            SongManager.PreSongChanged += SongManager_PreSongChanged;
             StationMediaPlayer.BackgroundAudioReconnecting += StationMediaPlayer_BackgroundAudioReconnecting;
 
             japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
@@ -143,7 +143,7 @@ namespace Neptunium.Managers
             IsInitialized = true;
         }
 
-        private static async void SongManager_SongChanged(object sender, SongManagerSongChangedEventArgs e)
+        private static async void SongManager_PreSongChanged(object sender, SongManagerSongChangedEventArgs e)
         {
             if (ShouldAnnounceSongs && IsInCarMode)
             {

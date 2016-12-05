@@ -144,7 +144,11 @@ namespace Neptunium.ViewModel
                 CurrentSongAlbumData = null;
             });
 
-            NowPlayingBackgroundImage = (await SongManager.GetSongBackgroundAsync(SongManager.CurrentSong)).ToString();
+
+            var songBGUrl = await SongManager.GetSongBackgroundAsync(SongManager.CurrentSong);
+
+            if (songBGUrl != null)
+                NowPlayingBackgroundImage = songBGUrl.ToString();
         }
 
         public ManualRelayCommand ViewAlbumOnMusicBrainzCommand { get; private set; }
