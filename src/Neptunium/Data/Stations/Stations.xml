@@ -198,6 +198,11 @@
         http://streaming.radionomy.com/J-PopProjectRadio
       </Stream>
     </Streams>
+    <StationMessages>
+      <Message><![CDATA[Station Christmas 1]]></Message>
+      <Message><![CDATA[Station Christmas 2]]></Message>
+      <Message><![CDATA[Station Christmas 3]]></Message>
+    </StationMessages>
   </Station>
   <Station>
     <Name>Big B Radio - JPop</Name>
