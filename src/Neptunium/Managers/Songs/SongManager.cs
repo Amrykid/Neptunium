@@ -55,8 +55,8 @@ namespace Neptunium.Managers.Songs
 
             //do preprocessing here.
             SongMetadata metadata = new SongMetadata();
-            metadata.Track = e.Title;
-            metadata.Artist = e.Artist;
+            metadata.Track = e.Title.Trim();
+            metadata.Artist = e.Artist.Trim();
 
             PreSongChanged?.Invoke(null, new SongManagerSongChangedEventArgs()
             {
