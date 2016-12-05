@@ -2,16 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Neptunium.Data
 {
+    [DataContract]
     public class ArtistData : ModelBase
     {
-        public string Name { get; internal set; }
-        public string ArtistID { get; internal set; }
-        public string Gender { get; internal set; }
-        public string ArtistImage { get; internal set; }
+        [DataMember]
+        public string Name { get; set; }
+        [DataMember]
+        public string ArtistID { get; set; }
+        [DataMember]
+        public string Gender { get; set; }
+        [DataMember]
+        public string ArtistImage { get; set; }
     }
 }

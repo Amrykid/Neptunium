@@ -2,18 +2,26 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Neptunium.Data
 {
+    [DataContract]
     public class AlbumData : ModelBase
     {
-        public string Album { get; internal set; }
-        public string AlbumCoverUrl { get; internal set; }
-        public string AlbumID { get; internal set; }
-        public string Artist { get; internal set; }
-        public string ArtistID { get; internal set; }
-        public DateTime ReleaseDate { get; internal set; }
+        [DataMember]
+        public string Album { get; set; }
+        [DataMember]
+        public string AlbumCoverUrl { get; set; }
+        [DataMember]
+        public string AlbumID { get; set; }
+        [DataMember]
+        public string Artist { get; set; }
+        [DataMember]
+        public string ArtistID { get; set; }
+        [DataMember]
+        public DateTime ReleaseDate { get; set; }
     }
 }
