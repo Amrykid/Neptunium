@@ -1,4 +1,5 @@
 ﻿using Crystal3.Core;
+using Kukkii;
 using Microsoft.HockeyApp.DataContracts;
 using Neptunium.Data;
 using Neptunium.Media;
@@ -57,10 +58,18 @@ namespace Neptunium.Managers.Songs
             metadata.Track = e.Title;
             metadata.Artist = e.Artist;
 
-            if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.TryToFindSongMetadata] == true)
+            string storageKey = "SONG|" + metadata.GetHashCode();
+
+            bool cachedSong = false;
+            if (cachedSong = await CookieJar.DeviceCache.ContainsObjectAsync(storageKey))
+                metadata = await CookieJar.DeviceCache.PeekObjectAsync<SongMetadata>(storageKey);
+            else
             {
-                //todo make metadata manager handle one source and use multiple sources (e.g. musicbrainz, amazon, google, etc)
-                metadata.MBData = await MetadataManager.GetMusicBrainzDataAsync(e.Title, e.Artist);
+                if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.TryToFindSongMetadata] == true)
+                {
+                    //todo make metadata manager handle one source and use multiple sources (e.g. musicbrainz, amazon, google, etc)
+                    metadata.MBData = await MetadataManager.GetMusicBrainzDataAsync(e.Title, e.Artist);
+                }
             }
 
             CurrentSong = metadata;
@@ -70,6 +79,12 @@ namespace Neptunium.Managers.Songs
                 Metadata = metadata,
             });
 
+            if (!cachedSong)
+            {
+                await CookieJar.DeviceCache.InsertObjectAsync<SongMetadata>(storageKey, metadata, 
+                    (int)TimeSpan.FromDays(15).TotalMilliseconds);
+                await CookieJar.DeviceCache.FlushAsync();
+            }
         }
 
         public static event EventHandler<SongManagerSongChangedEventArgs> SongChanged;

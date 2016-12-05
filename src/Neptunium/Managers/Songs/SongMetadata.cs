@@ -1,14 +1,24 @@
-﻿namespace Neptunium.Managers.Songs
+﻿using System.Runtime.Serialization;
+
+namespace Neptunium.Managers.Songs
 {
+    [DataContract]
     public class SongMetadata
     {
         internal SongMetadata()
         {
         }
 
-        public object Album { get; internal set; }
-        public string Artist { get; internal set; }
-        public string Track { get; internal set; }
-        public MusicBrainzSongMetadata MBData { get; internal set; }
+        [DataMember]
+        public string Artist { get; set; }
+        [DataMember]
+        public string Track { get; set; }
+        [DataMember]
+        public MusicBrainzSongMetadata MBData { get; set; }
+
+        public override int GetHashCode()
+        {
+            return Artist.GetHashCode() + Track.GetHashCode();
+        }
     }
 }

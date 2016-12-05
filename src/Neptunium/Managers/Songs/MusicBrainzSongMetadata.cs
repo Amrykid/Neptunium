@@ -1,11 +1,15 @@
 ﻿using System.Threading.Tasks;
 using Neptunium.Data;
+using System.Runtime.Serialization;
 
 namespace Neptunium.Managers
 {
+    [DataContract]
     public class MusicBrainzSongMetadata
     {
-        public AlbumData Album { get; internal set; }
-        public ArtistData Artist { get; internal set; }
+        [DataMember]
+        public AlbumData Album { get; set; }
+        [DataMember]
+        public ArtistData Artist { get; set; }
     }
 }

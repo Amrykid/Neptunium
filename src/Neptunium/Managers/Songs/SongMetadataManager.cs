@@ -86,7 +86,7 @@ namespace Neptunium.Managers
         {
             ArtistData data = new ArtistData();
 
-            var artistData = await Artist.GetAsync(artistID, "url-rels");
+            var artistData = await Artist.GetAsync(artistID, "url-rels", "aliases");
 
             if (artistData != null)
             {
@@ -125,7 +125,7 @@ namespace Neptunium.Managers
                 data.Gender = artist.Gender;
                 data.ArtistID = artist.Id;
 
-                var browsingData = await Artist.GetAsync(artist.Id, "url-rels");
+                var browsingData = await Artist.GetAsync(artist.Id, "url-rels", "aliases");
 
                 if (browsingData != null)
                 {
