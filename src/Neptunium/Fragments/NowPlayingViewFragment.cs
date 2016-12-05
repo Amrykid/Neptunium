@@ -33,12 +33,25 @@ namespace Neptunium.Fragments
         {
             CurrentStation = StationMediaPlayer.CurrentStation;
 
+            SongManager.PreSongChanged += SongManager_PreSongChanged;
             SongManager.SongChanged += SongManager_SongChanged;
             StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
 
             if (StationMediaPlayer.SongMetadata != null)
                 SongMetadata = StationMediaPlayer.SongMetadata.Track + " by " + StationMediaPlayer.SongMetadata.Artist;
+        }
+
+        private async void SongManager_PreSongChanged(object sender, SongManagerSongChangedEventArgs e)
+        {
+            await App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                SongMetadata = e.Metadata.Track + " by " + e.Metadata.Artist;
+
+
+                CurrentSong = e.Metadata.Track;
+                CurrentArtist = e.Metadata.Artist;
+            });
         }
 
         private async void SongManager_SongChanged(object sender, SongManagerSongChangedEventArgs e)
