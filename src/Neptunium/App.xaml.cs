@@ -83,6 +83,12 @@ namespace Neptunium
                     return "Exception HResult: " + ex.HResult.ToString();
                 });
             }
+            else
+            {
+#if DEBUG
+                App.Current.UnhandledException += Current_UnhandledException;
+#endif
+            }
         }
 
         private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -93,6 +99,10 @@ namespace Neptunium
                 HockeyClient.Current.Flush();
 
                 e.Handled = true;
+            }
+            else
+            {
+                Debugger.Break();
             }
         }
 
@@ -339,10 +349,12 @@ namespace Neptunium
             {
                 session.Reason = ExtendedExecutionReason.SavingData;
 
-                var extendedAccess = await session.RequestExtensionAsync();
-
                 ContinuedAppExperienceManager.StopWatchingForRemoteSystems();
                 await SongManager.FlushAsync();
+
+
+                var extendedAccess = await session.RequestExtensionAsync();
+
 
                 //clears the tile if we're suspending.
                 TileUpdateManager.CreateTileUpdaterForApplication().Clear();
