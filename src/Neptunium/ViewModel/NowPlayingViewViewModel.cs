@@ -134,7 +134,7 @@ namespace Neptunium.ViewModel
 
         private async void SongManager_SongChanged(object sender, SongManagerSongChangedEventArgs e)
         {
-            await App.Dispatcher.RunWhenIdleAsync(() =>
+            await App.Dispatcher.RunWhenIdleAsync(async () =>
             {
                 SongMetadata = e.Metadata.Track + " by " + e.Metadata.Artist;
 
@@ -148,13 +148,12 @@ namespace Neptunium.ViewModel
                 }
 
                 CurrentSongAlbumData = null;
+
+                var songBGUrl = await SongManager.GetSongBackgroundAsync(SongManager.CurrentSong);
+
+                if (songBGUrl != null)
+                    NowPlayingBackgroundImage = songBGUrl.ToString();
             });
-
-
-            var songBGUrl = await SongManager.GetSongBackgroundAsync(SongManager.CurrentSong);
-
-            if (songBGUrl != null)
-                NowPlayingBackgroundImage = songBGUrl.ToString();
         }
 
         public ManualRelayCommand ViewAlbumOnMusicBrainzCommand { get; private set; }

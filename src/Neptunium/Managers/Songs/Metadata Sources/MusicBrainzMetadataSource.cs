@@ -28,6 +28,8 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
                     if (imageRel != null)
                         data.ArtistImage = imageRel.Target;
                 }
+
+                return data;
             }
 
             return null;

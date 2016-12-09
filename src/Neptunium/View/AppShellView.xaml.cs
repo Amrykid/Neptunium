@@ -57,14 +57,16 @@ namespace Neptunium.View
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
 
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox || Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
             {
-                IoC.Current.Register<ISnackBarService>(new SnackBarService(xboxSnackBarGrid));
-
+                IoC.Current.Register<ISnackBarService>(new SnackBarService(floatingSnackBarGrid));
+                if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+                {
 #if DEBUG
-                if (Crystal3.CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
-                    VisualStateManager.GoToState(this, XboxVisualState.Name, true);
+                    if (Crystal3.CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
+                        VisualStateManager.GoToState(this, XboxVisualState.Name, true);
 #endif
+                }
             }
             else
             {
