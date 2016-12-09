@@ -118,6 +118,11 @@
     <Compile Include="Data\Stations\StationSupplementaryDataManager.cs" />
     <Compile Include="Fragments\SleepTimerFlyoutViewFragment.cs" />
     <Compile Include="Fragments\StationInfoViewSongHistoryFragment.cs" />
+    <Compile Include="Managers\Songs\ISongMetadata.cs" />
+    <Compile Include="Managers\Songs\ITunesMetadataSource.cs" />
+    <Compile Include="Managers\Songs\ITunesSongMetadata.cs" />
+    <Compile Include="Managers\Songs\Metadata Sources\ISongMetadataSource.cs" />
+    <Compile Include="Managers\Songs\Metadata Sources\MusicBrainzMetadataSource.cs" />
     <Compile Include="Managers\Songs\MusicBrainzSongMetadata.cs" />
     <Compile Include="Managers\Songs\Song History\SongHistoryManagerItemAddedEventArgs.cs" />
     <Compile Include="Managers\Songs\Song History\SongHistoryManagerItemRemovedEventArgs.cs" />
@@ -269,6 +274,10 @@
     <ProjectReference Include="..\..\lib\Crystal\src\Crystal3\Crystal3.csproj">
       <Project>{e7ac86be-e1f7-42e4-8da0-7e1ebef1130b}</Project>
       <Name>Crystal3</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\lib\iTunesSearch\iTunesSearch.Library\iTunesSearch.Library.csproj">
+      <Project>{c36d8dde-14cf-4a2d-b2c6-179eebb77e0c}</Project>
+      <Name>iTunesSearch.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\lib\Kimono\src\Kimono\Kimono.csproj">
       <Project>{329833b1-79b7-4724-b9a2-0629d735bea1}</Project>

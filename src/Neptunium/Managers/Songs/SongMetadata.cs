@@ -15,6 +15,8 @@ namespace Neptunium.Managers.Songs
         public string Track { get; set; }
         [DataMember]
         public MusicBrainzSongMetadata MBData { get; set; }
+        [DataMember]
+        public ITunesSongMetadata ITunesData { get; set; }
 
         public override int GetHashCode()
         {

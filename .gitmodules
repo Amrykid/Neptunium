@@ -16,3 +16,6 @@ url=https://github.com/Amrykid/MusicBrainz.git
 [submodule "lib/Kukkii"]
 	path = lib/Kukkii
 	url = https://github.com/Amrykid/Kukkii.git
+[submodule "lib/iTunesSearch"]
+	path = lib/iTunesSearch
+	url = https://github.com/Amrykid/iTunesSearch.git

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -72,8 +73,26 @@ namespace Neptunium.Managers.Songs
             {
                 if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.TryToFindSongMetadata] == true)
                 {
-                    //todo make metadata manager handle one source and use multiple sources (e.g. musicbrainz, amazon, google, etc)
-                    metadata.MBData = await MetadataManager.GetMusicBrainzDataAsync(e.Title, e.Artist);
+                    string cleanArtist = e.Artist; //strip out featured artist
+                    cleanArtist = Regex.Replace(cleanArtist, "[fF][t(eat(turing))].*", "");
+
+                    try
+                    {
+                        metadata.MBData = await MetadataManager.GetMusicBrainzDataAsync(e.Title, cleanArtist);
+                    }
+                    catch (NotImplementedException)
+                    {
+
+                    }
+
+                    try
+                    {
+                        metadata.ITunesData = await MetadataManager.GetITunesDataAsync(e.Title, cleanArtist);
+                    }
+                    catch (NotImplementedException)
+                    {
+
+                    }
                 }
             }
 
@@ -108,26 +127,31 @@ namespace Neptunium.Managers.Songs
 
             try
             {
-                var albumData = await MetadataManager.TryFindAlbumOnMusicBrainzAsync(title, artist);
+                var musicBrainzData = await MetadataManager.GetMusicBrainzDataAsync(title, artist);
 
-                if (albumData != null && !string.IsNullOrWhiteSpace(albumData?.AlbumCoverUrl))
+                if (musicBrainzData != null)
                 {
-                    return new Uri(albumData?.AlbumCoverUrl);
-                }
-                else
-                {
-                    var artistData = await MetadataManager.TryFindArtistOnMusicBrainzAsync(artist);
+                    var albumData = musicBrainzData.Album;
 
-                    if (artistData != null && !string.IsNullOrWhiteSpace(artistData?.ArtistID))
+                    if (albumData != null && !string.IsNullOrWhiteSpace(albumData?.AlbumCoverUrl))
                     {
-                        return new Uri(artistData?.ArtistImage);
+                        return new Uri(albumData?.AlbumCoverUrl);
                     }
                     else
                     {
-                        TraceTelemetry trace = new TraceTelemetry("Failed song data lookup.", Microsoft.HockeyApp.SeverityLevel.Information);
-                        trace.Properties.Add(new KeyValuePair<string, string>("Artist", artist));
-                        trace.Properties.Add(new KeyValuePair<string, string>("Song", title));
-                        Microsoft.HockeyApp.HockeyClient.Current.TrackTrace(trace);
+                        var artistData = musicBrainzData.Artist;
+
+                        if (artistData != null && !string.IsNullOrWhiteSpace(artistData?.ArtistID))
+                        {
+                            return new Uri(artistData?.ArtistImage);
+                        }
+                        else
+                        {
+                            TraceTelemetry trace = new TraceTelemetry("Failed song data lookup.", Microsoft.HockeyApp.SeverityLevel.Information);
+                            trace.Properties.Add(new KeyValuePair<string, string>("Artist", artist));
+                            trace.Properties.Add(new KeyValuePair<string, string>("Song", title));
+                            Microsoft.HockeyApp.HockeyClient.Current.TrackTrace(trace);
+                        }
                     }
                 }
             }
