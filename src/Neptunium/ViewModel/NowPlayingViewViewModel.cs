@@ -113,7 +113,10 @@ namespace Neptunium.ViewModel
 
                 if (App.GetDevicePlatform() != Platform.Xbox)
                     if (!App.IsUnrestrictiveInternetConnection()) return;
-                NowPlayingBackgroundImage = (await SongManager.GetSongBackgroundAsync(SongManager.CurrentSong)).ToString();
+
+                var songBackground = await SongManager.GetSongBackgroundAsync(SongManager.CurrentSong);
+                if (songBackground != null)
+                    NowPlayingBackgroundImage = songBackground.ToString();
             }
 
             SongManager.SongChanged += SongManager_SongChanged;
