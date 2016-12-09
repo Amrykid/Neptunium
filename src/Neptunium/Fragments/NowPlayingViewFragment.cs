@@ -1,6 +1,7 @@
 ﻿using Crystal3.InversionOfControl;
 using Crystal3.Model;
 using Crystal3.Navigation;
+using Crystal3.UI.Commands;
 using Neptunium.Data;
 using Neptunium.Managers.Songs;
 using Neptunium.Media;
@@ -12,11 +13,20 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Media.Playback;
 
 namespace Neptunium.Fragments
 {
     public class NowPlayingViewFragment : ViewModelFragment
     {
+        public SleepTimerFlyoutViewFragment SleepTimerViewFragment { get; private set; }
+        public HandOffFlyoutViewFragment HandOffViewFragment { get; private set; }
+
+        public RelayCommand PlayCommand { get; private set; }
+        public RelayCommand PauseCommand { get; private set; }
+
+        public RelayCommand GoToNowPlayingPageCommand { get; private set; }
+
         public StationModel CurrentStation { get { return GetPropertyValue<StationModel>(); } private set { SetPropertyValue<StationModel>(value: value); } }
 
         public string CurrentSong { get { return GetPropertyValue<string>("CurrentSong"); } private set { SetPropertyValue<string>("CurrentSong", value); } }
@@ -31,6 +41,37 @@ namespace Neptunium.Fragments
 
         public NowPlayingViewFragment()
         {
+            SleepTimerViewFragment = new SleepTimerFlyoutViewFragment();
+            HandOffViewFragment = new HandOffFlyoutViewFragment();
+
+            PlayCommand = new RelayCommand(x =>
+            {
+                BackgroundMediaPlayer.Current.Play();
+            }, x =>
+            {
+                var currentPlayerState = BackgroundMediaPlayer.Current.PlaybackSession.PlaybackState;
+
+                return currentPlayerState != MediaPlaybackState.Buffering &&
+                currentPlayerState != MediaPlaybackState.Opening &&
+                currentPlayerState != MediaPlaybackState.Playing;
+            });
+
+            PauseCommand = new RelayCommand(x =>
+            {
+                if (BackgroundMediaPlayer.Current.PlaybackSession.CanPause)
+                    BackgroundMediaPlayer.Current.Pause();
+            }, x => { try { return BackgroundMediaPlayer.Current.PlaybackSession.CanPause; } catch (Exception) { return true; } });
+
+
+            GoToNowPlayingPageCommand = new RelayCommand(x =>
+            {
+                NavigationService inlineNavService = WindowManager.GetNavigationManagerForCurrentWindow()
+                .GetNavigationServiceFromFrameLevel(FrameLevel.Two);
+
+                if (!inlineNavService.IsNavigatedTo<NowPlayingViewViewModel>())
+                    inlineNavService.NavigateTo<NowPlayingViewViewModel>();
+            });
+
             CurrentStation = StationMediaPlayer.CurrentStation;
 
             SongManager.PreSongChanged += SongManager_PreSongChanged;

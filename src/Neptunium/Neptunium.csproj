@@ -112,6 +112,9 @@
     <Compile Include="Controls\GlassPanel.xaml.cs">
       <DependentUpon>GlassPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Fragments\NowPlayingInfoBar.xaml.cs">
+      <DependentUpon>NowPlayingInfoBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\StationItemControl.xaml.cs">
       <DependentUpon>StationItemControl.xaml</DependentUpon>
     </Compile>
@@ -306,6 +309,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\GlassPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Fragments\NowPlayingInfoBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

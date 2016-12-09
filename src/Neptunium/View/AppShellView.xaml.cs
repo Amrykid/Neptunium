@@ -5,6 +5,7 @@ using Neptunium.Fragments;
 using Neptunium.Media;
 using Neptunium.MediaSourceStream;
 using Neptunium.Services.SnackBar;
+using Neptunium.View.Fragments;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -92,7 +93,7 @@ namespace Neptunium.View
                         break;
                     case Windows.System.VirtualKey.GamepadY:
                         if (StationMediaPlayer.IsPlaying)
-                            lowerAppBarHandOffButton.Flyout.ShowAt(lowerAppBar);
+                            (lowerAppBar.Content as NowPlayingInfoBar)?.ShowHandoffFlyout();                       
                         e.Handled = true;
                         break;
                     case Windows.System.VirtualKey.GamepadX:
@@ -120,59 +121,6 @@ namespace Neptunium.View
         private void AppShellView_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
            
-        }
-
-        private async void Current_Resuming(object sender, object e)
-        {
-            await Task.Delay(500);
-
-            await App.Dispatcher.RunAsync(Crystal3.Core.IUIDispatcherPriority.Low, () =>
-            {
-                RefreshMediaButtons(BackgroundMediaPlayer.Current);
-            });
-        }
-
-        private void Current_CurrentStateChanged(MediaPlayer sender, object args)
-        {
-            App.Dispatcher.RunAsync(Crystal3.Core.IUIDispatcherPriority.Low, () =>
-            {
-                RefreshMediaButtons(sender);
-            });
-
-        }
-
-        private void RefreshMediaButtons(MediaPlayer sender)
-        {
-            if (this.DataContext != null)
-            {
-                //var upperBarBtn = upperAppBar.PrimaryCommands.First(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
-                var lowerBarBtn = lowerAppBar.PrimaryCommands.FirstOrDefault(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
-                if (lowerBarBtn == null)
-                {
-                    //its possible the command got pushed to secondary commands
-                    lowerBarBtn = lowerAppBar.SecondaryCommands.FirstOrDefault(x => (string)((FrameworkElement)x).Tag == "PlayPause") as AppBarButton;
-                }
-
-
-                switch (sender.PlaybackSession.PlaybackState)
-                {
-                    case MediaPlaybackState.Playing:
-                    case MediaPlaybackState.Opening:
-                    case MediaPlaybackState.Buffering:
-                        lowerBarBtn.Icon = new SymbolIcon(Symbol.Pause);
-                        lowerBarBtn.Label = "Pause";
-                        lowerBarBtn.Command = (this.DataContext as AppShellViewModel).PauseCommand;
-                        break;
-                    case MediaPlaybackState.Paused:
-                    case MediaPlaybackState.None:
-                    default:
-                        lowerBarBtn.Icon = new SymbolIcon(Symbol.Play);
-                        lowerBarBtn.Label = "Play";
-                        lowerBarBtn.Command = (this.DataContext as AppShellViewModel).PlayCommand;
-                        break;
-                }
-
-            }
         }
 
         private void AppShellView_NavigationServicePreNavigatedSignaled(object sender, NavigationServicePreNavigatedSignaledEventArgs e)
@@ -238,9 +186,6 @@ namespace Neptunium.View
         {
             this.SizeChanged += AppShellView_SizeChanged;
 
-            App.Current.Resuming += Current_Resuming;
-
-            BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
             HandleUI();
 
             GoHome();
@@ -259,11 +204,6 @@ namespace Neptunium.View
                 });
 
             }
-
-            App.Dispatcher.RunAsync(() =>
-            {
-                RefreshMediaButtons(BackgroundMediaPlayer.Current);
-            });
         }
 
         private void HandleUI()
@@ -288,42 +228,6 @@ namespace Neptunium.View
             Debug.WriteLine("State Change: " + (e.OldState == null ? "null" : e.OldState.Name) + " -> " + e.NewState.Name);
 
 
-        }
-
-        private void HandOffDeviceFlyout_DeviceListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            //todo turn this into a behavior.
-            var listView = sender as ListView;
-            var fragment = listView.DataContext as HandOffFlyoutViewFragment;
-
-            fragment.Invoke(this.DataContext as ViewModelBase, e.ClickedItem);
-
-            var parentGrid = listView.Parent as Grid;
-            var parentFlyout = parentGrid.Parent as FlyoutPresenter;
-            var parentPopup = parentFlyout.Parent as Popup;
-
-            parentPopup.IsOpen = false;
-        }
-
-        private void nowPlayingAppBarGrid_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            if (!inlineNavService.IsNavigatedTo<NowPlayingViewViewModel>())
-                inlineNavService.NavigateTo<NowPlayingViewViewModel>();
-        }
-
-        private void SleepTimerItemsListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            //todo turn this into a behavior.
-            var listView = sender as ListView;
-            var fragment = listView.DataContext as SleepTimerFlyoutViewFragment;
-
-            fragment.Invoke(this.DataContext as ViewModelBase, e.ClickedItem);
-
-            var parentGrid = listView.Parent as Grid;
-            var parentFlyout = parentGrid.Parent as FlyoutPresenter;
-            var parentPopup = parentFlyout.Parent as Popup;
-
-            parentPopup.IsOpen = false;
         }
 
         private async void FeedbackButton_Click(object sender, RoutedEventArgs e)

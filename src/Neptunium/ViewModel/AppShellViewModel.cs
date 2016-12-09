@@ -61,33 +61,13 @@ namespace Neptunium.ViewModel
                     InlineNavigationService.NavigateTo<SongHistoryViewModel>();
             });
 
-            PlayCommand = new RelayCommand(x =>
-            {
-                BackgroundMediaPlayer.Current.Play();
-            }, x =>
-            {
-                var currentPlayerState = BackgroundMediaPlayer.Current.PlaybackSession.PlaybackState;
-
-                return currentPlayerState != MediaPlaybackState.Buffering &&
-                currentPlayerState != MediaPlaybackState.Opening &&
-                currentPlayerState != MediaPlaybackState.Playing;
-            });
-
-            PauseCommand = new RelayCommand(x =>
-            {
-                if (BackgroundMediaPlayer.Current.PlaybackSession.CanPause)
-                    BackgroundMediaPlayer.Current.Pause();
-            }, x => { try { return BackgroundMediaPlayer.Current.PlaybackSession.CanPause; } catch (Exception) { return true; } });
-
 
             HandoffStationCommand = new ManualRelayCommand(x =>
             {
 
             });
 
-            HandOffViewFragment = new HandOffFlyoutViewFragment();
             NowPlayingView = new NowPlayingViewFragment();
-            SleepTimerViewFragment = new SleepTimerFlyoutViewFragment();
 
             WindowManager.GetStatusManagerForCurrentWindow().NormalStatusText = "Neptunium"; //"Hanasu Alpha";
         }
@@ -468,14 +448,10 @@ namespace Neptunium.ViewModel
         public RelayCommand GoToSettingsViewCommand { get; private set; }
         public RelayCommand GoToSongHistoryViewCommand { get; private set; }
 
-        public RelayCommand PlayCommand { get; private set; }
-        public RelayCommand PauseCommand { get; private set; }
-
         public ManualRelayCommand HandoffStationCommand { get; private set; }
 
-        public HandOffFlyoutViewFragment HandOffViewFragment { get; private set; }
         public NowPlayingViewFragment NowPlayingView { get; private set; }
-        public SleepTimerFlyoutViewFragment SleepTimerViewFragment { get; private set; }
+
 
         public bool ShowCarModeStatusButton
         {

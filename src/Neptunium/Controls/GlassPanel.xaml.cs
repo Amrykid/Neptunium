@@ -25,6 +25,7 @@ namespace Neptunium.Controls
     {
         private SpriteVisual glassVisual;
         private Color blurColor = Color.FromArgb(255, 245, 245, 245);
+        private Color lastBlurColor = Colors.Transparent;
 
         public GlassPanel()
         {
@@ -42,6 +43,7 @@ namespace Neptunium.Controls
             // Create a glass effect, requires Win2D NuGet package
             var glassEffect = new GaussianBlurEffect
             {
+                Name = "Blur",
                 BlurAmount = 10.0f, //original value: 15.0f
                 BorderMode = EffectBorderMode.Hard,
                 Source = new ArithmeticCompositeEffect
@@ -52,13 +54,14 @@ namespace Neptunium.Controls
                     Source1 = new CompositionEffectSourceParameter("backdropBrush"),
                     Source2 = new ColorSourceEffect
                     {
+                        Name = "NewColor",
                         Color = blurColor
                     }
                 }
             };
 
             //  Create an instance of the effect and set its source to a CompositionBackdropBrush
-            var effectFactory = compositor.CreateEffectFactory(glassEffect);
+            var effectFactory = compositor.CreateEffectFactory(glassEffect, new[] { "Blur.BlurAmount", "NewColor.Color" });
             var backdropBrush = compositor.CreateBackdropBrush();
             var effectBrush = effectFactory.CreateBrush();
 
@@ -67,6 +70,25 @@ namespace Neptunium.Controls
             // Create a Visual to contain the frosted glass effect
             glassVisual = compositor.CreateSpriteVisual();
             glassVisual.Brush = effectBrush;
+
+            if (Animate)
+            {
+                // https://blogs.windows.com/buildingapps/2016/09/12/creating-beautiful-effects-for-uwp/
+
+                ColorKeyFrameAnimation colorAnimation = compositor.CreateColorKeyFrameAnimation();
+                colorAnimation.InsertKeyFrame(0.0f, lastBlurColor);
+                colorAnimation.InsertKeyFrame(1.0f, blurColor);
+                colorAnimation.Duration = TimeSpan.FromSeconds(2);
+                effectBrush.StartAnimation("NewColor.Color", colorAnimation);
+
+                //ScalarKeyFrameAnimation blurAnimation = compositor.CreateScalarKeyFrameAnimation();
+                //blurAnimation.InsertKeyFrame(0.0f, 0.0f);
+                //blurAnimation.InsertKeyFrame(0.5f, 100.0f);
+                //blurAnimation.InsertKeyFrame(1.0f, 0.0f);
+                //blurAnimation.Duration = TimeSpan.FromSeconds(4);
+                //blurAnimation.StopBehavior = AnimationStopBehavior.SetToFinalValue;
+                //effectBrush.StartAnimation("Blur.BlurAmount", blurAnimation);
+            }
 
             // Add the blur as a child of the host in the visual tree
             ElementCompositionPreview.SetElementChildVisual(glassHost, glassVisual);
@@ -80,12 +102,15 @@ namespace Neptunium.Controls
             IsGlassOn = true;
         }
 
+        public bool Animate { get; set; } = true;
+
         public bool IsGlassOn { get; private set; }
 
         public void ChangeBlurColor(Color newColor)
         {
             if (IsGlassOn) TurnOffGlass();
 
+            lastBlurColor = blurColor;
             blurColor = newColor;
 
             TurnOnGlass();

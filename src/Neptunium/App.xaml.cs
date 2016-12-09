@@ -103,6 +103,7 @@ namespace Neptunium
             else
             {
                 Debugger.Break();
+                e.Handled = true;
             }
         }
 
@@ -214,6 +215,7 @@ namespace Neptunium
             Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/0.1 ( amrykid@gmail.com )";
 
             FragmentManager.RegisterFragmentView<StationInfoViewSongHistoryFragment, StationInfoViewSongHistoryFragmentView>();
+            FragmentManager.RegisterFragmentView<NowPlayingViewFragment, NowPlayingInfoBar>();
         }
 
         private async Task PostUIInitAsync()
