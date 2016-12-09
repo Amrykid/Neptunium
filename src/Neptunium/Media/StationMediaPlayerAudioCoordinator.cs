@@ -71,9 +71,9 @@ namespace Neptunium.Media
                         currentTrack = songInfo.Track;
                         currentArtist = songInfo.Artist;
 
-                        UpdateNowPlaying(songInfo.Track, songInfo.Artist);
-
                         metadataReceivedSub.OnNext(songInfo);
+
+                        UpdateNowPlaying(songInfo.Track, songInfo.Artist);
                     });
 
 

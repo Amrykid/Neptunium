@@ -79,8 +79,6 @@ namespace Neptunium.Media
             IsInitialized = false;
         }
 
-        public static BasicSongInfo SongMetadata { get; private set; }
-
         public static StationModel CurrentStation { get { return currentStationModel; } }
 
         public static bool IsPlaying
