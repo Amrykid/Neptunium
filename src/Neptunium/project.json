@@ -5,6 +5,8 @@
     "Microsoft.Toolkit.Uwp": "1.2.0",
     "Microsoft.Toolkit.Uwp.Notifications": "1.2.0",
     "Microsoft.Toolkit.Uwp.UI.Controls": "1.2.0",
+    "System.Reactive": "3.1.1",
+    "System.Reactive.Core": "3.1.1",
     "Win2D.uwp": "1.20.0",
     "WindowsStateTriggers": "1.1.0"
   },
