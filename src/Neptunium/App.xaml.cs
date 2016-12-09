@@ -194,6 +194,11 @@ namespace Neptunium
         {
             CookieJar.ApplicationName = "Neptunium";
 
+            Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Major + " ( amrykid@gmail.com )";
+
+            FragmentManager.RegisterFragmentView<StationInfoViewSongHistoryFragment, StationInfoViewSongHistoryFragmentView>();
+            FragmentManager.RegisterFragmentView<NowPlayingViewFragment, NowPlayingInfoBar>();
+
             await TryInitOrHealCookieContainerAsync(CookieJar.Device);
             await TryInitOrHealCookieContainerAsync(CookieJar.DeviceCache);
 
@@ -211,11 +216,6 @@ namespace Neptunium
             await StationMediaPlayer.InitializeAsync();
 
             await SongManager.InitializeAsync();
-
-            Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Major + " ( amrykid@gmail.com )";
-
-            FragmentManager.RegisterFragmentView<StationInfoViewSongHistoryFragment, StationInfoViewSongHistoryFragmentView>();
-            FragmentManager.RegisterFragmentView<NowPlayingViewFragment, NowPlayingInfoBar>();
         }
 
         private async Task PostUIInitAsync()
