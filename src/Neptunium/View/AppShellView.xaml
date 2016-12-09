@@ -94,8 +94,8 @@
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
                         <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
-                        <Setter Target="floatingSnackBarGrid.Visibility" Value="Collapsed" />
-                        <Setter Target="snackBarGrid.Visibility" Value="Visible" />
+                        <Setter Target="floatingSnackBarGrid.Visibility" Value="Visible" />
+                        <Setter Target="snackBarGrid.Visibility" Value="Collapsed" />
 
                         <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="*" />
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
@@ -134,8 +134,8 @@
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
                         <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
-                        <Setter Target="floatingSnackBarGrid.Visibility" Value="Collapsed" />
-                        <Setter Target="snackBarGrid.Visibility" Value="Visible" />
+                        <Setter Target="floatingSnackBarGrid.Visibility" Value="Visible" />
+                        <Setter Target="snackBarGrid.Visibility" Value="Collapsed" />
 
                         <Setter Target="SplitViewContentGrid_SecondRow.Height" Value="*" />
                         <Setter Target="SplitViewContentGrid_ThirdRow.Height" Value="Auto" />
