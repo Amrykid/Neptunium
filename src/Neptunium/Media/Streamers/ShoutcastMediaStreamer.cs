@@ -19,8 +19,13 @@ namespace Neptunium.Media.Streamers
 
         public MediaSource Source { get; private set; }
 
+        public StationModel CurrentStation { get; private set; }
+        public StationModelStream CurrentStream { get; private set; }
+
         public IObservable<BasicSongInfo> MetadataChanged { get; private set; }
         private Subject<BasicSongInfo> metadataSubject = null;
+
+        public IObservable<Exception> ErrorOccurred { get; private set; }
 
         private MediaSourceStream.ShoutcastMediaSourceStream shoutcastStream = null;
 
@@ -31,6 +36,8 @@ namespace Neptunium.Media.Streamers
 
             metadataSubject = new Subject<BasicSongInfo>();
             MetadataChanged = metadataSubject;
+
+            ErrorOccurred = new Subject<Exception>();
 
             IsConnected = false;
         }
@@ -47,11 +54,16 @@ namespace Neptunium.Media.Streamers
 
                 Source = MediaSource.CreateFromMediaStreamSource(shoutcastStream.MediaStreamSource);
 
+                CurrentStation = station;
+                CurrentStream = stream;
+
                 IsConnected = true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 shoutcastStream.MetadataChanged -= ShoutcastStream_MetadataChanged;
+
+                ((Subject<Exception>)ErrorOccurred).OnNext(ex);
 
                 IsConnected = false;
             }
@@ -74,6 +86,16 @@ namespace Neptunium.Media.Streamers
             }
 
             return Task.CompletedTask;
+        }
+
+        public async Task ReconnectAsync()
+        {
+            if (CurrentStream == null) throw new Exception("This streamer hasn't been connected before!");
+
+            if (IsConnected)
+                await DisconnectAsync();
+
+            await ConnectAsync(CurrentStation, CurrentStream, null);
         }
 
         public void Dispose()

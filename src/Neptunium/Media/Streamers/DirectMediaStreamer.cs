@@ -17,10 +17,15 @@ namespace Neptunium.Media.Streamers
 
         public bool IsConnected { get; private set; }
 
+        public StationModel CurrentStation { get; private set; }
+        public StationModelStream CurrentStream { get; private set; }
+
         public MediaSource Source { get; private set; }
 
         public IObservable<BasicSongInfo> MetadataChanged { get; private set; }
         private Subject<BasicSongInfo> metadataSubject = null;
+
+        public IObservable<Exception> ErrorOccurred { get; private set; }
 
         internal DirectMediaStreamer()
         {
@@ -29,6 +34,8 @@ namespace Neptunium.Media.Streamers
 
             metadataSubject = new Subject<BasicSongInfo>();
             MetadataChanged = metadataSubject;
+
+            ErrorOccurred = new Subject<Exception>();
 
             IsConnected = false;
         }
@@ -39,6 +46,9 @@ namespace Neptunium.Media.Streamers
             Source.StateChanged += Source_StateChanged;
 
             metadataSubject.OnNext(new BasicSongInfo() { Track = currentTrack, Artist = currentArtist });
+
+            CurrentStation = station;
+            CurrentStream = stream;
 
             return Task.CompletedTask;
         }
@@ -61,6 +71,13 @@ namespace Neptunium.Media.Streamers
                 DisconnectAsync().Wait();
 
 
+        }
+
+        public Task ReconnectAsync()
+        {
+            if (CurrentStream == null) throw new Exception("This streamer hasn't been connected before!");
+
+            return ConnectAsync(CurrentStation, CurrentStream);
         }
     }
 }

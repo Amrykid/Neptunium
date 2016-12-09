@@ -47,6 +47,35 @@ namespace Neptunium.Media
                 if (MetadataChanged != null)
                     MetadataChanged(null, new ShoutcastMediaSourceStreamMetadataChangedEventArgs(songInfo.Track, songInfo.Artist));
             });
+            audioCoordinator.CoordinationMessageChannel.Subscribe(message =>
+            {
+                switch(message.MessageType)
+                {
+                    case StationMediaPlayerAudioCoordinationMessageType.Reconnecting:
+                        {
+                            BackgroundAudioReconnecting?.Invoke(null, EventArgs.Empty);
+                        }
+                        break;
+                    case StationMediaPlayerAudioCoordinationMessageType.PlaybackState:
+                        {
+                            var playMsg = message as StationMediaPlayerAudioCoordinationAudioPlaybackStatusMessage;
+                        }
+                        break;
+                    default:
+                        {
+                            var errorMsg = message as StationMediaPlayerAudioCoordinationErrorMessage;
+
+                            BackgroundAudioError?.Invoke(null, new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs()
+                            {
+                                Exception = errorMsg.Exception,
+                                NetworkConnectionProfile = errorMsg.NetworkConnection,
+                                Station = audioCoordinator.CurrentStreamer?.CurrentStation
+                            });
+                        }
+                        break;
+                }
+                
+            });
 
             IsInitialized = true;
 
@@ -153,6 +182,8 @@ namespace Neptunium.Media
 
                 //should be playing at this point.
 
+                IsPlayingChanged?.Invoke(null, EventArgs.Empty);
+
                 currentStationModel = station;
 
                 currentStream = stream;
@@ -164,6 +195,14 @@ namespace Neptunium.Media
             else
             {
                 //connection error
+
+                BackgroundAudioError?.Invoke(null, new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs()
+                {
+                    Exception = new Exception("Unable to connect."),
+                    Station = station
+                });
+
+                IsPlayingChanged?.Invoke(null, EventArgs.Empty);
             }
 
 

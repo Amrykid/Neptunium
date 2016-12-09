@@ -12,10 +12,15 @@ namespace Neptunium.Media.Streamers
     {
         Task ConnectAsync(StationModel station, StationModelStream stream, IEnumerable<KeyValuePair<string, object>> props = null);
         Task DisconnectAsync();
+        Task ReconnectAsync();
+
         bool IsConnected { get; }
+        StationModel CurrentStation { get; }
+        StationModelStream CurrentStream { get; }
 
         MediaSource Source { get; }
 
         IObservable<BasicSongInfo> MetadataChanged { get; }
+        IObservable<Exception> ErrorOccurred { get; }
     }
 }

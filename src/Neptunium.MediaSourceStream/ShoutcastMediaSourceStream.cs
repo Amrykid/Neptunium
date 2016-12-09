@@ -303,6 +303,10 @@ namespace Neptunium.MediaSourceStream
 
                 return;
             }
+            else if (response.StartsWith("HTTP/1.0 404"))
+            {
+                throw new Exception("Station is unavailable.");
+            }
             else if (response.StartsWith("ICY 401")) //ICY 401 Service Unavailable
             {
                 if (MediaStreamSource != null)
