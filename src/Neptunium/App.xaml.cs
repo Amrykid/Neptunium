@@ -212,7 +212,7 @@ namespace Neptunium
 
             await SongManager.InitializeAsync();
 
-            Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/0.1 ( amrykid@gmail.com )";
+            Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Major + " ( amrykid@gmail.com )";
 
             FragmentManager.RegisterFragmentView<StationInfoViewSongHistoryFragment, StationInfoViewSongHistoryFragmentView>();
             FragmentManager.RegisterFragmentView<NowPlayingViewFragment, NowPlayingInfoBar>();
