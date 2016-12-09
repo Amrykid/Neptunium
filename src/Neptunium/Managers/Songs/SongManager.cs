@@ -141,7 +141,7 @@ namespace Neptunium.Managers.Songs
                     {
                         var artistData = musicBrainzData.Artist;
 
-                        if (artistData != null && !string.IsNullOrWhiteSpace(artistData?.ArtistID))
+                        if (artistData != null && !string.IsNullOrWhiteSpace(artistData?.ArtistImage))
                         {
                             return new Uri(artistData?.ArtistImage);
                         }
