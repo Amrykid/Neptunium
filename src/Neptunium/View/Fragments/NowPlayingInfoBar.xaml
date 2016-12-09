@@ -140,10 +140,10 @@
                         <uwpcon:ImageEx Height="60" Width="60" Stretch="Uniform" 
                                x:Name="StationLogoImg"
                                Visibility="Visible"
-                               Margin="7,2,7,0" Grid.Column="0" VerticalAlignment="Top"
+                               Margin="7,0,7,0" Grid.Column="0" VerticalAlignment="Top"
                                Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <TextBlock Grid.Column="1" Height="50">
+                        <TextBlock Grid.Column="1" Height="50" VerticalAlignment="Center">
                             <Span>
                                 <Run x:Name="TrackRun" Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" FontSize="16" />
                             </Span>
