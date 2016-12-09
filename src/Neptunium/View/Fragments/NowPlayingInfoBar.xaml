@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:conv="using:Crystal3.UI.Converters"
     xmlns:wst="using:WindowsStateTriggers"
+    xmlns:uwpcon="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -68,13 +69,15 @@
                     <VisualState.Setters>
                         <Setter Target="NowPlayingCol.Width" Value="320" />
                         <Setter Target="MediaControlCol.Width" Value="Auto" />
+
+                        <Setter Target="StationLogoImg.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
 
-                <VisualState x:Name="PhoneVisualState">
+                <VisualState x:Name="LargePhoneVisualState">
                     <VisualState.StateTriggers>
                         <wst:CompositeStateTrigger Operator="And">
-                            <wst:AdaptiveTrigger MinWindowWidth="0" />
+                            <wst:AdaptiveTrigger MinWindowWidth="480" />
                             <wst:CompositeStateTrigger Operator="Or">
                                 <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
                                 <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
@@ -84,6 +87,25 @@
                     <VisualState.Setters>
                         <Setter Target="NowPlayingCol.Width" Value="260" />
                         <Setter Target="MediaControlCol.Width" Value="Auto" />
+
+                        <Setter Target="StationLogoImg.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="SmallPhoneVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:AdaptiveTrigger MinWindowWidth="360" />
+                            <wst:CompositeStateTrigger Operator="Or">
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
+                            </wst:CompositeStateTrigger>
+                        </wst:CompositeStateTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="NowPlayingCol.Width" Value="160" />
+                        <Setter Target="MediaControlCol.Width" Value="Auto" />
+
+                        <Setter Target="StationLogoImg.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -110,8 +132,9 @@
                         </Grid.ColumnDefinitions>
 
 
-                        <Image Height="60" Width="60" Stretch="Uniform" 
+                        <uwpcon:ImageEx Height="60" Width="60" Stretch="Uniform" 
                                x:Name="StationLogoImg"
+                               Visibility="Visible"
                                Margin="7,2,7,0" Grid.Column="0" VerticalAlignment="Top"
                                Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
 
