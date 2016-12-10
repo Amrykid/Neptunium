@@ -85,14 +85,14 @@ namespace Neptunium.Managers.Songs
 
                     }
 
-                    try
-                    {
-                        metadata.ITunesData = await MetadataManager.GetITunesDataAsync(e.Title, cleanArtist);
-                    }
-                    catch (NotImplementedException)
-                    {
+                    //try
+                    //{
+                    //    metadata.ITunesData = await MetadataManager.GetITunesDataAsync(e.Title, cleanArtist);
+                    //}
+                    //catch (NotImplementedException)
+                    //{
 
-                    }
+                    //}
                 }
             }
 

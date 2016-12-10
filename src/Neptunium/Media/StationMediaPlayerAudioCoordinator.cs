@@ -52,7 +52,6 @@ namespace Neptunium.Media
             CoordinationMessageChannel = coordinationChannel;
             MetadataReceived = metadataReceivedSub;
 
-            BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
             BackgroundMediaPlayer.Current.MediaFailed += Current_MediaFailed;
         }
 
@@ -92,6 +91,8 @@ namespace Neptunium.Media
                         });
                     });
 
+                    BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+
                     return Task.CompletedTask;
                 }
 
@@ -99,6 +100,8 @@ namespace Neptunium.Media
             }
             catch (Exception ex)
             {
+                BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
+
                 return Task.FromException(ex);
             }
         }
@@ -107,8 +110,13 @@ namespace Neptunium.Media
         {
             if (CurrentStreamer != null)
             {
+                BackgroundMediaPlayer.Current.Pause();
+                BackgroundMediaPlayer.Shutdown();
+
                 await CurrentStreamer.DisconnectAsync();
                 CurrentStreamer.Dispose();
+
+                BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
             }
         }
 
@@ -189,6 +197,7 @@ namespace Neptunium.Media
 
             if (networkError)
             {
+                await Task.Delay(500); //give the system time to figure out the new network connection
                 var connectionProfile = NetworkInformation.GetInternetConnectionProfile();
 
                 if (connectionProfile != null && internetConnectionProfile != null)

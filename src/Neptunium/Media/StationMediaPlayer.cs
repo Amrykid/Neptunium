@@ -178,6 +178,8 @@ namespace Neptunium.Media
 
             if (streamer.IsConnected)
             {
+                await Task.Delay(1000); //wait a second to buffer
+
                 await audioCoordinator.BeginStreamingAsync(streamer);
 
                 //should be playing at this point.
