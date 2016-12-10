@@ -368,6 +368,13 @@ namespace Neptunium.Managers
 
                     SelectedDevice = selection;
 
+                    if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
+                        ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] = SelectedDevice.Id;
+
+
+                    //above is the source of those "A bluetooth radio is required" exceptions
+                    //if the bluetooth radio is off and BluetoothDevice.FromIdAsync is called, that exception is thrown.
+
                     btRadio = (await Radio.GetRadiosAsync()).First(x => x.Kind == RadioKind.Bluetooth);
 
                     if (btRadio.State == RadioState.On)
@@ -378,18 +385,12 @@ namespace Neptunium.Managers
                         {
                             SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
 
-                            if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
-                                ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] = SelectedDevice.Id;
-
                             SetCarModeStatus(SelectedDeviceObj.ConnectionStatus == BluetoothConnectionStatus.Connected);
                         }
                     }
                     else
                     {
                         //create the bluetooth device when the radio is turned on
-                        //above is the source of those "A bluetooth radio is required" exceptions
-                        //if the bluetooth radio is off and BluetoothDevice.FromIdAsync is called, that exception is thrown.
-                        
                         
                         btRadio.StateChanged += BtRadio_StateChanged;
                         waitingforBtRadioActivation = true;
