@@ -71,7 +71,7 @@
 
                 <Grid x:Name="BodyRow" Grid.Row="1">
                     <wnrttk:WrapPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                        <cui:FragmentContentViewer x:Name="SongHistoryPanel"
+                        <cui:FragmentContentViewer x:Name="SongHistoryPanel" XYFocusUp="{x:Bind playButton}"
                     Fragment="{Binding SongHistory, UpdateSourceTrigger=PropertyChanged}" />
                     </wnrttk:WrapPanel>
                 </Grid>
