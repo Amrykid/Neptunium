@@ -63,7 +63,7 @@ namespace Neptunium.View.Xbox
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            StationsListBox.Focus(FocusState.Pointer);
+            StationsListBox.Focus(FocusState.Programmatic);
 
             if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
             {
@@ -71,11 +71,17 @@ namespace Neptunium.View.Xbox
             }
             else
             {
-                //waits for the stations to load.
-                await this.GetViewModel<StationsViewViewModel>()
-                    .WaitForPropertyChangeAsync<object>("Stations");
+                var viewModel = this.GetViewModel<StationsViewViewModel>();
 
-                StationsListBox.SelectedIndex = 0;
+                if (viewModel != null)
+                {
+                    if (viewModel.Stations == null)
+                    {
+                        //waits for the stations to load.
+                        await viewModel.WaitForPropertyChangeAsync<object>("Stations");
+                    }
+                    StationsListBox.SelectedIndex = 0;
+                }
             }
         }
 
