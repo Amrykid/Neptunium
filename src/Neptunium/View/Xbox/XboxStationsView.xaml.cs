@@ -1,4 +1,5 @@
 ﻿using Crystal3.Navigation;
+using Crystal3.UI;
 using Neptunium.Media;
 using Neptunium.ViewModel;
 using System;
@@ -60,14 +61,20 @@ namespace Neptunium.View.Xbox
             
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             StationsListBox.Focus(FocusState.Pointer);
 
             if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
+            {
                 StationsListBox.SelectedItem = StationMediaPlayer.CurrentStation;
+            }
             else
+            {
+                await this.GetViewModel<StationsViewViewModel>().WaitForPropertyChangeAsync<object>("Stations");
+
                 StationsListBox.SelectedIndex = 0;
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
