@@ -30,10 +30,10 @@
                 <ProgressBar IsIndeterminate="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" />
 
                 <ListView x:Name="HandOffDeviceFlyout_DeviceListView" IsItemClickEnabled="True" Grid.Row="1" 
-                              ItemsSource="{Binding AvailableDevices, UpdateSourceTrigger=PropertyChanged}"
-                              DisplayMemberPath="DisplayName" ItemClick="HandOffDeviceFlyout_DeviceListView_ItemClick" 
-                              SelectionMode="None" 
-                              IsEnabled="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BToIBConv}}" />
+                          ItemsSource="{Binding AvailableDevices, UpdateSourceTrigger=PropertyChanged}"
+                          DisplayMemberPath="DisplayName" ItemClick="HandOffDeviceFlyout_DeviceListView_ItemClick" 
+                          SelectionMode="None" 
+                          IsEnabled="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BToIBConv}}" />
 
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
 
@@ -45,9 +45,9 @@
         <Flyout x:Key="SleepTimerDeviceFlyout" AllowFocusOnInteraction="True" LightDismissOverlayMode="On">
             <Grid DataContext="{Binding SleepTimerViewFragment, UpdateSourceTrigger=PropertyChanged}">
                 <ListView x:Name="SleepTimerItemsListView" Header="Stop playing music after:" IsEnabled="{Binding IsViewEnabled, UpdateSourceTrigger=PropertyChanged}"
-                              ItemsSource="{Binding AvailableSleepItems, UpdateSourceTrigger=PropertyChanged}"
-                              DisplayMemberPath="DisplayName" IsItemClickEnabled="True" ItemClick="SleepTimerItemsListView_ItemClick"
-                              SelectedItem="{Binding SelectedSleepItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                          ItemsSource="{Binding AvailableSleepItems, UpdateSourceTrigger=PropertyChanged}"
+                          DisplayMemberPath="DisplayName" IsItemClickEnabled="True" ItemClick="SleepTimerItemsListView_ItemClick"
+                          SelectedItem="{Binding SelectedSleepItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
             </Grid>
         </Flyout>
     </UserControl.Resources>
@@ -138,10 +138,11 @@
 
 
                         <uwpcon:ImageEx Height="60" Width="60" Stretch="Uniform" 
-                               x:Name="StationLogoImg"
-                               Visibility="Visible"
-                               Margin="7,0,7,0" Grid.Column="0" VerticalAlignment="Top"
-                               Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
+                                        x:Name="StationLogoImg"
+                                        IsCacheEnabled="True"
+                                        Visibility="Visible"
+                                        Margin="7,0,7,0" Grid.Column="0" VerticalAlignment="Top"
+                                        Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
 
                         <TextBlock Grid.Column="1" Height="50" VerticalAlignment="Center">
                             <Span>
@@ -163,7 +164,7 @@
                         <Setter Property="LabelPosition" Value="Collapsed" />
                     </Style>
                 </StackPanel.Resources>
-                
+
                 <AppBarButton Icon="Play" ToolTipService.ToolTip="Play" Tag="PlayPause" x:Name="PlayPauseButton" Command="{Binding PlayCommand}" />
                 <AppBarButton ToolTipService.ToolTip="Handoff" Icon="Remote" x:Name="lowerAppBarHandOffButton" Flyout="{StaticResource HandOffDeviceFlyout}" />
                 <AppBarButton ToolTipService.ToolTip="Sleep Timer" Icon="Clock" Flyout="{StaticResource SleepTimerDeviceFlyout}" />
