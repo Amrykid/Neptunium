@@ -18,13 +18,14 @@
         </Grid.RowDefinitions>
 
         <TextBlock Margin="50,0,20,0" Style="{ThemeResource SubheaderTextBlockStyle}" 
-                   Height="45" Grid.Row="0" 
+                   Height="45" Grid.Row="0"
                    Visibility="Visible" Text="Stations" x:Name="PageTitleBlock" />
 
         <ListView Grid.Row="1"
                   ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" 
-                  x:Name="StationsListBox" 
+                  x:Name="StationsListBox"
                   DataContextChanged="StationsListBox_DataContextChanged"
+                  SingleSelectionFollowsFocus="True"
                   Visibility="Visible"
                   IsItemClickEnabled="True"
                   Background="Transparent"
@@ -56,7 +57,9 @@
                             <RowDefinition Height="50" />
                         </Grid.RowDefinitions>
                         
-                        <uwpcon:ImageEx Height="125" Width="125" Grid.Row="0" Stretch="Fill" VerticalAlignment="Top" IsCacheEnabled="True">
+                        <uwpcon:ImageEx Height="125" Width="125" Grid.Row="0" Stretch="Fill" 
+                                        IsTabStop="False" AllowFocusOnInteraction="False"
+                                        VerticalAlignment="Top" IsCacheEnabled="True">
                             <uwpcon:ImageEx.Source>
                                 <BitmapImage UriSource="{Binding Logo}" />
                             </uwpcon:ImageEx.Source>

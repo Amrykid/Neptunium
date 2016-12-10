@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -27,9 +28,22 @@ namespace Neptunium.View.Xbox
     [Crystal3.Navigation.NavigationViewModel(typeof(StationsViewViewModel), NavigationViewSupportedPlatform.Xbox)]
     public sealed partial class XboxStationsView : Page
     {
+
+        private ToggleButton shellPageMenuToggleBtn = null;
         public XboxStationsView()
         {
             this.InitializeComponent();
+
+            if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.Control", "XYFocusUp"))
+            {
+                var topFrame = WindowManager.GetNavigationManagerForCurrentWindow().RootNavigationService.NavigationFrame;
+                var shellPage = topFrame.Content as AppShellView;
+                if (shellPage != null)
+                {
+                    shellPageMenuToggleBtn = shellPage.FindName("MobileTogglePaneButton") as ToggleButton;
+                    //StationsListBox.XYFocusUp = toggleBtn;
+                }
+            }
         }
 
         private void StationsListBox_ItemClick(object sender, ItemClickEventArgs e)
@@ -51,8 +65,6 @@ namespace Neptunium.View.Xbox
                 {
                     if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
                         StationsListBox.SelectedItem = StationMediaPlayer.CurrentStation;
-                    else
-                        StationsListBox.SelectedIndex = 0;
                 }
                 catch (Exception) { }
             }
