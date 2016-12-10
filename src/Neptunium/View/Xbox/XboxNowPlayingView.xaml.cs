@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -69,10 +70,17 @@ namespace Neptunium.View.Xbox
             });
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             this.Focus(FocusState.Programmatic);
             PlayPauseButton.Focus(FocusState.Programmatic);
+
+            if (StationMediaPlayer.IsPlaying)
+            {
+                //var accentColor = (Color)this.Resources["SystemAccentColor"];
+
+                GlassPanel.ChangeBlurColor(await Neptunium.Data.Stations.StationSupplementaryDataManager.GetStationLogoDominantColorAsync(StationMediaPlayer.CurrentStation));
+            }
         }
     }
 }

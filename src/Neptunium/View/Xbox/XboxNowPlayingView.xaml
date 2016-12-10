@@ -5,6 +5,7 @@
     xmlns:local="using:Neptunium.View.Xbox"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:nepcon="using:Neptunium.Controls"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
@@ -22,6 +23,9 @@
                   VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="40 0 0 40">
                 <TextBlock Text="Select a station to begin streaming." VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" FontSize="25" />
             </Grid>
+
+            <nepcon:GlassPanel x:Name="GlassPanel" />
+
             <Grid x:Name="NowPlayingInfoGrid" Margin="40 0 0 85"
                   Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
                   HorizontalAlignment="Left" VerticalAlignment="Bottom" 
