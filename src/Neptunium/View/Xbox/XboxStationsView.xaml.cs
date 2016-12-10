@@ -57,22 +57,17 @@ namespace Neptunium.View.Xbox
 
         private void StationsListBox_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            StationsListBox.Focus(FocusState.Pointer);
-
-            if (args.NewValue != null)
-            {
-                try
-                {
-                    if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
-                        StationsListBox.SelectedItem = StationMediaPlayer.CurrentStation;
-                }
-                catch (Exception) { }
-            }
+            
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             StationsListBox.Focus(FocusState.Pointer);
+
+            if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
+                StationsListBox.SelectedItem = StationMediaPlayer.CurrentStation;
+            else
+                StationsListBox.SelectedIndex = 0;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
