@@ -71,7 +71,9 @@ namespace Neptunium.View.Xbox
             }
             else
             {
-                await this.GetViewModel<StationsViewViewModel>().WaitForPropertyChangeAsync<object>("Stations");
+                //waits for the stations to load.
+                await this.GetViewModel<StationsViewViewModel>()
+                    .WaitForPropertyChangeAsync<object>("Stations");
 
                 StationsListBox.SelectedIndex = 0;
             }
