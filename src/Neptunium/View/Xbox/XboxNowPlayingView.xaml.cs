@@ -41,9 +41,6 @@ namespace Neptunium.View.Xbox
             StationMediaPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
             SetPlaybackButtonState(StationMediaPlayer.PlaybackSession);
 
-            if (this.Focus(FocusState.Programmatic))
-                PlayPauseButton.Focus(FocusState.Pointer);
-
             base.OnNavigatedTo(e);
         }
 
@@ -70,6 +67,12 @@ namespace Neptunium.View.Xbox
                         break;
                 }
             });
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.Focus(FocusState.Programmatic);
+            PlayPauseButton.Focus(FocusState.Programmatic);
         }
     }
 }
