@@ -42,21 +42,31 @@ namespace Neptunium.Managers.Songs
         {
             ITunesSongMetadata metadata = new ITunesSongMetadata();
 
-            var albumData = await ITunes.TryFindAlbumAsync(track, artist);
-            if (albumData != null)
-            {
-                metadata.Album = albumData;
-            }
+            AlbumData albumData = null;
 
-            if (albumData != null)
+            try
             {
-                //get the artist via artist id
-                metadata.Artist = await ITunes.GetArtistAsync(albumData.ArtistID);
+                albumData = await ITunes.TryFindAlbumAsync(track, artist);
+                if (albumData != null)
+                {
+                    metadata.Album = albumData;
+                }
             }
-            else
+            catch (Hqub.MusicBrainz.API.HttpClientException) { }
+
+            try
             {
-                metadata.Artist = await ITunes.TryFindArtistAsync(artist);
+                if (albumData != null)
+                {
+                    //get the artist via artist id
+                    metadata.Artist = await ITunes.GetArtistAsync(albumData.ArtistID);
+                }
+                else
+                {
+                    metadata.Artist = await ITunes.TryFindArtistAsync(artist);
+                }
             }
+            catch (Hqub.MusicBrainz.API.HttpClientException) { }
 
             return metadata;
         }
