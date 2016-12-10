@@ -79,8 +79,8 @@ namespace Neptunium.Fragments
             StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
 
-            if (StationMediaPlayer.SongMetadata != null)
-                SongMetadata = StationMediaPlayer.SongMetadata.Track + " by " + StationMediaPlayer.SongMetadata.Artist;
+            if (SongManager.CurrentSong != null)
+                SongMetadata = SongManager.CurrentSong.Track + " by " + SongManager.CurrentSong.Artist;
         }
 
         private async void SongManager_PreSongChanged(object sender, SongManagerSongChangedEventArgs e)

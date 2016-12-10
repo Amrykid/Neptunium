@@ -112,6 +112,11 @@
     <Compile Include="Controls\GlassPanel.xaml.cs">
       <DependentUpon>GlassPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Media\StationMediaPlayerAudioCoordinator.cs" />
+    <Compile Include="Media\Streamers\DirectMediaStreamer.cs" />
+    <Compile Include="Media\Streamers\IMediaStreamer.cs" />
+    <Compile Include="Media\Streamers\ShoutcastMediaStreamer.cs" />
+    <Compile Include="Media\Streamers\StreamerFactory.cs" />
     <Compile Include="View\Fragments\NowPlayingInfoBar.xaml.cs">
       <DependentUpon>NowPlayingInfoBar.xaml</DependentUpon>
     </Compile>
@@ -147,7 +152,7 @@
     <Compile Include="Model\SongHistoryItem.cs" />
     <Compile Include="Managers\Songs\Song History\SongHistoryManager.cs" />
     <Compile Include="Managers\Songs\SongMetadataManager.cs" />
-    <Compile Include="Media\ShoutcastSongInfo.cs" />
+    <Compile Include="Media\BasicSongInfo.cs" />
     <Compile Include="Media\StationMediaPlayer.cs" />
     <Compile Include="Media\StationMediaPlayerConnectingStatusChangedEventArgs.cs" />
     <Compile Include="Data\ShoutcastInformationService.cs" />

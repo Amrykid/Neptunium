@@ -104,19 +104,21 @@ namespace Neptunium.ViewModel
             StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
 
-            if (StationMediaPlayer.SongMetadata != null)
+            if (Neptunium.Managers.Songs.SongManager.CurrentSong != null)
             {
-                CurrentSong = StationMediaPlayer.SongMetadata.Track;
-                CurrentArtist = StationMediaPlayer.SongMetadata.Artist;
+                var song = Neptunium.Managers.Songs.SongManager.CurrentSong;
 
-                SongMetadata = StationMediaPlayer.SongMetadata.Track + " by " + StationMediaPlayer.SongMetadata.Artist;
+                CurrentSong = song.Track;
+                CurrentArtist = song.Artist;
+
+                SongMetadata = song.Track + " by " + song.Artist;
 
                 if (App.GetDevicePlatform() != Platform.Xbox)
                     if (!App.IsUnrestrictiveInternetConnection()) return;
 
-                if (SongManager.CurrentSong != null)
+                if (song != null)
                 {
-                    var songBackground = await SongManager.GetSongBackgroundAsync(SongManager.CurrentSong);
+                    var songBackground = await SongManager.GetSongBackgroundAsync(song);
                     if (songBackground != null)
                         NowPlayingBackgroundImage = songBackground.ToString();
                 }

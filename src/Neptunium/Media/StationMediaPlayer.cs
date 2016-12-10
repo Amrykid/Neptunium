@@ -20,23 +20,19 @@ using Microsoft.HockeyApp;
 using Microsoft.HockeyApp.DataContracts;
 using Windows.Media.Core;
 using Windows.Networking.Connectivity;
+using Neptunium.Media.Streamers;
 
 namespace Neptunium.Media
 {
     public static class StationMediaPlayer
     {
-        private static ShoutcastMediaSourceStream currentStationMSSWrapper = null;
-        private static string currentTrack = "Title";
-        private static string currentArtist = "Artist";
+        private static StationMediaPlayerAudioCoordinator audioCoordinator = null;
         private static StationModelStreamServerType currentStationServerType;
         private static StationModelStream currentStream = null;
 
         private static StationModel currentStationModel = null;
-        private static SystemMediaTransportControls smtc;
 
         private static SemaphoreSlim playStationResetEvent = new SemaphoreSlim(1);
-
-        private static ConnectionProfile internetConnectionProfile = null;
 
 
         public static bool IsInitialized { get; private set; }
@@ -45,23 +41,41 @@ namespace Neptunium.Media
         {
             if (IsInitialized) return;
 
-            smtc = BackgroundMediaPlayer.Current.SystemMediaTransportControls;
-            smtc.ButtonPressed += Smtc_ButtonPressed;
-            smtc.PropertyChanged += Smtc_PropertyChanged;
+            audioCoordinator = new StationMediaPlayerAudioCoordinator();
+            audioCoordinator.MetadataReceived.Subscribe(songInfo =>
+            {
+                if (MetadataChanged != null)
+                    MetadataChanged(null, new ShoutcastMediaSourceStreamMetadataChangedEventArgs(songInfo.Track, songInfo.Artist));
+            });
+            audioCoordinator.CoordinationMessageChannel.Subscribe(message =>
+            {
+                switch(message.MessageType)
+                {
+                    case StationMediaPlayerAudioCoordinationMessageType.Reconnecting:
+                        {
+                            BackgroundAudioReconnecting?.Invoke(null, EventArgs.Empty);
+                        }
+                        break;
+                    case StationMediaPlayerAudioCoordinationMessageType.PlaybackState:
+                        {
+                            var playMsg = message as StationMediaPlayerAudioCoordinationAudioPlaybackStatusMessage;
+                        }
+                        break;
+                    default:
+                        {
+                            var errorMsg = message as StationMediaPlayerAudioCoordinationErrorMessage;
 
-
-            smtc.IsChannelDownEnabled = false;
-            smtc.IsChannelUpEnabled = false;
-            smtc.IsFastForwardEnabled = false;
-            smtc.IsNextEnabled = false;
-            smtc.IsPauseEnabled = true;
-            smtc.IsPlayEnabled = true;
-            smtc.IsPreviousEnabled = false;
-            smtc.IsRecordEnabled = false;
-            smtc.IsRewindEnabled = false;
-            smtc.IsStopEnabled = false;
-
-            BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+                            BackgroundAudioError?.Invoke(null, new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs()
+                            {
+                                Exception = errorMsg.Exception,
+                                NetworkConnectionProfile = errorMsg.NetworkConnection,
+                                Station = audioCoordinator.CurrentStreamer?.CurrentStation
+                            });
+                        }
+                        break;
+                }
+                
+            });
 
             IsInitialized = true;
 
@@ -80,28 +94,6 @@ namespace Neptunium.Media
                 BackgroundMediaPlayer.Current.Play();
         }
 
-        private static void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
-        {
-            switch (sender.PlaybackState)
-            {
-                case MediaPlaybackState.None:
-                    smtc.PlaybackStatus = MediaPlaybackStatus.Closed;
-                    break;
-                case MediaPlaybackState.Opening:
-                    smtc.PlaybackStatus = MediaPlaybackStatus.Changing;
-                    break;
-                case MediaPlaybackState.Paused:
-                    smtc.PlaybackStatus = MediaPlaybackStatus.Paused;
-                    break;
-                case MediaPlaybackState.Playing:
-                    smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
-                    break;
-            }
-
-            if (IsPlayingChanged != null)
-                IsPlayingChanged(null, EventArgs.Empty);
-        }
-
         public static MediaPlaybackSession PlaybackSession
         {
             get { return BackgroundMediaPlayer.Current?.PlaybackSession; }
@@ -111,61 +103,10 @@ namespace Neptunium.Media
         {
             if (!IsInitialized) return;
 
-            smtc.ButtonPressed -= Smtc_ButtonPressed;
-            smtc.PropertyChanged -= Smtc_PropertyChanged;
-
-            BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
+            audioCoordinator.Dispose();
 
             IsInitialized = false;
         }
-
-        private static void Smtc_PropertyChanged(SystemMediaTransportControls sender, SystemMediaTransportControlsPropertyChangedEventArgs args)
-        {
-            switch (args.Property)
-            {
-                case SystemMediaTransportControlsProperty.SoundLevel:
-                    break;
-            }
-        }
-
-        private static void Smtc_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
-        {
-            switch (args.Button)
-            {
-                case SystemMediaTransportControlsButton.Play:
-                    Debug.WriteLine("UVC play button pressed");
-                    try
-                    {
-                        BackgroundMediaPlayer.Current.Play();
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                    }
-                    break;
-                case SystemMediaTransportControlsButton.Pause:
-                    Debug.WriteLine("UVC pause button pressed");
-                    try
-                    {
-                        BackgroundMediaPlayer.Current.Pause();
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                    }
-                    break;
-                case SystemMediaTransportControlsButton.Next:
-                    Debug.WriteLine("UVC next button pressed");
-
-                    break;
-                case SystemMediaTransportControlsButton.Previous:
-                    Debug.WriteLine("UVC previous button pressed");
-
-                    break;
-            }
-        }
-
-        public static ShoutcastSongInfo SongMetadata { get; private set; }
 
         public static StationModel CurrentStation { get { return currentStationModel; } }
 
@@ -214,8 +155,6 @@ namespace Neptunium.Media
             }
         }
 
-        //public static ShoutcastStationInfo StationInfoFromStream { get { return currentStationMSSWrapper?.StationInfo; } }
-
         public static async Task<bool> PlayStationAsync(StationModel station)
         {
             if (station == currentStationModel && IsPlaying) return true;
@@ -225,165 +164,52 @@ namespace Neptunium.Media
 
             TracePlayStationAsyncCall(station);
 
-            ShoutcastMediaSourceStream lastStream = null;
-
-
-            if (currentStationMSSWrapper != null && (currentStationServerType == StationModelStreamServerType.Shoutcast || currentStationServerType == StationModelStreamServerType.Icecast))
-            {
-                currentStationMSSWrapper.StationInfoChanged -= CurrentStationMSSWrapper_StationInfoChanged;
-                currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
-
-                if (currentStationMSSWrapper.MediaStreamSource != null)
-                    currentStationMSSWrapper.MediaStreamSource.Closed -= MediaStreamSource_Closed;
-
-                if (IsPlaying)
-                {
-                    BackgroundMediaPlayer.Current.Pause();
-                }
-            }
+            await audioCoordinator.StopStreamingCurrentStreamerAsync();
 
             if (ConnectingStatusChanged != null)
                 ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(true));
 
-            currentStationModel = station;
-
-            //TODO use a combo of events+anon-delegates and TaskCompletionSource to detect play back errors here to seperate connection errors from long-running audio errors.
-            //handle error when connecting.
 
             var stream = station.Streams.First();
 
-            currentStream = stream;
+            var streamer = StreamerFactory.CreateStreamerFromServerType(stream.ServerType);
 
-            currentStationServerType = stream.ServerType;
+            await streamer.ConnectAsync(station, stream, null);
 
-            if (currentStationServerType == StationModelStreamServerType.Direct)
+            if (streamer.IsConnected)
             {
-                try
-                {
-#pragma warning disable CS0618 // Type or member is obsolete
-                    BackgroundMediaPlayer.Current.SetUriSource(new Uri(stream.Url));
-#pragma warning restore CS0618 // Type or member is obsolete
+                await audioCoordinator.BeginStreamingAsync(streamer);
 
-                    BackgroundMediaPlayer.Current.Play();
+                //should be playing at this point.
 
-                    internetConnectionProfile = NetworkInformation.GetInternetConnectionProfile();
+                IsPlayingChanged?.Invoke(null, EventArgs.Empty);
 
-                    currentTrack = "Unknown Song";
-                    currentArtist = "Unknown Artist";
+                currentStationModel = station;
 
-                    UpdateNowPlaying(currentTrack, currentArtist);
+                currentStream = stream;
 
-                    if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+                currentStationServerType = stream.ServerType;
 
-                    if (ConnectingStatusChanged != null)
-                        ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
-                }
-                catch (Exception ex)
-                {
-                    playStationResetEvent.Release();
-
-                    currentStream = null;
-                    internetConnectionProfile = null;
-
-                    if (ConnectingStatusChanged != null)
-                        ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
-
-                    HockeyClient.Current.TrackException(ex);
-
-                    return false;
-                }
+                if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
             }
-            else if (currentStationServerType == StationModelStreamServerType.Shoutcast
-                    || currentStationServerType == StationModelStreamServerType.Radionomy
-                    || currentStationServerType == StationModelStreamServerType.Icecast)
+            else
             {
-                currentStationMSSWrapper = new ShoutcastMediaSourceStream(new Uri(stream.Url.Trim()), ConvertServerTypeToMediaServerType(currentStationServerType));
+                //connection error
 
-                currentStationMSSWrapper.MetadataChanged += CurrentStationMSSWrapper_MetadataChanged;
-                currentStationMSSWrapper.StationInfoChanged += CurrentStationMSSWrapper_StationInfoChanged;
-
-
-                try
+                BackgroundAudioError?.Invoke(null, new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs()
                 {
-                    Action CleanUp = () =>
-                    {
-                        currentStationMSSWrapper.StationInfoChanged -= CurrentStationMSSWrapper_StationInfoChanged;
-                        currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
+                    Exception = new Exception("Unable to connect."),
+                    Station = station
+                });
 
-                        if (currentStationMSSWrapper.MediaStreamSource != null)
-                            currentStationMSSWrapper.MediaStreamSource.Closed -= MediaStreamSource_Closed;
-
-
-                        currentStream = null;
-                        internetConnectionProfile = null;
-                    };
-
-                    var connectTask = currentStationMSSWrapper.ConnectAsync(stream.SampleRate, stream.RelativePath);
-                    var timeoutTask = Task.Delay(10000);
-                    var resultTask = await Task.WhenAny(connectTask, timeoutTask);
-                    if (resultTask == connectTask)
-                    {
-                        if (await connectTask != null)
-                        {
-#pragma warning disable CS0618 // Type or member is obsolete
-                            BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
-#pragma warning restore CS0618 // Type or member is obsolete
-
-                            BackgroundMediaPlayer.Current.Play();
-
-                            internetConnectionProfile = NetworkInformation.GetInternetConnectionProfile();
-
-                            currentStationMSSWrapper.MediaStreamSource.Closed += MediaStreamSource_Closed;
-
-                            currentTrack = "Unknown Song";
-                            currentArtist = "Unknown Artist";
-
-                            //UpdateNowPlaying(currentTrack, currentArtist);
-                            SongMetadata = null;
-
-                            if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
-                        }
-                        else
-                        {
-                            CleanUp();
-                        }
-                    }
-                    else
-                    {
-                        CleanUp();
-
-                        //timeout.
-
-                        if (BackgroundAudioError != null)
-                            BackgroundAudioError(null, new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs() { Station = station, Exception = new Exception("Timed out") });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    currentStationMSSWrapper.StationInfoChanged -= CurrentStationMSSWrapper_StationInfoChanged;
-                    currentStationMSSWrapper.MetadataChanged -= CurrentStationMSSWrapper_MetadataChanged;
-
-                    if (currentStationMSSWrapper.MediaStreamSource != null)
-                        currentStationMSSWrapper.MediaStreamSource.Closed -= MediaStreamSource_Closed;
-
-#if !DEBUG
-                    HockeyClient.Current.TrackException(ex);
-#endif
-
-                    if (BackgroundAudioError != null)
-                        BackgroundAudioError(null, new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs() { Station = station, Exception = ex });
-                }
-
-                if (lastStream != null) lastStream.Disconnect();
+                IsPlayingChanged?.Invoke(null, EventArgs.Empty);
             }
+
 
             if (ConnectingStatusChanged != null)
                 ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
 
             playStationResetEvent.Release();
-
-            if (IsPlaying)
-                UpdateThumbnail(station);
 
             return IsPlaying;
         }
@@ -396,153 +222,6 @@ namespace Neptunium.Media
             et.Properties.Add("Station", station.Name);
             HockeyClient.Current.TrackEvent(et);
 #endif
-        }
-
-        private static async void CurrentStationMSSWrapper_StationInfoChanged(object sender, EventArgs e)
-        {
-            //show a message from the station if any. usually this only applies to radionomy stations.
-            if (currentStationMSSWrapper != null)
-            {
-                if (currentStationMSSWrapper.StationInfo != null)
-                {
-                    var station = currentStationMSSWrapper.StationInfo;
-                    if (!string.IsNullOrWhiteSpace(station.StationDescription))
-                        await IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync(station.StationName + " - " + station.StationDescription, 6000);
-                }
-            }
-        }
-
-        private static ShoutcastServerType ConvertServerTypeToMediaServerType(StationModelStreamServerType currentStationServerType)
-        {
-            switch (currentStationServerType)
-            {
-                case StationModelStreamServerType.Shoutcast:
-                    return ShoutcastServerType.Shoutcast;
-                case StationModelStreamServerType.Radionomy:
-                    return ShoutcastServerType.Radionomy;
-                default:
-                    return ShoutcastServerType.Shoutcast;
-            }
-        }
-
-        private static void UpdateThumbnail(StationModel station)
-        {
-            if (!string.IsNullOrWhiteSpace(station.Logo))
-            {
-                try
-                {
-                    smtc.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(station.Logo));
-                    smtc.DisplayUpdater.Update();
-                }
-                catch (Exception) { }
-            }
-        }
-
-        private static async void MediaStreamSource_Closed(Windows.Media.Core.MediaStreamSource sender, Windows.Media.Core.MediaStreamSourceClosedEventArgs args)
-        {
-            sender.Closed -= MediaStreamSource_Closed;
-
-            //if the connection is different from before, try and reconnect automatically.
-            await Task.Delay(1000); //give system time to update
-            var profile = NetworkInformation.GetInternetConnectionProfile();
-            if (internetConnectionProfile != null && profile != null && args.Request.Reason == MediaStreamSourceClosedReason.AppReportedError)
-            {
-                if (internetConnectionProfile.ProfileName != profile.ProfileName)
-                {
-                    //networks changed. e.g. we dropped from wifi and went cellular
-
-                    var cost = profile.GetConnectionCost();
-
-                    bool unrestrictive = cost.NetworkCostType == NetworkCostType.Unrestricted
-                        || (cost.NetworkCostType == NetworkCostType.Fixed && cost.ApproachingDataLimit == false);
-
-                    if (unrestrictive)
-                    {
-                        //we should be good to go with reconnecting.
-
-                        if (currentStationMSSWrapper != null)
-                        {
-                            if (BackgroundAudioReconnecting != null)
-                                BackgroundAudioReconnecting(null, EventArgs.Empty);
-
-                            try
-                            {
-                                await currentStationMSSWrapper.ReconnectAsync();
-
-#pragma warning disable CS0618 // Type or member is obsolete
-                                BackgroundMediaPlayer.Current.SetMediaSource(currentStationMSSWrapper.MediaStreamSource);
-#pragma warning restore CS0618 // Type or member is obsolete
-                                BackgroundMediaPlayer.Current.Play();
-                            }
-                            catch (Exception)
-                            {
-                                //reconnect fail
-                                //todo show message
-                            }
-
-                            currentStationMSSWrapper.MediaStreamSource.Closed += MediaStreamSource_Closed;             
-                        }
-
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                switch (args.Request.Reason)
-                {
-                    case Windows.Media.Core.MediaStreamSourceClosedReason.Done:
-                        break;
-                    default:
-                        if (BackgroundAudioError != null)
-                            BackgroundAudioError(null,
-                                new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs()
-                                {
-                                    Station = CurrentStation,
-                                    Exception = new Exception("Reason: " + Enum.GetName(typeof(MediaStreamSourceClosedReason), args.Request.Reason)),
-                                    ClosedReason = args.Request.Reason,
-                                    NetworkConnectionProfile = internetConnectionProfile
-                                });
-                        break;
-                }
-            }
-
-            EventTelemetry et = new EventTelemetry("MediaStreamSource_Closed");
-            et.Properties.Add("Reason", Enum.GetName(typeof(MediaStreamSourceClosedReason), args.Request.Reason));
-            HockeyClient.Current.TrackEvent(et);
-        }
-
-        private static void CurrentStationMSSWrapper_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
-        {
-            currentArtist = e.Artist;
-            currentTrack = e.Title;
-
-            UpdateNowPlaying(e.Title, e.Artist);
-        }
-
-        private static void UpdateNowPlaying(string currentTrack, string currentArtist)
-        {
-            SongMetadata = new ShoutcastSongInfo() { Track = currentTrack, Artist = currentArtist };
-
-            try
-            {
-                smtc.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
-                smtc.DisplayUpdater.MusicProperties.Title = currentTrack;
-                smtc.DisplayUpdater.MusicProperties.Artist = currentArtist;
-
-                smtc.DisplayUpdater.AppMediaId = currentStationModel.Name;
-
-                smtc.DisplayUpdater.Update();
-            }
-            catch (Exception) { }
-
-            if (MetadataChanged != null)
-                MetadataChanged(null, new ShoutcastMediaSourceStreamMetadataChangedEventArgs(currentTrack, currentArtist));
-
-            EventTelemetry et = new EventTelemetry("UpdateNowPlaying");
-            et.Properties.Add("CurrentTrack", currentTrack);
-            et.Properties.Add("CurrentArtist", currentArtist);
-            HockeyClient.Current.TrackEvent(et);
         }
 
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;

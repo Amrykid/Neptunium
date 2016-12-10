@@ -369,7 +369,7 @@ namespace Neptunium.ViewModel
 
             TileBindingContentAdaptive bindingContent = null;
 
-            if (StationMediaPlayer.IsPlaying && StationMediaPlayer.SongMetadata != null)
+            if (StationMediaPlayer.IsPlaying && SongManager.CurrentSong != null)
             {
                 bindingContent = new TileBindingContentAdaptive()
                 {
