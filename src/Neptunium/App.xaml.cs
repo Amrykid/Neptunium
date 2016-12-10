@@ -95,8 +95,12 @@ namespace Neptunium
         {
             if (!Debugger.IsAttached)
             {
-                HockeyClient.Current.TrackException(e.Exception);
-                HockeyClient.Current.Flush();
+                try
+                {
+                    HockeyClient.Current.TrackException(e.Exception);
+                    HockeyClient.Current.Flush();
+                }
+                catch (NullReferenceException) { }
 
                 e.Handled = true;
             }
