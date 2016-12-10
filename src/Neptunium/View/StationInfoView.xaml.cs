@@ -82,7 +82,7 @@ namespace Neptunium.View
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
             {
                 this.Focus(FocusState.Programmatic);
-                playButton.Focus(FocusState.Pointer);
+                playButton.Focus(FocusState.Programmatic);
             }
         }
 
