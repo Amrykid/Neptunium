@@ -38,6 +38,7 @@ namespace Neptunium.Managers
         private static VoiceInformation japaneseFemaleVoice = null;
         private static RadioAccessStatus radioAccess = RadioAccessStatus.Unspecified;
         private static Radio btRadio = null; //Since this is a mobile only feature, it is safe to assume there is only 1 bluetooth radio.
+        private static volatile bool waitingforBtRadioActivation = false;
 
         private static string lastPlayedSongMetadata = null;
 
@@ -122,6 +123,7 @@ namespace Neptunium.Managers
                             else
                             {
                                 btRadio.StateChanged += BtRadio_StateChanged;
+                                waitingforBtRadioActivation = true;
                             }
                         }
                     }
@@ -172,6 +174,7 @@ namespace Neptunium.Managers
         private static async void BtRadio_StateChanged(Radio sender, object args)
         {
             await btRadioStateChangeLock.WaitAsync();
+
             await App.Dispatcher.RunAsync(() =>
             {
                 btRadio.StateChanged -= BtRadio_StateChanged; //event is fired twice for some reason so we're trying to throttle it.
@@ -191,7 +194,7 @@ namespace Neptunium.Managers
                     //todo check if re-enabling bluetooth after disabling it after this initialization still allows us to detect status changes
                 }
             }
-
+            waitingforBtRadioActivation = false;
             btRadioStateChangeLock.Release();
         }
 
@@ -365,16 +368,31 @@ namespace Neptunium.Managers
 
                     SelectedDevice = selection;
 
-                    SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
+                    btRadio = (await Radio.GetRadiosAsync()).First(x => x.Kind == RadioKind.Bluetooth);
 
-                    if (SelectedDeviceObj != null)
+                    if (btRadio.State == RadioState.On)
                     {
-                        SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
+                        SelectedDeviceObj = await BluetoothDevice.FromIdAsync(SelectedDevice.Id);
 
-                        if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
-                            ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] = SelectedDevice.Id;
+                        if (SelectedDeviceObj != null)
+                        {
+                            SelectedDeviceObj.ConnectionStatusChanged += SelectedDeviceObj_ConnectionStatusChanged;
 
-                        SetCarModeStatus(SelectedDeviceObj.ConnectionStatus == BluetoothConnectionStatus.Connected);
+                            if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SelectedCarDevice))
+                                ApplicationData.Current.LocalSettings.Values[SelectedCarDevice] = SelectedDevice.Id;
+
+                            SetCarModeStatus(SelectedDeviceObj.ConnectionStatus == BluetoothConnectionStatus.Connected);
+                        }
+                    }
+                    else
+                    {
+                        //create the bluetooth device when the radio is turned on
+                        //above is the source of those "A bluetooth radio is required" exceptions
+                        //if the bluetooth radio is off and BluetoothDevice.FromIdAsync is called, that exception is thrown.
+                        
+                        
+                        btRadio.StateChanged += BtRadio_StateChanged;
+                        waitingforBtRadioActivation = true;
                     }
                 }
             }
