@@ -102,6 +102,9 @@ namespace Neptunium.Media.Streamers
         {
             if (IsConnected)
                 DisconnectAsync().Wait();
+
+            metadataSubject.OnCompleted();
+            ((Subject<Exception>)ErrorOccurred).OnCompleted();
         }
 
         private static ShoutcastServerType ConvertServerTypeToMediaServerType(StationModelStreamServerType currentStationServerType)

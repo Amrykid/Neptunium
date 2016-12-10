@@ -70,7 +70,8 @@ namespace Neptunium.Media.Streamers
             if (IsConnected)
                 DisconnectAsync().Wait();
 
-
+            metadataSubject.OnCompleted();
+            ((Subject<Exception>)ErrorOccurred).OnCompleted();
         }
 
         public Task ReconnectAsync()
