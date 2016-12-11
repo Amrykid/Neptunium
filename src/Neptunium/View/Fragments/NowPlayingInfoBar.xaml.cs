@@ -98,6 +98,7 @@ namespace Neptunium.View.Fragments
                 NowPlayingViewFragment fragment = sender as NowPlayingViewFragment;
                 if (fragment.CurrentStation != null)
                 {
+                    //todo make this a setting
                     var color = await StationSupplementaryDataManager.GetStationLogoDominantColorAsync(fragment.CurrentStation);
                     PART_GlassPane.ChangeBlurColor(color);
                 }
