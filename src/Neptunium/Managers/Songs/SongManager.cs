@@ -64,6 +64,8 @@ namespace Neptunium.Managers.Songs
                 Metadata = metadata,
             });
 
+            CurrentSong = metadata;
+
             string storageKey = "SONG|" + metadata.GetHashCode();
 
             bool cachedSong = false;
@@ -95,8 +97,6 @@ namespace Neptunium.Managers.Songs
                     //}
                 }
             }
-
-            CurrentSong = metadata;
 
             SongChanged?.Invoke(null, new SongManagerSongChangedEventArgs()
             {
