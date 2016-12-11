@@ -59,6 +59,11 @@ namespace Neptunium.Media
                     case StationMediaPlayerAudioCoordinationMessageType.PlaybackState:
                         {
                             var playMsg = message as StationMediaPlayerAudioCoordinationAudioPlaybackStatusMessage;
+
+                            if (playMsg != null)
+                            {
+                                IsPlaying = playMsg.PlaybackState == MediaPlaybackState.Playing;
+                            }
                         }
                         break;
                     default:
@@ -110,13 +115,21 @@ namespace Neptunium.Media
 
         public static StationModel CurrentStation { get { return currentStationModel; } }
 
+        private static bool _isPlaying = false;
         public static bool IsPlaying
         {
             get
             {
-                var state = BackgroundMediaPlayer.Current.PlaybackSession.PlaybackState;
+                return _isPlaying;
+            }
+            private set
+            {
+                if (_isPlaying != value)
+                {
+                    _isPlaying = value;
 
-                return state == MediaPlaybackState.Opening || state == MediaPlaybackState.Playing || state == MediaPlaybackState.Buffering;
+                    IsPlayingChanged?.Invoke(null, EventArgs.Empty);
+                }
             }
         }
 

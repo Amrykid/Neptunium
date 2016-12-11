@@ -1,6 +1,7 @@
 ﻿using Crystal3.Model;
 using Neptunium.Data.Stations;
 using Neptunium.Fragments;
+using Neptunium.Media;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,29 +33,43 @@ namespace Neptunium.View.Fragments
             PART_GlassPane.Animate = true;
 
             App.Current.Resuming += Current_Resuming;
-            BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+            //BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+            StationMediaPlayer.IsPlayingChanged += StationMediaPlayer_IsPlayingChanged;
 
             this.RegisterPropertyChangedCallback(DataContextProperty, HandleNowPlayingInfoContextChanged);
 
             var accentColor = (Color)this.Resources["SystemAccentColor"];
             PART_GlassPane.ChangeBlurColor(accentColor);
 
-            RefreshMediaButtons(BackgroundMediaPlayer.Current);
+            RefreshMediaButtonsFromMediaPlayer(BackgroundMediaPlayer.Current);
+        }
+
+        private void StationMediaPlayer_IsPlayingChanged(object sender, EventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                RefreshMediaButtons();
+            });
         }
 
         private void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
         {
-            App.Dispatcher.RunAsync(() =>
-            {
-                RefreshMediaButtons(BackgroundMediaPlayer.Current);
-            });
+            //App.Dispatcher.RunWhenIdleAsync(() =>
+            //{
+            //    RefreshMediaButtonsFromMediaPlayer(BackgroundMediaPlayer.Current);
+            //});
         }
 
         private void Current_Resuming(object sender, object e)
         {
-            App.Dispatcher.RunAsync(() =>
+            //App.Dispatcher.RunWhenIdleAsync(() =>
+            //{
+            //    RefreshMediaButtonsFromMediaPlayer(BackgroundMediaPlayer.Current);
+            //});
+
+            App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                RefreshMediaButtons(BackgroundMediaPlayer.Current);
+                RefreshMediaButtons();
             });
         }
 
@@ -131,7 +146,7 @@ namespace Neptunium.View.Fragments
             set { SetValue(NowPlayingInfoButtonCommandProperty, value); }
         }
 
-        public void RefreshMediaButtons(MediaPlayer sender)
+        public void RefreshMediaButtonsFromMediaPlayer(MediaPlayer sender)
         {
             if (this.DataContext != null)
             {
@@ -155,6 +170,31 @@ namespace Neptunium.View.Fragments
                             PlayPauseButton.SetValue(ToolTipService.ToolTipProperty, "Play");
                             PlayPauseButton.Command = fragment.PlayCommand;
                             break;
+                    }
+                }
+
+            }
+        }
+
+        public void RefreshMediaButtons()
+        {
+            if (this.DataContext != null)
+            {
+                var fragment = this.DataContext as NowPlayingViewFragment;
+
+                if (fragment != null)
+                {
+                    if (StationMediaPlayer.IsPlaying)
+                    {
+                        PlayPauseButton.Icon = new SymbolIcon(Symbol.Pause);
+                        PlayPauseButton.SetValue(ToolTipService.ToolTipProperty, "Pause");
+                        PlayPauseButton.Command = fragment.PauseCommand;
+                    }
+                    else
+                    {
+                        PlayPauseButton.Icon = new SymbolIcon(Symbol.Play);
+                        PlayPauseButton.SetValue(ToolTipService.ToolTipProperty, "Play");
+                        PlayPauseButton.Command = fragment.PlayCommand;
                     }
                 }
 
