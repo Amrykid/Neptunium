@@ -142,17 +142,16 @@
                                         IsCacheEnabled="True"
                                         Visibility="Visible"
                                         Margin="7,0,7,0" Grid.Column="0" VerticalAlignment="Top"
-                                        Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}" />
+                                        Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}">
+                        </uwpcon:ImageEx>
 
-                        <TextBlock Grid.Column="1" Height="50" VerticalAlignment="Center">
-                            <Span>
-                                <Run x:Name="TrackRun" Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" FontSize="16" />
-                            </Span>
-                            <LineBreak />
-                            <Span>
-                                <Run x:Name="ArtistRun" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" FontSize="15" /> 
-                            </Span>
-                        </TextBlock>
+
+                        <StackPanel Grid.Column="1" MaxHeight="50" Height="Auto" VerticalAlignment="Center">
+                            <TextBlock x:Name="TrackRun" Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" FontSize="16">
+                            </TextBlock>
+                            <TextBlock x:Name="ArtistRun" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" FontSize="15">
+                            </TextBlock>
+                        </StackPanel>
                     </Grid>
                 </Button>
             </Grid>

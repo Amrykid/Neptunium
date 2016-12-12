@@ -110,11 +110,14 @@ namespace Neptunium.Fragments
         {
             await App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                SongMetadata = e.Metadata.Track + " by " + e.Metadata.Artist;
+                if (CurrentSong != e.Metadata.Track)
+                {
+                    SongMetadata = e.Metadata.Track + " by " + e.Metadata.Artist;
 
 
-                CurrentSong = e.Metadata.Track;
-                CurrentArtist = e.Metadata.Artist;
+                    CurrentSong = e.Metadata.Track;
+                    CurrentArtist = e.Metadata.Artist;
+                }
 
                 if (StationMediaPlayer.CurrentStation != null)
                 {
