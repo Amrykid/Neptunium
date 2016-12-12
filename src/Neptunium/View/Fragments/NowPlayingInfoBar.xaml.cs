@@ -30,16 +30,18 @@ namespace Neptunium.View.Fragments
         {
             this.InitializeComponent();
 
-            PART_GlassPane.Animate = true;
-
             App.Current.Resuming += Current_Resuming;
             //BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
             StationMediaPlayer.IsPlayingChanged += StationMediaPlayer_IsPlayingChanged;
 
             this.RegisterPropertyChangedCallback(DataContextProperty, HandleNowPlayingInfoContextChanged);
 
+            PART_GlassPane.Animate = false;
+
             var accentColor = (Color)this.Resources["SystemAccentColor"];
             PART_GlassPane.ChangeBlurColor(accentColor);
+
+            PART_GlassPane.Animate = true;
 
             RefreshMediaButtonsFromMediaPlayer(BackgroundMediaPlayer.Current);
         }
