@@ -98,7 +98,7 @@ namespace Neptunium.ViewModel
             if (!StationMediaPlayer.IsInitialized)
                 await StationMediaPlayer.InitializeAsync();
 
-            SongManager.SongChanged += SongManager_SongChanged;
+            SongManager.PreSongChanged += SongManager_PreSongChanged;
             StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
             StationMediaPlayer.BackgroundAudioReconnecting += StationMediaPlayer_BackgroundAudioReconnecting;
@@ -136,7 +136,7 @@ namespace Neptunium.ViewModel
 #endif
         }
 
-        private async void SongManager_SongChanged(object sender, SongManagerSongChangedEventArgs e)
+        private async void SongManager_PreSongChanged(object sender, SongManagerSongChangedEventArgs e)
         {
             if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] == true)
             {

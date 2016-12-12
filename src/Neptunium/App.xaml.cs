@@ -162,15 +162,16 @@ namespace Neptunium
 
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
             {
-//#if DEBUG
-//                //however over .Count twice with a breakpoint once to force system to recognize xbox one controller.
-//                if (Debugger.IsAttached)
-//                    Debugger.Break();
-//                if (Gamepad.Gamepads.Count > 0)
-//                {
-//                    this.Options.OverridePlatform(Crystal3.Core.Platform.Xbox);
-//                }
-//#endif
+#if DEBUG
+                //todo not actually a todo but a PSA: to do Xbox testing on PC, set a breakpoint on Gamepads.Count or uncomment the Debugger.Break code.
+                //then however over .Count twice with a breakpoint once to force system to recognize xbox one controller.
+                //if (Debugger.IsAttached)
+                //    Debugger.Break();
+                if (Gamepad.Gamepads.Count > 0)
+                {
+                    this.Options.OverridePlatform(Crystal3.Core.Platform.Xbox);
+                }
+#endif
             }
 
             this.Options.HandleSystemBackNavigation = true;

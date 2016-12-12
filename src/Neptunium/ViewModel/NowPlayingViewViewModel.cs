@@ -124,17 +124,17 @@ namespace Neptunium.ViewModel
                 }
             }
 
-            SongManager.SongChanged += SongManager_SongChanged;
+            SongManager.PreSongChanged += SongManager_PreSongChanged;
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-            SongManager.SongChanged -= SongManager_SongChanged;
+            SongManager.PreSongChanged -= SongManager_PreSongChanged;
             StationMediaPlayer.CurrentStationChanged -= ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError -= ShoutcastStationMediaPlayer_BackgroundAudioError;
         }
 
-        private async void SongManager_SongChanged(object sender, SongManagerSongChangedEventArgs e)
+        private async void SongManager_PreSongChanged(object sender, SongManagerSongChangedEventArgs e)
         {
             await App.Dispatcher.RunWhenIdleAsync(async () =>
             {
@@ -151,7 +151,7 @@ namespace Neptunium.ViewModel
 
                 CurrentSongAlbumData = null;
 
-                var songBGUrl = await SongManager.GetSongBackgroundAsync(SongManager.CurrentSong);
+                var songBGUrl = await SongManager.GetSongBackgroundAsync(e.Metadata);
 
                 if (songBGUrl != null)
                     NowPlayingBackgroundImage = songBGUrl.ToString();

@@ -75,7 +75,7 @@ namespace Neptunium.View.Xbox
             this.Focus(FocusState.Programmatic);
             PlayPauseButton.Focus(FocusState.Programmatic);
 
-            if (StationMediaPlayer.IsPlaying)
+            if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
             {
                 //var accentColor = (Color)this.Resources["SystemAccentColor"];
 
