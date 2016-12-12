@@ -49,7 +49,7 @@ namespace Neptunium.Media
             });
             audioCoordinator.CoordinationMessageChannel.Subscribe(message =>
             {
-                switch(message.MessageType)
+                switch (message.MessageType)
                 {
                     case StationMediaPlayerAudioCoordinationMessageType.Reconnecting:
                         {
@@ -79,7 +79,7 @@ namespace Neptunium.Media
                         }
                         break;
                 }
-                
+
             });
 
             IsInitialized = true;
@@ -90,18 +90,13 @@ namespace Neptunium.Media
         internal static void Pause()
         {
             if (CurrentStation != null && IsPlaying)
-                BackgroundMediaPlayer.Current.Pause();
+                audioCoordinator.CurrentStreamer.Player.Pause();
         }
 
         internal static void Play()
         {
             if (CurrentStation != null && !IsPlaying)
-                BackgroundMediaPlayer.Current.Play();
-        }
-
-        public static MediaPlaybackSession PlaybackSession
-        {
-            get { return BackgroundMediaPlayer.Current?.PlaybackSession; }
+                audioCoordinator.CurrentStreamer.Player.Play();
         }
 
         public static void Deinitialize()
@@ -135,36 +130,27 @@ namespace Neptunium.Media
 
         public static double Volume
         {
-            get { return BackgroundMediaPlayer.Current.Volume; }
-            set { BackgroundMediaPlayer.Current.Volume = value; }
+            get { return (double)audioCoordinator.CurrentStreamer?.Player.Volume; }
+            set { if (audioCoordinator.CurrentStreamer != null) { audioCoordinator.CurrentStreamer.Player.Volume = value; } }
         }
 
         internal static void Stop()
         {
-            if (BackgroundMediaPlayer.Current.PlaybackSession.CanPause)
-                BackgroundMediaPlayer.Current.Pause();
+            Pause();
         }
 
         public static async Task FadeVolumeDownToAsync(double value)
         {
-            if (value >= StationMediaPlayer.Volume) throw new ArgumentOutOfRangeException(nameof(value));
-
-            var initial = StationMediaPlayer.Volume;
-            for (double x = initial; x > value; x -= .01)
+            if (audioCoordinator.CurrentStreamer is BasicMediaStreamer)
             {
-                await Task.Delay(25);
-                StationMediaPlayer.Volume = x;
-            }
+                await ((BasicMediaStreamer)audioCoordinator.CurrentStreamer).FadeVolumeDownToAsync(value);
+            }            
         }
         public static async Task FadeVolumeUpToAsync(double value)
         {
-            if (value <= StationMediaPlayer.Volume) throw new ArgumentOutOfRangeException(nameof(value));
-
-            var initial = StationMediaPlayer.Volume;
-            for (double x = initial; x < value; x += .01)
+            if (audioCoordinator.CurrentStreamer is BasicMediaStreamer)
             {
-                await Task.Delay(25);
-                StationMediaPlayer.Volume = x;
+                await ((BasicMediaStreamer)audioCoordinator.CurrentStreamer).FadeVolumeUpToAsync(value);
             }
         }
 

@@ -31,7 +31,6 @@ namespace Neptunium.View.Fragments
             this.InitializeComponent();
 
             App.Current.Resuming += Current_Resuming;
-            //BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
             StationMediaPlayer.IsPlayingChanged += StationMediaPlayer_IsPlayingChanged;
 
             this.RegisterPropertyChangedCallback(DataContextProperty, HandleNowPlayingInfoContextChanged);
@@ -43,7 +42,7 @@ namespace Neptunium.View.Fragments
 
             PART_GlassPane.Animate = true;
 
-            RefreshMediaButtonsFromMediaPlayer(BackgroundMediaPlayer.Current);
+            RefreshMediaButtons();
         }
 
         private void StationMediaPlayer_IsPlayingChanged(object sender, EventArgs e)
@@ -54,21 +53,8 @@ namespace Neptunium.View.Fragments
             });
         }
 
-        private void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
-        {
-            //App.Dispatcher.RunWhenIdleAsync(() =>
-            //{
-            //    RefreshMediaButtonsFromMediaPlayer(BackgroundMediaPlayer.Current);
-            //});
-        }
-
         private void Current_Resuming(object sender, object e)
         {
-            //App.Dispatcher.RunWhenIdleAsync(() =>
-            //{
-            //    RefreshMediaButtonsFromMediaPlayer(BackgroundMediaPlayer.Current);
-            //});
-
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
                 RefreshMediaButtons();

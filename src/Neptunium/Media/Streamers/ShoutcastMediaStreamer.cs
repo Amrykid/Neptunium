@@ -10,39 +10,15 @@ using Neptunium.MediaSourceStream;
 
 namespace Neptunium.Media.Streamers
 {
-    public class ShoutcastMediaStreamer : IMediaStreamer
+    public class ShoutcastMediaStreamer : BasicMediaStreamer
     {
-        private string currentTrack = "Title";
-        private string currentArtist = "Artist";
-
-        public bool IsConnected { get; private set; }
-
-        public MediaSource Source { get; private set; }
-
-        public StationModel CurrentStation { get; private set; }
-        public StationModelStream CurrentStream { get; private set; }
-
-        public IObservable<BasicSongInfo> MetadataChanged { get; private set; }
-        private Subject<BasicSongInfo> metadataSubject = null;
-
-        public IObservable<Exception> ErrorOccurred { get; private set; }
-
         private MediaSourceStream.ShoutcastMediaSourceStream shoutcastStream = null;
 
-        internal ShoutcastMediaStreamer()
+        internal ShoutcastMediaStreamer() : base()
         {
-            currentTrack = "Unknown Song";
-            currentArtist = "Unknown Artist";
-
-            metadataSubject = new Subject<BasicSongInfo>();
-            MetadataChanged = metadataSubject;
-
-            ErrorOccurred = new Subject<Exception>();
-
-            IsConnected = false;
         }
 
-        public async Task ConnectAsync(StationModel station, StationModelStream stream, IEnumerable<KeyValuePair<string, object>> props = null)
+        public override async Task ConnectAsync(StationModel station, StationModelStream stream, IEnumerable<KeyValuePair<string, object>> props = null)
         {
             shoutcastStream = new MediaSourceStream.ShoutcastMediaSourceStream(new Uri(stream.Url), ConvertServerTypeToMediaServerType(stream.ServerType));
 
@@ -53,6 +29,7 @@ namespace Neptunium.Media.Streamers
                 await shoutcastStream.ConnectAsync();
 
                 Source = MediaSource.CreateFromMediaStreamSource(shoutcastStream.MediaStreamSource);
+                Player.Source = Source;
 
                 CurrentStation = station;
                 CurrentStream = stream;
@@ -77,7 +54,7 @@ namespace Neptunium.Media.Streamers
             metadataSubject.OnNext(new BasicSongInfo() { Track = currentTrack, Artist = currentArtist });
         }
 
-        public Task DisconnectAsync()
+        public override Task DisconnectAsync()
         {
             if (shoutcastStream != null)
             {
@@ -86,25 +63,6 @@ namespace Neptunium.Media.Streamers
             }
 
             return Task.CompletedTask;
-        }
-
-        public async Task ReconnectAsync()
-        {
-            if (CurrentStream == null) throw new Exception("This streamer hasn't been connected before!");
-
-            if (IsConnected)
-                await DisconnectAsync();
-
-            await ConnectAsync(CurrentStation, CurrentStream, null);
-        }
-
-        public void Dispose()
-        {
-            if (IsConnected)
-                DisconnectAsync().Wait();
-
-            metadataSubject.OnCompleted();
-            ((Subject<Exception>)ErrorOccurred).OnCompleted();
         }
 
         private static ShoutcastServerType ConvertServerTypeToMediaServerType(StationModelStreamServerType currentStationServerType)

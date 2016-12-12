@@ -41,14 +41,14 @@ namespace Neptunium.Fragments
 
             IsViewEnabled = false;
 
-            BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+            StationMediaPlayer.IsPlayingChanged += StationMediaPlayer_IsPlayingChanged;
 
             this.PropertyChanged += SleepTimerFlyoutViewFragment_PropertyChanged;
 
             sleepTimer.Tick += SleepTimer_Tick;
         }
 
-        private async void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
+        private async void StationMediaPlayer_IsPlayingChanged(object sender, EventArgs e)
         {
             await App.Dispatcher.RunWhenIdleAsync(() =>
             {

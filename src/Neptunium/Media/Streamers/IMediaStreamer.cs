@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Media.Core;
+using Windows.Media.Playback;
 
 namespace Neptunium.Media.Streamers
 {
@@ -19,6 +20,7 @@ namespace Neptunium.Media.Streamers
         StationModelStream CurrentStream { get; }
 
         MediaSource Source { get; }
+        MediaPlayer Player { get; }
 
         IObservable<BasicSongInfo> MetadataChanged { get; }
         IObservable<Exception> ErrorOccurred { get; }

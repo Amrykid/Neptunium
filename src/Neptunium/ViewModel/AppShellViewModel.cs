@@ -102,6 +102,7 @@ namespace Neptunium.ViewModel
             StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
             StationMediaPlayer.BackgroundAudioReconnecting += StationMediaPlayer_BackgroundAudioReconnecting;
+            StationMediaPlayer.IsPlayingChanged += StationMediaPlayer_IsPlayingChanged;
 
             if (CrystalApplication.GetDevicePlatform() == Platform.Mobile)
             {
@@ -114,8 +115,6 @@ namespace Neptunium.ViewModel
             }
 
             StationMediaPlayer.ConnectingStatusChanged += StationMediaPlayer_ConnectingStatusChanged;
-
-            BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
 
             ContinuedAppExperienceManager.RemoteSystemsListUpdated += ContinuedAppExperienceManager_RemoteSystemsListUpdated;
 
@@ -134,6 +133,15 @@ namespace Neptunium.ViewModel
                 }
             }
 #endif
+        }
+
+        private async void StationMediaPlayer_IsPlayingChanged(object sender, EventArgs e)
+        {
+            await App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                HandoffStationCommand.SetCanExecute(StationMediaPlayer.IsPlaying);
+            });
+            
         }
 
         private async void SongManager_PreSongChanged(object sender, SongManagerSongChangedEventArgs e)
@@ -174,10 +182,6 @@ namespace Neptunium.ViewModel
             ContinuedAppExperienceManager.RemoteSystemsListUpdated += ContinuedAppExperienceManager_RemoteSystemsListUpdated;
         }
 
-        private void Current_CurrentStateChanged(MediaPlayer sender, object args)
-        {
-            HandoffStationCommand.SetCanExecute(sender.PlaybackSession.PlaybackState == MediaPlaybackState.Playing);
-        }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {

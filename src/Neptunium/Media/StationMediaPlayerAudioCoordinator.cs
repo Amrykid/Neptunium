@@ -18,7 +18,6 @@ namespace Neptunium.Media
     public class StationMediaPlayerAudioCoordinator : IDisposable
     {
         private ConnectionProfile internetConnectionProfile = null;
-        private SystemMediaTransportControls smtc;
         private string currentTrack = "Title";
         private string currentArtist = "Artist";
 
@@ -30,29 +29,11 @@ namespace Neptunium.Media
 
         internal StationMediaPlayerAudioCoordinator()
         {
-            smtc = BackgroundMediaPlayer.Current.SystemMediaTransportControls;
-            smtc.ButtonPressed += Smtc_ButtonPressed;
-            smtc.PropertyChanged += Smtc_PropertyChanged;
-
-
-            smtc.IsChannelDownEnabled = false;
-            smtc.IsChannelUpEnabled = false;
-            smtc.IsFastForwardEnabled = false;
-            smtc.IsNextEnabled = false;
-            smtc.IsPauseEnabled = true;
-            smtc.IsPlayEnabled = true;
-            smtc.IsPreviousEnabled = false;
-            smtc.IsRecordEnabled = false;
-            smtc.IsRewindEnabled = false;
-            smtc.IsStopEnabled = false;
-
             metadataReceivedSub = new Subject<BasicSongInfo>();
             coordinationChannel = new Subject<StationMediaPlayerAudioCoordinationMessage>();
 
             CoordinationMessageChannel = coordinationChannel;
             MetadataReceived = metadataReceivedSub;
-
-            BackgroundMediaPlayer.Current.MediaFailed += Current_MediaFailed;
         }
 
         public IMediaStreamer CurrentStreamer { get; private set; }
@@ -65,9 +46,7 @@ namespace Neptunium.Media
             {
                 if (streamer.IsConnected)
                 {
-                    BackgroundMediaPlayer.Current.Source = streamer.Source;
-
-                    BackgroundMediaPlayer.Current.Play();
+                    streamer.Player.Play();
 
                     CurrentStreamer = streamer;
 
@@ -91,7 +70,9 @@ namespace Neptunium.Media
                         });
                     });
 
-                    BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+                    CurrentStreamer.Player.MediaFailed += Current_MediaFailed;
+
+                    CurrentStreamer.Player.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
 
                     return Task.CompletedTask;
                 }
@@ -100,7 +81,7 @@ namespace Neptunium.Media
             }
             catch (Exception ex)
             {
-                BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
+                CurrentStreamer.Player.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
 
                 return Task.FromException(ex);
             }
@@ -110,27 +91,31 @@ namespace Neptunium.Media
         {
             if (CurrentStreamer != null)
             {
-                BackgroundMediaPlayer.Current.Pause();
-                BackgroundMediaPlayer.Shutdown();
+                CurrentStreamer.Player.Pause();
 
                 await CurrentStreamer.DisconnectAsync();
                 CurrentStreamer.Dispose();
 
-                BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
+                CurrentStreamer.Player.MediaFailed -= Current_MediaFailed;
+                CurrentStreamer.Player.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
             }
         }
 
         private void UpdateNowPlaying(string currentTrack, string currentArtist)
         {
-            try
+            if (CurrentStreamer != null)
             {
-                smtc.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
-                smtc.DisplayUpdater.MusicProperties.Title = currentTrack;
-                smtc.DisplayUpdater.MusicProperties.Artist = currentArtist;
+                try
+                {
+                    var smtc = CurrentStreamer.Player.SystemMediaTransportControls;
+                    smtc.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
+                    smtc.DisplayUpdater.MusicProperties.Title = currentTrack;
+                    smtc.DisplayUpdater.MusicProperties.Artist = currentArtist;
 
-                smtc.DisplayUpdater.Update();
+                    smtc.DisplayUpdater.Update();
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
 
             EventTelemetry et = new EventTelemetry("UpdateNowPlaying");
             et.Properties.Add("CurrentTrack", currentTrack);
@@ -139,54 +124,6 @@ namespace Neptunium.Media
         }
 
         #region Events
-
-        private static void Smtc_PropertyChanged(SystemMediaTransportControls sender, SystemMediaTransportControlsPropertyChangedEventArgs args)
-        {
-            switch (args.Property)
-            {
-                case SystemMediaTransportControlsProperty.SoundLevel:
-                    break;
-            }
-        }
-
-        private static void Smtc_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
-        {
-            switch (args.Button)
-            {
-                case SystemMediaTransportControlsButton.Play:
-                    Debug.WriteLine("UVC play button pressed");
-                    try
-                    {
-                        BackgroundMediaPlayer.Current.Play();
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                    }
-                    break;
-                case SystemMediaTransportControlsButton.Pause:
-                    Debug.WriteLine("UVC pause button pressed");
-                    try
-                    {
-                        BackgroundMediaPlayer.Current.Pause();
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                    }
-                    break;
-                case SystemMediaTransportControlsButton.Next:
-                    Debug.WriteLine("UVC next button pressed");
-
-                    break;
-                case SystemMediaTransportControlsButton.Previous:
-                    Debug.WriteLine("UVC previous button pressed");
-
-                    break;
-            }
-        }
-
-
         private async void Current_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
         {
             //EventTelemetry et = new EventTelemetry("MediaStreamSource_Closed");
@@ -214,8 +151,7 @@ namespace Neptunium.Media
 
                             if (CurrentStreamer.IsConnected)
                             {
-                                BackgroundMediaPlayer.Current.Source = CurrentStreamer.Source;
-                                BackgroundMediaPlayer.Current.Play();
+                                CurrentStreamer.Play();
 
                                 return;
                             }
@@ -251,31 +187,13 @@ namespace Neptunium.Media
         {
             PlaybackState = sender.PlaybackState;
 
-            switch (sender.PlaybackState)
-            {
-                case MediaPlaybackState.None:
-                    smtc.PlaybackStatus = MediaPlaybackStatus.Closed;
-                    break;
-                case MediaPlaybackState.Opening:
-                    smtc.PlaybackStatus = MediaPlaybackStatus.Changing;
-                    break;
-                case MediaPlaybackState.Paused:
-                    smtc.PlaybackStatus = MediaPlaybackStatus.Paused;
-                    break;
-                case MediaPlaybackState.Playing:
-                    smtc.PlaybackStatus = MediaPlaybackStatus.Playing;
-                    break;
-            }
-
             coordinationChannel.OnNext(new StationMediaPlayerAudioCoordinationAudioPlaybackStatusMessage(sender.PlaybackState));
         }
 
         public void Dispose()
         {
-            smtc.ButtonPressed -= Smtc_ButtonPressed;
-            smtc.PropertyChanged -= Smtc_PropertyChanged;
-
-            BackgroundMediaPlayer.Current.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
+            if (CurrentStreamer != null)
+                CurrentStreamer.Player.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
         }
         #endregion
     }

@@ -10,40 +10,18 @@ using System.Reactive.Subjects;
 
 namespace Neptunium.Media.Streamers
 {
-    public class DirectMediaStreamer : IMediaStreamer
+    public class DirectMediaStreamer : BasicMediaStreamer
     {
-        private string currentTrack = "Title";
-        private string currentArtist = "Artist";
-
-        public bool IsConnected { get; private set; }
-
-        public StationModel CurrentStation { get; private set; }
-        public StationModelStream CurrentStream { get; private set; }
-
-        public MediaSource Source { get; private set; }
-
-        public IObservable<BasicSongInfo> MetadataChanged { get; private set; }
-        private Subject<BasicSongInfo> metadataSubject = null;
-
-        public IObservable<Exception> ErrorOccurred { get; private set; }
-
-        internal DirectMediaStreamer()
+        internal DirectMediaStreamer(): base()
         {
-            currentTrack = "Unknown Song";
-            currentArtist = "Unknown Artist";
-
-            metadataSubject = new Subject<BasicSongInfo>();
-            MetadataChanged = metadataSubject;
-
-            ErrorOccurred = new Subject<Exception>();
-
-            IsConnected = false;
         }
 
-        public Task ConnectAsync(StationModel station, StationModelStream stream, IEnumerable<KeyValuePair<string, object>> props = null)
+        public override Task ConnectAsync(StationModel station, StationModelStream stream, IEnumerable<KeyValuePair<string, object>> props = null)
         {
             Source = MediaSource.CreateFromUri(new Uri(stream.Url));
             Source.StateChanged += Source_StateChanged;
+
+            Player.Source = Source;
 
             metadataSubject.OnNext(new BasicSongInfo() { Track = currentTrack, Artist = currentArtist });
 
@@ -58,27 +36,11 @@ namespace Neptunium.Media.Streamers
             IsConnected = args.NewState == MediaSourceState.Opened;
         }
 
-        public Task DisconnectAsync()
+        public override Task DisconnectAsync()
         {
             Source.StateChanged -= Source_StateChanged;
 
             return Task.CompletedTask;
-        }
-
-        public void Dispose()
-        {
-            if (IsConnected)
-                DisconnectAsync().Wait();
-
-            metadataSubject.OnCompleted();
-            ((Subject<Exception>)ErrorOccurred).OnCompleted();
-        }
-
-        public Task ReconnectAsync()
-        {
-            if (CurrentStream == null) throw new Exception("This streamer hasn't been connected before!");
-
-            return ConnectAsync(CurrentStation, CurrentStream);
         }
     }
 }

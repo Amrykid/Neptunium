@@ -46,21 +46,17 @@ namespace Neptunium.Fragments
 
             PlayCommand = new RelayCommand(x =>
             {
-                BackgroundMediaPlayer.Current.Play();
+                StationMediaPlayer.Play();
             }, x =>
             {
-                var currentPlayerState = BackgroundMediaPlayer.Current.PlaybackSession.PlaybackState;
-
-                return currentPlayerState != MediaPlaybackState.Buffering &&
-                currentPlayerState != MediaPlaybackState.Opening &&
-                currentPlayerState != MediaPlaybackState.Playing;
+                return StationMediaPlayer.IsPlaying;
             });
 
             PauseCommand = new RelayCommand(x =>
             {
-                if (BackgroundMediaPlayer.Current.PlaybackSession.CanPause)
-                    BackgroundMediaPlayer.Current.Pause();
-            }, x => { try { return BackgroundMediaPlayer.Current.PlaybackSession.CanPause; } catch (Exception) { return true; } });
+                if (StationMediaPlayer.IsPlaying)
+                    StationMediaPlayer.Pause();
+            }, x => { return true; });
 
 
             GoToNowPlayingPageCommand = new RelayCommand(x =>

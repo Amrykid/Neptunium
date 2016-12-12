@@ -113,6 +113,7 @@
       <DependentUpon>GlassPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Media\StationMediaPlayerAudioCoordinator.cs" />
+    <Compile Include="Media\Streamers\BasicMediaStreamer.cs" />
     <Compile Include="Media\Streamers\DirectMediaStreamer.cs" />
     <Compile Include="Media\Streamers\IMediaStreamer.cs" />
     <Compile Include="Media\Streamers\ShoutcastMediaStreamer.cs" />
