@@ -33,37 +33,33 @@ namespace Neptunium.View.Xbox
         }
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            StationMediaPlayer.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
+            StationMediaPlayer.IsPlayingChanged -= StationMediaPlayer_IsPlayingChanged;
 
             base.OnNavigatedFrom(e);
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            StationMediaPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
-            SetPlaybackButtonState(StationMediaPlayer.PlaybackSession);
+            StationMediaPlayer.IsPlayingChanged += StationMediaPlayer_IsPlayingChanged;
+            SetPlaybackButtonState(StationMediaPlayer.IsPlaying);
 
             base.OnNavigatedTo(e);
         }
 
-        private void PlaybackSession_PlaybackStateChanged(Windows.Media.Playback.MediaPlaybackSession sender, object args)
+        private void StationMediaPlayer_IsPlayingChanged(object sender, EventArgs e)
         {
-            SetPlaybackButtonState(sender);
+            SetPlaybackButtonState(StationMediaPlayer.IsPlaying);
         }
 
-        private void SetPlaybackButtonState(Windows.Media.Playback.MediaPlaybackSession sender)
+        private void SetPlaybackButtonState(bool isPlaying)
         {
-            if (sender == null) return;
-
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                switch (sender.PlaybackState)
+                switch (isPlaying)
                 {
-                    case Windows.Media.Playback.MediaPlaybackState.Playing:
-                    case Windows.Media.Playback.MediaPlaybackState.Opening:
-                    case Windows.Media.Playback.MediaPlaybackState.Buffering:
+                    case true:
                         PlayPauseButton.Content = new SymbolIcon(Symbol.Pause);
                         break;
-                    case Windows.Media.Playback.MediaPlaybackState.Paused:
+                    case false:
                         PlayPauseButton.Content = new SymbolIcon(Symbol.Play);
                         break;
                 }

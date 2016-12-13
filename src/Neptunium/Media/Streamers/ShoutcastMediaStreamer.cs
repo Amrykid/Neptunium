@@ -29,6 +29,7 @@ namespace Neptunium.Media.Streamers
                 await shoutcastStream.ConnectAsync();
 
                 Source = MediaSource.CreateFromMediaStreamSource(shoutcastStream.MediaStreamSource);
+                Source.StateChanged += Source_StateChanged;
                 Player.Source = Source;
 
                 CurrentStation = station;
@@ -46,12 +47,17 @@ namespace Neptunium.Media.Streamers
             }
         }
 
+        private void Source_StateChanged(MediaSource sender, MediaSourceStateChangedEventArgs args)
+        {
+            IsConnected = args.NewState == MediaSourceState.Opened;
+        }
+
         private void ShoutcastStream_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
-            currentTrack = e.Title;
-            currentArtist = e.Artist;
+            CurrentTrack = e.Title;
+            CurrentArtist = e.Artist;
 
-            metadataSubject.OnNext(new BasicSongInfo() { Track = currentTrack, Artist = currentArtist });
+            metadataSubject.OnNext(new BasicSongInfo() { Track = CurrentTrack, Artist = CurrentArtist });
         }
 
         public override Task DisconnectAsync()
@@ -60,6 +66,11 @@ namespace Neptunium.Media.Streamers
             {
                 shoutcastStream.MetadataChanged -= ShoutcastStream_MetadataChanged;
                 shoutcastStream.Disconnect();
+            }
+
+            if (Source != null)
+            {
+                Source.StateChanged -= Source_StateChanged;
             }
 
             return Task.CompletedTask;

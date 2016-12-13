@@ -40,51 +40,81 @@ namespace Neptunium.Media
         public MediaPlaybackState PlaybackState { get; private set; }
 
 
-        internal Task BeginStreamingAsync(IMediaStreamer streamer)
+        internal async Task BeginStreamingAsync(BasicMediaStreamer streamer)
         {
             try
             {
                 if (streamer.IsConnected)
                 {
                     streamer.Player.Play();
-
-                    CurrentStreamer = streamer;
-
-                    internetConnectionProfile = NetworkInformation.GetInternetConnectionProfile();
-
-                    streamer.MetadataChanged.Subscribe(songInfo =>
-                    {
-                        currentTrack = songInfo.Track;
-                        currentArtist = songInfo.Artist;
-
-                        metadataReceivedSub.OnNext(songInfo);
-
-                        UpdateNowPlaying(songInfo.Track, songInfo.Artist);
-                    });
-
-                    streamer.ErrorOccurred.Subscribe(exception =>
-                    {
-                        coordinationChannel.OnNext(new StationMediaPlayerAudioCoordinationErrorMessage(StationMediaPlayerAudioCoordinationMessageType.AudioError, exception)
-                        {
-                            NetworkConnection = internetConnectionProfile
-                        });
-                    });
-
-                    CurrentStreamer.Player.MediaFailed += Current_MediaFailed;
-
-                    CurrentStreamer.Player.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
-
-                    return Task.CompletedTask;
+                    await streamer.FadeVolumeUpToAsync(1.0);
+                    UseStreamerBase(streamer);
                 }
-
-                return Task.FromException(new Exception("Not connected."));
+                else
+                    throw new Exception("Not connected.");
             }
             catch (Exception ex)
             {
                 CurrentStreamer.Player.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
 
-                return Task.FromException(ex);
+                throw new Exception("Inner exception", ex);
             }
+        }
+
+        internal async Task BeginStreamingTransitionAsync(BasicMediaStreamer streamer)
+        {
+            if (CurrentStreamer == null)
+            {
+                throw new Exception("Not streaming anything currently.");
+            }
+
+            try
+            {
+                if (streamer.IsConnected)
+                {
+                    streamer.Player.Play();
+                    await Task.WhenAll(streamer.FadeVolumeUpToAsync(1.0), ((BasicMediaStreamer)CurrentStreamer).FadeVolumeDownToAsync(0.0));
+                    await StopStreamingCurrentStreamerAsync();
+                    UseStreamerBase(streamer);
+                }
+                else
+                    throw new Exception("Not connected.");
+            }
+            catch (Exception ex)
+            {
+                CurrentStreamer.Player.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
+
+                throw new Exception("Inner exception", ex);
+            }
+        }
+
+        private void UseStreamerBase(IMediaStreamer streamer)
+        {
+            CurrentStreamer = streamer;
+
+            internetConnectionProfile = NetworkInformation.GetInternetConnectionProfile();
+
+            streamer.MetadataChanged.Subscribe(songInfo =>
+            {
+                currentTrack = songInfo.Track;
+                currentArtist = songInfo.Artist;
+
+                UpdateNowPlaying(songInfo);
+            });
+
+            streamer.ErrorOccurred.Subscribe(exception =>
+            {
+                coordinationChannel.OnNext(new StationMediaPlayerAudioCoordinationErrorMessage(StationMediaPlayerAudioCoordinationMessageType.AudioError, exception)
+                {
+                    NetworkConnection = internetConnectionProfile
+                });
+            });
+
+            CurrentStreamer.Player.MediaFailed += Current_MediaFailed;
+
+            CurrentStreamer.Player.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+
+            UpdateNowPlaying(new BasicSongInfo() { Track = streamer.CurrentTrack, Artist = streamer.CurrentArtist });
         }
 
         internal async Task StopStreamingCurrentStreamerAsync()
@@ -94,14 +124,15 @@ namespace Neptunium.Media
                 CurrentStreamer.Player.Pause();
 
                 await CurrentStreamer.DisconnectAsync();
-                CurrentStreamer.Dispose();
 
                 CurrentStreamer.Player.MediaFailed -= Current_MediaFailed;
                 CurrentStreamer.Player.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
+
+                CurrentStreamer.Dispose();
             }
         }
 
-        private void UpdateNowPlaying(string currentTrack, string currentArtist)
+        private void UpdateNowPlaying(BasicSongInfo songInfo)
         {
             if (CurrentStreamer != null)
             {
@@ -109,13 +140,15 @@ namespace Neptunium.Media
                 {
                     var smtc = CurrentStreamer.Player.SystemMediaTransportControls;
                     smtc.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
-                    smtc.DisplayUpdater.MusicProperties.Title = currentTrack;
-                    smtc.DisplayUpdater.MusicProperties.Artist = currentArtist;
+                    smtc.DisplayUpdater.MusicProperties.Title = songInfo.Track;
+                    smtc.DisplayUpdater.MusicProperties.Artist = songInfo.Artist;
 
                     smtc.DisplayUpdater.Update();
                 }
                 catch (Exception) { }
             }
+
+            metadataReceivedSub.OnNext(songInfo);
 
             EventTelemetry et = new EventTelemetry("UpdateNowPlaying");
             et.Properties.Add("CurrentTrack", currentTrack);
@@ -151,7 +184,7 @@ namespace Neptunium.Media
 
                             if (CurrentStreamer.IsConnected)
                             {
-                                CurrentStreamer.Play();
+                                CurrentStreamer.Player.Play();
 
                                 return;
                             }

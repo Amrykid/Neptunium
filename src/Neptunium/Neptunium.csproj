@@ -163,7 +163,7 @@
     <Compile Include="ViewModel\AppShellViewModel.cs" />
     <Compile Include="ViewModel\NowPlayingViewViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewViewModel.cs" />
-    <Compile Include="Media\ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs.cs" />
+    <Compile Include="Media\StationMediaPlayerBackgroundAudioErrorEventArgs.cs" />
     <Compile Include="ViewModel\SongHistoryViewModel.cs" />
     <Compile Include="ViewModel\StationInfoViewModel.cs" />
     <Compile Include="ViewModel\StationsViewViewModel.cs" />

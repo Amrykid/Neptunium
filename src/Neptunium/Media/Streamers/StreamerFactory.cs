@@ -9,7 +9,7 @@ namespace Neptunium.Media.Streamers
 {
     public static class StreamerFactory
     {
-        public static IMediaStreamer CreateStreamerFromServerType(StationModelStreamServerType stationType)
+        public static BasicMediaStreamer CreateStreamerFromServerType(StationModelStreamServerType stationType)
         {
             switch(stationType)
             {

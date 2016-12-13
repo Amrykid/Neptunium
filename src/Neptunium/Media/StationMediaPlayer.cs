@@ -62,7 +62,7 @@ namespace Neptunium.Media
 
                             if (playMsg != null)
                             {
-                                IsPlaying = playMsg.PlaybackState == MediaPlaybackState.Playing;
+                                IsPlaying = playMsg.PlaybackState == MediaPlaybackState.Playing || playMsg.PlaybackState == MediaPlaybackState.Buffering;
                             }
                         }
                         break;
@@ -70,7 +70,7 @@ namespace Neptunium.Media
                         {
                             var errorMsg = message as StationMediaPlayerAudioCoordinationErrorMessage;
 
-                            BackgroundAudioError?.Invoke(null, new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs()
+                            BackgroundAudioError?.Invoke(null, new StationMediaPlayerBackgroundAudioErrorEventArgs()
                             {
                                 Exception = errorMsg.Exception,
                                 NetworkConnectionProfile = errorMsg.NetworkConnection,
@@ -119,12 +119,9 @@ namespace Neptunium.Media
             }
             private set
             {
-                if (_isPlaying != value)
-                {
-                    _isPlaying = value;
+                _isPlaying = value;
 
-                    IsPlayingChanged?.Invoke(null, EventArgs.Empty);
-                }
+                IsPlayingChanged?.Invoke(null, EventArgs.Empty);
             }
         }
 
@@ -144,7 +141,7 @@ namespace Neptunium.Media
             if (audioCoordinator.CurrentStreamer is BasicMediaStreamer)
             {
                 await ((BasicMediaStreamer)audioCoordinator.CurrentStreamer).FadeVolumeDownToAsync(value);
-            }            
+            }
         }
         public static async Task FadeVolumeUpToAsync(double value)
         {
@@ -163,7 +160,7 @@ namespace Neptunium.Media
 
             TracePlayStationAsyncCall(station);
 
-            await audioCoordinator.StopStreamingCurrentStreamerAsync();
+            //await audioCoordinator.StopStreamingCurrentStreamerAsync();
 
             if (ConnectingStatusChanged != null)
                 ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(true));
@@ -175,15 +172,11 @@ namespace Neptunium.Media
 
             await streamer.ConnectAsync(station, stream, null);
 
+            bool willCrossFade = audioCoordinator.CurrentStreamer == null;
+
             if (streamer.IsConnected)
             {
                 await Task.Delay(1000); //wait a second to buffer
-
-                await audioCoordinator.BeginStreamingAsync(streamer);
-
-                //should be playing at this point.
-
-                IsPlayingChanged?.Invoke(null, EventArgs.Empty);
 
                 currentStationModel = station;
 
@@ -192,23 +185,47 @@ namespace Neptunium.Media
                 currentStationServerType = stream.ServerType;
 
                 if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+
+
+                if (ConnectingStatusChanged != null)
+                    ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
+
+                IsPlaying = true;
+
+                if (willCrossFade)
+                    await audioCoordinator.BeginStreamingAsync(streamer);
+                else
+                    await audioCoordinator.BeginStreamingTransitionAsync(streamer);
+
+                //should be playing at this point.
+
+                IsPlaying = true;
             }
             else
             {
+                if (ConnectingStatusChanged != null)
+                    ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
+
                 //connection error
 
-                BackgroundAudioError?.Invoke(null, new ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs()
+                BackgroundAudioError?.Invoke(null, new StationMediaPlayerBackgroundAudioErrorEventArgs()
                 {
                     Exception = new Exception("Unable to connect."),
-                    Station = station
+                    Station = station,
+                    StillPlaying = audioCoordinator.CurrentStreamer != null ? audioCoordinator.CurrentStreamer.IsConnected : false
                 });
 
-                IsPlayingChanged?.Invoke(null, EventArgs.Empty);
+                if (audioCoordinator.CurrentStreamer == null || !(bool)audioCoordinator.CurrentStreamer?.IsConnected)
+                {
+                    IsPlaying = false;
+
+                    currentStationModel = null;
+
+                    currentStream = null;
+
+                    currentStationServerType = stream.ServerType;
+                }
             }
-
-
-            if (ConnectingStatusChanged != null)
-                ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
 
             playStationResetEvent.Release();
 
@@ -228,7 +245,7 @@ namespace Neptunium.Media
         public static event EventHandler<ShoutcastMediaSourceStreamMetadataChangedEventArgs> MetadataChanged;
         public static event EventHandler CurrentStationChanged;
         public static event EventHandler BackgroundAudioReconnecting;
-        public static event EventHandler<ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs> BackgroundAudioError;
+        public static event EventHandler<StationMediaPlayerBackgroundAudioErrorEventArgs> BackgroundAudioError;
         public static event EventHandler<StationMediaPlayerConnectingStatusChangedEventArgs> ConnectingStatusChanged;
         public static event EventHandler IsPlayingChanged;
     }

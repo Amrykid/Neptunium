@@ -23,7 +23,7 @@ namespace Neptunium.Media.Streamers
 
             Player.Source = Source;
 
-            metadataSubject.OnNext(new BasicSongInfo() { Track = currentTrack, Artist = currentArtist });
+            metadataSubject.OnNext(new BasicSongInfo() { Track = CurrentTrack, Artist = CurrentArtist });
 
             CurrentStation = station;
             CurrentStream = stream;

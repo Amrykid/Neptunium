@@ -46,17 +46,15 @@ namespace Neptunium.Fragments
 
             PlayCommand = new RelayCommand(x =>
             {
-                StationMediaPlayer.Play();
-            }, x =>
-            {
-                return StationMediaPlayer.IsPlaying;
+                if (!StationMediaPlayer.IsPlaying)
+                    StationMediaPlayer.Play();
             });
 
             PauseCommand = new RelayCommand(x =>
             {
                 if (StationMediaPlayer.IsPlaying)
                     StationMediaPlayer.Pause();
-            }, x => { return true; });
+            });
 
 
             GoToNowPlayingPageCommand = new RelayCommand(x =>
@@ -146,16 +144,18 @@ namespace Neptunium.Fragments
             });
         }
 
-        private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, EventArgs e)
+        private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, StationMediaPlayerBackgroundAudioErrorEventArgs e)
         {
-            await Crystal3.CrystalApplication.Dispatcher.RunAsync(() =>
+            if (!e.StillPlaying)
             {
-                CurrentArtist = "";
-                CurrentSong = "";
-                CurrentStation = null;
-                CurrentStationLogo = null;
-            });
-
+                await Crystal3.CrystalApplication.Dispatcher.RunAsync(() =>
+                {
+                    CurrentArtist = "";
+                    CurrentSong = "";
+                    CurrentStation = null;
+                    CurrentStationLogo = null;
+                });
+            }
         }
 
         public override void Dispose()

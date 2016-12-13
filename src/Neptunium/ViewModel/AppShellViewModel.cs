@@ -196,7 +196,7 @@ namespace Neptunium.ViewModel
             App.Dispatcher.RunWhenIdleAsync(() => IsBusy = e.IsConnecting);
         }
 
-        private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, ShoutcastStationMediaPlayerBackgroundAudioErrorEventArgs e)
+        private async void ShoutcastStationMediaPlayer_BackgroundAudioError(object sender, StationMediaPlayerBackgroundAudioErrorEventArgs e)
         {
             StationMediaPlayer.BackgroundAudioError -= ShoutcastStationMediaPlayer_BackgroundAudioError; //throttle error messages
 

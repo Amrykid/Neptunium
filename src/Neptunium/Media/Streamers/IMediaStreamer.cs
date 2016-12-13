@@ -24,5 +24,8 @@ namespace Neptunium.Media.Streamers
 
         IObservable<BasicSongInfo> MetadataChanged { get; }
         IObservable<Exception> ErrorOccurred { get; }
+
+        string CurrentTrack { get; }
+        string CurrentArtist { get; }
     }
 }
