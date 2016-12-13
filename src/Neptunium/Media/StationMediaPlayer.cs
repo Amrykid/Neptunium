@@ -177,6 +177,7 @@ namespace Neptunium.Media
 
             switch(CrystalApplication.GetDevicePlatform())
             {
+                case Crystal3.Core.Platform.Xbox:
                 case Crystal3.Core.Platform.Desktop:
                     willCrossFade = audioCoordinator.CurrentStreamer != null;
                     break;
