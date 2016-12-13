@@ -368,7 +368,7 @@ namespace Neptunium.MediaSourceStream
         {
             var request = args.Request;
 
-            if (!IsInternetConnected())
+            if (!IsInternetConnected() || !connected)
             {
                 connected = false;
                 Disconnect();
@@ -378,11 +378,6 @@ namespace Neptunium.MediaSourceStream
 
 
             var deferral = request.GetDeferral();
-
-            if (!connected)
-            {
-                await ReconnectAsync();
-            }
 
             try
             {

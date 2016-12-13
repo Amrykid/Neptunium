@@ -51,6 +51,7 @@ namespace Neptunium.View.Fragments
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
                 this.IsEnabled = !e.IsConnecting;
+                RefreshMediaButtons();
             });
         }
 

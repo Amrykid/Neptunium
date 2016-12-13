@@ -21,6 +21,7 @@ using Microsoft.HockeyApp.DataContracts;
 using Windows.Media.Core;
 using Windows.Networking.Connectivity;
 using Neptunium.Media.Streamers;
+using Crystal3;
 
 namespace Neptunium.Media
 {
@@ -162,8 +163,6 @@ namespace Neptunium.Media
 
             TracePlayStationAsyncCall(station);
 
-            //await audioCoordinator.StopStreamingCurrentStreamerAsync();
-
             if (ConnectingStatusChanged != null)
                 ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(true));
 
@@ -174,12 +173,21 @@ namespace Neptunium.Media
 
             await streamer.ConnectAsync(station, stream, null);
 
-            bool willCrossFade = audioCoordinator.CurrentStreamer == null;
+            bool willCrossFade = false;
+
+            switch(CrystalApplication.GetDevicePlatform())
+            {
+                case Crystal3.Core.Platform.Desktop:
+                    willCrossFade = audioCoordinator.CurrentStreamer != null;
+                    break;
+                default: //cross fade transitionin seems to studder on mobile.
+                    willCrossFade = false;
+                    break;
+
+            }          
 
             if (streamer.IsConnected)
             {
-                await Task.Delay(3000); //wait a second to buffer
-
                 currentStationModel = station;
 
                 currentStream = stream;
@@ -190,24 +198,25 @@ namespace Neptunium.Media
 
                 IsPlaying = true;
 
-                if (willCrossFade)
+                if (!willCrossFade)
                 {
-                    if (ConnectingStatusChanged != null)
-                        ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
+                    await audioCoordinator.StopStreamingCurrentStreamerAsync();
 
                     await audioCoordinator.BeginStreamingAsync(streamer);
                 }
                 else
                 {
-                    await audioCoordinator.BeginStreamingTransitionAsync(streamer);
+                    await Task.Delay(3000); //wait to buffer
 
-                    if (ConnectingStatusChanged != null)
-                        ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
+                    await audioCoordinator.BeginStreamingTransitionAsync(streamer);
                 }
 
                 //should be playing at this point.
 
                 IsPlaying = true;
+
+                if (ConnectingStatusChanged != null)
+                    ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
             }
             else
             {
