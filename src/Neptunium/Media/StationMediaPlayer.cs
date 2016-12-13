@@ -42,11 +42,13 @@ namespace Neptunium.Media
             if (IsInitialized) return;
 
             audioCoordinator = new StationMediaPlayerAudioCoordinator();
+
             audioCoordinator.MetadataReceived.Subscribe(songInfo =>
             {
                 if (MetadataChanged != null)
                     MetadataChanged(null, new ShoutcastMediaSourceStreamMetadataChangedEventArgs(songInfo.Track, songInfo.Artist));
             });
+
             audioCoordinator.CoordinationMessageChannel.Subscribe(message =>
             {
                 switch (message.MessageType)
@@ -176,7 +178,7 @@ namespace Neptunium.Media
 
             if (streamer.IsConnected)
             {
-                await Task.Delay(1000); //wait a second to buffer
+                //await Task.Delay(1000); //wait a second to buffer
 
                 currentStationModel = station;
 

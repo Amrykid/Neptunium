@@ -28,7 +28,7 @@ namespace Neptunium.Media.Streamers
         public MediaPlayer Player { get; private set; }
 
         public IObservable<BasicSongInfo> MetadataChanged { get; private set; }
-        protected Subject<BasicSongInfo> metadataSubject = null;
+        protected BehaviorSubject<BasicSongInfo> metadataSubject = null;
 
         public IObservable<Exception> ErrorOccurred { get; private set; }
 
@@ -43,7 +43,7 @@ namespace Neptunium.Media.Streamers
             Player.AudioCategory = MediaPlayerAudioCategory.Media;
             Player.Volume = 0.0;
 
-            metadataSubject = new Subject<BasicSongInfo>();
+            metadataSubject = new BehaviorSubject<BasicSongInfo>(new BasicSongInfo() { Artist = CurrentArtist, Track = CurrentTrack });
             MetadataChanged = metadataSubject;
 
             ErrorOccurred = new Subject<Exception>();

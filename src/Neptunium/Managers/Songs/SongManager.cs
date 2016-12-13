@@ -41,8 +41,6 @@ namespace Neptunium.Managers.Songs
         {
             if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //don't play that pre-defined station message that happens every so often.
 
-            if (e.Title.ToLower().Equals("unknown song") || e.Artist.ToLower().Equals("unknown artist")) return;
-
             if (!string.IsNullOrWhiteSpace(e.Title) && string.IsNullOrWhiteSpace(e.Artist))
             {
                 //station message got through.
@@ -66,6 +64,8 @@ namespace Neptunium.Managers.Songs
             });
 
             CurrentSong = metadata;
+
+            if (e.Title.ToLower().Equals("unknown song") || e.Artist.ToLower().Equals("unknown artist")) return;
 
             string storageKey = "SONG|" + metadata.GetHashCode();
 

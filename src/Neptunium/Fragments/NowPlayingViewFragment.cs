@@ -1,4 +1,5 @@
-﻿using Crystal3.InversionOfControl;
+﻿using Crystal3.Core;
+using Crystal3.InversionOfControl;
 using Crystal3.Model;
 using Crystal3.Navigation;
 using Crystal3.UI.Commands;
@@ -79,25 +80,25 @@ namespace Neptunium.Fragments
 
         private async void SongManager_PreSongChanged(object sender, SongManagerSongChangedEventArgs e)
         {
-            await App.Dispatcher.RunWhenIdleAsync(() =>
-            {
-                SongMetadata = e.Metadata.Track + " by " + e.Metadata.Artist;
+            await App.Dispatcher.RunAsync(IUIDispatcherPriority.High, () =>
+             {
+                 SongMetadata = e.Metadata.Track + " by " + e.Metadata.Artist;
 
 
-                CurrentSong = e.Metadata.Track;
-                CurrentArtist = e.Metadata.Artist;
+                 CurrentSong = e.Metadata.Track;
+                 CurrentArtist = e.Metadata.Artist;
 
-                try
-                {
-                    if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
-                    {
-                        if (!WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two)
-                        .IsNavigatedTo<NowPlayingViewViewModel>())
-                            IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync("Now Playing: " + SongMetadata, 6000);
-                    }
-                }
-                catch (Exception) { }
-            });
+                 try
+                 {
+                     if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+                     {
+                         if (!WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two)
+                         .IsNavigatedTo<NowPlayingViewViewModel>())
+                             IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync("Now Playing: " + SongMetadata, 6000);
+                     }
+                 }
+                 catch (Exception) { }
+             });
         }
 
         private async void SongManager_SongChanged(object sender, SongManagerSongChangedEventArgs e)
