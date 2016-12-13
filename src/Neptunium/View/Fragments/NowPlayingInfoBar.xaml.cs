@@ -32,6 +32,7 @@ namespace Neptunium.View.Fragments
 
             App.Current.Resuming += Current_Resuming;
             StationMediaPlayer.IsPlayingChanged += StationMediaPlayer_IsPlayingChanged;
+            StationMediaPlayer.ConnectingStatusChanged += StationMediaPlayer_ConnectingStatusChanged;
 
             this.RegisterPropertyChangedCallback(DataContextProperty, HandleNowPlayingInfoContextChanged);
 
@@ -43,6 +44,14 @@ namespace Neptunium.View.Fragments
             PART_GlassPane.Animate = true;
 
             RefreshMediaButtons();
+        }
+
+        private void StationMediaPlayer_ConnectingStatusChanged(object sender, StationMediaPlayerConnectingStatusChangedEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                this.IsEnabled = !e.IsConnecting;
+            });
         }
 
         private void StationMediaPlayer_IsPlayingChanged(object sender, EventArgs e)
