@@ -156,6 +156,9 @@ namespace Neptunium.Media
 
         public static async Task<bool> PlayStationAsync(StationModel station)
         {
+            if (!IsInitialized)
+                await InitializeAsync();
+
             if (station == currentStationModel && IsPlaying) return true;
             if (station == null) return false;
 

@@ -47,8 +47,10 @@ namespace Neptunium.Media
                 if (streamer.IsConnected)
                 {
                     streamer.Player.Play();
-                    await streamer.FadeVolumeUpToAsync(1.0);
                     UseStreamerBase(streamer);
+                    await streamer.FadeVolumeUpToAsync(1.0);
+
+                    CurrentStreamer = streamer;
                 }
                 else
                     throw new Exception("Not connected.");
@@ -73,9 +75,11 @@ namespace Neptunium.Media
                 if (streamer.IsConnected)
                 {
                     streamer.Player.Play();
+                    UseStreamerBase(streamer);
                     await Task.WhenAll(streamer.FadeVolumeUpToAsync(1.0), ((BasicMediaStreamer)CurrentStreamer).FadeVolumeDownToAsync(0.0));
                     await StopStreamingCurrentStreamerAsync();
-                    UseStreamerBase(streamer);
+
+                    CurrentStreamer = streamer;
                 }
                 else
                     throw new Exception("Not connected.");
@@ -90,8 +94,6 @@ namespace Neptunium.Media
 
         private void UseStreamerBase(IMediaStreamer streamer)
         {
-            CurrentStreamer = streamer;
-
             internetConnectionProfile = NetworkInformation.GetInternetConnectionProfile();
 
             streamer.MetadataChanged.Subscribe(songInfo =>
@@ -110,11 +112,11 @@ namespace Neptunium.Media
                 });
             });
 
-            CurrentStreamer.Player.MediaFailed += Current_MediaFailed;
+            streamer.Player.MediaFailed += Current_MediaFailed;
 
-            CurrentStreamer.Player.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+            streamer.Player.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
 
-            UpdateNowPlaying(new BasicSongInfo() { Track = streamer.CurrentTrack, Artist = streamer.CurrentArtist });
+            //UpdateNowPlaying(new BasicSongInfo() { Track = streamer.CurrentTrack, Artist = streamer.CurrentArtist });
         }
 
         internal async Task StopStreamingCurrentStreamerAsync()
@@ -139,11 +141,15 @@ namespace Neptunium.Media
                 try
                 {
                     var smtc = CurrentStreamer.Player.SystemMediaTransportControls;
-                    smtc.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
-                    smtc.DisplayUpdater.MusicProperties.Title = songInfo.Track;
-                    smtc.DisplayUpdater.MusicProperties.Artist = songInfo.Artist;
 
-                    smtc.DisplayUpdater.Update();
+                    if (smtc != null)
+                    {
+                        smtc.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
+                        smtc.DisplayUpdater.MusicProperties.Title = songInfo.Track;
+                        smtc.DisplayUpdater.MusicProperties.Artist = songInfo.Artist;
+
+                        smtc.DisplayUpdater.Update();
+                    }
                 }
                 catch (Exception) { }
             }

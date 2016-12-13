@@ -79,7 +79,9 @@ namespace Neptunium.Media.Streamers
 
         public async Task FadeVolumeDownToAsync(double value)
         {
-            if (value >= Player.Volume) throw new ArgumentOutOfRangeException(nameof(value));
+            if (value > Player.Volume) throw new ArgumentOutOfRangeException(nameof(value));
+
+            if (value == Player.Volume) return;
 
             await volumeLock.WaitAsync();
 
@@ -94,7 +96,9 @@ namespace Neptunium.Media.Streamers
         }
         public async Task FadeVolumeUpToAsync(double value)
         {
-            if (value <= Player.Volume) throw new ArgumentOutOfRangeException(nameof(value));
+            if (value < Player.Volume) throw new ArgumentOutOfRangeException(nameof(value));
+
+            if (value == Player.Volume) return;
 
             await volumeLock.WaitAsync();
 
