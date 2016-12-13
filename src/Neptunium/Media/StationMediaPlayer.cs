@@ -178,7 +178,7 @@ namespace Neptunium.Media
 
             if (streamer.IsConnected)
             {
-                //await Task.Delay(1000); //wait a second to buffer
+                await Task.Delay(3000); //wait a second to buffer
 
                 currentStationModel = station;
 
