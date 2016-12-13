@@ -188,16 +188,22 @@ namespace Neptunium.Media
 
                 if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
 
-
-                if (ConnectingStatusChanged != null)
-                    ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
-
                 IsPlaying = true;
 
                 if (willCrossFade)
+                {
+                    if (ConnectingStatusChanged != null)
+                        ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
+
                     await audioCoordinator.BeginStreamingAsync(streamer);
+                }
                 else
+                {
                     await audioCoordinator.BeginStreamingTransitionAsync(streamer);
+
+                    if (ConnectingStatusChanged != null)
+                        ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
+                }
 
                 //should be playing at this point.
 
