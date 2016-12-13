@@ -173,14 +173,14 @@ namespace Neptunium.Media
 
             await streamer.ConnectAsync(station, stream, null);
 
-            bool willCrossFade = false;
+            bool willCrossFade = false; //todo make cross fade transitions a setting
 
             switch(CrystalApplication.GetDevicePlatform())
             {
                 case Crystal3.Core.Platform.Desktop:
                     willCrossFade = audioCoordinator.CurrentStreamer != null;
                     break;
-                default: //cross fade transitionin seems to studder on mobile.
+                default: //cross fade transitioning seems to studder on mobile. might be because of the SD400
                     willCrossFade = false;
                     break;
 
