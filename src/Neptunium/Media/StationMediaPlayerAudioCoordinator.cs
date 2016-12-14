@@ -153,6 +153,8 @@ namespace Neptunium.Media
 
         private void UpdateNowPlaying(IMediaStreamer streamer, BasicSongInfo songInfo)
         {
+            if (songInfo == null) return;
+
             if (streamer != null)
             {
                 if (streamer.CurrentStation != null)
@@ -160,21 +162,16 @@ namespace Neptunium.Media
 
                 if (systemMediaTransportControls != null)
                 {
-                    try
-                    {
+                    systemMediaTransportControls.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
+                    systemMediaTransportControls.DisplayUpdater.MusicProperties.Title = songInfo.Track;
+                    systemMediaTransportControls.DisplayUpdater.MusicProperties.Artist = songInfo.Artist;
 
-                        systemMediaTransportControls.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
-                        systemMediaTransportControls.DisplayUpdater.MusicProperties.Title = songInfo.Track;
-                        systemMediaTransportControls.DisplayUpdater.MusicProperties.Artist = songInfo.Artist;
+                    if (streamer.CurrentStation != null)
+                        if (!string.IsNullOrWhiteSpace(streamer.CurrentStation.Logo))
+                            systemMediaTransportControls.DisplayUpdater.Thumbnail =
+                                RandomAccessStreamReference.CreateFromUri(new Uri(streamer.CurrentStation.Logo));
 
-                        if (streamer.CurrentStation != null)
-                            if (!string.IsNullOrWhiteSpace(streamer.CurrentStation.Logo))
-                                systemMediaTransportControls.DisplayUpdater.Thumbnail =
-                                    RandomAccessStreamReference.CreateFromUri(new Uri(streamer.CurrentStation.Logo));
-
-                        systemMediaTransportControls.DisplayUpdater.Update();
-                    }
-                    catch (Exception) { }
+                    systemMediaTransportControls.DisplayUpdater.Update();
                 }
 
                 metadataReceivedSub.OnNext(songInfo);
