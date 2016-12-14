@@ -46,6 +46,8 @@ namespace Neptunium.Media
 
             audioCoordinator.MetadataReceived.Subscribe(songInfo =>
             {
+                if (songInfo == null) return;
+
                 if (MetadataChanged != null)
                     MetadataChanged(null, new ShoutcastMediaSourceStreamMetadataChangedEventArgs(songInfo.Track, songInfo.Artist));
             });
