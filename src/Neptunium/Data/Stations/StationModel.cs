@@ -27,5 +27,10 @@ namespace Neptunium.Data
         public IEnumerable<string> StationMessages { get; internal set; }
         [DataMember]
         public IEnumerable<StationModelStream> Streams { get; internal set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

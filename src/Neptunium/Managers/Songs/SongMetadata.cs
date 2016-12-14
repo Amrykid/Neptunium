@@ -22,5 +22,10 @@ namespace Neptunium.Managers.Songs
         {
             return Artist.GetHashCode() + Track.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return string.Join(" - ", Artist, Track);
+        }
     }
 }
