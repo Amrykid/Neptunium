@@ -42,7 +42,6 @@ namespace Neptunium.Media.Streamers
             Player = new MediaPlayer();
             Player.AudioCategory = MediaPlayerAudioCategory.Media;
             Player.Volume = 0.0;
-            Player.CommandManager.IsEnabled = false;
 
             metadataSubject = new BehaviorSubject<BasicSongInfo>(new BasicSongInfo() { Artist = CurrentArtist, Track = CurrentTrack });
             MetadataChanged = metadataSubject;

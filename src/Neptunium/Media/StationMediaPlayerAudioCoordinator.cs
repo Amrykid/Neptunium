@@ -39,45 +39,6 @@ namespace Neptunium.Media
             MetadataReceived = metadataReceivedSub;
         }
 
-        private void AcquireMediaControlsIfNeeded()
-        {
-            if (systemMediaTransportControls == null)
-            {
-                systemMediaTransportControls = SystemMediaTransportControls.GetForCurrentView();
-                systemMediaTransportControls.IsChannelDownEnabled = false;
-                systemMediaTransportControls.IsChannelUpEnabled = false;
-                systemMediaTransportControls.IsEnabled = true;
-                systemMediaTransportControls.IsFastForwardEnabled = false;
-                systemMediaTransportControls.IsNextEnabled = false;
-                systemMediaTransportControls.IsPauseEnabled = true;
-                systemMediaTransportControls.IsPlayEnabled = true;
-                systemMediaTransportControls.IsPreviousEnabled = false;
-                systemMediaTransportControls.IsRecordEnabled = false;
-                systemMediaTransportControls.IsRewindEnabled = false;
-                systemMediaTransportControls.IsStopEnabled = false;
-
-                systemMediaTransportControls.ButtonPressed += SystemMediaTransportControls_ButtonPressed;
-            }
-        }
-
-        private void SystemMediaTransportControls_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
-        {
-            if (CurrentStreamer == null) return;
-
-            switch (args.Button)
-            {
-                case SystemMediaTransportControlsButton.Play:
-                    if (CurrentStreamer.Player.PlaybackSession.PlaybackState == MediaPlaybackState.Paused)
-                        CurrentStreamer.Player.Play();
-                    break;
-                case SystemMediaTransportControlsButton.Pause:
-                    if (CurrentStreamer.Player.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
-                        CurrentStreamer.Player.Pause();
-                    break;
-
-            }
-        }
-
         public IMediaStreamer CurrentStreamer { get; private set; }
         public MediaPlaybackState PlaybackState { get; private set; }
 
@@ -86,8 +47,6 @@ namespace Neptunium.Media
         {
             try
             {
-                AcquireMediaControlsIfNeeded();
-
                 if (streamer.IsConnected)
                 {
                     streamer.Player.Play();
@@ -117,14 +76,13 @@ namespace Neptunium.Media
 
             try
             {
-                AcquireMediaControlsIfNeeded();
-
                 if (streamer.IsConnected)
                 {
                     streamer.Player.Play();
                     UseStreamerBase(streamer);
                     await Task.WhenAll(streamer.FadeVolumeUpToAsync(1.0), ((BasicMediaStreamer)CurrentStreamer).FadeVolumeDownToAsync(0.0));
                     await StopStreamingCurrentStreamerAsync();
+
 
                     CurrentStreamer = streamer;
                 }
@@ -144,12 +102,14 @@ namespace Neptunium.Media
         {
             internetConnectionProfile = NetworkInformation.GetInternetConnectionProfile();
 
+            systemMediaTransportControls = streamer.Player.SystemMediaTransportControls;
+
             streamer.MetadataChanged.Subscribe(songInfo =>
             {
                 currentTrack = songInfo.Track;
                 currentArtist = songInfo.Artist;
 
-                UpdateNowPlaying(songInfo);
+                UpdateNowPlaying(streamer, songInfo);
             });
 
             streamer.ErrorOccurred.Subscribe(exception =>
@@ -164,7 +124,7 @@ namespace Neptunium.Media
 
             streamer.Player.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
 
-            UpdateNowPlaying(new BasicSongInfo() { Track = streamer.CurrentTrack, Artist = streamer.CurrentArtist });
+            UpdateNowPlaying(streamer, new BasicSongInfo() { Track = streamer.CurrentTrack, Artist = streamer.CurrentArtist });
         }
 
         internal async Task StopStreamingCurrentStreamerAsync()
@@ -182,33 +142,39 @@ namespace Neptunium.Media
             }
         }
 
-        private void UpdateNowPlaying(BasicSongInfo songInfo)
+        private void UpdateNowPlaying(IMediaStreamer streamer, BasicSongInfo songInfo)
         {
-            if ((bool)CurrentStreamer.CurrentStation.StationMessages?.Contains(songInfo.Track)) return; //don't play that pre-defined station message that happens every so often.
-
-            if (systemMediaTransportControls != null)
+            if (streamer != null)
             {
-                try
+                if (streamer.CurrentStation != null)
+                    if ((bool)streamer.CurrentStation.StationMessages?.Contains(songInfo.Track)) return; //don't play that pre-defined station message that happens every so often.
+
+                if (systemMediaTransportControls != null)
                 {
+                    try
+                    {
 
-                    systemMediaTransportControls.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
-                    systemMediaTransportControls.DisplayUpdater.MusicProperties.Title = songInfo.Track;
-                    systemMediaTransportControls.DisplayUpdater.MusicProperties.Artist = songInfo.Artist;
+                        systemMediaTransportControls.DisplayUpdater.Type = Windows.Media.MediaPlaybackType.Music;
+                        systemMediaTransportControls.DisplayUpdater.MusicProperties.Title = songInfo.Track;
+                        systemMediaTransportControls.DisplayUpdater.MusicProperties.Artist = songInfo.Artist;
 
-                    if (!string.IsNullOrWhiteSpace(CurrentStreamer.CurrentStation.Logo))
-                        systemMediaTransportControls.DisplayUpdater.Thumbnail = RandomAccessStreamReference.CreateFromUri(new Uri(CurrentStreamer.CurrentStation.Logo));
+                        if (streamer.CurrentStation != null)
+                            if (!string.IsNullOrWhiteSpace(streamer.CurrentStation.Logo))
+                                systemMediaTransportControls.DisplayUpdater.Thumbnail =
+                                    RandomAccessStreamReference.CreateFromUri(new Uri(streamer.CurrentStation.Logo));
 
-                    systemMediaTransportControls.DisplayUpdater.Update();
+                        systemMediaTransportControls.DisplayUpdater.Update();
+                    }
+                    catch (Exception) { }
                 }
-                catch (Exception) { }
+
+                metadataReceivedSub.OnNext(songInfo);
+
+                EventTelemetry et = new EventTelemetry("UpdateNowPlaying");
+                et.Properties.Add("CurrentTrack", currentTrack);
+                et.Properties.Add("CurrentArtist", currentArtist);
+                HockeyClient.Current.TrackEvent(et);
             }
-
-            metadataReceivedSub.OnNext(songInfo);
-
-            EventTelemetry et = new EventTelemetry("UpdateNowPlaying");
-            et.Properties.Add("CurrentTrack", currentTrack);
-            et.Properties.Add("CurrentArtist", currentArtist);
-            HockeyClient.Current.TrackEvent(et);
         }
 
         #region Events
@@ -275,7 +241,7 @@ namespace Neptunium.Media
         {
             PlaybackState = sender.PlaybackState;
 
-            systemMediaTransportControls.PlaybackStatus = ConvertToSystemMediaPlaybackStatus(sender.PlaybackState);
+            //systemMediaTransportControls.PlaybackStatus = ConvertToSystemMediaPlaybackStatus(sender.PlaybackState);
 
             coordinationChannel.OnNext(new StationMediaPlayerAudioCoordinationAudioPlaybackStatusMessage(sender.PlaybackState));
         }
@@ -284,12 +250,11 @@ namespace Neptunium.Media
         {
             switch (playbackState)
             {
-                case MediaPlaybackState.Buffering:
-                    return MediaPlaybackStatus.Changing;
                 case MediaPlaybackState.Opening:
                     return MediaPlaybackStatus.Changing;
                 case MediaPlaybackState.Paused:
                     return MediaPlaybackStatus.Paused;
+                case MediaPlaybackState.Buffering:
                 case MediaPlaybackState.Playing:
                     return MediaPlaybackStatus.Playing;
                 case MediaPlaybackState.None:
@@ -304,11 +269,6 @@ namespace Neptunium.Media
             {
                 CurrentStreamer.Player.MediaFailed -= Current_MediaFailed;
                 CurrentStreamer.Player.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
-            }
-
-            if (systemMediaTransportControls != null)
-            {
-                systemMediaTransportControls.ButtonPressed -= SystemMediaTransportControls_ButtonPressed;
             }
         }
         #endregion
