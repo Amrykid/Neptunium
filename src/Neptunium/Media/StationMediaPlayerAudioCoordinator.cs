@@ -78,6 +78,15 @@ namespace Neptunium.Media
             {
                 if (streamer.IsConnected)
                 {
+                    if (CurrentStreamer.Player.PlaybackSession.PlaybackState == MediaPlaybackState.Paused || CurrentStreamer.Player.IsMuted)
+                    {
+                        //no point fading if it can't be heard anyway.
+
+                        await StopStreamingCurrentStreamerAsync();
+                        await BeginStreamingAsync(streamer);
+                        return;
+                    }
+
                     streamer.Player.Play();
                     UseStreamerBase(streamer);
                     await Task.WhenAll(streamer.FadeVolumeUpToAsync(1.0), ((BasicMediaStreamer)CurrentStreamer).FadeVolumeDownToAsync(0.0));
