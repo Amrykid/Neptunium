@@ -315,6 +315,11 @@
         http://192.99.62.212:9764/stream
       </Stream>
     </Streams>
+    <StationMessages>
+      <Message><![CDATA[asiadreamradio.com - Merry Christmas & Happy New Year 1]]></Message>
+      <Message><![CDATA[asiadreamradio.com - Merry Christmas & Happy New Year 2]]></Message>
+      <Message><![CDATA[asiadreamradio.com - Merry Christmas & Happy New Year 3]]></Message>
+    </StationMessages>
   </Station>
   <Station>
     <Name>J-Rock Powerplay</Name>
