@@ -7,6 +7,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Neptunium.Managers.Songs;
+using Neptunium.Data;
 
 namespace Neptunium.Managers
 {
@@ -20,8 +22,6 @@ namespace Neptunium.Managers
         public async Task InitializeAsync()
         {
             if (IsInitialized) return;
-
-            StationMediaPlayer.MetadataChanged += StationMediaPlayer_MetadataChanged;
 
             songHistoryCollection = await CookieJar.DeviceCache.PeekObjectAsync<ObservableCollection<SongHistoryItem>>("SongHistory", () => new ObservableCollection<SongHistoryItem>());
             SongHistory = new ReadOnlyObservableCollection<SongHistoryItem>(songHistoryCollection);
@@ -44,17 +44,17 @@ namespace Neptunium.Managers
             await CookieJar.DeviceCache.FlushAsync();
         }
 
+        public event EventHandler<SongHistoryManagerItemAddedEventArgs> ItemAdded;
+        public event EventHandler<SongHistoryManagerItemRemovedEventArgs> ItemRemoved;
 
-        private async void StationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
+        internal async void HandleNewSongPlayed(SongMetadata metadata, StationModel songStation)
         {
-            if (StationMediaPlayer.CurrentStation.StationMessages.Any(x => x == e.Title)) return;
-            if (e.Artist == "Unknown Artist" && e.Title == "Unknown Song") return;
             //add a new song to the metadata when the song changes.
 
             var historyItem = new SongHistoryItem();
-            historyItem.Track = e.Title;
-            historyItem.Artist = e.Artist;
-            historyItem.Station = StationMediaPlayer.CurrentStation.Name;
+            historyItem.Track = metadata.Track;
+            historyItem.Artist = metadata.Artist;
+            historyItem.Station = songStation?.Name;
             historyItem.DatePlayed = DateTime.Now;
 
             songHistoryCollection.Insert(0, historyItem);
@@ -63,8 +63,5 @@ namespace Neptunium.Managers
 
             await FlushAsync();
         }
-
-        public event EventHandler<SongHistoryManagerItemAddedEventArgs> ItemAdded;
-        public event EventHandler<SongHistoryManagerItemRemovedEventArgs> ItemRemoved;
     }
 }

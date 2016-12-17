@@ -104,6 +104,8 @@ namespace Neptunium.Managers.Songs
                 Metadata = metadata,
             });
 
+            HistoryManager.HandleNewSongPlayed(metadata, StationMediaPlayer.CurrentStation);
+
             if (!cachedSong)
             {
                 await CookieJar.DeviceCache.InsertObjectAsync<SongMetadata>(storageKey, metadata,

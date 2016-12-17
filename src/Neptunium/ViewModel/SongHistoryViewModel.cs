@@ -11,18 +11,13 @@ using Neptunium.Managers.Songs;
 
 namespace Neptunium.ViewModel
 {
-    public class SongHistoryViewModel : ViewModelBase
+    public class SongHistoryViewModel : UIViewModelBase
     {
-        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            try
-            {
-                SongHistory = new ObservableCollection<SongHistoryItem>(SongManager.HistoryManager.SongHistory);
-            }
-            catch (Exception)
-            {
-                SongHistory = new ObservableCollection<SongHistoryItem>();
-            }
+            await UI.WaitForUILoadAsync();
+
+            SongHistory = new ObservableCollection<SongHistoryItem>(SongManager.HistoryManager.SongHistory.ToArray());
 
             SongManager.HistoryManager.ItemAdded += SongHistoryManager_ItemAdded;
             SongManager.HistoryManager.ItemRemoved += SongHistoryManager_ItemRemoved;

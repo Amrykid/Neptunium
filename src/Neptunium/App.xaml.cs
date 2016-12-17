@@ -218,9 +218,8 @@ namespace Neptunium
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.TryToFindSongMetadata))
                 ApplicationData.Current.LocalSettings.Values.Add(AppSettings.TryToFindSongMetadata, true);
 
-            await StationMediaPlayer.InitializeAsync();
-
             await SongManager.InitializeAsync();
+            await StationMediaPlayer.InitializeAsync();
         }
 
         private async Task PostUIInitAsync()
