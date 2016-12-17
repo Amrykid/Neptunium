@@ -6,32 +6,30 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:nepcon="using:Neptunium.Controls"
+    xmlns:ki="using:Kimono.Controls"
     xmlns:uwpcon="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d" Loaded="Page_Loaded" DataContextChanged="Page_DataContextChanged" Unloaded="Page_Unloaded">
 
+    <Page.Resources>
+        <DataTemplate x:Key="NowPlayingSecondaryDataPanelTemplate">
+            <Pivot>
+                <PivotItem Header="Album Data" />
+                <PivotItem Header="Events" />
+            </Pivot>
+        </DataTemplate>
+    </Page.Resources>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
-                <VisualState x:Name="DesktopVisualState">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1080" />
-                    </VisualState.StateTriggers>
-
-                    <VisualState.Setters>
-                        <Setter Target="StationLogo.Height" Value="300" />
-                        <Setter Target="StationLogo.HorizontalAlignment" Value="Left" />
-                        <Setter Target="StationLogo.Stretch" Value="Uniform" />
-                    </VisualState.Setters>
-                </VisualState>
                 <VisualState x:Name="TabletVisualState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="720" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="StationLogo.Height" Value="300" />
-                        <Setter Target="StationLogo.HorizontalAlignment" Value="Left" />
-                        <Setter Target="StationLogo.Stretch" Value="Uniform" />
+                        <Setter Target="MobileView.Visibility" Value="Collapsed" />
+                        <Setter Target="TabletView.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -40,9 +38,8 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="StationLogo.Height" Value="250" />
-                        <Setter Target="StationLogo.HorizontalAlignment" Value="Stretch" />
-                        <Setter Target="StationLogo.Stretch" Value="Uniform" />
+                        <Setter Target="MobileView.Visibility" Value="Visible" />
+                        <Setter Target="TabletView.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -51,111 +48,76 @@
               VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <TextBlock Text="Select a station to begin streaming." VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" />
         </Grid>
-        <ScrollViewer>
-            <Grid>
-                <Grid x:Name="BackDropGrid">
-                    <Grid.Background>
-                        <ImageBrush Opacity=".45" Stretch="Uniform">
-                            <ImageBrush.ImageSource>
-                                <BitmapImage UriSource="{Binding NowPlayingBackgroundImage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StrUriConv}}"/>
-                            </ImageBrush.ImageSource>
-                        </ImageBrush>
-                    </Grid.Background>
 
-                    <nepcon:GlassPanel x:Name="GlassPanel" />
-                </Grid>
 
-                <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
+        <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
+            <nepcon:GlassPanel x:Name="GlassPanel" />
+
+            <Grid x:Name="TabletView" Visibility="Collapsed" x:DeferLoadStrategy="Lazy">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="300" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="150" />
+                        <RowDefinition Height="150" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" x:Name="StationInfoPanel" Margin="20 5">
-                        <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Center" Text="{Binding CurrentStation.Title, UpdateSourceTrigger=PropertyChanged}" />
-                        <uwpcon:ImageEx x:Name="StationLogo" Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}"
-                                        IsCacheEnabled="True"
-                                        HorizontalAlignment="Stretch" Height="250" Stretch="Uniform" />
-                    </Grid>
+                    <uwpcon:ImageEx Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
+                                    HorizontalAlignment="Left" VerticalAlignment="Center"
+                                    Width="200" Height="200" Margin="10 10 0 0" IsCacheEnabled="True" />
 
-                    <VariableSizedWrapGrid x:Name="SongInfoPanel" Grid.Row="1" 
-                                           Orientation="Horizontal" Margin="0 0 0 20" VerticalAlignment="Stretch">
-                        <Grid x:Name="songInfoGrid">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock Style="{ThemeResource SubheaderTextBlockStyle}" Margin="20 10 0 0" Grid.Row="0">Song Info</TextBlock>
-                            <TextBlock Text="{Binding SongMetadata, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1"
-                                       Margin="20 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left" />
-                        </Grid>
+                    <TextBlock Grid.Column="1" Grid.Row="0" Style="{ThemeResource TitleTextBlockStyle}"
+                               Margin="20 0 0 0"
+                               VerticalAlignment="Bottom"
+                               Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <Grid x:Name="extendedSongInfoGrid"
-                              Margin="20 10 0 0" MinHeight="425"
-                              Visibility="{Binding CurrentSongAlbumData, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" MaxHeight="250" />
-                                <RowDefinition Height="50" />
-                                <RowDefinition Height="50" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="1" Grid.Row="1" Style="{ThemeResource SubtitleTextBlockStyle}"
+                               Margin="20 0 0 0"
+                               Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <TextBlock Grid.Row="0" Text="Album Info" Style="{ThemeResource SubheaderTextBlockStyle}" />
-                            <uwpcon:ImageEx Grid.Row="1" 
-                                            Stretch="Uniform"
-                                            MaxHeight="250"
-                                            IsCacheEnabled="True"
-                                            HorizontalAlignment="Left"
-                                            Source="{Binding CurrentSongAlbumData.AlbumCoverUrl, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StrUriConv}}" />
-                            <TextBlock Grid.Row="2" Style="{ThemeResource BaseTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}">
-                                <Span>
-                                    <Run Text="{Binding CurrentSongAlbumData.Album, UpdateSourceTrigger=PropertyChanged}" />
-                                    <Run Text="by" />
-                                    <Run Text="{Binding CurrentSongAlbumData.Artist, UpdateSourceTrigger=PropertyChanged}" />
-                                </Span>
-                            </TextBlock>
-                            <TextBlock Grid.Row="3" Style="{ThemeResource BodyTextBlockStyle}" 
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" FontSize="18" LineHeight="22">
-                                <Span>
-                                    <Run Text="Released: " />
-                                    <Run Text="{Binding CurrentSongAlbumData.ReleaseDate, UpdateSourceTrigger=PropertyChanged}" />
-                                </Span>
-                            </TextBlock>
-                            <Button Grid.Row="4" Content="View on MusicBrainz" Command="{Binding ViewAlbumOnMusicBrainzCommand}" />
-                        </Grid>
-
-                        <Grid x:Name="SongHistoryPanel" Width="600" Visibility="Collapsed">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Grid.Row="0" Style="{ThemeResource TitleTextBlockStyle}" Margin="20 10 0 0">Song History</TextBlock>
-
-                            <ListView ItemsSource="{Binding HistoryItems, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Margin="10 10 0 0">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="300" />
-                                                <ColumnDefinition Width="30" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <TextBlock Text="{Binding Song, Mode=OneTime}" Grid.Column="0" />
-
-                                            <TextBlock Text="{Binding Time, Mode=OneTime}" Grid.Column="1" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Grid>
-                    </VariableSizedWrapGrid>
                 </Grid>
+
+                <ContentControl Grid.Row="1" ContentTemplate="{StaticResource NowPlayingSecondaryDataPanelTemplate}" />
+
             </Grid>
-        </ScrollViewer>
+            
+            <Grid x:Name="MobileView">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="60" />
+                        <RowDefinition Height="60" />
+                    </Grid.RowDefinitions>
+
+                    <uwpcon:ImageEx Grid.Row="0" Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Margin="20 20 20 20" IsCacheEnabled="True" />
+
+                    <TextBlock Grid.Row="1" Style="{ThemeResource TitleTextBlockStyle}"
+                               Margin="20 -10 0 0"
+                               VerticalAlignment="Bottom"
+                               Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="2" Style="{ThemeResource SubtitleTextBlockStyle}"
+                               Margin="20 0 0 0"
+                               Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" />
+
+                </Grid>
+
+                <ki:GripperPanel CollapsedHeight="20">
+                    <ki:GripperPanel.PanelContent>
+                        <Grid>
+                            <ContentControl ContentTemplate="{StaticResource NowPlayingSecondaryDataPanelTemplate}" />
+                        </Grid>
+                    </ki:GripperPanel.PanelContent>
+                </ki:GripperPanel>
+            </Grid>
+        </Grid>
     </Grid>
 </Page>

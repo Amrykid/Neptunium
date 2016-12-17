@@ -128,6 +128,8 @@ namespace Neptunium.View
         private void AppShellView_NavigationServicePreNavigatedSignaled(object sender, NavigationServicePreNavigatedSignaledEventArgs e)
         {
             RefreshNavigationSplitViewState(e.ViewModel);
+
+            HandleLowerAppbarState(e.ViewModel is NowPlayingViewViewModel);
         }
 
         private void AppShellView_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -188,7 +190,7 @@ namespace Neptunium.View
         {
             this.SizeChanged += AppShellView_SizeChanged;
 
-            HandleUI();
+            HandleLowerAppbarState(inlineNavService.IsNavigatedTo<NowPlayingViewViewModel>());
 
             GoHome();
 
@@ -208,16 +210,9 @@ namespace Neptunium.View
             }
         }
 
-        private void HandleUI()
-        {
-
-        }
-
         private void GoHome()
         {
-            WindowManager.GetNavigationManagerForCurrentWindow()
-                            .GetNavigationServiceFromFrameLevel(Crystal3.Navigation.FrameLevel.Two)
-                            .NavigateTo<StationsViewViewModel>();
+            inlineNavService.NavigateTo<StationsViewViewModel>();
 
             inlineFrame.BackStack.Clear();
 
@@ -229,7 +224,21 @@ namespace Neptunium.View
         {
             Debug.WriteLine("State Change: " + (e.OldState == null ? "null" : e.OldState.Name) + " -> " + e.NewState.Name);
 
+            HandleLowerAppbarState(inlineNavService.IsNavigatedTo<NowPlayingViewViewModel>());
+        }
 
+        private void HandleLowerAppbarState(bool isOnNowPlayingPage)
+        {
+            if (App.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                //lower app bar is always collapsed on xbox.
+                lowerAppBar.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                //lowerAppBar.Visibility = isOnNowPlayingPage ? Visibility.Collapsed : Visibility.Visible;
+                lowerAppBar.Visibility = Visibility.Visible;
+            }
         }
 
         private async void FeedbackButton_Click(object sender, RoutedEventArgs e)

@@ -2,6 +2,7 @@
 using Crystal3.UI;
 using Crystal3.Utilities;
 using Microsoft.Graphics.Canvas.Effects;
+using Neptunium.Media;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -32,56 +33,37 @@ namespace Neptunium.View
     [Crystal3.Navigation.NavigationViewModel(typeof(NowPlayingViewViewModel), NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile)]
     public sealed partial class NowPlayingView : Page
     {
-        private NowPlayingViewViewModel viewModel = null;
-
         public NowPlayingView()
         {
             this.InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            GlassPanel.TurnOffGlass(); //turn off the glass
-        }
+            StationMediaPlayer.IsPlayingChanged += StationMediaPlayer_IsPlayingChanged;
 
-        private async void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "NowPlayingBackgroundImage")
+            if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
             {
-                var viewModel = (this.DataContext as NowPlayingViewViewModel);
+                //var accentColor = (Color)this.Resources["SystemAccentColor"];
 
-                await Task.Delay(500);
-
-                var imgSrc = viewModel.NowPlayingBackgroundImage;
-
-                if (string.IsNullOrWhiteSpace(imgSrc))
-                {
-                    GlassPanel.TurnOffGlass(); //turn off the glass
-                }
-                else
-                {
-                    //todo check if url doesn't 404
-
-                    GlassPanel.TurnOnGlass(); //turn on glass
-                }
+                GlassPanel.ChangeBlurColor(await Neptunium.Data.Stations.StationSupplementaryDataManager.GetStationLogoDominantColorAsync(StationMediaPlayer.CurrentStation));
             }
         }
+
+        private void StationMediaPlayer_IsPlayingChanged(object sender, EventArgs e)
+        {
+        }
+
+
 
         private void Page_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            if (viewModel != null)
-            {
-                viewModel.PropertyChanged -= ViewModel_PropertyChanged;
-            }
 
-            viewModel = (args.NewValue as NowPlayingViewViewModel);
-            viewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
-            if (viewModel != null)
-                viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+            StationMediaPlayer.IsPlayingChanged -= StationMediaPlayer_IsPlayingChanged;
         }
     }
 }

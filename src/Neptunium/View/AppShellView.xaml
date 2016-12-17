@@ -49,8 +49,6 @@
                         <Setter Target="CurrentPaneTitle.Visibility" Value="Collapsed" />
                         <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
 
-                        <Setter Target="lowerAppBar.Visibility" Value="Collapsed" />
-
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
                         <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
@@ -88,8 +86,6 @@
                         <Setter Target="CurrentPaneTitleRow.Height" Value="0" />
                         <Setter Target="CurrentPaneTitle.Visibility" Value="Collapsed" />
                         <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
-
-                        <Setter Target="lowerAppBar.Visibility" Value="Visible" />
 
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
@@ -129,8 +125,6 @@
                         <Setter Target="CurrentPaneTitle.Visibility" Value="Collapsed" />
                         <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
 
-                        <Setter Target="lowerAppBar.Visibility" Value="Visible" />
-
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
                         <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
@@ -168,8 +162,6 @@
                         <Setter Target="CurrentPaneTitleRow.Height" Value="50" />
                         <Setter Target="CurrentPaneTitle.Visibility" Value="Visible" />
                         <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
-
-                        <Setter Target="lowerAppBar.Visibility" Value="Visible" />
 
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
