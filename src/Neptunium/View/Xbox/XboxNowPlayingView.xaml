@@ -5,6 +5,7 @@
     xmlns:local="using:Neptunium.View.Xbox"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uwpcon="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:nepcon="using:Neptunium.Controls"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
@@ -39,8 +40,8 @@
                     <RowDefinition Height="80" />
                 </Grid.RowDefinitions>
 
-                <Image Grid.Column="0" Grid.Row="0" Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
-                       Width="150" Height="150" />
+                <uwpcon:ImageEx Grid.Column="0" Grid.Row="0" Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
+                       Width="150" Height="150" IsCacheEnabled="True" />
 
                 <Grid Grid.Column="1" Grid.Row="0" Margin="20 0 0 0">
                     <Grid.RowDefinitions>
