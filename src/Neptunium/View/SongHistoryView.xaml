@@ -97,5 +97,11 @@
                 </TransitionCollection>
             </ListView.Transitions>
         </ListView>
+
+        <Grid Opacity=".7" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+              Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisConv}, UpdateSourceTrigger=PropertyChanged}"
+              Grid.Row="0" Grid.RowSpan="2">
+            <ProgressRing Width="60" Height="60" VerticalAlignment="Center" HorizontalAlignment="Center" IsActive="True" />
+        </Grid>
     </Grid>
 </Page>

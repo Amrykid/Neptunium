@@ -17,10 +17,17 @@ namespace Neptunium.ViewModel
         {
             await UI.WaitForUILoadAsync();
 
-            SongHistory = new ObservableCollection<SongHistoryItem>(SongManager.HistoryManager.SongHistory.ToArray());
+            IsBusy = true;
+
+            var songs = SongManager.HistoryManager.SongHistory.ToArray();
+            await App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                SongHistory = new ObservableCollection<SongHistoryItem>(songs);
+            });
 
             SongManager.HistoryManager.ItemAdded += SongHistoryManager_ItemAdded;
             SongManager.HistoryManager.ItemRemoved += SongHistoryManager_ItemRemoved;
+            IsBusy = false;
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
