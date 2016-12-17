@@ -49,6 +49,8 @@ namespace Neptunium.Managers
 
         internal async void HandleNewSongPlayed(SongMetadata metadata, StationModel songStation)
         {
+            if (songHistoryCollection.Any(x => x.Artist == metadata.Artist && x.Track == metadata.Track)) return; //todo, maybe keep track of how many times this particular song is played?
+
             //add a new song to the metadata when the song changes.
 
             var historyItem = new SongHistoryItem();
