@@ -77,6 +77,17 @@
                 </Grid>
 
                 <ki:BannerBar x:Name="bannerBar" Grid.Row="2" Visibility="Collapsed" />
+
+                <Grid Opacity=".8" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                      Grid.Row="0" Grid.RowSpan="3"
+                      Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisConv}, UpdateSourceTrigger=PropertyChanged}">
+                    <ProgressRing Width="60" Height="60" VerticalAlignment="Center" HorizontalAlignment="Center" IsActive="True" />
+                    <Grid.Transitions>
+                        <TransitionCollection>
+                            <PopupThemeTransition />
+                        </TransitionCollection>
+                    </Grid.Transitions>
+                </Grid>
             </Grid>
         </ScrollViewer>
 

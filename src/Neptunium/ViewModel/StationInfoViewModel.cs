@@ -23,17 +23,20 @@ namespace Neptunium.ViewModel
             {
                 IsBusy = true;
 
+                await UI.WaitForUILoadAsync();
+
                 string stationName = e.Parameter as string;
                 if (!string.IsNullOrWhiteSpace(stationName))
                 {
-                    if (!StationDataManager.IsInitialized)
-                        await StationDataManager.InitializeAsync();
-
                     StationModel station = StationDataManager.Stations.FirstOrDefault(x => x.Name == stationName);
 
-                    Station = station;
+                    await App.Dispatcher.RunWhenIdleAsync(() =>
+                    {
+                        Station = station;
 
-                    SongHistory.Invoke(this, station);
+                        SongHistory.Invoke(this, station);
+                    });
+                    
                 }
 
                 IsBusy = false;

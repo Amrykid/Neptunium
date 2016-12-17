@@ -51,7 +51,7 @@ namespace Neptunium.Fragments
                                 }
                                 catch (HttpRequestException)
                                 {
-
+                                    UI.SendMessageToUI("hide");
                                 }
                             }
                             else
