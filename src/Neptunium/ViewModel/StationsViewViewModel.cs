@@ -19,15 +19,22 @@ namespace Neptunium.ViewModel
     {
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            if (!StationDataManager.IsInitialized)
-            {
-                await StationDataManager.InitializeAsync();
-            }
+            await UI.WaitForUILoadAsync();
+
+            IsBusy = true;
 
             if (e.Direction == CrystalNavigationDirection.Forward || e.Direction == CrystalNavigationDirection.Restore || e.Direction == CrystalNavigationDirection.Refresh)
             {
-                Stations = new ObservableCollection<StationModel>(StationDataManager.Stations);
+                if (Stations == null)
+                {
+                    await App.Dispatcher.RunWhenIdleAsync(() =>
+                    {
+                        Stations = new ObservableCollection<StationModel>(StationDataManager.Stations);
+                    });
+                }
+
             }
+            IsBusy = false;
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
