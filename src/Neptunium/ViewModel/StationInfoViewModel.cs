@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Crystal3.Navigation;
 using Neptunium.Data;
 using Neptunium.Fragments;
+using Crystal3.UI.Commands;
+using Windows.System;
 
 namespace Neptunium.ViewModel
 {
@@ -15,6 +17,22 @@ namespace Neptunium.ViewModel
         public StationInfoViewModel()
         {
             SongHistory = new StationInfoViewSongHistoryFragment();
+
+            GoToStationWebsiteCommand = new RelayCommand(async obj =>
+            {
+                if (obj == null || !(obj is StationModel)) return;
+
+                StationModel station = (StationModel)obj;
+                if (!string.IsNullOrWhiteSpace(station.Site))
+                {
+                    await Launcher.LaunchUriAsync(new Uri(station.Site));
+                }
+                else
+                {
+                    //todo snack bar that there isn't a site listed.
+                }
+                    
+            });
         }
 
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
@@ -52,5 +70,7 @@ namespace Neptunium.ViewModel
         }
 
         public StationInfoViewSongHistoryFragment SongHistory { get; private set; }
+
+        public RelayCommand GoToStationWebsiteCommand { get; private set; }
     }
 }

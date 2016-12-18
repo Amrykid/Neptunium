@@ -61,9 +61,13 @@
                             RelativePanel.AlignHorizontalCenterWithPanel="True"
                             VerticalAlignment="Top"
                             Margin="0 10 0 0">
-                            <AppBarButton Icon="Play" Label="Play station" 
+                            <AppBarButton Icon="Play" Label="Stream" 
                                   x:Name="playButton"
                                   Command="{Binding Source={StaticResource AppCommands}, Path=PlayStationCommand}" 
+                                  CommandParameter="{Binding Station}" />
+                            <AppBarButton Icon="Globe" Label="Website" 
+                                  x:Name="websiteButton"
+                                  Command="{Binding GoToStationWebsiteCommand}" 
                                   CommandParameter="{Binding Station}" />
                         </StackPanel>
                     </RelativePanel>
