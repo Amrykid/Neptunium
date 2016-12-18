@@ -37,7 +37,7 @@ namespace Neptunium.ViewModel
         {
             ViewAlbumOnMusicBrainzCommand = new ManualRelayCommand(async x =>
             {
-                await Launcher.LaunchUriAsync(new Uri("https://musicbrainz.org/release/" + CurrentSongAlbumData.AlbumID));
+                //await Launcher.LaunchUriAsync(new Uri("https://musicbrainz.org/release/" + CurrentSongAlbumData.AlbumID));
             });
 
             PlayPauseCommand = new RelayCommand(item =>
@@ -62,21 +62,6 @@ namespace Neptunium.ViewModel
                 CurrentAlbum = null;
             });
 
-        }
-
-        private async Task UpdateAlbumDataFromTaskAsync(AlbumData albumData)
-        {
-            //todo figure out what to do with this
-            await App.Dispatcher.RunAsync(() =>
-            {
-                try
-                {
-                    CurrentSongAlbumData = albumData;
-
-                    ViewAlbumOnMusicBrainzCommand.SetCanExecute(CurrentSongAlbumData != null);
-                }
-                catch (Exception) { }
-            });
         }
 
         private async void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)

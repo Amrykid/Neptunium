@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wst="using:WindowsStateTriggers"
+    xmlns:uwpcon="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -80,13 +81,13 @@
                             <RowDefinition Height="20" />
                         </Grid.RowDefinitions>
 
-                        <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Width="70" Height="70"
-                               Source="{Binding AlbumData.AlbumCoverUrl, UpdateSourceTrigger=PropertyChanged, FallbackValue='/Assets/NoAlbumCover.png'}" />
+                        <uwpcon:ImageEx Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Width="70" Height="70" IsCacheEnabled="True"
+                               Source="{Binding Album.AlbumCoverUrl, UpdateSourceTrigger=PropertyChanged, FallbackValue='/Assets/NoAlbumCover.png'}" />
                         <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Track}" Margin="0 5 0 0"
                                    Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
                         <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Artist}" 
                                    Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
-                        <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding AlbumData.Album, UpdateSourceTrigger=PropertyChanged, FallbackValue='Album unavailable.'}" 
+                        <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Album.Album, UpdateSourceTrigger=PropertyChanged, FallbackValue='Album unavailable.'}" 
                                    Style="{ThemeResource CaptionTextBlockStyle}" FontSize="13" LineHeight="16" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
                     </Grid>
                 </DataTemplate>

@@ -58,6 +58,7 @@ namespace Neptunium.Managers
             historyItem.Artist = metadata.Artist;
             historyItem.Station = songStation?.Name;
             historyItem.DatePlayed = DateTime.Now;
+            historyItem.Album = metadata.MBData?.Album;
 
             songHistoryCollection.Insert(0, historyItem);
 
