@@ -229,9 +229,10 @@ namespace Neptunium
 
         private async Task PostUIInitAsync()
         {
+            SnackBarAppearance.Opacity = 1.0;
+
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
             {
-                SnackBarAppearance.Opacity = 1.0;
                 SnackBarAppearance.MessageFontSize = 14;
                 SnackBarAppearance.Transition = new PopupThemeTransition();
 
@@ -240,7 +241,6 @@ namespace Neptunium
             }
             else
             {
-                SnackBarAppearance.Opacity = 0.8;
                 SnackBarAppearance.MessageFontSize = 12;
                 SnackBarAppearance.Transition = new AddDeleteThemeTransition();
             }
