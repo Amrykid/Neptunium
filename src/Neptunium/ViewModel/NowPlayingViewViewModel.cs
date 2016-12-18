@@ -116,18 +116,20 @@ namespace Neptunium.ViewModel
                 if (App.GetDevicePlatform() != Platform.Xbox)
                     if (!App.IsUnrestrictiveInternetConnection()) return;
 
-                if (song != null)
-                {
-                    var albumUrl = song.MBData?.Album?.AlbumCoverUrl;
-                    if (!string.IsNullOrWhiteSpace(albumUrl))
-                        CurrentAlbum = new Uri(albumUrl);
-                    else
-                        CurrentAlbum = null;
-                }
+                UpdateCoverImage(song);
             }
 
             SongManager.PreSongChanged += SongManager_PreSongChanged;
             SongManager.SongChanged += SongManager_SongChanged;
+        }
+
+        private void UpdateCoverImage(SongMetadata song)
+        {
+            var albumUrl = song.MBData?.Album?.AlbumCoverUrl;
+            if (!string.IsNullOrWhiteSpace(albumUrl))
+                CoverImage = new Uri(albumUrl);
+            else
+                CoverImage = new Uri(CurrentStation.Logo);
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
@@ -153,9 +155,7 @@ namespace Neptunium.ViewModel
                     NowPlayingBackgroundImage = StationMediaPlayer.CurrentStation.Logo?.ToString();
                 }
 
-                CurrentAlbum = null;
-
-                CurrentSongAlbumData = null;
+                UpdateCoverImage(e.Metadata);
             });
         }
 
@@ -165,11 +165,7 @@ namespace Neptunium.ViewModel
             {
                 await App.Dispatcher.RunWhenIdleAsync(() =>
                 {
-                    var albumUrl = e.Metadata.MBData?.Album?.AlbumCoverUrl;
-                    if (!string.IsNullOrWhiteSpace(albumUrl))
-                        CurrentAlbum = new Uri(albumUrl);
-                    else
-                        CurrentAlbum = null;
+                    UpdateCoverImage(e.Metadata);
                 });
 
             }
@@ -194,9 +190,7 @@ namespace Neptunium.ViewModel
         public string CurrentSong { get { return GetPropertyValue<string>("CurrentSong"); } private set { SetPropertyValue<string>("CurrentSong", value); } }
         public string CurrentArtist { get { return GetPropertyValue<string>("CurrentArtist"); } private set { SetPropertyValue<string>("CurrentArtist", value); } }
         public Uri CurrentAlbum { get { return GetPropertyValue<Uri>(); } private set { SetPropertyValue<Uri>(value: value); } }
-        public string StationLogo { get { return GetPropertyValue<string>("CurrentStationLogo"); } private set { SetPropertyValue<string>("CurrentStationLogo", value); } }
-
-        public AlbumData CurrentSongAlbumData { get { return GetPropertyValue<AlbumData>(); } set { SetPropertyValue<AlbumData>(value: value); } }
+        public Uri CoverImage { get { return GetPropertyValue<Uri>(); } private set { SetPropertyValue<Uri>(value: value); } }
 
         public string NowPlayingBackgroundImage { get { return GetPropertyValue<string>(); } set { SetPropertyValue<string>(value: value); } }
 

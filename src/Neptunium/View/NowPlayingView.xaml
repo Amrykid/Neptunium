@@ -55,22 +55,22 @@
 
             <Grid x:Name="TabletView" Visibility="Collapsed" x:DeferLoadStrategy="Lazy">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="300" />
+                    <RowDefinition Height="200" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="250" />
+                        <ColumnDefinition Width="150" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="150" />
-                        <RowDefinition Height="150" />
+                        <RowDefinition Height="75" />
+                        <RowDefinition Height="75" />
                     </Grid.RowDefinitions>
 
-                    <uwpcon:ImageEx Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
+                    <uwpcon:ImageEx Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Source="{Binding CoverImage, UpdateSourceTrigger=PropertyChanged}" 
                                     HorizontalAlignment="Left" VerticalAlignment="Center"
-                                    Width="200" Height="200" Margin="10 10 0 0" IsCacheEnabled="True" />
+                                    Width="150" Height="150" Margin="10 10 0 0" IsCacheEnabled="True" />
 
                     <TextBlock Grid.Column="1" Grid.Row="0" Style="{ThemeResource TitleTextBlockStyle}"
                                Margin="20 0 0 0"
@@ -83,7 +83,11 @@
 
                 </Grid>
 
-                <ContentControl Grid.Row="1" ContentTemplate="{StaticResource NowPlayingSecondaryDataPanelTemplate}" />
+                <Grid Grid.Row="1">
+                    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity=".8" />
+
+                    <ContentControl ContentTemplate="{StaticResource NowPlayingSecondaryDataPanelTemplate}" />
+                </Grid>
 
             </Grid>
             
@@ -95,7 +99,7 @@
                         <RowDefinition Height="60" />
                     </Grid.RowDefinitions>
 
-                    <uwpcon:ImageEx Grid.Row="0" Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
+                    <uwpcon:ImageEx Grid.Row="0" Source="{Binding CoverImage, UpdateSourceTrigger=PropertyChanged}" 
                                     HorizontalAlignment="Center" VerticalAlignment="Center"
                                     Margin="20 20 20 20" IsCacheEnabled="True" />
 
