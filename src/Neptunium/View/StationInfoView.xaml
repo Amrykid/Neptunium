@@ -39,7 +39,7 @@
                                 RelativePanel.AlignTopWithPanel="True"
                                 RelativePanel.AlignHorizontalCenterWithPanel="True"
                                 RelativePanel.AlignLeftWithPanel="False"
-                                Stretch="UniformToFill"
+                                Stretch="Uniform"
                                 Margin="0 10 0 0"
                                 Height="100" Width="100" IsCacheEnabled="True" Source="{Binding Station.Logo, UpdateSourceTrigger=PropertyChanged}" />
 
@@ -150,7 +150,7 @@
                         <Setter Target="StationLogo.Height" Value="150" />
                         <Setter Target="StationLogo.Width" Value="150" />
                         <Setter Target="StationLogo.Margin" Value="15 0 0 0" />
-                        <Setter Target="StationLogo.Stretch" Value="UniformToFill" />
+                        <Setter Target="StationLogo.Stretch" Value="Uniform" />
 
                         <Setter Target="StationTitleBlock.Margin" Value="10 0 0 0" />
                         <Setter Target="StationTitleBlock.(RelativePanel.Below)" Value="" />
