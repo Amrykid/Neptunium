@@ -77,7 +77,7 @@ namespace Neptunium.MediaSourceStream
         #endregion
 
         //TODO
-        UInt32 aac_sampleSize = 16;
+        UInt32 aac_sampleSize = 1024;
         TimeSpan aac_sampleDuration = new TimeSpan(0, 0, 0, 0, 70);
 
         public ShoutcastMediaSourceStream(Uri url, ShoutcastServerType stationServerType = ShoutcastServerType.Shoutcast)

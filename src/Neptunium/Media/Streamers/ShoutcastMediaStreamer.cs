@@ -26,7 +26,7 @@ namespace Neptunium.Media.Streamers
 
             try
             {
-                await shoutcastStream.ConnectAsync();
+                await shoutcastStream.ConnectAsync(stream.SampleRate, stream.RelativePath, true);
 
                 Source = MediaSource.CreateFromMediaStreamSource(shoutcastStream.MediaStreamSource);
                 Source.StateChanged += Source_StateChanged;
