@@ -317,11 +317,13 @@
       </Stream>
     </Streams>
     <StationMessages>
-      <Message><![CDATA[asiadreamradio.com - Merry Christmas & Happy New Year 1]]></Message>
-      <Message><![CDATA[asiadreamradio.com - Merry Christmas & Happy New Year 2]]></Message>
-      <Message><![CDATA[asiadreamradio.com - Merry Christmas & Happy New Year 3]]></Message>
-      <Message><![CDATA[It's an AKB48 Christmas - It's an AKB48 Christmas on asia DREAM radio]]></Message>
-      <Message><![CDATA[Christmas Short 1 - jpoppowerplay.tokyo]]></Message>
+      <Message><![CDATA[Merry Christmas & Happy New Year 1]]></Message>
+      <Message><![CDATA[Merry Christmas & Happy New Year 2]]></Message>
+      <Message><![CDATA[Merry Christmas & Happy New Year 3]]></Message>
+      <Message><![CDATA[It's an AKB48 Christmas]]></Message>
+      <Message><![CDATA[Christmas Short 1]]></Message>
+      <Message><![CDATA[Christmas Short 2]]></Message>
+      <Message><![CDATA[J-Pop Christmas Exile]]></Message>
     </StationMessages>
   </Station>
   <Station>
