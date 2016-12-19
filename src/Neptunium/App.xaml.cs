@@ -264,8 +264,7 @@ namespace Neptunium
 
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
-            await CoreInitAsync();
-            await PostUIInitAsync();
+            await FullInitAsync();
 
             WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.NavigateTo<AppShellViewModel>();
@@ -278,8 +277,7 @@ namespace Neptunium
             if (!WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.IsNavigatedTo<AppShellViewModel>())
             {
-                await CoreInitAsync();
-                await PostUIInitAsync();
+                await FullInitAsync();
 
                 WindowManager.GetNavigationManagerForCurrentWindow()
                     .RootNavigationService.NavigateTo<AppShellViewModel>();
@@ -321,6 +319,12 @@ namespace Neptunium
             }
 
             await Task.CompletedTask;
+        }
+
+        private async Task FullInitAsync()
+        {
+            await CoreInitAsync();
+            await PostUIInitAsync();
         }
 
         internal static bool GetIfPrimaryWindowVisible()

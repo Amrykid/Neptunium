@@ -25,7 +25,6 @@ namespace Neptunium.ViewModel
 
             try
             {
-
                 if (e.Direction == CrystalNavigationDirection.Forward || e.Direction == CrystalNavigationDirection.Restore || e.Direction == CrystalNavigationDirection.Refresh)
                 {
                     if (Stations == null)

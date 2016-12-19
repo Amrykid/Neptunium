@@ -34,8 +34,6 @@ namespace Neptunium.Managers
             }
 
             IsInitialized = true;
-
-            await Task.CompletedTask;
         }
 
         public async Task FlushAsync()
