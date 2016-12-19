@@ -69,6 +69,11 @@
                                   x:Name="websiteButton"
                                   Command="{Binding GoToStationWebsiteCommand}" 
                                   CommandParameter="{Binding Station}" />
+                            <AppBarButton Icon="Pin" Label="Pin to Start" 
+                                  x:Name="pinToStartButton"
+                                  Visibility="Collapsed"
+                                  Command="{Binding PinToStartCommand}" 
+                                  CommandParameter="{Binding Station}" />
                         </StackPanel>
                     </RelativePanel>
                 </Grid>

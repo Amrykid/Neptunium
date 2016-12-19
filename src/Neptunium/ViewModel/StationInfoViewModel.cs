@@ -9,6 +9,10 @@ using Neptunium.Data;
 using Neptunium.Fragments;
 using Crystal3.UI.Commands;
 using Windows.System;
+using Windows.UI.StartScreen;
+using Windows.UI.Notifications;
+using Microsoft.Toolkit.Uwp.Notifications;
+using Neptunium.Data.Stations;
 
 namespace Neptunium.ViewModel
 {
@@ -32,6 +36,37 @@ namespace Neptunium.ViewModel
                     //todo snack bar that there isn't a site listed.
                 }
                     
+            });
+
+            PinToStartCommand = new RelayCommand(async obj =>
+            {
+                if (obj == null || !(obj is StationModel)) return;
+
+                return;
+
+                StationModel station = (StationModel)obj;
+
+                string tileId = station.Name.Replace(" ", "%20");
+
+                if (!SecondaryTile.Exists(tileId))
+                {
+                    SecondaryTile tile = new SecondaryTile(tileId);
+                    tile.VisualElements.BackgroundColor = await StationSupplementaryDataManager.GetStationLogoDominantColorAsync(station);
+                    tile.VisualElements.Square150x150Logo = await StationSupplementaryDataManager.GetCachedStationLogoRelativeUriAsync(station);
+                    tile.RoamingEnabled = true;
+                    tile.DisplayName = station.Name;
+                    tile.Arguments = "play-station?station=" + station.Name.Replace(" ", "%20");
+
+                    bool result = await tile.RequestCreateAsync();
+
+                    
+
+                    //todo say results
+                }
+                else
+                {
+                    //todo say this already exists
+                }
             });
         }
 
@@ -72,5 +107,6 @@ namespace Neptunium.ViewModel
         public StationInfoViewSongHistoryFragment SongHistory { get; private set; }
 
         public RelayCommand GoToStationWebsiteCommand { get; private set; }
+        public RelayCommand PinToStartCommand { get; private set; }
     }
 }
