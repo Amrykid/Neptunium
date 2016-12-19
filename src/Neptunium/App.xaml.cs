@@ -308,6 +308,11 @@ namespace Neptunium
                                 var station = StationDataManager.Stations.First(x => x.Name == stationName);
 
                                 await StationMediaPlayer.PlayStationAsync(station);
+
+                                //todo make this a setting
+                                WindowManager.GetNavigationManagerForCurrentWindow()
+                                .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
+                                .NavigateTo<StationInfoViewModel>(station.Name);
                             }
                             catch (Exception)
                             {
