@@ -65,6 +65,18 @@ namespace Neptunium
             this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
             ElementSoundPlayer.State = ElementSoundPlayerState.Auto;
 
+            CookieJar.ApplicationName = "Neptunium";
+
+            Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Major + " ( amrykid@gmail.com )";
+
+            //initialize app settings
+            //todo add all settings
+
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.ShowSongNotifications))
+                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.ShowSongNotifications, true);
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.TryToFindSongMetadata))
+                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.TryToFindSongMetadata, true);
+
             CoreInit();
 
             Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
@@ -197,13 +209,6 @@ namespace Neptunium
 
         private static async void CoreInit()
         {
-            CookieJar.ApplicationName = "Neptunium";
-
-            Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Major + " ( amrykid@gmail.com )";
-
-            FragmentManager.RegisterFragmentView<StationInfoViewSongHistoryFragment, StationInfoViewSongHistoryFragmentView>();
-            FragmentManager.RegisterFragmentView<NowPlayingViewFragment, NowPlayingInfoBar>();
-
             try
             {
                 await TryInitOrHealCookieContainerAsync(CookieJar.Device);
@@ -211,21 +216,7 @@ namespace Neptunium
             }
             catch (Exception) { }
 
-            if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
-                BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
-
-            //initialize app settings
-            //todo add all settings
-
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.ShowSongNotifications))
-                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.ShowSongNotifications, true);
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.TryToFindSongMetadata))
-                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.TryToFindSongMetadata, true);
-
-            if (!StationDataManager.IsInitialized)
-            {
-                await StationDataManager.InitializeAsync();
-            }
+            await StationDataManager.InitializeAsync();
 
             await SongManager.InitializeAsync();
             await StationMediaPlayer.InitializeAsync();
@@ -248,6 +239,12 @@ namespace Neptunium
                 SnackBarAppearance.MessageFontSize = 12;
                 SnackBarAppearance.Transition = new AddDeleteThemeTransition();
             }
+
+            FragmentManager.RegisterFragmentView<StationInfoViewSongHistoryFragment, StationInfoViewSongHistoryFragmentView>();
+            FragmentManager.RegisterFragmentView<NowPlayingViewFragment, NowPlayingInfoBar>();
+
+            if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
+                BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
 
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
@@ -305,9 +302,6 @@ namespace Neptunium
 
                                 var stationName = query.First(x => x.Key.ToLower() == "station").Value;
                                 stationName = stationName.Replace("%20", " ");
-
-                                if (!StationDataManager.IsInitialized)
-                                    await StationDataManager.InitializeAsync();
 
                                 var station = StationDataManager.Stations.First(x => x.Name == stationName);
 

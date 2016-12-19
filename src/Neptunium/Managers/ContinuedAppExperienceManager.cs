@@ -331,9 +331,6 @@ namespace Neptunium.Managers
 
             if (!IsSupported) return null;
 
-            if (!StationDataManager.IsInitialized)
-                await StationDataManager.InitializeAsync();
-
             if (RemoteSystemAccess != RemoteSystemAccessStatus.Allowed) return null;
 
             await Task.Run(() => watcherLock.WaitOne());
