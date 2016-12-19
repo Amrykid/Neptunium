@@ -156,11 +156,15 @@ namespace Neptunium.Managers
                 var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, japaneseFemaleVoice != null && ShouldUseJapaneseVoice);
                 var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
 
-                await StationMediaPlayer.FadeVolumeDownToAsync(0.1);
+                bool shouldFade = initialVolume >= 0.1;
+
+                if (shouldFade)
+                    await StationMediaPlayer.FadeVolumeDownToAsync(0.1);
 
                 await PlayAnnouncementAudioStreamAsync(stream);
 
-                await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume);
+                if (shouldFade)
+                    await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume);
 
             }
         }
@@ -391,7 +395,7 @@ namespace Neptunium.Managers
                     else
                     {
                         //create the bluetooth device when the radio is turned on
-                        
+
                         btRadio.StateChanged += BtRadio_StateChanged;
                         waitingforBtRadioActivation = true;
                     }

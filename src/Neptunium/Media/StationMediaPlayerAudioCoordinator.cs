@@ -1,4 +1,5 @@
-﻿using Microsoft.HockeyApp;
+﻿using Crystal3;
+using Microsoft.HockeyApp;
 using Microsoft.HockeyApp.DataContracts;
 using Neptunium.Media.Streamers;
 using System;
@@ -50,10 +51,12 @@ namespace Neptunium.Media
                 if (streamer.IsConnected)
                 {
                     streamer.Player.Play();
-                    UseStreamerBase(streamer);
                     await streamer.FadeVolumeUpToAsync(1.0);
+                    UseStreamerBase(streamer);
+                    
 
                     CurrentStreamer = streamer;
+                    
                 }
                 else
                     throw new Exception("Not connected.");
