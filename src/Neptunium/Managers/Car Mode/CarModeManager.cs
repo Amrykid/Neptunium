@@ -42,6 +42,8 @@ namespace Neptunium.Managers
 
         private static string lastPlayedSongMetadata = null;
 
+        private static SemaphoreSlim songAnouncementLock = new SemaphoreSlim(1);
+
         #region Options
         public static DeviceInformation SelectedDevice { get; private set; }
         private static BluetoothDevice SelectedDeviceObj { get; set; }
@@ -151,6 +153,8 @@ namespace Neptunium.Managers
             {
                 if (lastPlayedSongMetadata == e.Metadata.Track) return;
 
+                await songAnouncementLock.WaitAsync();
+
                 double initialVolume = StationMediaPlayer.Volume;
 
                 var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, japaneseFemaleVoice != null && ShouldUseJapaneseVoice);
@@ -166,6 +170,7 @@ namespace Neptunium.Managers
                 if (shouldFade)
                     await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume);
 
+                songAnouncementLock.Release();
             }
         }
 
