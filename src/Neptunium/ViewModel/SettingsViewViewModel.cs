@@ -74,7 +74,15 @@ namespace Neptunium.ViewModel
         public bool CarModeAnnounceSongs
         {
             get { return GetPropertyValue<bool>(); }
-            set { SetPropertyValue<bool>(value: value); }
+            set
+            {
+                SetPropertyValue<bool>(value: value);
+
+                if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                {
+                    CarModeManager.SetShouldAnnounceSongs(value);
+                }
+            }
         }
 
         public string SelectedBluetoothDevice
@@ -86,7 +94,14 @@ namespace Neptunium.ViewModel
         public bool JapaneseVoiceForSongAnnouncements
         {
             get { return GetPropertyValue<bool>(); }
-            set { SetPropertyValue<bool>(value: value); }
+            set
+            {
+                SetPropertyValue<bool>(value: value);
+                if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                {
+                    CarModeManager.SetShouldUseJapaneseVoice(value);
+                }
+            }
         }
         #endregion
 
