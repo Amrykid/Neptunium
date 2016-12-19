@@ -77,8 +77,6 @@ namespace Neptunium
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.TryToFindSongMetadata))
                 ApplicationData.Current.LocalSettings.Values.Add(AppSettings.TryToFindSongMetadata, true);
 
-            CoreInit();
-
             Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
             Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;
 
@@ -207,8 +205,11 @@ namespace Neptunium
             }
         }
 
-        private static async void CoreInit()
+        private static bool coreInitialized = false;
+        private static async Task CoreInitAsync()
         {
+            if (coreInitialized) return;
+
             try
             {
                 await TryInitOrHealCookieContainerAsync(CookieJar.Device);
@@ -220,6 +221,8 @@ namespace Neptunium
 
             await SongManager.InitializeAsync();
             await StationMediaPlayer.InitializeAsync();
+
+            coreInitialized = true;
         }
 
         private async Task PostUIInitAsync()
@@ -261,6 +264,7 @@ namespace Neptunium
 
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
+            await CoreInitAsync();
             await PostUIInitAsync();
 
             WindowManager.GetNavigationManagerForCurrentWindow()
@@ -271,10 +275,10 @@ namespace Neptunium
 
         public override async Task OnActivationAsync(IActivatedEventArgs args)
         {
-
             if (!WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.IsNavigatedTo<AppShellViewModel>())
             {
+                await CoreInitAsync();
                 await PostUIInitAsync();
 
                 WindowManager.GetNavigationManagerForCurrentWindow()

@@ -23,19 +23,31 @@ namespace Neptunium.ViewModel
 
             IsBusy = true;
 
-            if (e.Direction == CrystalNavigationDirection.Forward || e.Direction == CrystalNavigationDirection.Restore || e.Direction == CrystalNavigationDirection.Refresh)
+            try
             {
-                if (Stations == null)
+
+                if (e.Direction == CrystalNavigationDirection.Forward || e.Direction == CrystalNavigationDirection.Restore || e.Direction == CrystalNavigationDirection.Refresh)
                 {
-                    await App.Dispatcher.RunWhenIdleAsync(() =>
+                    if (Stations == null)
                     {
-                        Stations = new ObservableCollection<StationModel>(StationDataManager.Stations);
-                    });
+                        await App.Dispatcher.RunWhenIdleAsync(() =>
+                        {
+                            Stations = new ObservableCollection<StationModel>(StationDataManager.Stations);
+                        });
+                    }
+
                 }
-
             }
-
-            IsBusy = false;
+            catch (Exception ex)
+            {
+#if RELEASE
+                Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex);
+#endif
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
