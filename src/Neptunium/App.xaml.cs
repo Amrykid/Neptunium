@@ -204,8 +204,12 @@ namespace Neptunium
             FragmentManager.RegisterFragmentView<StationInfoViewSongHistoryFragment, StationInfoViewSongHistoryFragmentView>();
             FragmentManager.RegisterFragmentView<NowPlayingViewFragment, NowPlayingInfoBar>();
 
-            await TryInitOrHealCookieContainerAsync(CookieJar.Device);
-            await TryInitOrHealCookieContainerAsync(CookieJar.DeviceCache);
+            try
+            {
+                await TryInitOrHealCookieContainerAsync(CookieJar.Device);
+                await TryInitOrHealCookieContainerAsync(CookieJar.DeviceCache);
+            }
+            catch (Exception) { }
 
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
