@@ -42,8 +42,6 @@ namespace Neptunium.ViewModel
             {
                 if (obj == null || !(obj is StationModel)) return;
 
-                return;
-
                 StationModel station = (StationModel)obj;
 
                 string tileId = station.Name.Replace(" ", "%20");
@@ -52,7 +50,7 @@ namespace Neptunium.ViewModel
                 {
                     SecondaryTile tile = new SecondaryTile(tileId);
                     tile.VisualElements.BackgroundColor = await StationSupplementaryDataManager.GetStationLogoDominantColorAsync(station);
-                    tile.VisualElements.Square150x150Logo = await StationSupplementaryDataManager.GetCachedStationLogoRelativeUriAsync(station);
+                    tile.VisualElements.Square150x150Logo = new Uri("ms-appx:///Assets/Logo.scale-100.png", UriKind.Absolute);
                     tile.RoamingEnabled = true;
                     tile.DisplayName = station.Name;
                     tile.Arguments = "play-station?station=" + station.Name.Replace(" ", "%20");

@@ -288,42 +288,55 @@ namespace Neptunium
                 var pargs = args as ProtocolActivatedEventArgs;
 
                 var uri = pargs.Uri;
-                switch (uri.LocalPath.ToLower())
+                await ExecuteQueryCommandsAsync(uri);
+            }
+            else if (args.Kind == ActivationKind.Launch && (args is LaunchActivatedEventArgs))
+            {
+                //tile activation. crystal wouldn't call here otherwise.
+
+                var largs = args as LaunchActivatedEventArgs;
+                if (!string.IsNullOrWhiteSpace(largs.Arguments))
                 {
-                    case "play-station":
-                        {
-                            try
-                            {
-                                var query = uri.Query
-                                    .Substring(1)
-                                    .Split('&')
-                                    .Select(x =>
-                                        new KeyValuePair<string, string>(
-                                            x.Split('=')[0],
-                                            x.Split('=')[1])); //remote the "?"
-
-                                var stationName = query.First(x => x.Key.ToLower() == "station").Value;
-                                stationName = stationName.Replace("%20", " ");
-
-                                var station = StationDataManager.Stations.First(x => x.Name == stationName);
-
-                                await StationMediaPlayer.PlayStationAsync(station);
-
-                                //todo make this a setting
-                                WindowManager.GetNavigationManagerForCurrentWindow()
-                                .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
-                                .NavigateTo<StationInfoViewModel>(station.Name);
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-                        }
-                        break;
+                    await ExecuteQueryCommandsAsync(new Uri("nep:" + largs.Arguments));
                 }
             }
+        }
 
-            await Task.CompletedTask;
+        private static async Task ExecuteQueryCommandsAsync(Uri uri)
+        {
+            switch (uri.LocalPath.ToLower())
+            {
+                case "play-station":
+                    {
+                        try
+                        {
+                            var query = uri.Query
+                                .Substring(1)
+                                .Split('&')
+                                .Select(x =>
+                                    new KeyValuePair<string, string>(
+                                        x.Split('=')[0],
+                                        x.Split('=')[1])); //remote the "?"
+
+                            var stationName = query.First(x => x.Key.ToLower() == "station").Value;
+                            stationName = stationName.Replace("%20", " ");
+
+                            var station = StationDataManager.Stations.First(x => x.Name == stationName);
+
+                            await StationMediaPlayer.PlayStationAsync(station);
+
+                            //todo make this a setting
+                            WindowManager.GetNavigationManagerForCurrentWindow()
+                            .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
+                            .NavigateTo<StationInfoViewModel>(station.Name);
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                    }
+                    break;
+            }
         }
 
         private async Task FullInitAsync()

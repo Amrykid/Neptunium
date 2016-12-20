@@ -33,49 +33,5 @@ namespace Neptunium.Data.Stations
 
             return color;
         }
-
-        public static async Task<Uri> GetCachedStationLogoUriAsync(StationModel station)
-        {
-            if (station == null) throw new ArgumentNullException(nameof(station));
-
-            Uri webUrl = new Uri(station.Logo);
-            string fileName = webUrl.Segments.Last();
-            var localFileRef = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName);
-            if (localFileRef != null)
-            {
-                return new Uri(localFileRef.Path);
-            }
-            else
-            {
-                using (HttpClient http = new HttpClient())
-                {
-                    var data = await http.GetBufferAsync(webUrl);
-
-                    var createdFileRef = await ApplicationData.Current.LocalFolder.CreateFileAsync(fileName);
-                    using (var stream = await createdFileRef.OpenAsync(FileAccessMode.ReadWrite))
-                        await stream.WriteAsync(data);
-
-                    return new Uri(createdFileRef.Path);
-                }
-            }
-        }
-
-        public static async Task<Uri> GetCachedStationLogoRelativeUriAsync(StationModel station)
-        {
-            if (station == null) throw new ArgumentNullException(nameof(station));
-
-            var url = await GetCachedStationLogoUriAsync(station);
-
-            if (url != null)
-            {
-                string path = "ms-appdata://localfolder/";
-                string fileName = url.Segments.Last();
-                path += fileName;
-
-                return new Uri(path);
-            }
-
-            return null;
-        }
     }
 }
