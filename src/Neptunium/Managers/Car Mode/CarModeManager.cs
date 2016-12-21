@@ -155,7 +155,17 @@ namespace Neptunium.Managers
 
                 await songAnouncementLock.WaitAsync();
 
-                double initialVolume = StationMediaPlayer.Volume;
+                double initialVolume = 0.0;
+
+                try
+                {
+                    initialVolume = StationMediaPlayer.Volume;
+                }
+                catch (InvalidOperationException)
+                {
+                    songAnouncementLock.Release();
+                    return;
+                }
 
                 var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, japaneseFemaleVoice != null && ShouldUseJapaneseVoice);
                 var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
