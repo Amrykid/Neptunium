@@ -31,6 +31,7 @@ namespace Neptunium.Fragments
                         if (station.Streams.Any())
                         {
                             IsBusy = true;
+                            UI.SendMessageToUI("hide");
                             if (station.Streams.First().ServerType == StationModelStreamServerType.Shoutcast)
                             {
                                 try
