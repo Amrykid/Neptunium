@@ -1,4 +1,5 @@
-﻿using Neptunium.ViewModel;
+﻿using Neptunium.Managers;
+using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -34,6 +36,19 @@ namespace Neptunium.View
                 if (Crystal3.CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
                     VisualStateManager.GoToState(this, XboxVisualState.Name, true);
 #endif
+            }
+        }
+
+        private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var item = e.ClickedItem as SongHistoryItem;
+
+            if (item != null)
+            {
+                if (item.Album != null)
+                {
+                    await Launcher.LaunchUriAsync(new Uri("https://musicbrainz.org/release/" + item.Album.AlbumID));
+                }
             }
         }
     }

@@ -67,6 +67,7 @@
 
         <ListView ItemsSource="{Binding SongHistory, UpdateSourceTrigger=PropertyChanged}"
                   Grid.Row="1"
+                  ItemClick="ListView_ItemClick"
                   Margin="0 5 0 0" SelectionMode="None" IsItemClickEnabled="True">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -83,9 +84,9 @@
 
                         <uwpcon:ImageEx Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Width="70" Height="70" IsCacheEnabled="True"
                                Source="{Binding Album.AlbumCoverUrl, UpdateSourceTrigger=PropertyChanged, FallbackValue='/Assets/NoAlbumCover.png'}" />
-                        <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Track}" Margin="0 5 0 0"
+                        <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Track}" Margin="0 0 0 0"
                                    Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Artist}" 
+                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Artist}" VerticalAlignment="Center" 
                                    Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
                         <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Album.Album, UpdateSourceTrigger=PropertyChanged, FallbackValue='Album unavailable.'}" 
                                    Style="{ThemeResource CaptionTextBlockStyle}" FontSize="13" LineHeight="16" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
