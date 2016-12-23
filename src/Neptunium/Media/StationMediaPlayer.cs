@@ -22,6 +22,7 @@ using Windows.Media.Core;
 using Windows.Networking.Connectivity;
 using Neptunium.Media.Streamers;
 using Crystal3;
+using Windows.Storage;
 
 namespace Neptunium.Media
 {
@@ -180,17 +181,20 @@ namespace Neptunium.Media
 
             bool willCrossFade = false; //todo make cross fade transitions a setting
 
-            switch(CrystalApplication.GetDevicePlatform())
+            if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.PreferUsingCrossFadeWhenChangingStations])
             {
-                case Crystal3.Core.Platform.Xbox:
-                case Crystal3.Core.Platform.Desktop:
-                    willCrossFade = audioCoordinator.CurrentStreamer != null;
-                    break;
-                default: //cross fade transitioning seems to studder on mobile. might be because of the SD400
-                    willCrossFade = false;
-                    break;
+                switch (CrystalApplication.GetDevicePlatform())
+                {
+                    case Crystal3.Core.Platform.Xbox:
+                    case Crystal3.Core.Platform.Desktop:
+                        willCrossFade = audioCoordinator.CurrentStreamer != null;
+                        break;
+                    default: //cross fade transitioning seems to studder on mobile. might be because of the SD400
+                        willCrossFade = false;
+                        break;
 
-            }          
+                }
+            }      
 
             if (streamer.IsConnected)
             {

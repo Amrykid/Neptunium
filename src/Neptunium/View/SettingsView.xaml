@@ -86,6 +86,13 @@
                     <CheckBox Content="Media bar should match station's logo color." IsChecked="{Binding ShouldHaveMediaBarMatchStationColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </PivotItem>
+            <PivotItem Header="Media">
+                <StackPanel>
+                    <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Behaviors" />
+                    <CheckBox Content="Prefer cross fading when changing stations." 
+                              IsChecked="{Binding ShouldPreferCrossFadingOnStationTransition, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                </StackPanel>
+            </PivotItem>
             <PivotItem Header="Car Mode" x:Name="carModePivotItem">
                 <StackPanel>
                     <TextBlock FontSize="26" FontFamily="{ThemeResource SymbolThemeFontFamily}" Margin="5 0 0 5">

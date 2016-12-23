@@ -13,5 +13,7 @@ namespace Neptunium
 
         public const string MediaBarMatchStationColor = nameof(MediaBarMatchStationColor);
         public const string NavigateToStationWhenLaunched = nameof(NavigateToStationWhenLaunched);
+
+        public const string PreferUsingCrossFadeWhenChangingStations = nameof(PreferUsingCrossFadeWhenChangingStations);
     }
 }

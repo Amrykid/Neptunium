@@ -80,6 +80,8 @@ namespace Neptunium
                 ApplicationData.Current.LocalSettings.Values.Add(AppSettings.NavigateToStationWhenLaunched, true);
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.MediaBarMatchStationColor))
                 ApplicationData.Current.LocalSettings.Values.Add(AppSettings.MediaBarMatchStationColor, true);
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.PreferUsingCrossFadeWhenChangingStations))
+                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.PreferUsingCrossFadeWhenChangingStations, true);
 
             Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
             Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;

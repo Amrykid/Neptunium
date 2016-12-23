@@ -78,6 +78,12 @@ namespace Neptunium.ViewModel
             set { SetPropertyValue<bool>(value: value); }
         }
 
+        public bool ShouldPreferCrossFadingOnStationTransition
+        {
+            get { return GetPropertyValue<bool>(); }
+            set { SetPropertyValue<bool>(value: value); }
+        }
+
         #region Car Mode Settings
 
         public RelayCommand PickCarModeDeviceCommand { get; private set; }
@@ -129,6 +135,8 @@ namespace Neptunium.ViewModel
 
             ShouldNavigateToStationPageWhenLaunching = (bool)ApplicationData.Current.LocalSettings.Values[AppSettings.NavigateToStationWhenLaunched];
 
+            ShouldPreferCrossFadingOnStationTransition = (bool)ApplicationData.Current.LocalSettings.Values[AppSettings.PreferUsingCrossFadeWhenChangingStations];
+
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
                 CarModeAnnounceSongs = CarModeManager.ShouldAnnounceSongs;
@@ -149,6 +157,8 @@ namespace Neptunium.ViewModel
             ApplicationData.Current.LocalSettings.Values[AppSettings.MediaBarMatchStationColor] = ShouldHaveMediaBarMatchStationColor;
 
             ApplicationData.Current.LocalSettings.Values[AppSettings.NavigateToStationWhenLaunched] = ShouldNavigateToStationPageWhenLaunching;
+
+            ApplicationData.Current.LocalSettings.Values[AppSettings.PreferUsingCrossFadeWhenChangingStations] = ShouldPreferCrossFadingOnStationTransition;
 
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
