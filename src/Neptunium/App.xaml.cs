@@ -76,6 +76,10 @@ namespace Neptunium
                 ApplicationData.Current.LocalSettings.Values.Add(AppSettings.ShowSongNotifications, true);
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.TryToFindSongMetadata))
                 ApplicationData.Current.LocalSettings.Values.Add(AppSettings.TryToFindSongMetadata, true);
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.NavigateToStationWhenLaunched))
+                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.NavigateToStationWhenLaunched, true);
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.MediaBarMatchStationColor))
+                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.MediaBarMatchStationColor, true);
 
             Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
             Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;
@@ -323,12 +327,15 @@ namespace Neptunium
 
                             var station = StationDataManager.Stations.First(x => x.Name == stationName);
 
-                            await StationMediaPlayer.PlayStationAsync(station);
-
-                            //todo make this a setting
-                            WindowManager.GetNavigationManagerForCurrentWindow()
-                            .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
-                            .NavigateTo<StationInfoViewModel>(station.Name);
+                            if (await StationMediaPlayer.PlayStationAsync(station))
+                            {
+                                if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.NavigateToStationWhenLaunched])
+                                {
+                                    WindowManager.GetNavigationManagerForCurrentWindow()
+                                    .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
+                                    .NavigateTo<StationInfoViewModel>(station.Name);
+                                }
+                            }
                         }
                         catch (Exception)
                         {

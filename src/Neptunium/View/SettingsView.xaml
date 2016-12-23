@@ -76,6 +76,16 @@
                               IsChecked="{Binding ShouldStopPlayingAfterSuccessfulHandoff, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </PivotItem>
+            <PivotItem Header="UI">
+                <StackPanel>
+                    <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="General" />
+                    <CheckBox Content="When launching from a tile or url to play a station, navigate to that station." 
+                              IsChecked="{Binding ShouldNavigateToStationPageWhenLaunching, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                    <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Media Bar" />
+                    <CheckBox Content="Media bar should match station's logo color." IsChecked="{Binding ShouldHaveMediaBarMatchStationColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                </StackPanel>
+            </PivotItem>
             <PivotItem Header="Car Mode" x:Name="carModePivotItem">
                 <StackPanel>
                     <TextBlock FontSize="26" FontFamily="{ThemeResource SymbolThemeFontFamily}" Margin="5 0 0 5">

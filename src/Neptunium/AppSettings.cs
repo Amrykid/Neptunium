@@ -10,5 +10,8 @@ namespace Neptunium
     {
         public const string ShowSongNotifications = nameof(ShowSongNotifications);
         public const string TryToFindSongMetadata = nameof(TryToFindSongMetadata);
+
+        public const string MediaBarMatchStationColor = nameof(MediaBarMatchStationColor);
+        public const string NavigateToStationWhenLaunched = nameof(NavigateToStationWhenLaunched);
     }
 }

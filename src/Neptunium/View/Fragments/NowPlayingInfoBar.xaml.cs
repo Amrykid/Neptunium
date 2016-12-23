@@ -11,6 +11,7 @@ using System.Windows.Input;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
+using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -37,11 +38,18 @@ namespace Neptunium.View.Fragments
             this.RegisterPropertyChangedCallback(DataContextProperty, HandleNowPlayingInfoContextChanged);
 
             PART_GlassPane.Animate = false;
+            if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.MediaBarMatchStationColor])
+            {
+                var accentColor = (Color)this.Resources["SystemAccentColor"];
+                PART_GlassPane.ChangeBlurColor(accentColor);
 
-            var accentColor = (Color)this.Resources["SystemAccentColor"];
-            PART_GlassPane.ChangeBlurColor(accentColor);
-
-            PART_GlassPane.Animate = true;
+                PART_GlassPane.Animate = true;
+            }
+            else
+            {
+                var accentColor = (Color)this.Resources["SystemAccentColor"];
+                PART_GlassPane.ChangeBlurColor(accentColor);
+            }
 
             RefreshMediaButtons();
         }
@@ -96,9 +104,11 @@ namespace Neptunium.View.Fragments
                 NowPlayingViewFragment fragment = sender as NowPlayingViewFragment;
                 if (fragment.CurrentStation != null)
                 {
-                    //todo make this a setting
-                    var color = await StationSupplementaryDataManager.GetStationLogoDominantColorAsync(fragment.CurrentStation);
-                    PART_GlassPane.ChangeBlurColor(color);
+                    if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.MediaBarMatchStationColor])
+                    {
+                        var color = await StationSupplementaryDataManager.GetStationLogoDominantColorAsync(fragment.CurrentStation);
+                        PART_GlassPane.ChangeBlurColor(color);
+                    }
                 }
             }
         }

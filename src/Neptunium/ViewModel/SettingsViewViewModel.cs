@@ -66,6 +66,18 @@ namespace Neptunium.ViewModel
             set { SetPropertyValue<bool>(value: value); }
         }
 
+        public bool ShouldHaveMediaBarMatchStationColor
+        {
+            get { return GetPropertyValue<bool>(); }
+            set { SetPropertyValue<bool>(value: value); }
+        }
+
+        public bool ShouldNavigateToStationPageWhenLaunching
+        {
+            get { return GetPropertyValue<bool>(); }
+            set { SetPropertyValue<bool>(value: value); }
+        }
+
         #region Car Mode Settings
 
         public RelayCommand PickCarModeDeviceCommand { get; private set; }
@@ -113,6 +125,10 @@ namespace Neptunium.ViewModel
 
             ShouldFetchSongMetadata = (bool)ApplicationData.Current.LocalSettings.Values[AppSettings.TryToFindSongMetadata];
 
+            ShouldHaveMediaBarMatchStationColor = (bool)ApplicationData.Current.LocalSettings.Values[AppSettings.MediaBarMatchStationColor];
+
+            ShouldNavigateToStationPageWhenLaunching = (bool)ApplicationData.Current.LocalSettings.Values[AppSettings.NavigateToStationWhenLaunched];
+
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
                 CarModeAnnounceSongs = CarModeManager.ShouldAnnounceSongs;
@@ -129,6 +145,10 @@ namespace Neptunium.ViewModel
             ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] = ShouldShowSongNofitications;
 
             ApplicationData.Current.LocalSettings.Values[AppSettings.TryToFindSongMetadata] = ShouldFetchSongMetadata;
+
+            ApplicationData.Current.LocalSettings.Values[AppSettings.MediaBarMatchStationColor] = ShouldHaveMediaBarMatchStationColor;
+
+            ApplicationData.Current.LocalSettings.Values[AppSettings.NavigateToStationWhenLaunched] = ShouldNavigateToStationPageWhenLaunching;
 
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
