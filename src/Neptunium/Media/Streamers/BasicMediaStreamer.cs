@@ -31,6 +31,7 @@ namespace Neptunium.Media.Streamers
         protected BehaviorSubject<BasicSongInfo> metadataSubject = null;
 
         public IObservable<Exception> ErrorOccurred { get; private set; }
+        protected Subject<Exception> errorSubject = null;
 
         public BasicMediaStreamer()
         {
@@ -46,7 +47,8 @@ namespace Neptunium.Media.Streamers
             metadataSubject = new BehaviorSubject<BasicSongInfo>(new BasicSongInfo() { Artist = CurrentArtist, Track = CurrentTrack });
             MetadataChanged = metadataSubject;
 
-            ErrorOccurred = new Subject<Exception>();
+            errorSubject = new Subject<Exception>();
+            ErrorOccurred = errorSubject;
 
             IsConnected = false;
         }
