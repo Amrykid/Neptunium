@@ -26,6 +26,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.Services.Store;
 using Windows.Networking.Connectivity;
 using Neptunium.Managers.Songs;
+using Neptunium.Managers.Car_Mode;
 
 namespace Neptunium.ViewModel
 {

@@ -42,6 +42,7 @@ using Neptunium.View.Fragments;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.UI.Notifications;
 using Neptunium.Managers.Songs;
+using Neptunium.Managers.Car_Mode;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -255,11 +256,12 @@ namespace Neptunium
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
 
+#if !DEBUG
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-            {
+#endif
                 if (!CarModeManager.IsInitialized)
                     await CarModeManager.InitializeAsync();
-            }
+            
 
             //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
 

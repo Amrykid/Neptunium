@@ -112,6 +112,7 @@
     <Compile Include="Controls\GlassPanel.xaml.cs">
       <DependentUpon>GlassPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Managers\Car Mode\CarModeManagerBluetoothDeviceCoordinator.cs" />
     <Compile Include="Media\StationMediaPlayerAudioCoordinator.cs" />
     <Compile Include="Media\Streamers\BasicMediaStreamer.cs" />
     <Compile Include="Media\Streamers\DirectMediaStreamer.cs" />

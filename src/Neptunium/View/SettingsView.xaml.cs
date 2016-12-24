@@ -1,5 +1,6 @@
 ﻿using Crystal3;
 using Neptunium.Managers;
+using Neptunium.Managers.Car_Mode;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -31,8 +32,10 @@ namespace Neptunium.View
             this.InitializeComponent();
 
 
+#if !DEBUG
             if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Mobile)
                 mainPivot.Items.Remove(carModePivotItem);
+#endif
 
             if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
             {
@@ -72,13 +75,10 @@ namespace Neptunium.View
 
         private void CarModeManager_CarModeManagerCarModeStatusChanged(object sender, CarModeManagerCarModeStatusChangedEventArgs e)
         {
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                App.Dispatcher.RunWhenIdleAsync(() =>
-                {
-                    UpdateCarModeStatusIndicator(e.IsInCarMode);
-                });
-            }
+                UpdateCarModeStatusIndicator(e.IsInCarMode);
+            });
         }
     }
 }

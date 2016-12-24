@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Neptunium.Managers
+namespace Neptunium.Managers.Car_Mode
 {
     public class CarModeManagerCarModeStatusChangedEventArgs: EventArgs
     {

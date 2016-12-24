@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Crystal3.Navigation;
 using Windows.Storage;
 using Crystal3;
+using Neptunium.Managers.Car_Mode;
 
 namespace Neptunium.ViewModel
 {
@@ -24,7 +25,7 @@ namespace Neptunium.ViewModel
 #endif
                 try
                 {
-                    var selection = await CarModeManager.SelectDeviceAsync(Windows.UI.Xaml.Window.Current.Bounds);
+                    var selection = await CarModeManager.BluetoothCoordinator.SelectDeviceAsync(Windows.UI.Xaml.Window.Current.Bounds);
 
                     if (selection != null)
                     {
@@ -42,7 +43,7 @@ namespace Neptunium.ViewModel
 
             ClearCarModeDeviceCommand = new ManualRelayCommand(x =>
             {
-                CarModeManager.ClearDevice();
+                CarModeManager.BluetoothCoordinator.ClearDevice();
 
                 SelectedBluetoothDevice = "None";
             });
@@ -140,8 +141,8 @@ namespace Neptunium.ViewModel
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
                 CarModeAnnounceSongs = CarModeManager.ShouldAnnounceSongs;
-                SelectedBluetoothDevice = CarModeManager.SelectedDevice?.Name ?? "None";
-                ClearCarModeDeviceCommand.SetCanExecute(CarModeManager.SelectedDevice != null);
+                SelectedBluetoothDevice = CarModeManager.BluetoothCoordinator.SelectedBluetoothDeviceName ?? "None";
+                ClearCarModeDeviceCommand.SetCanExecute(CarModeManager.BluetoothCoordinator.SelectedBluetoothDevice != null);
                 JapaneseVoiceForSongAnnouncements = CarModeManager.ShouldUseJapaneseVoice;
             }
         }
