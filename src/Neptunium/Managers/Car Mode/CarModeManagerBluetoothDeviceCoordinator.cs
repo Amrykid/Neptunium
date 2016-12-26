@@ -126,6 +126,7 @@ namespace Neptunium.Managers.Car_Mode
             if (SelectedBluetoothDevice != null)
             {
                 SelectedBluetoothDevice.ConnectionStatusChanged -= BluetoothDevice_ConnectionStatusChanged;
+                SelectedBluetoothDevice.Dispose();
             }
 
             if (device != null)
@@ -169,6 +170,10 @@ namespace Neptunium.Managers.Car_Mode
                 if (SelectedBluetoothDevice == null)
                 {
                     await InitializeBluetoothDeviceFromSettingsAsync();
+                }
+                else
+                {
+                    UpdateBluetoothState(SelectedBluetoothDevice.ConnectionStatus == BluetoothConnectionStatus.Connected);
                 }
             }
             else if (sender.State == RadioState.Off || sender.State == RadioState.Disabled)
