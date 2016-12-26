@@ -98,7 +98,10 @@ namespace Neptunium.Managers.Car_Mode
                 BluetoothDevice device = null;
 
                 if (btRadio.State == RadioState.On)
+                {
+                    await Task.Delay(250); //wait before trying to create the bluetooth device.
                     device = await BluetoothDevice.FromIdAsync(deviceID);
+                }
 
                 SetBluetoothDevice(deviceID, device);
             }
