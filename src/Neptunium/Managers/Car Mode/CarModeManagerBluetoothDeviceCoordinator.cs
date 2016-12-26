@@ -32,6 +32,8 @@ namespace Neptunium.Managers.Car_Mode
         public IObservable<bool> BluetoothConnectionStatusChanged { get; private set; }
         protected BehaviorSubject<bool> bluetoothConnectionStatusSubject = null;
 
+        public bool IsBluetoothConnected { get; private set; }
+
         internal CarModeManagerBluetoothDeviceCoordinator()
         {
         }
@@ -40,7 +42,7 @@ namespace Neptunium.Managers.Car_Mode
         {
             if (IsInitialized) return;
 
-            radioAccess = await Radio.RequestAccessAsync();
+            radioAccess = await await App.Dispatcher.RunAsync(IUIDispatcherPriority.High, () => Radio.RequestAccessAsync());
 
             //we're not allowed to access radios so stop here.
             if (radioAccess != RadioAccessStatus.Allowed) return;
@@ -72,6 +74,19 @@ namespace Neptunium.Managers.Car_Mode
             }
 
             IsInitialized = true;
+        }
+
+        /// <summary>
+        /// Updates the bluetooth connection state.
+        /// </summary>
+        /// <param name="state">Whether the bluetooth device is connected or not.</param>
+        private void UpdateBluetoothState(bool state)
+        {
+            bluetoothConnectionStatusSubject.OnNext(state);
+
+            IsBluetoothConnected = state;
+
+            //todo add an event for IsBluetoothConnected changed
         }
 
         private async Task InitializeBluetoothDeviceFromSettingsAsync()
@@ -125,15 +140,16 @@ namespace Neptunium.Managers.Car_Mode
                 {
                     ApplicationData.Current.LocalSettings.Values.Add(SelectedCarDeviceNameSettingsKey, device.Name);
                 }
+
                 SelectedBluetoothDeviceName = device.Name;
 
                 SelectedBluetoothDevice.ConnectionStatusChanged += BluetoothDevice_ConnectionStatusChanged;
 
-                bluetoothConnectionStatusSubject.OnNext(SelectedBluetoothDevice.ConnectionStatus == BluetoothConnectionStatus.Connected);
+                UpdateBluetoothState(SelectedBluetoothDevice.ConnectionStatus == BluetoothConnectionStatus.Connected);
             }
             else
             {
-                bluetoothConnectionStatusSubject.OnNext(false);
+                UpdateBluetoothState(false);
             }
 
             SelectedBluetoothDeviceId = id;
@@ -141,12 +157,13 @@ namespace Neptunium.Managers.Car_Mode
 
         private void BluetoothDevice_ConnectionStatusChanged(BluetoothDevice sender, object args)
         {
-            bluetoothConnectionStatusSubject.OnNext(SelectedBluetoothDevice.ConnectionStatus == BluetoothConnectionStatus.Connected);
+            UpdateBluetoothState(SelectedBluetoothDevice.ConnectionStatus == BluetoothConnectionStatus.Connected);
         }
 
         private async void BtRadio_StateChanged(Radio sender, object args)
         {
             await btRadioStateChangeLock.WaitAsync();
+
             if (sender.State == RadioState.On)
             {
                 if (SelectedBluetoothDevice == null)
@@ -154,6 +171,11 @@ namespace Neptunium.Managers.Car_Mode
                     await InitializeBluetoothDeviceFromSettingsAsync();
                 }
             }
+            else if (sender.State == RadioState.Off || sender.State == RadioState.Disabled)
+            {
+                UpdateBluetoothState(false);
+            }
+
             btRadioStateChangeLock.Release();
         }
 
@@ -207,7 +229,7 @@ namespace Neptunium.Managers.Car_Mode
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey(CarModeManager.SelectedCarDevice))
                 ApplicationData.Current.LocalSettings.Values[CarModeManager.SelectedCarDevice] = string.Empty;
 
-            bluetoothConnectionStatusSubject.OnNext(false);
+            UpdateBluetoothState(false);
         }
     }
 }
