@@ -27,7 +27,7 @@ namespace Neptunium.Controls
         private Color blurColor = Color.FromArgb(255, 245, 245, 245);
         private Color lastBlurColor = Colors.Transparent;
         private DispatcherTimer timer = new DispatcherTimer();
-        private Color[] colorsLoop = new Color[] { Colors.Blue, Colors.Purple, Colors.Red, Colors.Orange, Colors.GoldenrodYellow, Colors.Green, Colors.Teal };
+        private Color[] colorsLoop = new Color[] { Colors.Blue, Colors.Purple, Colors.Red, Colors.Orange, Colors.Yellow, Colors.Green, Colors.Teal };
         private int colorsLoopIndex = 0;
 
         public TransitioningColorGlassPanel()
