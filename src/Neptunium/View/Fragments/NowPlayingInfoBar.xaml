@@ -45,7 +45,8 @@
 
         <Flyout x:Key="SleepTimerDeviceFlyout" AllowFocusOnInteraction="True" LightDismissOverlayMode="On">
             <Grid DataContext="{Binding SleepTimerViewFragment, UpdateSourceTrigger=PropertyChanged}">
-                <ListView x:Name="SleepTimerItemsListView" Header="Stop playing music after:" IsEnabled="{Binding IsViewEnabled, UpdateSourceTrigger=PropertyChanged}"
+                <ListView x:Name="SleepTimerItemsListView" Header="Stop playing music after:" 
+                          IsEnabled="{Binding IsViewEnabled, UpdateSourceTrigger=PropertyChanged}"
                           ItemsSource="{Binding AvailableSleepItems, UpdateSourceTrigger=PropertyChanged}"
                           DisplayMemberPath="DisplayName" IsItemClickEnabled="True" ItemClick="SleepTimerItemsListView_ItemClick"
                           SelectedItem="{Binding SelectedSleepItem, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
@@ -256,7 +257,7 @@
 
                 <AppBarButton Icon="Play" ToolTipService.ToolTip="Play" Tag="PlayPause" x:Name="PlayPauseButton" Command="{Binding PlayCommand}" />
                 <AppBarButton ToolTipService.ToolTip="Handoff" Icon="Remote" x:Name="lowerAppBarHandOffButton" Flyout="{StaticResource HandOffDeviceFlyout}" />
-                <AppBarButton ToolTipService.ToolTip="Sleep Timer" Icon="Clock" Flyout="{StaticResource SleepTimerDeviceFlyout}" />
+                <AppBarButton ToolTipService.ToolTip="Sleep Timer" Icon="Clock" x:Name="lowerAppBarSleepTimerButton" Flyout="{StaticResource SleepTimerDeviceFlyout}" />
             </StackPanel>
         </Grid>
     </Grid>
