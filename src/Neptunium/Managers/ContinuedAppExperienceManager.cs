@@ -37,6 +37,8 @@ namespace Neptunium.Managers
 
         public static bool IsRunning { get; private set; }
 
+        public static event EventHandler IsRunningChanged;
+
         public static ReadOnlyObservableCollection<RemoteSystem> RemoteSystemsList { get; private set; }
 
         public static RemoteSystemAccessStatus RemoteSystemAccess { get; private set; }
@@ -70,24 +72,25 @@ namespace Neptunium.Managers
 
             RemoteSystemAccess = await await App.Dispatcher.RunAsync(() => RemoteSystem.RequestAccessAsync());
 
+            watcherLock = new AutoResetEvent(true);
+
+            systemList = new ObservableCollection<RemoteSystem>();
+            RemoteSystemsList = new ReadOnlyObservableCollection<RemoteSystem>(systemList);
+
+            IsInitialized = true;
+
             if (RemoteSystemAccess == RemoteSystemAccessStatus.Allowed)
             {
-                watcherLock = new AutoResetEvent(true);
-
-                systemList = new ObservableCollection<RemoteSystem>();
-                RemoteSystemsList = new ReadOnlyObservableCollection<RemoteSystem>(systemList);
                 remoteSystemWatcher = RemoteSystem.CreateWatcher(new IRemoteSystemFilter[] { new RemoteSystemDiscoveryTypeFilter(RemoteSystemDiscoveryType.Proximal) });
                 await ScanForRemoteSystemsAsync();
             }
-
-            IsInitialized = true;
         }
 
         public static async Task ScanForRemoteSystemsAsync()
         {
             StartWatchingForRemoteSystems();
 
-            await Task.Delay(10000); //scan for 10 seconds
+            await Task.Delay(30000); //scan for 30 seconds
 
             StopWatchingForRemoteSystems();
         }
@@ -140,6 +143,8 @@ namespace Neptunium.Managers
                 remoteSystemWatcher.Start();
 
                 IsRunning = true;
+                if (IsRunningChanged != null)
+                    IsRunningChanged(null, EventArgs.Empty);
 
                 await Task.Delay(5000);
 
@@ -160,6 +165,8 @@ namespace Neptunium.Managers
                 remoteSystemWatcher?.Stop();
 
                 IsRunning = false;
+                if (IsRunningChanged != null)
+                    IsRunningChanged(null, EventArgs.Empty);
             }
         }
 

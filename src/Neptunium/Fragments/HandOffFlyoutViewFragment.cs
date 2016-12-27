@@ -18,11 +18,20 @@ namespace Neptunium.Fragments
         internal HandOffFlyoutViewFragment()
         {
             ContinuedAppExperienceManager.RemoteSystemsListUpdated += ContinuedAppExperienceManager_RemoteSystemsListUpdated;
+            ContinuedAppExperienceManager.IsRunningChanged += ContinuedAppExperienceManager_IsRunningChanged;
+            IsBusy = ContinuedAppExperienceManager.IsRunning;
 
-            IsBusy = true;
 
             if (ContinuedAppExperienceManager.RemoteSystemsList != null)
                 AvailableDevices = new ObservableCollection<RemoteSystem>(ContinuedAppExperienceManager.RemoteSystemsList);
+        }
+
+        private void ContinuedAppExperienceManager_IsRunningChanged(object sender, EventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                IsBusy = ContinuedAppExperienceManager.IsRunning;
+            });
         }
 
         private void ContinuedAppExperienceManager_RemoteSystemsListUpdated(object sender, EventArgs e)
@@ -31,8 +40,6 @@ namespace Neptunium.Fragments
             {
                 AvailableDevices = new ObservableCollection<RemoteSystem>(ContinuedAppExperienceManager.RemoteSystemsList);
                 //RaisePropertyChanged(nameof(AvailableDevices));
-
-                IsBusy = false;
             });
         }
 
@@ -79,6 +86,7 @@ namespace Neptunium.Fragments
         public override void Dispose()
         {
             ContinuedAppExperienceManager.RemoteSystemsListUpdated -= ContinuedAppExperienceManager_RemoteSystemsListUpdated;
+            ContinuedAppExperienceManager.IsRunningChanged -= ContinuedAppExperienceManager_IsRunningChanged;
         }
 
         public ObservableCollection<RemoteSystem> AvailableDevices
