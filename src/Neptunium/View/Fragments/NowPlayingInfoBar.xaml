@@ -32,7 +32,8 @@
                 <ListView x:Name="HandOffDeviceFlyout_DeviceListView" IsItemClickEnabled="True" Grid.Row="1" 
                           ItemsSource="{Binding AvailableDevices, UpdateSourceTrigger=PropertyChanged}"
                           DisplayMemberPath="DisplayName" ItemClick="HandOffDeviceFlyout_DeviceListView_ItemClick" 
-                          SelectionMode="None" 
+                          SelectionMode="None"
+                          Header="Hand Off Devices:"
                           IsEnabled="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BToIBConv}}" />
 
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
