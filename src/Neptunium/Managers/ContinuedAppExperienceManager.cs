@@ -77,10 +77,19 @@ namespace Neptunium.Managers
                 systemList = new ObservableCollection<RemoteSystem>();
                 RemoteSystemsList = new ReadOnlyObservableCollection<RemoteSystem>(systemList);
                 remoteSystemWatcher = RemoteSystem.CreateWatcher(new IRemoteSystemFilter[] { new RemoteSystemDiscoveryTypeFilter(RemoteSystemDiscoveryType.Proximal) });
-                StartWatchingForRemoteSystems();
+                await ScanForRemoteSystemsAsync();
             }
 
             IsInitialized = true;
+        }
+
+        public static async Task ScanForRemoteSystemsAsync()
+        {
+            StartWatchingForRemoteSystems();
+
+            await Task.Delay(10000); //scan for 10 seconds
+
+            StopWatchingForRemoteSystems();
         }
 
         private static async Task<bool> CheckRemoteAppServiceEnabledAsync()
@@ -116,7 +125,7 @@ namespace Neptunium.Managers
             return result;
         }
 
-        public static async void StartWatchingForRemoteSystems()
+        private static async void StartWatchingForRemoteSystems()
         {
             if (!IsSupported) return;
             if (!IsInitialized) return;
@@ -138,7 +147,7 @@ namespace Neptunium.Managers
             }
         }
 
-        public static void StopWatchingForRemoteSystems()
+        private static void StopWatchingForRemoteSystems()
         {
             if (!IsSupported) return;
             if (!IsInitialized) return;

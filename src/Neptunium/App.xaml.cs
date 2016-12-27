@@ -395,7 +395,6 @@ namespace Neptunium
             {
                 session.Reason = ExtendedExecutionReason.SavingData;
 
-                ContinuedAppExperienceManager.StopWatchingForRemoteSystems();
                 await SongManager.FlushAsync();
 
 
@@ -416,10 +415,9 @@ namespace Neptunium
 
         protected override async Task OnResumingAsync()
         {
-
             if (ContinuedAppExperienceManager.RemoteSystemAccess == RemoteSystemAccessStatus.Unspecified)
                 await ContinuedAppExperienceManager.InitializeAsync();
-            ContinuedAppExperienceManager.StartWatchingForRemoteSystems();
+            await ContinuedAppExperienceManager.ScanForRemoteSystemsAsync();
 
             ContinuedAppExperienceManager.CheckForReverseHandoffOpportunities();
 
