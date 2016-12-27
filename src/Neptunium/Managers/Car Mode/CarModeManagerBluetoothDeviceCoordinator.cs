@@ -12,6 +12,7 @@ using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Radios;
 using Windows.Storage;
+using Microsoft.HockeyApp;
 
 namespace Neptunium.Managers.Car_Mode
 {
