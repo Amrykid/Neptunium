@@ -25,7 +25,7 @@
                 <TextBlock Text="Select a station to begin streaming." VerticalAlignment="Center" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" FontSize="25" />
             </Grid>
 
-            <nepcon:GlassPanel x:Name="GlassPanel" />
+            <nepcon:TransitioningColorGlassPanel x:Name="ColorPanel" />
 
             <Grid x:Name="NowPlayingInfoGrid" Margin="40 0 0 85"
                   Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"

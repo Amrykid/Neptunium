@@ -109,6 +109,9 @@
     <Compile Include="ApplicationCommands.cs" />
     <Compile Include="AppSettings.cs" />
     <Compile Include="ColorUtilities.cs" />
+    <Compile Include="Controls\TransitioningColorGlassPanel.xaml.cs">
+      <DependentUpon>TransitioningColorGlassPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\GlassPanel.xaml.cs">
       <DependentUpon>GlassPanel.xaml</DependentUpon>
     </Compile>
@@ -315,6 +318,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\TransitioningColorGlassPanel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\GlassPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

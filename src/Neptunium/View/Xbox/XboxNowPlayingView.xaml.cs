@@ -66,17 +66,19 @@ namespace Neptunium.View.Xbox
             });
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             this.Focus(FocusState.Programmatic);
             PlayPauseButton.Focus(FocusState.Programmatic);
 
-            if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
-            {
-                //var accentColor = (Color)this.Resources["SystemAccentColor"];
+            ColorPanel.StartAnimating();
 
-                GlassPanel.ChangeBlurColor(await Neptunium.Data.Stations.StationSupplementaryDataManager.GetStationLogoDominantColorAsync(StationMediaPlayer.CurrentStation));
-            }
+            //if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
+            //{
+            //    //var accentColor = (Color)this.Resources["SystemAccentColor"];
+
+            //    GlassPanel.ChangeBlurColor(await Neptunium.Data.Stations.StationSupplementaryDataManager.GetStationLogoDominantColorAsync(StationMediaPlayer.CurrentStation));
+            //}
         }
     }
 }
