@@ -21,7 +21,11 @@ namespace Neptunium.Data.Stations
             string colorKey = "LogoColor|" + station.Name;
 
             if (await CookieJar.DeviceCache.ContainsObjectAsync(colorKey))
-                return await CookieJar.DeviceCache.PeekObjectAsync<Color>(colorKey);
+            {
+                var hexCode = await CookieJar.DeviceCache.PeekObjectAsync<string>(colorKey);
+
+                return ColorUtilities.ParseFromHexString(hexCode);
+            }
 
             var streamRef = RandomAccessStreamReference.CreateFromUri(new Uri(station.Logo));
             var stationLogoStream = await streamRef.OpenReadAsync();
@@ -29,7 +33,7 @@ namespace Neptunium.Data.Stations
 
             stationLogoStream.Dispose();
 
-            await CookieJar.DeviceCache.InsertObjectAsync<Color>(colorKey, color);
+            await CookieJar.DeviceCache.InsertObjectAsync<string>(colorKey, color.ToString());
 
             return color;
         }
