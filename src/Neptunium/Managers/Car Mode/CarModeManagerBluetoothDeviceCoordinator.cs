@@ -43,6 +43,9 @@ namespace Neptunium.Managers.Car_Mode
         {
             if (IsInitialized) return;
 
+            bluetoothConnectionStatusSubject = new BehaviorSubject<bool>(false);
+            BluetoothConnectionStatusChanged = bluetoothConnectionStatusSubject;
+
             radioAccess = await await App.Dispatcher.RunAsync(IUIDispatcherPriority.High, () => Radio.RequestAccessAsync());
 
             //we're not allowed to access radios so stop here.
@@ -50,9 +53,6 @@ namespace Neptunium.Managers.Car_Mode
 
             //there aren't any bluetooth radios so stop here.
             if (!await HasBluetoothRadiosAsync()) return;
-
-            bluetoothConnectionStatusSubject = new BehaviorSubject<bool>(false);
-            BluetoothConnectionStatusChanged = bluetoothConnectionStatusSubject;
 
             btRadio = (await Radio.GetRadiosAsync()).First(x => x.Kind == RadioKind.Bluetooth);
 
