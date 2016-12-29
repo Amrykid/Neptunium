@@ -64,20 +64,22 @@ namespace Neptunium.Managers.Songs
                 }
             }
             catch (Hqub.MusicBrainz.API.HttpClientException) { }
+            catch (NotImplementedException) { }
 
             try
             {
-                if (albumData != null)
-                {
-                    //get the artist via artist id
-                    metadata.Artist = await ITunes.GetArtistAsync(albumData.ArtistID);
-                }
-                else
-                {
-                    metadata.Artist = await ITunes.TryFindArtistAsync(artist);
-                }
+                //if (albumData != null)
+                //{
+                //    //get the artist via artist id
+                //    metadata.Artist = await ITunes.GetArtistAsync(albumData.ArtistID);
+                //}
+                //else
+                //{
+                metadata.Artist = await ITunes.TryFindArtistAsync(artist);
+                //}
             }
             catch (Hqub.MusicBrainz.API.HttpClientException) { }
+            catch (NotImplementedException) { }
 
             return metadata;
         }

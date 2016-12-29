@@ -79,23 +79,23 @@ namespace Neptunium.Managers.Songs
                     string cleanArtist = e.Artist; //strip out featured artist
                     cleanArtist = Regex.Replace(cleanArtist, "[fF][t(eat(turing))].*", "").Trim();
 
-                    try
-                    {
-                        metadata.MBData = await MetadataManager.GetMusicBrainzDataAsync(e.Title, cleanArtist);
-                    }
-                    catch (NotImplementedException)
-                    {
-
-                    }
-
                     //try
                     //{
-                    //    metadata.ITunesData = await MetadataManager.GetITunesDataAsync(e.Title, cleanArtist);
+                    //    metadata.MBData = await MetadataManager.GetMusicBrainzDataAsync(e.Title, cleanArtist);
                     //}
                     //catch (NotImplementedException)
                     //{
 
                     //}
+
+                    try
+                    {
+                        metadata.ITunesData = await MetadataManager.GetITunesDataAsync(e.Title, cleanArtist);
+                    }
+                    catch (NotImplementedException)
+                    {
+
+                    }
                 }
             }
 

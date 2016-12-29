@@ -18,6 +18,8 @@ namespace Neptunium.Data
         [DataMember]
         public string AlbumID { get; set; }
         [DataMember]
+        public string AlbumLinkUrl { get; set; }
+        [DataMember]
         public string Artist { get; set; }
         [DataMember]
         public string ArtistID { get; set; }

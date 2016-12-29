@@ -19,5 +19,7 @@ namespace Neptunium.Data
         public string Gender { get; set; }
         [DataMember]
         public string ArtistImage { get; set; }
+        [DataMember]
+        public string ArtistLinkUrl { get; set; }
     }
 }

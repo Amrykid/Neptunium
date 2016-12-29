@@ -21,6 +21,7 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
                 data.Name = artistData.Name;
                 data.Gender = artistData.Gender;
                 data.ArtistID = artistData.Id;
+                data.ArtistLinkUrl = "https://musicbrainz.org/artist/" + artistData.Id;
 
                 if (artistData.RelationLists != null)
                 {
@@ -65,6 +66,7 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
                             data.ArtistID = potentialRecording.Credits.First().Artist.Id;
                             data.Album = firstRelease.Title;
                             data.AlbumID = firstRelease.Id;
+                            data.AlbumLinkUrl = "https://musicbrainz.org/release/" + firstRelease.Id;
                             if (!string.IsNullOrWhiteSpace(firstRelease.Date))
                             {
                                 try
@@ -102,6 +104,7 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
                 data.Name = artist.Name;
                 data.Gender = artist.Gender;
                 data.ArtistID = artist.Id;
+                data.ArtistLinkUrl = "https://musicbrainz.org/artist/" + artist.Id;
 
                 var browsingData = await Artist.GetAsync(artist.Id, "url-rels", "aliases");
 
