@@ -27,6 +27,7 @@ using Windows.Services.Store;
 using Windows.Networking.Connectivity;
 using Neptunium.Managers.Songs;
 using Neptunium.Managers.Car_Mode;
+using Windows.Media.Core;
 
 namespace Neptunium.ViewModel
 {
@@ -219,6 +220,11 @@ namespace Neptunium.ViewModel
                     }
                 }
             }
+            else
+            {
+                message += "\r\n" + Enum.GetName(typeof(MediaStreamSourceClosedReason), e.ClosedReason);
+                message += "\r\n" + e.Exception?.ToString();
+            }
 
             bool appVisible = await App.GetIfPrimaryWindowVisibleAsync();
 
@@ -230,6 +236,14 @@ namespace Neptunium.ViewModel
             {
                 ShowMediaErrorNotification(title, message);
             }
+
+#if !DEBUG
+            if (e.Exception != null)
+            {
+                HockeyClient.Current.TrackException(e.Exception);
+                HockeyClient.Current.Flush();
+            }
+#endif
 
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
         }

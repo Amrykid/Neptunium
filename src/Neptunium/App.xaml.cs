@@ -118,8 +118,6 @@ namespace Neptunium
                     HockeyClient.Current.Flush();
                 }
                 catch (NullReferenceException) { }
-
-                e.Handled = true;
             }
             else
             {
