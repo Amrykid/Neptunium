@@ -159,9 +159,9 @@ namespace Neptunium.Fragments
             }
         }
 
-        public override void Dispose()
+        public sealed override void Dispose()
         {
-
+            GC.SuppressFinalize(this);
         }
 
         public override void Invoke(ViewModelBase viewModel, object data)

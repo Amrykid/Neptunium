@@ -279,6 +279,11 @@ namespace Neptunium.Media
                 CurrentStreamer.Player.MediaFailed -= Current_MediaFailed;
                 CurrentStreamer.Player.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
             }
+
+            metadataReceivedSub.Dispose();
+            coordinationChannel.Dispose();
+
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

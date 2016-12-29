@@ -83,10 +83,12 @@ namespace Neptunium.Fragments
             }
         }
 
-        public override void Dispose()
+        public sealed override void Dispose()
         {
             ContinuedAppExperienceManager.RemoteSystemsListUpdated -= ContinuedAppExperienceManager_RemoteSystemsListUpdated;
             ContinuedAppExperienceManager.IsRunningChanged -= ContinuedAppExperienceManager_IsRunningChanged;
+
+            GC.SuppressFinalize(this);
         }
 
         public ObservableCollection<RemoteSystem> AvailableDevices

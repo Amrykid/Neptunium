@@ -99,10 +99,12 @@ namespace Neptunium.Fragments
             }
         }
 
-        public override void Dispose()
+        public sealed override void Dispose()
         {
             this.PropertyChanged -= SleepTimerFlyoutViewFragment_PropertyChanged;
             sleepTimer.Tick -= SleepTimer_Tick;
+
+            GC.SuppressFinalize(this);
         }
 
         public override void Invoke(ViewModelBase viewModel, object data)

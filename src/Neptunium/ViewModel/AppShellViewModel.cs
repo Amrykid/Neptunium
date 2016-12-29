@@ -28,6 +28,7 @@ using Windows.Networking.Connectivity;
 using Neptunium.Managers.Songs;
 using Neptunium.Managers.Car_Mode;
 using Windows.Media.Core;
+using Microsoft.HockeyApp;
 
 namespace Neptunium.ViewModel
 {

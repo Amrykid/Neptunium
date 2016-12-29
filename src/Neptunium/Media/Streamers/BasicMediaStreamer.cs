@@ -65,9 +65,14 @@ namespace Neptunium.Media.Streamers
             Player.Dispose();
 
             metadataSubject.OnCompleted();
-            ((Subject<Exception>)ErrorOccurred).OnCompleted();
+            errorSubject.OnCompleted();
+
+            errorSubject.Dispose();
+            metadataSubject.Dispose();
 
             volumeLock.Dispose();
+
+            GC.SuppressFinalize(this);
         }
 
         public virtual Task ReconnectAsync()
