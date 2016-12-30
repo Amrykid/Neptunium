@@ -66,14 +66,6 @@ namespace Neptunium.Managers.Songs
                 return;
             }
             
-
-            //don't try and process the song again if its the same song
-            if (CurrentSong?.Track == e.Title.Trim() && CurrentSong?.Artist == e.Artist.Trim())
-            {
-                //todo what about the rare situation when you change the station and the exact same song is playing?
-                return;
-            }
-
             await metadataChangeLock.WaitAsync();
 
             if (!string.IsNullOrWhiteSpace(e.Title) && string.IsNullOrWhiteSpace(e.Artist))
