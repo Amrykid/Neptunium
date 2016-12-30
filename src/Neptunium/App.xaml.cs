@@ -210,6 +210,11 @@ namespace Neptunium
             }
         }
 
+        protected override async Task OnApplicationInitializedAsync()
+        {
+            await CoreInitAsync();
+        }
+
         private static bool coreInitialized = false;
         private static async Task CoreInitAsync()
         {
@@ -270,11 +275,9 @@ namespace Neptunium
 
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
-            await FullInitAsync(() =>
-            {
-                WindowManager.GetNavigationManagerForCurrentWindow()
+            WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.NavigateTo<AppShellViewModel>();
-            });
+            await PostUIInitAsync();
         }
 
         public override async Task OnActivationAsync(IActivatedEventArgs args)
@@ -282,11 +285,9 @@ namespace Neptunium
             if (!WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.IsNavigatedTo<AppShellViewModel>())
             {
-                await FullInitAsync(() =>
-                {
-                    WindowManager.GetNavigationManagerForCurrentWindow()
-                    .RootNavigationService.NavigateTo<AppShellViewModel>();
-                });
+                WindowManager.GetNavigationManagerForCurrentWindow()
+                .RootNavigationService.NavigateTo<AppShellViewModel>();
+                await PostUIInitAsync();
             }
 
             if (args.Kind == ActivationKind.Protocol)
@@ -346,13 +347,6 @@ namespace Neptunium
                     }
                     break;
             }
-        }
-
-        private async Task FullInitAsync(Action uiCallback)
-        {
-            await CoreInitAsync();
-            uiCallback();
-            await PostUIInitAsync();
         }
 
         internal static bool GetIfPrimaryWindowVisible()
