@@ -29,6 +29,11 @@ namespace Neptunium.Controls
         private DispatcherTimer timer = new DispatcherTimer();
         private Color[] colorsLoop = new Color[] { Colors.Blue, Colors.Purple, Colors.Red, Colors.Orange, Colors.Yellow, Colors.Green, Colors.Teal };
         private int colorsLoopIndex = 0;
+        private CompositionEffectBrush effectBrush;
+        private CompositionBackdropBrush backdropBrush;
+        private CompositionEffectFactory effectFactory;
+        private Visual hostVisual;
+        private Compositor compositor;
 
         public TransitioningColorGlassPanel()
         {
@@ -40,8 +45,8 @@ namespace Neptunium.Controls
         {
             //https://msdn.microsoft.com/en-us/windows/uwp/graphics/using-the-visual-layer-with-xaml
 
-            Visual hostVisual = ElementCompositionPreview.GetElementVisual(glassHost);
-            Compositor compositor = hostVisual.Compositor;
+            hostVisual = ElementCompositionPreview.GetElementVisual(glassHost);
+            compositor = hostVisual.Compositor;
 
             // Create a glass effect, requires Win2D NuGet package
             var glassEffect = new GaussianBlurEffect
@@ -64,9 +69,9 @@ namespace Neptunium.Controls
             };
 
             //  Create an instance of the effect and set its source to a CompositionBackdropBrush
-            var effectFactory = compositor.CreateEffectFactory(glassEffect, new[] { "Blur.BlurAmount", "NewColor.Color" });
-            var backdropBrush = compositor.CreateBackdropBrush();
-            var effectBrush = effectFactory.CreateBrush();
+            effectFactory = compositor.CreateEffectFactory(glassEffect, new[] { "Blur.BlurAmount", "NewColor.Color" });
+            backdropBrush = compositor.CreateBackdropBrush();
+            effectBrush = effectFactory.CreateBrush();
 
             effectBrush.SetSourceParameter("backdropBrush", backdropBrush);
 
@@ -122,12 +127,23 @@ namespace Neptunium.Controls
 
         private void ChangeBlurColor(Color newColor)
         {
-            if (IsGlassOn) TurnOffGlass();
-
             lastBlurColor = blurColor;
             blurColor = newColor;
 
-            TurnOnGlass();
+            if (IsGlassOn)
+            {
+                effectBrush.Properties.InsertColor("NewColor.Color", newColor);
+
+                ColorKeyFrameAnimation colorAnimation = compositor.CreateColorKeyFrameAnimation();
+                colorAnimation.InsertKeyFrame(0.0f, lastBlurColor);
+                colorAnimation.InsertKeyFrame(1.0f, blurColor);
+                colorAnimation.Duration = TimeSpan.FromSeconds(5);
+                effectBrush.StartAnimation("NewColor.Color", colorAnimation);
+            }
+            else
+            {
+                TurnOnGlass();
+            }
         }
 
         private void TurnOnGlass()
@@ -176,6 +192,12 @@ namespace Neptunium.Controls
             StopAnimating();
 
             timer.Tick -= Timer_Tick;
+
+            compositor.Dispose();
+            effectBrush.Dispose();
+            backdropBrush.Dispose();
+            effectFactory.Dispose();
+            hostVisual.Dispose();
 
             if (glassVisual != null)
                 glassVisual.Dispose();
