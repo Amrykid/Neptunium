@@ -12,13 +12,13 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid>
-            <Grid.Background>
+            <!--<Grid.Background>
                 <ImageBrush Opacity=".45" Stretch="Uniform">
                     <ImageBrush.ImageSource>
                         <BitmapImage UriSource="{Binding NowPlayingBackgroundImage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StrUriConv}}"/>
                     </ImageBrush.ImageSource>
                 </ImageBrush>
-            </Grid.Background>
+            </Grid.Background>-->
 
             <Grid Visibility="{Binding CurrentStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}"
                   VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="40 0 0 40">
@@ -40,7 +40,7 @@
                     <RowDefinition Height="80" />
                 </Grid.RowDefinitions>
 
-                <uwpcon:ImageEx Grid.Column="0" Grid.Row="0" Source="{Binding CurrentStation.Logo, UpdateSourceTrigger=PropertyChanged}" 
+                <uwpcon:ImageEx Grid.Column="0" Grid.Row="0" Source="{Binding CoverImage, UpdateSourceTrigger=PropertyChanged}" 
                        Width="150" Height="150" IsCacheEnabled="True" />
 
                 <Grid Grid.Column="1" Grid.Row="0" Margin="20 0 0 0">
