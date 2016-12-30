@@ -63,6 +63,14 @@ namespace Neptunium.Managers.Songs
             metadata.Track = e.Title.Trim();
             metadata.Artist = e.Artist.Trim();
 
+            //don't try and process the song again if its the same song
+            if (CurrentSong?.Track == metadata.Track && CurrentSong?.Artist == metadata.Artist)
+            {
+                //todo what about the rare situation when you change the station and the exact same song is playing?
+                metadataChangeLock.Release();
+                return;
+            }
+
             PreSongChanged?.Invoke(null, new SongManagerSongChangedEventArgs()
             {
                 Metadata = metadata,
