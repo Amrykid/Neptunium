@@ -222,6 +222,9 @@ namespace Neptunium
             }
             catch (Exception) { }
 
+            FragmentManager.RegisterFragmentView<StationInfoViewSongHistoryFragment, StationInfoViewSongHistoryFragmentView>();
+            FragmentManager.RegisterFragmentView<NowPlayingViewFragment, NowPlayingInfoBar>();
+
             await StationDataManager.InitializeAsync();
 
             await SongManager.InitializeAsync();
@@ -248,18 +251,15 @@ namespace Neptunium
                 SnackBarAppearance.Transition = new AddDeleteThemeTransition();
             }
 
-            FragmentManager.RegisterFragmentView<StationInfoViewSongHistoryFragment, StationInfoViewSongHistoryFragmentView>();
-            FragmentManager.RegisterFragmentView<NowPlayingViewFragment, NowPlayingInfoBar>();
-
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
 
 #if !DEBUG
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
 #endif
-                if (!CarModeManager.IsInitialized)
-                    await CarModeManager.InitializeAsync();
-            
+            if (!CarModeManager.IsInitialized)
+                await CarModeManager.InitializeAsync();
+
 
             //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
 
@@ -270,12 +270,11 @@ namespace Neptunium
 
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
-            await FullInitAsync();
-
-            WindowManager.GetNavigationManagerForCurrentWindow()
+            await FullInitAsync(() =>
+            {
+                WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.NavigateTo<AppShellViewModel>();
-
-            await Task.CompletedTask;
+            });
         }
 
         public override async Task OnActivationAsync(IActivatedEventArgs args)
@@ -283,10 +282,11 @@ namespace Neptunium
             if (!WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.IsNavigatedTo<AppShellViewModel>())
             {
-                await FullInitAsync();
-
-                WindowManager.GetNavigationManagerForCurrentWindow()
+                await FullInitAsync(() =>
+                {
+                    WindowManager.GetNavigationManagerForCurrentWindow()
                     .RootNavigationService.NavigateTo<AppShellViewModel>();
+                });
             }
 
             if (args.Kind == ActivationKind.Protocol)
@@ -348,9 +348,10 @@ namespace Neptunium
             }
         }
 
-        private async Task FullInitAsync()
+        private async Task FullInitAsync(Action uiCallback)
         {
             await CoreInitAsync();
+            uiCallback();
             await PostUIInitAsync();
         }
 
