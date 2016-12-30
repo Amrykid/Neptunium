@@ -47,7 +47,8 @@ namespace Neptunium.View
             {
                 if (item.Album != null)
                 {
-                    await Launcher.LaunchUriAsync(new Uri("https://musicbrainz.org/release/" + item.Album.AlbumID));
+                    if (!string.IsNullOrWhiteSpace(item.Album.AlbumLinkUrl))
+                        await Launcher.LaunchUriAsync(new Uri(item.Album.AlbumLinkUrl));
                 }
             }
         }

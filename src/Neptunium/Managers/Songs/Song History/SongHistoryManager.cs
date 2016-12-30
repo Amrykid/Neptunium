@@ -57,6 +57,8 @@ namespace Neptunium.Managers
             historyItem.Station = songStation?.Name;
             historyItem.DatePlayed = DateTime.Now;
             historyItem.Album = metadata.MBData?.Album;
+            if (historyItem.Album == null)
+                historyItem.Album = metadata.ITunesData?.Album;
 
             songHistoryCollection.Insert(0, historyItem);
 
