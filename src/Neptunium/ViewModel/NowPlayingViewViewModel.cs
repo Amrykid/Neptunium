@@ -111,6 +111,9 @@ namespace Neptunium.ViewModel
         private void UpdateCoverImage(SongMetadata song)
         {
             var albumUrl = song.MBData?.Album?.AlbumCoverUrl;
+            if (string.IsNullOrWhiteSpace(albumUrl))
+                albumUrl = song.ITunesData?.Album?.AlbumCoverUrl;
+
             if (!string.IsNullOrWhiteSpace(albumUrl))
                 CoverImage = new Uri(albumUrl);
             else
@@ -127,7 +130,7 @@ namespace Neptunium.ViewModel
 
         private async void SongManager_PreSongChanged(object sender, SongManagerSongChangedEventArgs e)
         {
-            await App.Dispatcher.RunWhenIdleAsync(() =>
+            await App.Dispatcher.RunAsync(() =>
             {
                 SongMetadata = e.Metadata.Track + " by " + e.Metadata.Artist;
 
@@ -148,7 +151,7 @@ namespace Neptunium.ViewModel
         {
             if (CurrentSong == e.Metadata.Track && CurrentArtist == e.Metadata.Artist)
             {
-                await App.Dispatcher.RunWhenIdleAsync(() =>
+                await App.Dispatcher.RunAsync(() =>
                 {
                     UpdateCoverImage(e.Metadata);
                 });

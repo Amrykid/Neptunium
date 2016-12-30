@@ -107,6 +107,8 @@ namespace Neptunium.Managers.Songs
                 }
             }
 
+            CurrentSong = metadata;
+
             SongChanged?.Invoke(null, new SongManagerSongChangedEventArgs()
             {
                 Metadata = metadata,
