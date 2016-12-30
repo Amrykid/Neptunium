@@ -122,6 +122,21 @@ namespace Neptunium.ViewModel
                 }
             }
         }
+
+        public string[] PossibleAnnouncementFrequencyOptions { get; private set; }
+
+        public string SelectedAnnouncementFrequencyOption
+        {
+            get { return GetPropertyValue<string>(); }
+            set
+            {
+                SetPropertyValue<string>(value: value);
+                if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                {
+                    CarModeManager.SetAnnouncementFrequency((CarModeManagerSongAnnouncementFrequency)Enum.Parse(typeof(CarModeManagerSongAnnouncementFrequency), value));
+                }
+            }
+        }
         #endregion
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
@@ -144,6 +159,8 @@ namespace Neptunium.ViewModel
                 SelectedBluetoothDevice = CarModeManager.BluetoothCoordinator.SelectedBluetoothDeviceName ?? "None";
                 ClearCarModeDeviceCommand.SetCanExecute(CarModeManager.BluetoothCoordinator.SelectedBluetoothDevice != null);
                 JapaneseVoiceForSongAnnouncements = CarModeManager.ShouldUseJapaneseVoice;
+                PossibleAnnouncementFrequencyOptions = Enum.GetNames(typeof(CarModeManagerSongAnnouncementFrequency));
+                SetPropertyValue<string>(nameof(SelectedAnnouncementFrequencyOption), Enum.GetName(typeof(CarModeManagerSongAnnouncementFrequency), CarModeManager.AnnouncementFrequency));
             }
         }
 

@@ -25,6 +25,7 @@ namespace Neptunium.Managers.Car_Mode
         public const string SelectedCarDevice = "SelectedCarDevice";
         public const string CarModeAnnounceSongs = "CarModeAnnounceSongs";
         public const string UseJapaneseVoiceForAnnouncements = "UseJapaneseVoiceForAnnouncements";
+        public const string SongAnnouncementFrequency = nameof(SongAnnouncementFrequency);
 
         public static bool IsInitialized { get; private set; }
 
@@ -42,6 +43,7 @@ namespace Neptunium.Managers.Car_Mode
         #region Options
         public static bool ShouldAnnounceSongs { get; private set; }
         public static bool ShouldUseJapaneseVoice { get; private set; }
+        public static CarModeManagerSongAnnouncementFrequency AnnouncementFrequency { get; private set; }
 
         private static void CreateSettings()
         {
@@ -54,6 +56,19 @@ namespace Neptunium.Managers.Car_Mode
 
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(UseJapaneseVoiceForAnnouncements))
                 ApplicationData.Current.LocalSettings.Values.Add(UseJapaneseVoiceForAnnouncements, false);
+
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(SongAnnouncementFrequency))
+                ApplicationData.Current.LocalSettings.Values.Add(SongAnnouncementFrequency, 
+                    Enum.GetName(typeof(CarModeManagerSongAnnouncementFrequency), CarModeManagerSongAnnouncementFrequency.Everytime));
+        }
+
+        public static void SetAnnouncementFrequency(CarModeManagerSongAnnouncementFrequency value)
+        {
+            if (!IsInitialized) throw new InvalidOperationException();
+
+            AnnouncementFrequency = value;
+
+            ApplicationData.Current.LocalSettings.Values[SongAnnouncementFrequency] = Enum.GetName(typeof(CarModeManagerSongAnnouncementFrequency), value);
         }
 
         public static void SetShouldAnnounceSongs(bool value)
@@ -94,6 +109,8 @@ namespace Neptunium.Managers.Car_Mode
 
             ShouldAnnounceSongs = (bool)ApplicationData.Current.LocalSettings.Values[CarModeAnnounceSongs];
             ShouldUseJapaneseVoice = (bool)ApplicationData.Current.LocalSettings.Values[UseJapaneseVoiceForAnnouncements];
+            AnnouncementFrequency = (CarModeManagerSongAnnouncementFrequency)Enum.Parse(typeof(CarModeManagerSongAnnouncementFrequency), 
+                ApplicationData.Current.LocalSettings.Values[SongAnnouncementFrequency].ToString());
 
             SongManager.PreSongChanged += SongManager_PreSongChanged;
             StationMediaPlayer.BackgroundAudioReconnecting += StationMediaPlayer_BackgroundAudioReconnecting;
@@ -109,6 +126,8 @@ namespace Neptunium.Managers.Car_Mode
             if (ShouldAnnounceSongs && IsInCarMode)
             {
                 if (lastPlayedSongMetadata == e.Metadata.Track) return;
+
+                if (!ShouldDoAnnouncementBecauseDiceRollBasedOnFrequency()) return;
 
                 await songAnouncementLock.WaitAsync();
 
@@ -139,6 +158,21 @@ namespace Neptunium.Managers.Car_Mode
 
                 songAnouncementLock.Release();
             }
+        }
+
+        private static bool ShouldDoAnnouncementBecauseDiceRollBasedOnFrequency()
+        {
+            switch(AnnouncementFrequency)
+            {
+                case CarModeManagerSongAnnouncementFrequency.Everytime:
+                    return true;
+                case CarModeManagerSongAnnouncementFrequency.Sometimes:
+                    return new Random(DateTime.Now.Millisecond).Next(0, 101) <= 50; //50%
+                case CarModeManagerSongAnnouncementFrequency.Occasionally:
+                    return new Random(DateTime.Now.Millisecond).Next(0, 101) <= 33; //33%
+            }
+
+            return true;
         }
 
         private static async void StationMediaPlayer_BackgroundAudioReconnecting(object sender, EventArgs e)
