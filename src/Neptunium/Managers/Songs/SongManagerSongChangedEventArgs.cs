@@ -9,6 +9,7 @@ namespace Neptunium.Managers.Songs
 
         }
 
+        public bool IsUnknown { get; internal set; }
         internal SongMetadata Metadata { get; set; }
     }
 }

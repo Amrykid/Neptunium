@@ -44,6 +44,36 @@ namespace Neptunium.Managers.Songs
         {
             if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //don't play that pre-defined station message that happens every so often.
 
+            if (e.Title.ToLower().Equals("unknown song") || e.Artist.ToLower().Equals("unknown artist"))
+            {
+                SongMetadata tmp = new SongMetadata();
+                tmp.Track = e.Title.Trim();
+                tmp.Artist = e.Artist.Trim();
+
+                PreSongChanged?.Invoke(null, new SongManagerSongChangedEventArgs()
+                {
+                    Metadata = tmp,
+                    IsUnknown = true
+                });
+
+                CurrentSong = tmp;
+
+                SongChanged?.Invoke(null, new SongManagerSongChangedEventArgs()
+                {
+                    Metadata = tmp,
+                    IsUnknown = true
+                });
+                return;
+            }
+            
+
+            //don't try and process the song again if its the same song
+            if (CurrentSong?.Track == e.Title.Trim() && CurrentSong?.Artist == e.Artist.Trim())
+            {
+                //todo what about the rare situation when you change the station and the exact same song is playing?
+                return;
+            }
+
             await metadataChangeLock.WaitAsync();
 
             if (!string.IsNullOrWhiteSpace(e.Title) && string.IsNullOrWhiteSpace(e.Artist))
@@ -63,22 +93,12 @@ namespace Neptunium.Managers.Songs
             metadata.Track = e.Title.Trim();
             metadata.Artist = e.Artist.Trim();
 
-            //don't try and process the song again if its the same song
-            if (CurrentSong?.Track == metadata.Track && CurrentSong?.Artist == metadata.Artist)
-            {
-                //todo what about the rare situation when you change the station and the exact same song is playing?
-                metadataChangeLock.Release();
-                return;
-            }
-
             PreSongChanged?.Invoke(null, new SongManagerSongChangedEventArgs()
             {
                 Metadata = metadata,
             });
 
             CurrentSong = metadata;
-
-            if (e.Title.ToLower().Equals("unknown song") || e.Artist.ToLower().Equals("unknown artist")) return;
 
             string storageKey = "SONG|" + metadata.GetHashCode();
 

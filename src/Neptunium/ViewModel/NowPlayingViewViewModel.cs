@@ -35,7 +35,7 @@ namespace Neptunium.ViewModel
     {
         public NowPlayingViewViewModel()
         {
-            ViewAlbumOnMusicBrainzCommand = new ManualRelayCommand(async x =>
+            ViewAlbumOnMusicBrainzCommand = new ManualRelayCommand(x =>
             {
                 //await Launcher.LaunchUriAsync(new Uri("https://musicbrainz.org/release/" + CurrentSongAlbumData.AlbumID));
             });
@@ -97,9 +97,6 @@ namespace Neptunium.ViewModel
                 CurrentArtist = song.Artist;
 
                 SongMetadata = song.Track + " by " + song.Artist;
-
-                if (App.GetDevicePlatform() != Platform.Xbox)
-                    if (!App.IsUnrestrictiveInternetConnection()) return;
 
                 UpdateCoverImage(song);
             }
@@ -175,8 +172,8 @@ namespace Neptunium.ViewModel
 
         public StationModel CurrentStation { get { return GetPropertyValue<StationModel>(); } private set { SetPropertyValue<StationModel>(value: value); } }
 
-        public string CurrentSong { get { return GetPropertyValue<string>("CurrentSong"); } private set { SetPropertyValue<string>("CurrentSong", value); } }
-        public string CurrentArtist { get { return GetPropertyValue<string>("CurrentArtist"); } private set { SetPropertyValue<string>("CurrentArtist", value); } }
+        public string CurrentSong { get { return GetPropertyValue<string>(); } private set { SetPropertyValue<string>(value: value); } }
+        public string CurrentArtist { get { return GetPropertyValue<string>(); } private set { SetPropertyValue<string>(value: value); } }
         public Uri CurrentAlbum { get { return GetPropertyValue<Uri>(); } private set { SetPropertyValue<Uri>(value: value); } }
         public Uri CoverImage { get { return GetPropertyValue<Uri>(); } private set { SetPropertyValue<Uri>(value: value); } }
 
