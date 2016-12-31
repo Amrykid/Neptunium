@@ -127,36 +127,37 @@ namespace Neptunium.Managers.Car_Mode
 
             if (ShouldAnnounceSongs && IsInCarMode)
             {
-                if (lastPlayedSongMetadata == e.Metadata.Track) return;
-
                 if (!ShouldDoAnnouncementBecauseDiceRollBasedOnFrequency()) return;
 
                 await songAnouncementLock.WaitAsync();
 
-                double initialVolume = 0.0;
-
-                try
+                if (lastPlayedSongMetadata != e.Metadata.Track)
                 {
-                    initialVolume = StationMediaPlayer.Volume;
+                    double initialVolume = 0.0;
+
+                    try
+                    {
+                        initialVolume = StationMediaPlayer.Volume;
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        songAnouncementLock.Release();
+                        return;
+                    }
+
+                    var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, japaneseFemaleVoice != null && ShouldUseJapaneseVoice);
+                    var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
+
+                    bool shouldFade = initialVolume >= 0.1;
+
+                    if (shouldFade)
+                        await StationMediaPlayer.FadeVolumeDownToAsync(0.1);
+
+                    await PlayAnnouncementAudioStreamAsync(stream);
+
+                    if (shouldFade)
+                        await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume);
                 }
-                catch (InvalidOperationException)
-                {
-                    songAnouncementLock.Release();
-                    return;
-                }
-
-                var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, japaneseFemaleVoice != null && ShouldUseJapaneseVoice);
-                var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
-
-                bool shouldFade = initialVolume >= 0.1;
-
-                if (shouldFade)
-                    await StationMediaPlayer.FadeVolumeDownToAsync(0.1);
-
-                await PlayAnnouncementAudioStreamAsync(stream);
-
-                if (shouldFade)
-                    await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume);
 
                 songAnouncementLock.Release();
             }
