@@ -123,6 +123,8 @@ namespace Neptunium.Managers.Car_Mode
 
         private static async void SongManager_PreSongChanged(object sender, SongManagerSongChangedEventArgs e)
         {
+            if (e.IsUnknown || e.Metadata is UnknownSongMetadata) return;
+
             if (ShouldAnnounceSongs && IsInCarMode)
             {
                 if (lastPlayedSongMetadata == e.Metadata.Track) return;

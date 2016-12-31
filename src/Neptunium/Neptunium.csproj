@@ -117,6 +117,7 @@
     </Compile>
     <Compile Include="Managers\Car Mode\CarModeManagerBluetoothDeviceCoordinator.cs" />
     <Compile Include="Managers\Car Mode\CarModeManagerSongAnnouncementFrequency.cs" />
+    <Compile Include="Managers\Songs\UnknownSongMetadata.cs" />
     <Compile Include="Media\StationMediaPlayerAudioCoordinator.cs" />
     <Compile Include="Media\Streamers\BasicMediaStreamer.cs" />
     <Compile Include="Media\Streamers\DirectMediaStreamer.cs" />

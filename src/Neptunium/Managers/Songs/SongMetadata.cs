@@ -10,13 +10,13 @@ namespace Neptunium.Managers.Songs
         }
 
         [DataMember]
-        public string Artist { get; set; }
+        public virtual string Artist { get; set; }
         [DataMember]
-        public string Track { get; set; }
+        public virtual string Track { get; set; }
         [DataMember]
-        public MusicBrainzSongMetadata MBData { get; set; }
+        public virtual MusicBrainzSongMetadata MBData { get; set; }
         [DataMember]
-        public ITunesSongMetadata ITunesData { get; set; }
+        public virtual ITunesSongMetadata ITunesData { get; set; }
 
         public override int GetHashCode()
         {

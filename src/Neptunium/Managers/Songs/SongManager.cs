@@ -46,7 +46,7 @@ namespace Neptunium.Managers.Songs
 
             if (e.Title.ToLower().Equals("unknown song") || e.Artist.ToLower().Equals("unknown artist"))
             {
-                SongMetadata tmp = new SongMetadata();
+                SongMetadata tmp = new UnknownSongMetadata();
                 tmp.Track = e.Title.Trim();
                 tmp.Artist = e.Artist.Trim();
 
