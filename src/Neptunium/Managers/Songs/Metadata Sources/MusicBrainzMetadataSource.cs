@@ -60,7 +60,16 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
                         {
 
                             //data.AlbumCoverUrl = CoverArtArchive.GetCoverArtUri(firstRelease.Id)?.ToString();
-                            data.AlbumCoverUrl = "http://coverartarchive.org/release/" + firstRelease?.Id + "/front-250.jpg";
+
+                            if (firstRelease.CoverArtArchive != null)
+                            {
+                                if (firstRelease.CoverArtArchive.Artwork)
+                                    data.AlbumCoverUrl = CoverArtArchive.GetCoverArtUri(firstRelease.Id)?.ToString();
+                            }
+                            else
+                            {
+                                data.AlbumCoverUrl = "http://coverartarchive.org/release/" + firstRelease?.Id + "/front-250.jpg";
+                            }
 
                             data.Artist = potentialRecording.Credits.First().Artist.Name;
                             data.ArtistID = potentialRecording.Credits.First().Artist.Id;
