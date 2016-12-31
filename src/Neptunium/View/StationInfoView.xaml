@@ -36,43 +36,45 @@
                     </Grid>
                     <RelativePanel>
                         <uwpcon:ImageEx x:Name="StationLogo"
-                                RelativePanel.AlignTopWithPanel="True"
-                                RelativePanel.AlignHorizontalCenterWithPanel="True"
-                                RelativePanel.AlignLeftWithPanel="False"
-                                Stretch="Uniform"
-                                Margin="0 10 0 0"
-                                Height="100" Width="100" IsCacheEnabled="True" Source="{Binding Station.Logo, UpdateSourceTrigger=PropertyChanged}" />
+                                        RelativePanel.AlignTopWithPanel="True"
+                                        RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                        RelativePanel.AlignLeftWithPanel="False"
+                                        Stretch="Uniform"
+                                        Margin="0 10 0 0"
+                                        Height="100" Width="100" IsCacheEnabled="True" Source="{Binding Station.Logo, UpdateSourceTrigger=PropertyChanged}" />
 
                         <TextBlock x:Name="StationTitleBlock" 
-                           RelativePanel.Below="StationLogo"
-                           RelativePanel.AlignHorizontalCenterWithPanel="True"
-                           Margin="0 10 0 0"
-                           Style="{ThemeResource TitleTextBlockStyle}" 
-                           Text="{Binding Station.Name, UpdateSourceTrigger=PropertyChanged}" />
+                                   RelativePanel.Below="StationLogo"
+                                   RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                   Margin="0 10 0 0"
+                                   Style="{ThemeResource TitleTextBlockStyle}" 
+                                   Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                   Text="{Binding Station.Name, UpdateSourceTrigger=PropertyChanged}" />
 
                         <TextBlock x:Name="StationDescBlock"
-                           Style="{ThemeResource BodyTextBlockStyle}"
-                           Text="{Binding Station.Description, UpdateSourceTrigger=PropertyChanged}" />
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                   Text="{Binding Station.Description, UpdateSourceTrigger=PropertyChanged}" />
 
                         <StackPanel x:Name="ButtonPanel" 
-                            Orientation="Horizontal" 
-                            RelativePanel.AlignBottomWithPanel="True"
-                            RelativePanel.Below="StationDescBlock"
-                            RelativePanel.AlignHorizontalCenterWithPanel="True"
-                            VerticalAlignment="Top"
-                            Margin="0 10 0 0">
+                                    Orientation="Horizontal" 
+                                    RelativePanel.AlignBottomWithPanel="True"
+                                    RelativePanel.Below="StationDescBlock"
+                                    RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                    VerticalAlignment="Top"
+                                    Margin="0 10 0 0">
                             <AppBarButton Icon="Play" Label="Stream" 
-                                  x:Name="playButton"
-                                  Command="{Binding Source={StaticResource AppCommands}, Path=PlayStationCommand}" 
-                                  CommandParameter="{Binding Station}" />
+                                          x:Name="playButton"
+                                          Command="{Binding Source={StaticResource AppCommands}, Path=PlayStationCommand}" 
+                                          CommandParameter="{Binding Station}" />
                             <AppBarButton Icon="Globe" Label="Website" 
-                                  x:Name="websiteButton"
-                                  Command="{Binding GoToStationWebsiteCommand}" 
-                                  CommandParameter="{Binding Station}" />
+                                          x:Name="websiteButton"
+                                          Command="{Binding GoToStationWebsiteCommand}" 
+                                          CommandParameter="{Binding Station}" />
                             <AppBarButton Icon="Pin" Label="Pin to Start" 
-                                  x:Name="pinToStartButton"
-                                  Command="{Binding PinToStartCommand}" 
-                                  CommandParameter="{Binding Station}" />
+                                          x:Name="pinToStartButton"
+                                          Command="{Binding PinToStartCommand}" 
+                                          CommandParameter="{Binding Station}" />
                         </StackPanel>
                     </RelativePanel>
                 </Grid>
@@ -80,7 +82,7 @@
                 <Grid x:Name="BodyRow" Grid.Row="1">
                     <wnrttk:WrapPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <cui:FragmentContentViewer x:Name="SongHistoryPanel" XYFocusUp="{x:Bind playButton}"
-                    Fragment="{Binding SongHistory, UpdateSourceTrigger=PropertyChanged}" />
+                                                   Fragment="{Binding SongHistory, UpdateSourceTrigger=PropertyChanged}" />
                     </wnrttk:WrapPanel>
                 </Grid>
 

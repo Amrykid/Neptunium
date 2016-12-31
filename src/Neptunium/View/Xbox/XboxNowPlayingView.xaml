@@ -51,8 +51,12 @@
                         <RowDefinition Height="35" />
                     </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="1" Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" Style="{ThemeResource TitleTextBlockStyle}" />
-                    <TextBlock Grid.Row="2" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" Style="{ThemeResource SubtitleTextBlockStyle}" FontSize="18" LineHeight="22" />
+                    <TextBlock Grid.Row="1" Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" 
+                               Style="{ThemeResource TitleTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                    <TextBlock Grid.Row="2" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" 
+                               Style="{ThemeResource BaseTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
                 </Grid>
             </Grid>
 

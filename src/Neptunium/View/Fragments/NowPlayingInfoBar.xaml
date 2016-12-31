@@ -238,9 +238,15 @@
 
 
                         <StackPanel Grid.Column="1" MaxHeight="50" Height="Auto" VerticalAlignment="Center">
-                            <TextBlock x:Name="TrackRun" Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" FontSize="16">
+                            <TextBlock x:Name="TrackRun" Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}"
+                                       Style="{ThemeResource BaseTextBlockStyle}"
+                                       TextTrimming="Clip"
+                                       TextWrapping="NoWrap"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}">
                             </TextBlock>
-                            <TextBlock x:Name="ArtistRun" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" FontSize="15">
+                            <TextBlock x:Name="ArtistRun" Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}"
+                                       Style="{ThemeResource BodyTextBlockStyle}"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}">
                             </TextBlock>
                         </StackPanel>
                     </Grid>

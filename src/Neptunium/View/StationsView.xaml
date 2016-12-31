@@ -41,7 +41,7 @@
                                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
                         <TextBlock Text="{Binding Genres[0]}" Grid.Row="1" TextTrimming="WordEllipsis" 
                                    Style="{ThemeResource BodyTextBlockStyle}" 
-                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
+                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
 
                     </Grid>
 
@@ -70,11 +70,12 @@
 
                     <TextBlock TextAlignment="Left"
                                Grid.Row="1" TextWrapping="WrapWholeWords"
-                               Text="{Binding Name}" FontSize="13" 
+                               Text="{Binding Name}"
+                               Style="{ThemeResource BaseTextBlockStyle}" 
                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
 
                     <TextBlock Grid.Row="2" Text="{Binding Genres[0]}"
-                               FontSize="13"
+                               Style="{ThemeResource BodyTextBlockStyle}" 
                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
 
                     <ToolTipService.ToolTip>

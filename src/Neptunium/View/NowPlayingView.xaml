@@ -73,12 +73,16 @@
                                     HorizontalAlignment="Left" VerticalAlignment="Center"
                                     Width="150" Height="150" Margin="10 10 0 0" IsCacheEnabled="True" />
 
-                    <TextBlock Grid.Column="1" Grid.Row="0" Style="{ThemeResource TitleTextBlockStyle}"
+                    <TextBlock Grid.Column="1" Grid.Row="0" 
+                               Style="{ThemeResource TitleTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                Margin="20 0 0 0"
                                VerticalAlignment="Bottom"
                                Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Grid.Column="1" Grid.Row="1" Style="{ThemeResource SubtitleTextBlockStyle}"
+                    <TextBlock Grid.Column="1" Grid.Row="1" 
+                               Style="{ThemeResource SubtitleTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                Margin="20 0 0 0"
                                Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" />
 
@@ -105,12 +109,14 @@
                                     Margin="20 20 20 20" IsCacheEnabled="True" />
 
                     <TextBlock Grid.Row="1" Style="{ThemeResource TitleTextBlockStyle}"
-                               Margin="20 -10 0 0"
+                               Margin="40 -10 0 0"
                                VerticalAlignment="Bottom"
+                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Grid.Row="2" Style="{ThemeResource SubtitleTextBlockStyle}"
-                               Margin="20 0 0 0"
+                    <TextBlock Grid.Row="2" Style="{ThemeResource BodyTextBlockStyle}"
+                               Margin="40 0 0 0"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" />
 
                 </Grid>
