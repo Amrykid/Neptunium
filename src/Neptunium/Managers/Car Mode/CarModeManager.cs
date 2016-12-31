@@ -200,7 +200,7 @@ namespace Neptunium.Managers.Car_Mode
                 var media = new MediaElement();
 
                 media.Volume = 1.0;
-                media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Alerts; //setting this to alerts automatically fades out music
+                media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Speech;
                 media.SetSource(stream, stream.ContentType);
 
                 Task mediaOpenTask = media.WaitForMediaOpenAsync();
