@@ -32,7 +32,7 @@ namespace Neptunium.Managers.Songs
 
                 data.Album = selectedAlbum.CollectionName;
                 data.AlbumID = selectedAlbum.CollectionId.ToString();
-                data.AlbumCoverUrl = selectedAlbum.ArtworkUrl100;
+                data.AlbumCoverUrl = selectedAlbum.ArtworkUrl100.Replace("100x100", "600x600");
                 data.AlbumLinkUrl = selectedAlbum.CollectionViewUrl;
                 data.Artist = selectedAlbum.ArtistName;
                 data.ArtistID = selectedAlbum.ArtistId.ToString();
