@@ -108,14 +108,14 @@
                                     HorizontalAlignment="Center" VerticalAlignment="Center"
                                     Margin="20 20 20 20" IsCacheEnabled="True" />
 
-                    <TextBlock Grid.Row="1" Style="{ThemeResource TitleTextBlockStyle}"
-                               Margin="40 -10 0 0"
+                    <TextBlock Grid.Row="1" Style="{ThemeResource BaseTextBlockStyle}"
+                               Margin="40 -10 40 0"
                                VerticalAlignment="Bottom"
                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" />
 
                     <TextBlock Grid.Row="2" Style="{ThemeResource BodyTextBlockStyle}"
-                               Margin="40 0 0 0"
+                               Margin="40 0 40 0"
                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" />
 
