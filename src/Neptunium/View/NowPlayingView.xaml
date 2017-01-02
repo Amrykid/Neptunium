@@ -21,7 +21,8 @@
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
+            <VisualStateGroup CurrentStateChanging="VisualStateGroup_CurrentStateChanging"
+                              CurrentStateChanged="VisualStateGroup_CurrentStateChanged">
                 <VisualState x:Name="TabletVisualState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="720" />

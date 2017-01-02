@@ -49,6 +49,8 @@
                         <Setter Target="CurrentPaneTitle.Visibility" Value="Collapsed" />
                         <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />
 
+                        <Setter Target="lowerAppBar.Visibility" Value="Collapsed" />
+
                         <Setter Target="inlineFrame.Margin" Value="0" />
 
                         <Setter Target="MobileIconMenu.Visibility" Value="Collapsed" />

@@ -40,6 +40,8 @@ namespace Neptunium.View
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            UpdateIsMobileView(Window.Current.Bounds.Width < 720);
+
             StationMediaPlayer.IsPlayingChanged += StationMediaPlayer_IsPlayingChanged;
 
             if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
@@ -54,7 +56,11 @@ namespace Neptunium.View
         {
         }
 
-
+        private void UpdateIsMobileView(bool isMobileView)
+        {
+            IsMobileView = isMobileView;
+            IsMobileViewChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         private void Page_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
@@ -64,6 +70,19 @@ namespace Neptunium.View
         private void Page_Unloaded(object sender, RoutedEventArgs e)
         {
             StationMediaPlayer.IsPlayingChanged -= StationMediaPlayer_IsPlayingChanged;
+        }
+
+        public bool IsMobileView { get; private set; }
+        public event EventHandler IsMobileViewChanged;
+
+        private void VisualStateGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        {
+            UpdateIsMobileView(e.NewState == PhoneVisualState);
+        }
+
+        private void VisualStateGroup_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
+        {
+
         }
     }
 }

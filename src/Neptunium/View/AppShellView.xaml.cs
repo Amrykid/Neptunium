@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -95,7 +96,7 @@ namespace Neptunium.View
                         break;
                     case Windows.System.VirtualKey.GamepadY:
                         if (StationMediaPlayer.IsPlaying)
-                            (lowerAppBar.Content as NowPlayingInfoBar)?.ShowHandoffFlyout();                       
+                            (lowerAppBar.Content as NowPlayingInfoBar)?.ShowHandoffFlyout();
                         e.Handled = true;
                         break;
                     case Windows.System.VirtualKey.GamepadX:
@@ -122,14 +123,12 @@ namespace Neptunium.View
 
         private void AppShellView_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-           
+
         }
 
         private void AppShellView_NavigationServicePreNavigatedSignaled(object sender, NavigationServicePreNavigatedSignaledEventArgs e)
         {
             RefreshNavigationSplitViewState(e.ViewModel);
-
-            HandleLowerAppbarState(e.ViewModel is NowPlayingViewViewModel);
         }
 
         private void AppShellView_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -137,10 +136,80 @@ namespace Neptunium.View
             //Debug.WriteLine(e.NewSize);
         }
 
+        private IDisposable nowPlayingIsMobileChangedObserver = null;
         private void InlineFrame_Navigated(object sender, NavigationEventArgs e)
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
                 ((Frame)sender).CanGoBack ? AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
+
+            if ((inlineNavService.NavigationFrame.Content is NowPlayingView))
+            {
+                if (App.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+                {
+                    //lower app bar is always collapsed on xbox.
+                    lowerAppBar.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    var nowPlayingPage = inlineNavService.NavigationFrame.Content as NowPlayingView;
+                    nowPlayingIsMobileChangedObserver = Observable.FromEventPattern<EventHandler, EventArgs>(
+                        h => nowPlayingPage.IsMobileViewChanged += h,
+                        h => nowPlayingPage.IsMobileViewChanged -= h)
+                        .Subscribe(obv =>
+                        {
+                            lowerAppBar.Visibility = nowPlayingPage.IsMobileView ? Visibility.Collapsed : Visibility.Visible;
+                        });
+                }
+            }
+            else
+            {
+                if (App.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+                {
+                    //lower app bar is always collapsed on xbox.
+                    lowerAppBar.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    if (nowPlayingIsMobileChangedObserver != null)
+                    {
+                        nowPlayingIsMobileChangedObserver.Dispose();
+                        nowPlayingIsMobileChangedObserver = null;
+                    }
+
+                    lowerAppBar.Visibility = Visibility.Visible;
+                }
+            }
+        }
+
+        private void HandleLowerAppbarStateForNowPlayingPage(bool isOnNowPlayingPage)
+        {
+            if (App.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                //lower app bar is always collapsed on xbox.
+                lowerAppBar.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                if (isOnNowPlayingPage)
+                {
+                    bool isMobileView = (inlineNavService.NavigationFrame.Content as NowPlayingView).IsMobileView;
+                    if (isMobileView)
+                    {
+                        lowerAppBar.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        lowerAppBar.Visibility = Visibility.Visible;
+                    }
+
+                }
+                else
+                {
+                    lowerAppBar.Visibility = Visibility.Visible;
+                }
+
+                //lowerAppBar.Visibility = Visibility.Visible;
+            }
         }
 
         private void RefreshNavigationSplitViewState(ViewModelBase viewModelToGoTo)
@@ -190,8 +259,6 @@ namespace Neptunium.View
         {
             this.SizeChanged += AppShellView_SizeChanged;
 
-            HandleLowerAppbarState(inlineNavService.IsNavigatedTo<NowPlayingViewViewModel>());
-
             GoHome();
 
             FeedbackButton.Visibility = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported() ? Visibility.Visible : Visibility.Collapsed;
@@ -222,24 +289,11 @@ namespace Neptunium.View
 
         private void VisualStateGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
         {
+#if DEBUG
             Debug.WriteLine("State Change: " + (e.OldState == null ? "null" : e.OldState.Name) + " -> " + e.NewState.Name);
-
-            HandleLowerAppbarState(inlineNavService.IsNavigatedTo<NowPlayingViewViewModel>());
+#endif
         }
 
-        private void HandleLowerAppbarState(bool isOnNowPlayingPage)
-        {
-            if (App.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
-            {
-                //lower app bar is always collapsed on xbox.
-                lowerAppBar.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                //lowerAppBar.Visibility = isOnNowPlayingPage ? Visibility.Collapsed : Visibility.Visible;
-                lowerAppBar.Visibility = Visibility.Visible;
-            }
-        }
 
         private async void FeedbackButton_Click(object sender, RoutedEventArgs e)
         {
