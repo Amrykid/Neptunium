@@ -112,9 +112,19 @@ namespace Neptunium.ViewModel
                 albumUrl = song.ITunesData?.Album?.AlbumCoverUrl;
 
             if (!string.IsNullOrWhiteSpace(albumUrl))
-                CoverImage = new Uri(albumUrl);
+            {
+                var albumUri = new Uri(albumUrl);
+
+                if (CoverImage != albumUri)
+                    CoverImage = albumUri;
+            }
             else
-                CoverImage = new Uri(CurrentStation.Logo);
+            {
+                var stationLogo = new Uri(CurrentStation.Logo);
+
+                if (CoverImage != stationLogo)
+                    CoverImage = stationLogo;
+            }
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
