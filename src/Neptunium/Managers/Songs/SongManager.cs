@@ -44,6 +44,21 @@ namespace Neptunium.Managers.Songs
         {
             if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //don't play that pre-defined station message that happens every so often.
 
+
+            if (!string.IsNullOrWhiteSpace(e.Title) && string.IsNullOrWhiteSpace(e.Artist))
+            {
+                //station message got through.
+
+#if DEBUG
+                if (Debugger.IsAttached)
+                    Debugger.Break();
+#else
+                return;
+#endif
+            }
+
+            await metadataChangeLock.WaitAsync();
+
             if (e.Title.ToLower().Equals("unknown song") || e.Artist.ToLower().Equals("unknown artist"))
             {
                 SongMetadata tmp = new UnknownSongMetadata();
@@ -63,85 +78,74 @@ namespace Neptunium.Managers.Songs
                     Metadata = tmp,
                     IsUnknown = true
                 });
-                return;
             }
-            
-            await metadataChangeLock.WaitAsync();
-
-            if (!string.IsNullOrWhiteSpace(e.Title) && string.IsNullOrWhiteSpace(e.Artist))
-            {
-                //station message got through.
-
-#if DEBUG
-                if (Debugger.IsAttached)
-                    Debugger.Break();
-#else
-                return;
-#endif
-            }
-
-            //do preprocessing here.
-            SongMetadata metadata = new SongMetadata();
-            metadata.Track = e.Title.Trim();
-            metadata.Artist = e.Artist.Trim();
-
-            PreSongChanged?.Invoke(null, new SongManagerSongChangedEventArgs()
-            {
-                Metadata = metadata,
-            });
-
-            CurrentSong = metadata;
-
-            string storageKey = "SONG|" + metadata.GetHashCode();
-
-            bool cachedSong = false;
-            if (cachedSong = await CookieJar.DeviceCache.ContainsObjectAsync(storageKey))
-                metadata = await CookieJar.DeviceCache.PeekObjectAsync<SongMetadata>(storageKey);
             else
             {
-                if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.TryToFindSongMetadata] == true)
+                //do preprocessing here.
+                SongMetadata metadata = new SongMetadata();
+                metadata.Track = e.Title.Trim();
+                metadata.Artist = e.Artist.Trim();
+
+                PreSongChanged?.Invoke(null, new SongManagerSongChangedEventArgs()
                 {
-                    string cleanArtist = e.Artist; //strip out featured artist
-                    //cleanArtist = Regex.Replace(cleanArtist, "[fF][t(eat(turing))].*", "").Trim();
-                    //Fukimaki Ryota matches and gets removed.
+                    Metadata = metadata,
+                });
 
-                    try
-                    {
-                        metadata.MBData = await MetadataManager.GetMusicBrainzDataAsync(e.Title, cleanArtist);
-                    }
-                    catch (NotImplementedException)
-                    {
+                CurrentSong = metadata;
 
-                    }
+                string storageKey = "SONG|" + metadata.GetHashCode();
 
-                    if (metadata.MBData == null || metadata.MBData?.Album == null || metadata.MBData?.Artist == null)
+                bool cachedSong = false;
+                if (cachedSong = await CookieJar.DeviceCache.ContainsObjectAsync(storageKey))
+                {
+                    metadata = await CookieJar.DeviceCache.PeekObjectAsync<SongMetadata>(storageKey);
+                }
+                else
+                {
+                    if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.TryToFindSongMetadata] == true)
                     {
+                        string cleanArtist = e.Artist; //strip out featured artist
+                                                       //cleanArtist = Regex.Replace(cleanArtist, "[fF][t(eat(turing))].*", "").Trim();
+                                                       //Fukimaki Ryota matches and gets removed.
+
                         try
                         {
-                            metadata.ITunesData = await MetadataManager.GetITunesDataAsync(e.Title, cleanArtist);
+                            metadata.MBData = await MetadataManager.GetMusicBrainzDataAsync(e.Title, cleanArtist);
                         }
                         catch (NotImplementedException)
                         {
 
                         }
+
+                        if (metadata.MBData == null || metadata.MBData?.Album == null || metadata.MBData?.Artist == null)
+                        {
+                            try
+                            {
+                                metadata.ITunesData = await MetadataManager.GetITunesDataAsync(e.Title, cleanArtist);
+                            }
+                            catch (NotImplementedException)
+                            {
+
+                            }
+                        }
                     }
                 }
-            }
 
-            CurrentSong = metadata;
+                CurrentSong = metadata;
 
-            SongChanged?.Invoke(null, new SongManagerSongChangedEventArgs()
-            {
-                Metadata = metadata,
-            });
+                SongChanged?.Invoke(null, new SongManagerSongChangedEventArgs()
+                {
+                    Metadata = metadata,
+                });
 
-            HistoryManager.HandleNewSongPlayed(metadata, StationMediaPlayer.CurrentStation);
+                HistoryManager.HandleNewSongPlayed(metadata, StationMediaPlayer.CurrentStation);
 
-            if (!cachedSong)
-            {
-                await CookieJar.DeviceCache.InsertObjectAsync<SongMetadata>(storageKey, metadata,
-                    (int)TimeSpan.FromDays(15).TotalMilliseconds);
-                await CookieJar.DeviceCache.FlushAsync();
+                if (!cachedSong)
+                {
+                    await CookieJar.DeviceCache.InsertObjectAsync<SongMetadata>(storageKey, metadata,
+                        (int)TimeSpan.FromDays(15).TotalMilliseconds);
+                    await CookieJar.DeviceCache.FlushAsync();
+                }
             }
 
             metadataChangeLock.Release();
