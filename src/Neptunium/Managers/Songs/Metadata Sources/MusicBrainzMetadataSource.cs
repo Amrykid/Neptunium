@@ -52,7 +52,7 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
             {
                 foreach (var potentialRecording in recordings?.Items)
                 {
-                    if (potentialRecording.Title.ToLower().StartsWith(track.ToLower()))
+                    if (potentialRecording.Title.ToLower().StartsWith(track.ToLower()) || potentialRecording.Title.ToLower().Trim().FuzzyEquals(track.ToLower().Trim()))
                     {
                         var firstRelease = potentialRecording.Releases.Items.FirstOrDefault();
 

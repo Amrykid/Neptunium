@@ -102,7 +102,8 @@ namespace Neptunium.Managers.Songs
                 if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.TryToFindSongMetadata] == true)
                 {
                     string cleanArtist = e.Artist; //strip out featured artist
-                    cleanArtist = Regex.Replace(cleanArtist, "[fF][t(eat(turing))].*", "").Trim();
+                    //cleanArtist = Regex.Replace(cleanArtist, "[fF][t(eat(turing))].*", "").Trim();
+                    //Fukimaki Ryota matches and gets removed.
 
                     try
                     {

@@ -13,7 +13,9 @@
     <Page.Resources>
         <DataTemplate x:Key="NowPlayingSecondaryDataPanelTemplate">
             <Pivot>
-                <PivotItem Header="Album Data" />
+                <PivotItem Header="Album">
+                    
+                </PivotItem>
                 <PivotItem Header="Events" />
             </Pivot>
         </DataTemplate>

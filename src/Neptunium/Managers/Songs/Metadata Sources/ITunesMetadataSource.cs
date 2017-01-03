@@ -23,18 +23,34 @@ namespace Neptunium.Managers.Songs
 
         public async Task<AlbumData> TryFindAlbumAsync(string track, string artist)
         {
-            //todo figure out a better way to do this. maybe romanize the japanese artist names for better accuracy?
-            var albums = await itunesStore.SearchAlbumsAsync(string.Join(" ", artist, track), 5, "jp");
-            if (albums.Count == 0)
-                albums = await itunesStore.GetAlbumsFromSongAsync(track, 5, "jp");
+            //todo pass in station country: i.e. jp or kr
 
-            if (albums.Count > 0)
+            //todo figure out a better way to do this. maybe romanize the japanese artist names for better accuracy?
+            var albumResults = await itunesStore.SearchAlbumsAsync(string.Join(" ", artist, track), 20, "jp");
+            IEnumerable<Album> albums = null;
+            if (albumResults.Count != 0)
+            {
+                albums = albumResults.Albums;
+            }
+            else
+            {
+                albumResults = await itunesStore.GetAlbumsFromSongAsync(track, 20, "jp");
+                if (albumResults.Count == 0) return null;
+
+                albums = albumResults.Albums.Where(x =>
+                {
+                    var artistName = x.ArtistName.Trim();
+                    return artistName.FuzzyEquals(artist.Trim()) || artist.Contains(artistName);
+                });
+            }
+
+            if (albums.Count() > 0)
             {
                 Album selectedAlbum = null;
 
-                selectedAlbum = albums.Albums.FirstOrDefault(x => x.ArtistName.Trim().Equals(artist.Trim()));
+                selectedAlbum = albums.First();
                 if (selectedAlbum == null)
-                    selectedAlbum = albums.Albums.First(); //give up until we figure out a better way to do this.
+                    return null; //give up until we figure out a better way to do this.
 
                 var data = new AlbumData();
 

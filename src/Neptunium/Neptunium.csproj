@@ -115,6 +115,7 @@
     <Compile Include="Controls\GlassPanel.xaml.cs">
       <DependentUpon>GlassPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="JapaneseTextUtilities.cs" />
     <Compile Include="Managers\Car Mode\CarModeManagerBluetoothDeviceCoordinator.cs" />
     <Compile Include="Managers\Car Mode\CarModeManagerSongAnnouncementFrequency.cs" />
     <Compile Include="Managers\Songs\UnknownSongMetadata.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Media\Streamers\IMediaStreamer.cs" />
     <Compile Include="Media\Streamers\ShoutcastMediaStreamer.cs" />
     <Compile Include="Media\Streamers\StreamerFactory.cs" />
+    <Compile Include="StringUtilities.cs" />
     <Compile Include="View\Fragments\NowPlayingInfoBar.xaml.cs">
       <DependentUpon>NowPlayingInfoBar.xaml</DependentUpon>
     </Compile>
