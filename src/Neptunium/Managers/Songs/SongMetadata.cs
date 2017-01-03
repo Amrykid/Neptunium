@@ -27,5 +27,19 @@ namespace Neptunium.Managers.Songs
         {
             return string.Join(" - ", Artist, Track);
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+
+            if (obj is SongMetadata)
+            {
+                var other = (SongMetadata)obj;
+
+                return this.Artist.Equals(other.Artist) && this.Track.Equals(other.Track);
+            }
+
+            return base.Equals(obj);
+        }
     }
 }

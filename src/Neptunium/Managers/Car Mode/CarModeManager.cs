@@ -36,7 +36,7 @@ namespace Neptunium.Managers.Car_Mode
         private static VoiceInformation japaneseFemaleVoice = null;
         public static CarModeManagerBluetoothDeviceCoordinator BluetoothCoordinator { get; private set; }
 
-        private static string lastPlayedSongMetadata = null;
+        private static SongMetadata lastPlayedSongMetadata = null;
 
         private static SemaphoreSlim songAnouncementLock = new SemaphoreSlim(1);
 
@@ -131,7 +131,7 @@ namespace Neptunium.Managers.Car_Mode
 
                 await songAnouncementLock.WaitAsync();
 
-                if (lastPlayedSongMetadata != e.Metadata.Track)
+                if (lastPlayedSongMetadata != e.Metadata)
                 {
                     double initialVolume = 0.0;
 
@@ -157,6 +157,8 @@ namespace Neptunium.Managers.Car_Mode
 
                     if (shouldFade)
                         await StationMediaPlayer.FadeVolumeUpToAsync(initialVolume);
+
+                    lastPlayedSongMetadata = e.Metadata;
                 }
 
                 songAnouncementLock.Release();
