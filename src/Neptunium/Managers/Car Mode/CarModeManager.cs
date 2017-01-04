@@ -13,6 +13,8 @@ using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
 using Windows.Devices.Radios;
 using Windows.Foundation;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 using Windows.Media.SpeechSynthesis;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -199,11 +201,14 @@ namespace Neptunium.Managers.Car_Mode
         {
             await await CrystalApplication.Dispatcher.RunWhenIdleAsync(async () =>
             {
-                var media = new MediaElement();
+                var source = MediaSource.CreateFromStream(stream, stream.ContentType);
 
+                var media = new MediaPlayer();
+
+                media.CommandManager.IsEnabled = false;
                 media.Volume = 1.0;
-                media.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Speech;
-                media.SetSource(stream, stream.ContentType);
+                media.AudioCategory = MediaPlayerAudioCategory.Speech;
+                media.Source = source;
 
                 Task mediaOpenTask = media.WaitForMediaOpenAsync();
 
@@ -211,9 +216,13 @@ namespace Neptunium.Managers.Car_Mode
 
                 await mediaOpenTask;
 
-                await Task.Delay((int)media.NaturalDuration.TimeSpan.TotalMilliseconds);
+                await Task.Delay((int)media.PlaybackSession.NaturalDuration.TotalMilliseconds);
+
+                source.Dispose();
 
                 stream.Dispose();
+
+                media.Dispose();
             });
         }
 
