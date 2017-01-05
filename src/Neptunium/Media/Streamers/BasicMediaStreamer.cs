@@ -12,7 +12,7 @@ using Windows.Media.Playback;
 
 namespace Neptunium.Media.Streamers
 {
-    public abstract class BasicMediaStreamer: IMediaStreamer
+    public abstract class BasicMediaStreamer : IMediaStreamer
     {
         public string CurrentTrack { get; protected set; } = "Unknown Song";
         public string CurrentArtist { get; protected set; } = "Unknown Artist";
@@ -75,11 +75,12 @@ namespace Neptunium.Media.Streamers
             GC.SuppressFinalize(this);
         }
 
-        public virtual Task ReconnectAsync()
+        public virtual async Task ReconnectAsync()
         {
             if (CurrentStream == null) throw new Exception("This streamer hasn't been connected before!");
 
-            return ConnectAsync(CurrentStation, CurrentStream);
+            await DisconnectAsync();
+            await ConnectAsync(CurrentStation, CurrentStream);
         }
 
         public double Volume { get { return (double)Player?.Volume; } }

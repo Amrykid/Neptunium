@@ -38,7 +38,12 @@ namespace Neptunium.Media.Streamers
 
         public override Task DisconnectAsync()
         {
-            Source.StateChanged -= Source_StateChanged;
+            if (Source != null)
+            {
+                Source.StateChanged -= Source_StateChanged;
+                Source.Dispose();
+                Source = null;
+            }
 
             return Task.CompletedTask;
         }

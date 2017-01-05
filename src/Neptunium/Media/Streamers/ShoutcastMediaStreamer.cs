@@ -71,6 +71,8 @@ namespace Neptunium.Media.Streamers
             if (Source != null)
             {
                 Source.StateChanged -= Source_StateChanged;
+                Source.Dispose();
+                Source = null;
             }
 
             return Task.CompletedTask;
