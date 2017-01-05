@@ -40,7 +40,7 @@ namespace Neptunium.Managers.Songs
                 albums = albumResults.Albums.Where(x =>
                 {
                     var artistName = x.ArtistName.Trim();
-                    return artistName.FuzzyEquals(artist.Trim()) || artist.Contains(artistName);
+                    return artistName.FuzzyEquals(artist.Trim(), .75) || artist.Contains(artistName);
                 });
             }
 
