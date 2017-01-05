@@ -14,8 +14,11 @@ namespace Neptunium.Media.Streamers
 {
     public abstract class BasicMediaStreamer : IMediaStreamer
     {
-        public string CurrentTrack { get; protected set; } = "Unknown Song";
-        public string CurrentArtist { get; protected set; } = "Unknown Artist";
+        public const string UnknownSong = "Unknown Song";
+        public const string UnknownArtist = "Unknown Artist";
+
+        public string CurrentTrack { get; protected set; } = UnknownSong;
+        public string CurrentArtist { get; protected set; } = UnknownArtist;
 
         private SemaphoreSlim volumeLock = null;
 
@@ -44,7 +47,7 @@ namespace Neptunium.Media.Streamers
             Player.AudioCategory = MediaPlayerAudioCategory.Media;
             Player.Volume = 0.0;
 
-            metadataSubject = new BehaviorSubject<BasicSongInfo>(new BasicSongInfo() { Artist = CurrentArtist, Track = CurrentTrack });
+            metadataSubject = new BehaviorSubject<BasicSongInfo>(new BasicSongInfo() { Artist = UnknownArtist, Track = UnknownSong });
             MetadataChanged = metadataSubject;
 
             errorSubject = new Subject<Exception>();
