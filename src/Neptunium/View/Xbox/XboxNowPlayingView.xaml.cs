@@ -48,6 +48,11 @@ namespace Neptunium.View.Xbox
         private void StationMediaPlayer_IsPlayingChanged(object sender, EventArgs e)
         {
             SetPlaybackButtonState(StationMediaPlayer.IsPlaying);
+
+            if (StationMediaPlayer.IsPlaying)
+                ColorPanel.StartAnimating();
+            else
+                ColorPanel.StopAnimating();
         }
 
         private void SetPlaybackButtonState(bool isPlaying)
@@ -71,7 +76,8 @@ namespace Neptunium.View.Xbox
             this.Focus(FocusState.Programmatic);
             PlayPauseButton.Focus(FocusState.Programmatic);
 
-            ColorPanel.StartAnimating();
+            if (StationMediaPlayer.IsPlaying)
+                ColorPanel.StartAnimating();
 
             //if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
             //{
