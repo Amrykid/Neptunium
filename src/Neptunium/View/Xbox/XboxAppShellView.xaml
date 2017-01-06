@@ -22,6 +22,10 @@
             <PivotItem x:Name="songHistoryPivot" Header="Song History" cnav:NavigationAttributes.NavigationHint="Neptunium.ViewModel.SongHistoryViewModel">
                 
             </PivotItem>
+
+            <PivotItem x:Name="settingsPivot" Header="Settings" cnav:NavigationAttributes.NavigationHint="Neptunium.ViewModel.SettingsViewViewModel">
+                
+            </PivotItem>
         </Pivot>
 
         <Grid x:Name="floatingSnackBarGrid" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="300" Margin="0 0 100 100">
