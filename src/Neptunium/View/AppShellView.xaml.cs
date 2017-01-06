@@ -38,10 +38,10 @@ namespace Neptunium.View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    [NavigationViewModel(typeof(ViewModel.AppShellViewModel), NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile | NavigationViewSupportedPlatform.Xbox)]
+    [NavigationViewModel(typeof(ViewModel.AppShellViewModel), NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile)]
     public partial class AppShellView : Page
     {
-        private NavigationService inlineNavService = null;
+        private FrameNavigationService inlineNavService = null;
         public AppShellView()
         {
             this.InitializeComponent();

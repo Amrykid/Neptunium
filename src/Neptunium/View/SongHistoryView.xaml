@@ -15,7 +15,7 @@
                 <VisualState x:Name="XboxVisualState">
                     <VisualState.Setters>
                         <Setter Target="PageTitleBlock.Margin" Value="50,0,20,0" />
-                        <Setter Target="PageTitleBlock.Visibility" Value="Visible" />
+                        <Setter Target="PageTitleBlock.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                     <VisualState.StateTriggers>
                         <wst:DeviceFamilyStateTrigger DeviceFamily="Xbox" />

@@ -19,7 +19,7 @@
 
         <TextBlock Margin="50,0,20,0" Style="{ThemeResource SubheaderTextBlockStyle}" 
                    Height="45" Grid.Row="0"
-                   Visibility="Visible" Text="Stations" x:Name="PageTitleBlock" />
+                   Visibility="Collapsed" Text="Stations" x:Name="PageTitleBlock" />
 
         <ListView Grid.Row="1"
                   ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" 

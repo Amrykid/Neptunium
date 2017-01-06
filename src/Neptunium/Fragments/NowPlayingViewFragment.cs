@@ -60,7 +60,7 @@ namespace Neptunium.Fragments
 
             GoToNowPlayingPageCommand = new RelayCommand(x =>
             {
-                NavigationService inlineNavService = WindowManager.GetNavigationManagerForCurrentWindow()
+                NavigationServiceBase inlineNavService = WindowManager.GetNavigationManagerForCurrentWindow()
                 .GetNavigationServiceFromFrameLevel(FrameLevel.Two);
 
                 if (!inlineNavService.IsNavigatedTo<NowPlayingViewViewModel>())

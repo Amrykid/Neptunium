@@ -31,19 +31,6 @@ namespace Neptunium.View.Xbox
         {
             this.InitializeComponent();
         }
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            StationMediaPlayer.IsPlayingChanged -= StationMediaPlayer_IsPlayingChanged;
-
-            base.OnNavigatedFrom(e);
-        }
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            StationMediaPlayer.IsPlayingChanged += StationMediaPlayer_IsPlayingChanged;
-            SetPlaybackButtonState(StationMediaPlayer.IsPlaying);
-
-            base.OnNavigatedTo(e);
-        }
 
         private void StationMediaPlayer_IsPlayingChanged(object sender, EventArgs e)
         {
@@ -76,6 +63,9 @@ namespace Neptunium.View.Xbox
             this.Focus(FocusState.Programmatic);
             PlayPauseButton.Focus(FocusState.Programmatic);
 
+            this.GotFocus += XboxNowPlayingView_GotFocus;
+            StationMediaPlayer.IsPlayingChanged += StationMediaPlayer_IsPlayingChanged;
+
             if (StationMediaPlayer.IsPlaying)
                 ColorPanel.StartAnimating();
 
@@ -85,6 +75,16 @@ namespace Neptunium.View.Xbox
 
             //    GlassPanel.ChangeBlurColor(await Neptunium.Data.Stations.StationSupplementaryDataManager.GetStationLogoDominantColorAsync(StationMediaPlayer.CurrentStation));
             //}
+        }
+
+        private void XboxNowPlayingView_GotFocus(object sender, RoutedEventArgs e)
+        {
+            SetPlaybackButtonState(StationMediaPlayer.IsPlaying);
+
+            if (StationMediaPlayer.IsPlaying)
+                ColorPanel.StartAnimating();
+            else
+                ColorPanel.StopAnimating();
         }
     }
 }

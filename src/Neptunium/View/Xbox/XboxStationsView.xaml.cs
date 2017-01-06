@@ -37,13 +37,13 @@ namespace Neptunium.View.Xbox
 
             if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Controls.Control", "XYFocusUp"))
             {
-                var topFrame = WindowManager.GetNavigationManagerForCurrentWindow().RootNavigationService.NavigationFrame;
-                var shellPage = topFrame.Content as AppShellView;
-                if (shellPage != null)
-                {
-                    shellPageMenuToggleBtn = shellPage.FindName("MobileTogglePaneButton") as ToggleButton;
-                    //StationsListBox.XYFocusUp = toggleBtn;
-                }
+                //var topFrame = WindowManager.GetNavigationManagerForCurrentWindow().RootNavigationService.NavigationFrame;
+                //var shellPage = topFrame.Content as AppShellView;
+                //if (shellPage != null)
+                //{
+                //    shellPageMenuToggleBtn = shellPage.FindName("MobileTogglePaneButton") as ToggleButton;
+                //    //StationsListBox.XYFocusUp = toggleBtn;
+                //}
             }
         }
 

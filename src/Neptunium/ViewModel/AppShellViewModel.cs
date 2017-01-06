@@ -34,7 +34,7 @@ namespace Neptunium.ViewModel
 {
     public class AppShellViewModel : UIViewModelBase
     {
-        private NavigationService InlineNavigationService = null;
+        private NavigationServiceBase InlineNavigationService = null;
         public AppShellViewModel()
         {
             if (!IoC.Current.IsRegistered<IMessageDialogService>())
