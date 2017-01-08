@@ -15,5 +15,7 @@ namespace Neptunium
         public const string NavigateToStationWhenLaunched = nameof(NavigateToStationWhenLaunched);
 
         public const string PreferUsingCrossFadeWhenChangingStations = nameof(PreferUsingCrossFadeWhenChangingStations);
+
+        public const string UseHapticFeedbackForNavigation = nameof(UseHapticFeedbackForNavigation);
     }
 }

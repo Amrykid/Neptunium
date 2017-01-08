@@ -74,6 +74,10 @@
                     <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Continuous App Experience (Handoff)" />
                     <CheckBox Content="Stop playing on this device after successful handoff." 
                               IsChecked="{Binding ShouldStopPlayingAfterSuccessfulHandoff, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                    <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Haptic Feedback" />
+                    <CheckBox Content="Use haptic feedback for in-app buttons." IsEnabled="{Binding IsOnMobile, UpdateSourceTrigger=PropertyChanged}" 
+                              IsChecked="{Binding ShouldUseHapticFeedback, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </PivotItem>
             <PivotItem Header="UI">

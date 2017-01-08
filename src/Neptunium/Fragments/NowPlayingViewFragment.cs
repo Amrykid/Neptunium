@@ -7,6 +7,7 @@ using Neptunium.Data;
 using Neptunium.Managers.Songs;
 using Neptunium.Media;
 using Neptunium.Services.SnackBar;
+using Neptunium.Services.Vibration;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -47,12 +48,16 @@ namespace Neptunium.Fragments
 
             PlayCommand = new RelayCommand(x =>
             {
+                HapticFeedbackService.TapVibration();
+
                 if (!StationMediaPlayer.IsPlaying)
                     StationMediaPlayer.Play();
             });
 
             PauseCommand = new RelayCommand(x =>
             {
+                HapticFeedbackService.TapVibration();
+
                 if (StationMediaPlayer.IsPlaying)
                     StationMediaPlayer.Pause();
             });

@@ -125,6 +125,7 @@
     <Compile Include="Media\Streamers\IMediaStreamer.cs" />
     <Compile Include="Media\Streamers\ShoutcastMediaStreamer.cs" />
     <Compile Include="Media\Streamers\StreamerFactory.cs" />
+    <Compile Include="Services\Vibration\HapticFeedbackService.cs" />
     <Compile Include="StringUtilities.cs" />
     <Compile Include="ViewGlue\XboxAppShellViewPivotNavigationService.cs" />
     <Compile Include="View\Fragments\NowPlayingInfoBar.xaml.cs">

@@ -29,6 +29,7 @@ using Neptunium.Managers.Songs;
 using Neptunium.Managers.Car_Mode;
 using Windows.Media.Core;
 using Microsoft.HockeyApp;
+using Neptunium.Services.Vibration;
 
 namespace Neptunium.ViewModel
 {
@@ -42,24 +43,32 @@ namespace Neptunium.ViewModel
 
             GoToStationsViewCommand = new RelayCommand(x =>
             {
+                HapticFeedbackService.TapVibration();
+
                 if (!InlineNavigationService.IsNavigatedTo<StationsViewViewModel>())
                     InlineNavigationService.NavigateTo<StationsViewViewModel>();
             });
 
             GoToNowPlayingViewCommand = new RelayCommand(x =>
             {
+                HapticFeedbackService.TapVibration();
+
                 if (!InlineNavigationService.IsNavigatedTo<NowPlayingViewViewModel>())
                     InlineNavigationService.NavigateTo<NowPlayingViewViewModel>();
             });
 
             GoToSettingsViewCommand = new RelayCommand(x =>
             {
+                HapticFeedbackService.TapVibration();
+
                 if (!InlineNavigationService.IsNavigatedTo<SettingsViewViewModel>())
                     InlineNavigationService.NavigateTo<SettingsViewViewModel>();
             });
 
             GoToSongHistoryViewCommand = new RelayCommand(x =>
             {
+                HapticFeedbackService.TapVibration();
+
                 if (!InlineNavigationService.IsNavigatedTo<SongHistoryViewModel>())
                     InlineNavigationService.NavigateTo<SongHistoryViewModel>();
             });

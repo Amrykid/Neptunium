@@ -3,6 +3,7 @@ using Crystal3.Navigation;
 using Crystal3.UI.Commands;
 using Neptunium.Data;
 using Neptunium.Media;
+using Neptunium.Services.Vibration;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,8 @@ namespace Neptunium
         {
             PlayStationCommand = new RelayCommand(async station =>
                 {
+                    HapticFeedbackService.TapVibration();
+
                     if (Windows.Networking.Connectivity.NetworkInformation.GetInternetConnectionProfile() != null)
                     {
                         var result = await StationMediaPlayer.PlayStationAsync((StationModel)station);
@@ -37,6 +40,8 @@ namespace Neptunium
 
             GoToStationCommand = new RelayCommand(station =>
             {
+                HapticFeedbackService.TapVibration();
+
                 WindowManager.GetNavigationManagerForCurrentWindow()
                 .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
                 .NavigateTo<StationInfoViewModel>(((StationModel)station).Name);

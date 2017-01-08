@@ -13,6 +13,7 @@ using Windows.UI.StartScreen;
 using Windows.UI.Notifications;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Neptunium.Data.Stations;
+using Neptunium.Services.Vibration;
 
 namespace Neptunium.ViewModel
 {
@@ -25,6 +26,8 @@ namespace Neptunium.ViewModel
             GoToStationWebsiteCommand = new RelayCommand(async obj =>
             {
                 if (obj == null || !(obj is StationModel)) return;
+
+                HapticFeedbackService.TapVibration();
 
                 StationModel station = (StationModel)obj;
                 if (!string.IsNullOrWhiteSpace(station.Site))
@@ -41,6 +44,8 @@ namespace Neptunium.ViewModel
             PinToStartCommand = new RelayCommand(async obj =>
             {
                 if (obj == null || !(obj is StationModel)) return;
+
+                HapticFeedbackService.TapVibration();
 
                 StationModel station = (StationModel)obj;
 

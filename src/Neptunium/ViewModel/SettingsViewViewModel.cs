@@ -17,6 +17,8 @@ namespace Neptunium.ViewModel
     {
         public SettingsViewViewModel()
         {
+            IsOnMobile = CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile;
+
             PickCarModeDeviceCommand = new RelayCommand(async x =>
             {
 #if RELEASE
@@ -47,6 +49,18 @@ namespace Neptunium.ViewModel
 
                 SelectedBluetoothDevice = "None";
             });
+        }
+
+        public bool IsOnMobile
+        {
+            get { return GetPropertyValue<bool>(); }
+            set { SetPropertyValue<bool>(value: value); }
+        }
+
+        public bool ShouldUseHapticFeedback
+        {
+            get { return GetPropertyValue<bool>(); }
+            set { SetPropertyValue<bool>(value: value); }
         }
 
         public bool ShouldShowSongNofitications
@@ -155,6 +169,8 @@ namespace Neptunium.ViewModel
 
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
+                ShouldUseHapticFeedback = (bool)ApplicationData.Current.LocalSettings.Values[AppSettings.UseHapticFeedbackForNavigation];
+
                 CarModeAnnounceSongs = CarModeManager.ShouldAnnounceSongs;
                 SelectedBluetoothDevice = CarModeManager.BluetoothCoordinator.SelectedBluetoothDeviceName ?? "None";
                 ClearCarModeDeviceCommand.SetCanExecute(CarModeManager.BluetoothCoordinator.SelectedBluetoothDevice != null);
@@ -182,6 +198,8 @@ namespace Neptunium.ViewModel
             {
                 CarModeManager.SetShouldAnnounceSongs(CarModeAnnounceSongs);
                 CarModeManager.SetShouldUseJapaneseVoice(JapaneseVoiceForSongAnnouncements);
+
+                ApplicationData.Current.LocalSettings.Values[AppSettings.UseHapticFeedbackForNavigation] = ShouldUseHapticFeedback;
             }
         }
     }
