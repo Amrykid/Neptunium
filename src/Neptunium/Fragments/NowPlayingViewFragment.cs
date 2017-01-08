@@ -35,6 +35,8 @@ namespace Neptunium.Fragments
         public string CurrentArtist { get { return GetPropertyValue<string>("CurrentArtist"); } private set { SetPropertyValue<string>("CurrentArtist", value); } }
         public string CurrentStationLogo { get { return GetPropertyValue<string>("CurrentStationLogo"); } private set { SetPropertyValue<string>("CurrentStationLogo", value); } }
 
+        public Uri CoverImage { get { return GetPropertyValue<Uri>(); } private set { SetPropertyValue<Uri>(value: value); } }
+
         public string SongMetadata
         {
             get { return GetPropertyValue<string>(); }
@@ -83,48 +85,58 @@ namespace Neptunium.Fragments
                 SongMetadata = SongManager.CurrentSong.Track + " by " + SongManager.CurrentSong.Artist;
         }
 
-        private async void SongManager_PreSongChanged(object sender, SongManagerSongChangedEventArgs e)
+        private void SongManager_PreSongChanged(object sender, SongManagerSongChangedEventArgs e)
         {
-            await App.Dispatcher.RunAsync(IUIDispatcherPriority.High, () =>
-             {
-                 SongMetadata = e.Metadata.Track + " by " + e.Metadata.Artist;
+            SongMetadata = e.Metadata.Track + " by " + e.Metadata.Artist;
 
+            CurrentSong = e.Metadata.Track;
+            CurrentArtist = e.Metadata.Artist;
 
-                 CurrentSong = e.Metadata.Track;
-                 CurrentArtist = e.Metadata.Artist;
+            UpdateCoverImage(e.Metadata);
 
-                 try
-                 {
-                     if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
-                     {
-                         if (!WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two)
-                         .IsNavigatedTo<NowPlayingViewViewModel>())
-                             IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync("Now Playing: " + SongMetadata, 6000);
-                     }
-                 }
-                 catch (Exception) { }
-             });
+            if (StationMediaPlayer.CurrentStation != null)
+            {
+                CurrentStation = StationMediaPlayer.CurrentStation;
+                CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo.ToString();
+            }
+
+            try
+            {
+                if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+                {
+                    if (!WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two)
+                    .IsNavigatedTo<NowPlayingViewViewModel>())
+                        IoC.Current.Resolve<ISnackBarService>().ShowSnackAsync("Now Playing: " + SongMetadata, 6000);
+                }
+            }
+            catch (Exception) { }
         }
 
-        private async void SongManager_SongChanged(object sender, SongManagerSongChangedEventArgs e)
+        private void SongManager_SongChanged(object sender, SongManagerSongChangedEventArgs e)
         {
-            await App.Dispatcher.RunWhenIdleAsync(() =>
+            UpdateCoverImage(e.Metadata);
+        }
+
+        private void UpdateCoverImage(SongMetadata song)
+        {
+            var albumUrl = song.MBData?.Album?.AlbumCoverUrl;
+            if (string.IsNullOrWhiteSpace(albumUrl))
+                albumUrl = song.ITunesData?.Album?.AlbumCoverUrl;
+
+            if (!string.IsNullOrWhiteSpace(albumUrl) && !(song is UnknownSongMetadata))
             {
-                if (CurrentSong != e.Metadata.Track)
-                {
-                    SongMetadata = e.Metadata.Track + " by " + e.Metadata.Artist;
+                var albumUri = new Uri(albumUrl);
 
+                if (CoverImage != albumUri)
+                    CoverImage = albumUri;
+            }
+            else
+            {
+                var stationLogo = new Uri(CurrentStation.Logo);
 
-                    CurrentSong = e.Metadata.Track;
-                    CurrentArtist = e.Metadata.Artist;
-                }
-
-                if (StationMediaPlayer.CurrentStation != null)
-                {
-                    CurrentStation = StationMediaPlayer.CurrentStation;
-                    CurrentStationLogo = StationMediaPlayer.CurrentStation.Logo.ToString();
-                }
-            });
+                if (CoverImage != stationLogo)
+                    CoverImage = stationLogo;
+            }
         }
 
         private async void ShoutcastStationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)

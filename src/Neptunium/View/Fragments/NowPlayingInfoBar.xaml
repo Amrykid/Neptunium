@@ -233,7 +233,7 @@
                                         IsCacheEnabled="True"
                                         Visibility="Visible"
                                         Margin="7,0,7,0" Grid.Column="0" VerticalAlignment="Top"
-                                        Source="{Binding CurrentStationLogo, UpdateSourceTrigger=PropertyChanged}">
+                                        Source="{Binding CoverImage, UpdateSourceTrigger=PropertyChanged}">
                         </uwpcon:ImageEx>
 
 

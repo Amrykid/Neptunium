@@ -111,7 +111,7 @@ namespace Neptunium.ViewModel
             if (string.IsNullOrWhiteSpace(albumUrl))
                 albumUrl = song.ITunesData?.Album?.AlbumCoverUrl;
 
-            if (!string.IsNullOrWhiteSpace(albumUrl))
+            if (!string.IsNullOrWhiteSpace(albumUrl) && !(song is UnknownSongMetadata))
             {
                 var albumUri = new Uri(albumUrl);
 
