@@ -82,7 +82,7 @@ namespace Neptunium.ViewModel
             });
         }
 
-        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             CurrentStation = StationMediaPlayer.CurrentStation;
 
