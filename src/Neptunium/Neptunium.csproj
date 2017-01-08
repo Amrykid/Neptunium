@@ -140,7 +140,7 @@
     <Compile Include="Managers\Songs\Metadata Sources\ISongMetadata.cs" />
     <Compile Include="Managers\Songs\Metadata Sources\ITunesMetadataSource.cs" />
     <Compile Include="Managers\Songs\Metadata Sources\ITunesSongMetadata.cs" />
-    <Compile Include="Managers\Songs\Metadata Sources\ISongMetadataSource.cs" />
+    <Compile Include="Managers\Songs\Metadata Sources\BaseSongMetadataSource.cs" />
     <Compile Include="Managers\Songs\Metadata Sources\MusicBrainzMetadataSource.cs" />
     <Compile Include="Managers\Songs\Metadata Sources\MusicBrainzSongMetadata.cs" />
     <Compile Include="Managers\Songs\Song History\SongHistoryManagerItemAddedEventArgs.cs" />

@@ -8,9 +8,9 @@ using Hqub.MusicBrainz.API.Entities;
 
 namespace Neptunium.Managers.Songs.Metadata_Sources
 {
-    class MusicBrainzMetadataSource : ISongMetadataSource
+    public class MusicBrainzMetadataSource : BaseSongMetadataSource
     {
-        public async Task<ArtistData> GetArtistAsync(string artistID)
+        public async override Task<ArtistData> GetArtistAsync(string artistID)
         {
             ArtistData data = new ArtistData();
 
@@ -27,7 +27,13 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
                 {
                     var imageRel = artistData.RelationLists.Items.FirstOrDefault(x => x.Type == "image");
                     if (imageRel != null)
-                        data.ArtistImage = imageRel.Target;
+                    {
+                        if (!string.IsNullOrWhiteSpace(imageRel.Target))
+                        {
+                            if (await CheckIfUrlIsWebAccessibleAsync(new Uri(imageRel.Target)))
+                                data.ArtistImage = imageRel.Target;
+                        }
+                    }
                 }
 
                 return data;
@@ -36,7 +42,7 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
             return null;
         }
 
-        public async Task<AlbumData> TryFindAlbumAsync(string track, string artist)
+        public async override Task<AlbumData> TryFindAlbumAsync(string track, string artist)
         {
             AlbumData data = new AlbumData();
 
@@ -64,11 +70,23 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
                             if (firstRelease.CoverArtArchive != null)
                             {
                                 if (firstRelease.CoverArtArchive.Artwork)
-                                    data.AlbumCoverUrl = CoverArtArchive.GetCoverArtUri(firstRelease.Id)?.ToString();
+                                {
+                                    string albumImg = CoverArtArchive.GetCoverArtUri(firstRelease.Id)?.ToString();
+                                    if (!string.IsNullOrWhiteSpace(albumImg))
+                                    {
+                                        if (await CheckIfUrlIsWebAccessibleAsync(new Uri(albumImg)))
+                                            data.AlbumCoverUrl = albumImg;
+                                    }
+                                }
                             }
                             else
                             {
-                                data.AlbumCoverUrl = "http://coverartarchive.org/release/" + firstRelease?.Id + "/front-250.jpg";
+                                string albumImg = "http://coverartarchive.org/release/" + firstRelease?.Id + "/front-250.jpg";
+                                if (!string.IsNullOrWhiteSpace(albumImg))
+                                {
+                                    if (await CheckIfUrlIsWebAccessibleAsync(new Uri(albumImg)))
+                                        data.AlbumCoverUrl = albumImg;
+                                }
                             }
 
                             data.Artist = potentialRecording.Credits.First().Artist.Name;
@@ -94,7 +112,7 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
             return null;
         }
 
-        public async Task<ArtistData> TryFindArtistAsync(string artistName)
+        public async override Task<ArtistData> TryFindArtistAsync(string artistName)
         {
             ArtistData data = new ArtistData();
 
@@ -123,7 +141,13 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
                     {
                         var imageRel = browsingData.RelationLists.Items.FirstOrDefault(x => x.Type == "image");
                         if (imageRel != null)
-                            data.ArtistImage = imageRel.Target;
+                        {
+                            if (!string.IsNullOrWhiteSpace(imageRel.Target))
+                            {
+                                if (await CheckIfUrlIsWebAccessibleAsync(new Uri(imageRel.Target)))
+                                    data.ArtistImage = imageRel.Target;
+                            }
+                        }
                     }
                 }
 

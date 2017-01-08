@@ -9,19 +9,19 @@ using iTunesSearch.Library.Models;
 
 namespace Neptunium.Managers.Songs
 {
-    public class ITunesMetadataSource : ISongMetadataSource
+    public class ITunesMetadataSource : BaseSongMetadataSource
     {
         iTunesSearch.Library.iTunesSearchManager itunesStore = null;
         public ITunesMetadataSource()
         {
             itunesStore = new iTunesSearch.Library.iTunesSearchManager();
         }
-        public Task<ArtistData> GetArtistAsync(string artistID)
+        public override Task<ArtistData> GetArtistAsync(string artistID)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<AlbumData> TryFindAlbumAsync(string track, string artist)
+        public async override Task<AlbumData> TryFindAlbumAsync(string track, string artist)
         {
             //todo pass in station country: i.e. jp or kr
 
@@ -58,9 +58,17 @@ namespace Neptunium.Managers.Songs
                 data.AlbumID = selectedAlbum.CollectionId.ToString();
 
                 if (!string.IsNullOrWhiteSpace(selectedAlbum.ArtworkUrl100))
-                    data.AlbumCoverUrl = selectedAlbum.ArtworkUrl100.Replace("100x100", "600x600");
+                {
+                    string highResImg = selectedAlbum.ArtworkUrl100.Replace("100x100", "600x600");
+                    if (await CheckIfUrlIsWebAccessibleAsync(new Uri(highResImg)))
+                        data.AlbumCoverUrl = highResImg;
+                }
                 else if (!string.IsNullOrWhiteSpace(selectedAlbum.ArtworkUrl60))
-                    data.AlbumCoverUrl = selectedAlbum.ArtworkUrl60.Replace("100x100", "600x600");
+                {
+                    string highResImg = selectedAlbum.ArtworkUrl60.Replace("100x100", "600x600");
+                    if (await CheckIfUrlIsWebAccessibleAsync(new Uri(highResImg)))
+                        data.AlbumCoverUrl = selectedAlbum.ArtworkUrl60.Replace("100x100", "600x600");
+                }
 
                 data.AlbumLinkUrl = selectedAlbum.CollectionViewUrl;
                 data.Artist = selectedAlbum.ArtistName;
@@ -73,7 +81,7 @@ namespace Neptunium.Managers.Songs
             return null;
         }
 
-        public async Task<ArtistData> TryFindArtistAsync(string artistName)
+        public async override Task<ArtistData> TryFindArtistAsync(string artistName)
         {
             var artists = await itunesStore.GetSongArtistsAsync(artistName, 5, "jp");
 

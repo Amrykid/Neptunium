@@ -12,8 +12,8 @@ namespace Neptunium.Managers.Songs
 {
     public class SongMetadataManager
     {
-        private ISongMetadataSource MusicBrainz { get; set; } = new MusicBrainzMetadataSource();
-        private ISongMetadataSource ITunes { get; set; } = new ITunesMetadataSource();
+        private BaseSongMetadataSource MusicBrainz { get; set; } = new MusicBrainzMetadataSource();
+        private BaseSongMetadataSource ITunes { get; set; } = new ITunesMetadataSource();
 
         internal async Task<MusicBrainzSongMetadata> GetMusicBrainzDataAsync(string track, string artist)
         {
