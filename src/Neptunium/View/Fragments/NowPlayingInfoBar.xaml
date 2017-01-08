@@ -263,7 +263,9 @@
 
                 <AppBarButton Icon="Play" ToolTipService.ToolTip="Play" Tag="PlayPause" x:Name="PlayPauseButton" Command="{Binding PlayCommand}" />
                 <AppBarButton ToolTipService.ToolTip="Handoff" Icon="Remote" x:Name="lowerAppBarHandOffButton" Flyout="{StaticResource HandOffDeviceFlyout}" />
-                <AppBarButton ToolTipService.ToolTip="Sleep Timer" Icon="Clock" x:Name="lowerAppBarSleepTimerButton" Flyout="{StaticResource SleepTimerDeviceFlyout}" />
+                <AppBarButton ToolTipService.ToolTip="Sleep Timer" Icon="Clock" x:Name="lowerAppBarSleepTimerButton" 
+                              IsEnabled="{Binding SleepTimerViewFragment.IsViewEnabled, UpdateSourceTrigger=PropertyChanged}"
+                              Flyout="{StaticResource SleepTimerDeviceFlyout}" />
             </StackPanel>
         </Grid>
     </Grid>

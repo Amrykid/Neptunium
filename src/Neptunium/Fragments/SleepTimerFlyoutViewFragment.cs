@@ -39,7 +39,7 @@ namespace Neptunium.Fragments
 
             SelectedSleepItem = AvailableSleepItems.First(x => x.TimeToWait == TimeSpan.MinValue);
 
-            IsViewEnabled = false;
+            IsViewEnabled = StationMediaPlayer.IsPlaying;
 
             StationMediaPlayer.IsPlayingChanged += StationMediaPlayer_IsPlayingChanged;
 
