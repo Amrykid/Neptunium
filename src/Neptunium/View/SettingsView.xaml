@@ -122,8 +122,10 @@
                     <CheckBox Content="Announce Songs" x:Name="announcedSongsCb" IsChecked="{Binding CarModeAnnounceSongs, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                     <ComboBox ItemsSource="{Binding PossibleAnnouncementFrequencyOptions}" 
                               Header="Announcement Frequency"
+                              IsEnabled="{Binding ElementName=announcedSongsCb, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" 
                               SelectedItem="{Binding SelectedAnnouncementFrequencyOption, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <CheckBox Content="Use Japanese Voice" IsEnabled="{Binding ElementName=announcedSongsCb, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" 
+                    <CheckBox Content="Use Japanese Voice" 
+                              IsEnabled="{Binding ElementName=announcedSongsCb, Path=IsChecked, UpdateSourceTrigger=PropertyChanged}" 
                               IsChecked="{Binding JapaneseVoiceForSongAnnouncements, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </PivotItem>
