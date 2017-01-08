@@ -35,13 +35,17 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="20" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <TextBlock Text="{Binding Name}" Grid.Row="0" Style="{ThemeResource BaseTextBlockStyle}" 
                                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                        <TextBlock Text="{Binding Genres[0]}" Grid.Row="1" TextTrimming="WordEllipsis" 
+                        <TextBlock Text="{Binding Description}" Grid.Row="1"
                                    Style="{ThemeResource BodyTextBlockStyle}" 
                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
+                        <TextBlock Text="{Binding Genres[0]}" Grid.Row="2"
+                                   Style="{ThemeResource BodyTextBlockStyle}"
+                                   Foreground="{ThemeResource SystemControlForegroundBaseLowBrush}" />
 
                     </Grid>
 
@@ -148,6 +152,11 @@
                     <!--<AddDeleteThemeTransition />-->
                 </TransitionCollection>
             </ListBox.Transitions>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListBox.ItemContainerStyle>
         </ListBox>
 
         <GridView ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" x:Name="StationsGridView" 
