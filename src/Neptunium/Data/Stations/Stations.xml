@@ -21,6 +21,7 @@
     <Site>https://www.animenfo.com/radio/</Site>
     <Genres>Anime; J-Pop</Genres>
     <Streams>
+      <Stream ContentType="audio/aacp" Bitrate="64" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://emaru.animenfo.com:443/</Stream>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://itori.animenfo.com:443/</Stream>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://momori.animenfo.com:8000/</Stream>
     </Streams>

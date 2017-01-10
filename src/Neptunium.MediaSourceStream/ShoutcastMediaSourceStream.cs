@@ -136,7 +136,8 @@ namespace Neptunium.MediaSourceStream
                     break;
                 case StreamAudioFormat.AAC:
                     {
-                        MediaStreamSource = new MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateAac(sampleRate, 2, (uint)bitRate)));
+                        //AudioEncodingProperties
+                        MediaStreamSource = new MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateAacAdts(sampleRate, 2, (uint)bitRate)));
                     }
                     break;
             }
