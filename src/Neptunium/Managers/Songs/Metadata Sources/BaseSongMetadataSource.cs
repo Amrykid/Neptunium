@@ -10,9 +10,9 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
 {
     public abstract class BaseSongMetadataSource
     {
-        public abstract Task<AlbumData> TryFindAlbumAsync(string track, string artist);
-        public abstract Task<ArtistData> TryFindArtistAsync(string artistName);
-        public abstract Task<ArtistData> GetArtistAsync(string artistID);
+        public abstract Task<AlbumData> TryFindAlbumAsync(string track, string artist, string locale = "JP");
+        public abstract Task<ArtistData> TryFindArtistAsync(string artistName, string locale = "JP");
+        public abstract Task<ArtistData> GetArtistAsync(string artistID, string locale = "JP");
 
         protected async Task<bool> CheckIfUrlIsWebAccessibleAsync(Uri url)
         {

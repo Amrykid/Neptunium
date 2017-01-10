@@ -51,6 +51,8 @@ namespace Neptunium.Data
                 station.Site = stationElement.Element("Site").Value;
                 station.Genres = stationElement.Element("Genres").Value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
+                station.PrimaryLocale = stationElement.Element("PrimaryLocale")?.Value;
+
                 station.Streams = stationElement.Element("Streams").Elements("Stream").Select<XElement, StationModelStream>(x =>
                 {
                     var stream = new StationModelStream();

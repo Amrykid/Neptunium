@@ -16,17 +16,17 @@ namespace Neptunium.Managers.Songs
         {
             itunesStore = new iTunesSearch.Library.iTunesSearchManager();
         }
-        public override Task<ArtistData> GetArtistAsync(string artistID)
+        public override Task<ArtistData> GetArtistAsync(string artistID, string locale = "JP")
         {
             throw new NotImplementedException();
         }
 
-        public async override Task<AlbumData> TryFindAlbumAsync(string track, string artist)
+        public async override Task<AlbumData> TryFindAlbumAsync(string track, string artist, string locale = "JP")
         {
             //todo pass in station country: i.e. jp or kr
 
             //todo figure out a better way to do this. maybe romanize the japanese artist names for better accuracy?
-            var albumResults = await itunesStore.SearchAlbumsAsync(string.Join(" ", artist, track), 20, "jp");
+            var albumResults = await itunesStore.SearchAlbumsAsync(string.Join(" ", artist, track), 20, locale.ToLower());
             IEnumerable<Album> albums = null;
             if (albumResults.Count != 0)
             {
@@ -34,7 +34,7 @@ namespace Neptunium.Managers.Songs
             }
             else
             {
-                albumResults = await itunesStore.GetAlbumsFromSongAsync(track, 20, "jp");
+                albumResults = await itunesStore.GetAlbumsFromSongAsync(track, 20, locale.ToLower());
                 if (albumResults.Count == 0) return null;
 
                 albums = albumResults.Albums.Where(x =>
@@ -81,9 +81,9 @@ namespace Neptunium.Managers.Songs
             return null;
         }
 
-        public async override Task<ArtistData> TryFindArtistAsync(string artistName)
+        public async override Task<ArtistData> TryFindArtistAsync(string artistName, string locale = "JP")
         {
-            var artists = await itunesStore.GetSongArtistsAsync(artistName, 5, "jp");
+            var artists = await itunesStore.GetSongArtistsAsync(artistName, 5, locale.ToLower());
 
             if (artists.Count > 0)
             {

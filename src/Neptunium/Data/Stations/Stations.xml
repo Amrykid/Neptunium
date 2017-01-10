@@ -7,6 +7,7 @@
     <Background>http://www.animeamaze.com/web/wp-content/uploads/2016/04/slider1_reduced.jpg?1471506640148</Background>
     <Site>http://www.animeamaze.com/#</Site>
     <Genres>Anime; J-Pop</Genres>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/aacp" Bitrate="64" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://stream.theradiator.org:8005/</Stream>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://stream.theradiator.org:10008/</Stream>
@@ -21,6 +22,7 @@
     <Logo>http://cdn.marketplaceimages.windowsphone.com/v8/images/dbf3e042-cd31-4d33-9609-f7f956512cf9?imageType=ws_icon_large</Logo>
     <Site>https://www.animenfo.com/radio/</Site>
     <Genres>Anime; J-Pop</Genres>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/aacp" Bitrate="64" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://emaru.animenfo.com:443/</Stream>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://itori.animenfo.com:443/</Stream>
@@ -33,6 +35,7 @@
     <Logo><![CDATA[https://scontent-atl3-1.xx.fbcdn.net/v/t1.0-9/13770512_1716434165285420_1996521440200989773_n.png?oh=65374511c2d1126bfdd385e86b93f591&oe=58D10065]]></Logo>
     <Site>http://ani-station.playtheradio.com/index.cfm</Site>
     <Genres>Anime; J-Pop; Soundtracks</Genres>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" ServerType="Radionomy">http://listen.radionomy.com:80/Ani-Station</Stream>
     </Streams>
@@ -44,6 +47,7 @@
     <Logo><![CDATA[http://j1fm.tokyo/images/listenbox_j1.jpg]]></Logo>
     <Site>http://en.j1fm.com/</Site>
     <Genres>J-Pop; J-Rock; Pop</Genres>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://cabhs30.sonixcast.com:9774/</Stream>
     </Streams>
@@ -55,6 +59,7 @@
     <Logo><![CDATA[http://j1fm.tokyo/images/listenbox-j1x_90.jpg]]></Logo>
     <Site>http://en.j1fm.com/</Site>
     <Genres>J-Pop; J-Rock; Pop</Genres>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://cabhs31.sonixcast.com:20080/</Stream>
     </Streams>
@@ -66,6 +71,7 @@
     <Logo><![CDATA[http://j1fm.tokyo/images/listenbox-j1g.jpg]]></Logo>
     <Site>http://en.j1fm.com/</Site>
     <Genres>Enka; J-Pop; Pop</Genres>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" ServerType="Radionomy">http://streaming.radionomy.com/J1GOLDJapanOldies?lang=en-US%2cen%3bq%3d0.7%2cja%3bq%3d0.3</Stream>
     </Streams>
@@ -76,6 +82,7 @@
     <Logo>http://www.japanaradio.com/images/logo02.png</Logo>
     <Site>http://www.japanaradio.com/index.php</Site>
     <Genres>J-Pop; Anime</Genres>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/aac" Bitrate="48" SampleRate="44100" RelativePath="japan48k" ServerType="Icecast">http://audio.misproductions.com</Stream>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="japan128k" ServerType="Icecast">http://audio.misproductions.com/</Stream>
@@ -87,6 +94,7 @@
     <Logo>http://cdn-radiotime-logos.tunein.com/s136422q.png</Logo>
     <Site>http://jpopsuki.fm/</Site>
     <Genres>J-Pop; Rock; Electronic</Genres>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath="stream" ServerType="Icecast">http://213.239.204.252:8000/</Stream>
     </Streams>
@@ -97,6 +105,7 @@
     <Logo>http://img.photobucket.com/albums/v23/daigong/MY%20Fat%20ASs/jphipradio.jpg</Logo>
     <Site>http://jphip.com/radio/</Site>
     <Genres>J-Pop; Rock; Electronic </Genres>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://radio.jphip.com:8800/</Stream>
     </Streams>
@@ -108,6 +117,7 @@
     <Site>http://www.radiohayama.com/</Site>
     <Genres>Pop; Ambient; Alternative Rock</Genres>
     <Background>http://www.radiohayama.com/sites/default/files/vegas/fullmoon1.jpg</Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="" ServerType="Shoutcast" HistoryPath="/played.html?sid=1">http://199.195.194.140:8085/</Stream>
     </Streams>
@@ -120,6 +130,7 @@
     <Site>http://www.radiovocaloid.com/</Site>
     <Genres>Anime; J-Pop</Genres>
     <Background>http://1.bp.blogspot.com/-Ij-IW-Gpwcw/VUyEgLzhlyI/AAAAAAAACYg/xh7KhIcU6qE/s1600/radio-vocaloid.png</Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="" ServerType="Radionomy">http://streaming.radionomy.com/RadioVocaloid</Stream>
     </Streams>
@@ -133,6 +144,7 @@
     <Site>http://www.breeze-crew.net/shoutcast/player/70s90s.php</Site>
     <Genres>J-Pop;J-Rock</Genres>
     <Background></Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="64" SampleRate="22050" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html?sid=1">
         http://s5.voscast.com:7002
@@ -148,6 +160,7 @@
     <Site>http://jjamsradio.weebly.com</Site>
     <Genres><![CDATA[J-Pop;R&B]]></Genres>
     <Background></Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html?sid=1">
         http://216.126.195.37:8078/
@@ -167,6 +180,7 @@
     <Site>http://www.animeradio.net/index.php</Site>
     <Genres><![CDATA[Anime; J-Pop]]></Genres>
     <Background></Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://69.4.225.75:8100/
@@ -182,6 +196,7 @@
     <Site>http://yggdrasilradio.net/</Site>
     <Genres><![CDATA[Anime; J-Pop]]></Genres>
     <Background></Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://95.211.241.92:9200/
@@ -197,6 +212,7 @@
     <Site>http://www.j-popprojectradio.com/</Site>
     <Genres><![CDATA[J-Pop]]></Genres>
     <Background></Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Radionomy">
         http://streaming.radionomy.com/J-PopProjectRadio
@@ -218,6 +234,7 @@
     <Site>http://bigbradio.net/jpop/</Site>
     <Genres><![CDATA[J-Pop]]></Genres>
     <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="64" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://64.71.79.181:8024/
@@ -237,6 +254,7 @@
     <Site>http://bigbradio.net/kpop/</Site>
     <Genres><![CDATA[K-Pop]]></Genres>
     <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <PrimaryLocale>KR</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="64" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://64.71.79.181:8044/
@@ -259,6 +277,7 @@
     <Site>http://www.asiadreamradio.com/stations/index.html</Site>
     <Genres><![CDATA[J-Pop; Christmas]]></Genres>
     <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://149.56.23.7:20278/stream
@@ -275,6 +294,7 @@
     <Site>http://www.asiadreamradio.com/stations/index.html</Site>
     <Genres><![CDATA[J-Pop; Pop]]></Genres>
     <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://cabhs30.sonixcast.com:9628/stream
@@ -291,6 +311,7 @@
     <Site>http://www.asiadreamradio.com/stations/index.html</Site>
     <Genres><![CDATA[J-Pop; Kawaii]]></Genres>
     <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://149.56.23.7:20002/stream
@@ -307,6 +328,7 @@
     <Site>http://www.asiadreamradio.com/stations/index.html</Site>
     <Genres><![CDATA[J-Pop; HipHop]]></Genres>
     <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://192.99.62.212:9260/stream
@@ -323,6 +345,7 @@
     <Site>http://www.asiadreamradio.com/stations/index.html</Site>
     <Genres><![CDATA[J-Pop; J-Rock; Pop; Hits]]></Genres>
     <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://192.99.62.212:9764/stream
@@ -354,6 +377,7 @@
     <Site>http://www.asiadreamradio.com/stations/index.html</Site>
     <Genres><![CDATA[J-Rock; Rock; Hits]]></Genres>
     <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://192.99.62.212:9508/stream
@@ -369,6 +393,7 @@
     <Site>https://listen.moe/</Site>
     <Genres><![CDATA[Anime; J-Pop]]></Genres>
     <Background>https://pbs.twimg.com/profile_banners/792628294793433088/1477813088/1500x500</Background>
+    <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" ServerType="Direct" RelativePath=";">
         http://listen.moe:9999/stream

@@ -10,7 +10,7 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
 {
     public class MusicBrainzMetadataSource : BaseSongMetadataSource
     {
-        public async override Task<ArtistData> GetArtistAsync(string artistID)
+        public async override Task<ArtistData> GetArtistAsync(string artistID, string locale = "JP")
         {
             ArtistData data = new ArtistData();
 
@@ -42,14 +42,14 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
             return null;
         }
 
-        public async override Task<AlbumData> TryFindAlbumAsync(string track, string artist)
+        public async override Task<AlbumData> TryFindAlbumAsync(string track, string artist, string locale = "JP")
         {
             AlbumData data = new AlbumData();
 
 
             var recordingQuery = new Hqub.MusicBrainz.API.QueryParameters<Hqub.MusicBrainz.API.Entities.Recording>();
             recordingQuery.Add("artistname", artist);
-            recordingQuery.Add("country", "JP");
+            recordingQuery.Add("country", locale);
             recordingQuery.Add("recording", track);
 
             var recordings = await Recording.SearchAsync(recordingQuery);
@@ -112,7 +112,7 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
             return null;
         }
 
-        public async override Task<ArtistData> TryFindArtistAsync(string artistName)
+        public async override Task<ArtistData> TryFindArtistAsync(string artistName, string locale = "JP")
         {
             ArtistData data = new ArtistData();
 
@@ -120,7 +120,7 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
             //artistQuery.Add("inc", "url-rels");
             artistQuery.Add("artist", artistName);
             artistQuery.Add("alias", artistName);
-            artistQuery.Add("country", "JP");
+            artistQuery.Add("country", locale);
 
             var artistResults = await Artist.SearchAsync(artistQuery);
 

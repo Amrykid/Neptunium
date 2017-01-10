@@ -15,7 +15,7 @@ namespace Neptunium.Managers.Songs
         private BaseSongMetadataSource MusicBrainz { get; set; } = new MusicBrainzMetadataSource();
         private BaseSongMetadataSource ITunes { get; set; } = new ITunesMetadataSource();
 
-        internal async Task<MusicBrainzSongMetadata> GetMusicBrainzDataAsync(string track, string artist)
+        internal async Task<MusicBrainzSongMetadata> GetMusicBrainzDataAsync(string track, string artist, string locale = "jp")
         {
             MusicBrainzSongMetadata metadata = new MusicBrainzSongMetadata();
 
@@ -23,7 +23,7 @@ namespace Neptunium.Managers.Songs
 
             try
             {
-                albumData = await MusicBrainz.TryFindAlbumAsync(track, artist);
+                albumData = await MusicBrainz.TryFindAlbumAsync(track, artist, locale);
                 if (albumData != null)
                 {
                     metadata.Album = albumData;
@@ -37,11 +37,11 @@ namespace Neptunium.Managers.Songs
                 if (albumData != null)
                 {
                     //get the artist via artist id
-                    metadata.Artist = await MusicBrainz.GetArtistAsync(albumData.ArtistID);
+                    metadata.Artist = await MusicBrainz.GetArtistAsync(albumData.ArtistID, locale);
                 }
                 else
                 {
-                    metadata.Artist = await MusicBrainz.TryFindArtistAsync(artist);
+                    metadata.Artist = await MusicBrainz.TryFindArtistAsync(artist, locale);
                 }
             }
             catch (Hqub.MusicBrainz.API.HttpClientException) { }
@@ -49,7 +49,7 @@ namespace Neptunium.Managers.Songs
             return metadata;
         }
 
-        internal async Task<ITunesSongMetadata> GetITunesDataAsync(string track, string artist)
+        internal async Task<ITunesSongMetadata> GetITunesDataAsync(string track, string artist, string locale = "jp")
         {
             ITunesSongMetadata metadata = new ITunesSongMetadata();
 
@@ -57,7 +57,7 @@ namespace Neptunium.Managers.Songs
 
             try
             {
-                albumData = await ITunes.TryFindAlbumAsync(track, artist);
+                albumData = await ITunes.TryFindAlbumAsync(track, artist, locale);
                 if (albumData != null)
                 {
                     metadata.Album = albumData;
@@ -75,7 +75,7 @@ namespace Neptunium.Managers.Songs
                 //}
                 //else
                 //{
-                metadata.Artist = await ITunes.TryFindArtistAsync(artist);
+                metadata.Artist = await ITunes.TryFindArtistAsync(artist, locale);
                 //}
             }
             catch (Hqub.MusicBrainz.API.HttpClientException) { }

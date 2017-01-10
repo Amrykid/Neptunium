@@ -110,7 +110,7 @@ namespace Neptunium.Managers.Songs
 
                         try
                         {
-                            metadata.MBData = await MetadataManager.GetMusicBrainzDataAsync(e.Title, cleanArtist);
+                            metadata.MBData = await MetadataManager.GetMusicBrainzDataAsync(e.Title, cleanArtist, StationMediaPlayer.CurrentStation.PrimaryLocale);
                         }
                         catch (NotImplementedException)
                         {
@@ -121,7 +121,7 @@ namespace Neptunium.Managers.Songs
                         {
                             try
                             {
-                                metadata.ITunesData = await MetadataManager.GetITunesDataAsync(e.Title, cleanArtist);
+                                metadata.ITunesData = await MetadataManager.GetITunesDataAsync(e.Title, cleanArtist, StationMediaPlayer.CurrentStation.PrimaryLocale);
                             }
                             catch (NotImplementedException)
                             {

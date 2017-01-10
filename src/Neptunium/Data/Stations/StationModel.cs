@@ -27,6 +27,11 @@ namespace Neptunium.Data
         public IEnumerable<string> StationMessages { get; internal set; }
         [DataMember]
         public IEnumerable<StationModelStream> Streams { get; internal set; }
+        /// <summary>
+        /// The locale that the majority of music played on this station originates from.
+        /// </summary>
+        [DataMember]
+        public string PrimaryLocale { get; internal set; }
 
         public override string ToString()
         {
