@@ -341,7 +341,17 @@ namespace Neptunium.MediaSourceStream
 
             bitRate = uint.Parse(headers.FirstOrDefault(x => x.Key == "ICY-BR").Value);
             metadataInt = uint.Parse(headers.First(x => x.Key == "ICY-METAINT").Value);
-            contentType = headers.First(x => x.Key == "CONTENT-TYPE").Value.ToUpper().Trim() == "AUDIO/MPEG" ? StreamAudioFormat.MP3 : StreamAudioFormat.AAC;
+
+            switch(headers.First(x => x.Key == "CONTENT-TYPE").Value.ToLower().Trim())
+            {
+                case "audio/mpeg":
+                    contentType = StreamAudioFormat.MP3;
+                    break;
+                case "audio/aac":
+                case "audio/aacp":
+                    contentType = StreamAudioFormat.AAC;
+                    break;
+            }
         }
 
         private static KeyValuePair<string, string>[] ParseHttpResponseToKeyPairArray(string[] responseSplitByLine)

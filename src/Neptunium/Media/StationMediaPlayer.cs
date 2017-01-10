@@ -173,7 +173,12 @@ namespace Neptunium.Media
                 ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(true));
 
 
-            var stream = station.Streams.First();
+            StationModelStream stream = null;
+
+            if (App.IsUnrestrictiveInternetConnection())
+                stream = station.Streams.OrderByDescending(x => x.Bitrate).First(); //grab a higher bitrate stream
+            else
+                stream = station.Streams.OrderBy(x => x.Bitrate).First(); //grab a lower bitrate stream
 
             var streamer = StreamerFactory.CreateStreamerFromServerType(stream.ServerType);
 
@@ -194,7 +199,7 @@ namespace Neptunium.Media
                         break;
 
                 }
-            }      
+            }
 
             if (streamer.IsConnected)
             {
