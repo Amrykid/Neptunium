@@ -385,7 +385,7 @@ namespace Neptunium.MediaSourceStream
                 MediaStreamSample sample = null;
                 uint sampleLength = 0;
 
-                request.ReportSampleProgress(25);
+                //request.ReportSampleProgress(25);
 
                 //if metadataPos is less than mp3_sampleSize away from metadataInt
                 if (metadataInt - metadataPos <= (contentType == StreamAudioFormat.MP3 ? mp3_sampleSize : aac_sampleSize) && metadataInt - metadataPos > 0)
@@ -429,7 +429,7 @@ namespace Neptunium.MediaSourceStream
                 {
                     await HandleMetadata();
 
-                    request.ReportSampleProgress(50);
+                    //request.ReportSampleProgress(50);
 
                     switch (contentType)
                     {
@@ -468,7 +468,7 @@ namespace Neptunium.MediaSourceStream
                 if (sample != null)
                     request.Sample = sample;
 
-                request.ReportSampleProgress(100);
+                //request.ReportSampleProgress(100);
             }
             catch (Exception)
             {
