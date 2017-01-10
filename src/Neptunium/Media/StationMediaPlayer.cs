@@ -23,6 +23,7 @@ using Windows.Networking.Connectivity;
 using Neptunium.Media.Streamers;
 using Crystal3;
 using Windows.Storage;
+using Crystal3.Core;
 
 namespace Neptunium.Media
 {
@@ -176,87 +177,138 @@ namespace Neptunium.Media
             StationModelStream stream = null;
 
             if (App.IsUnrestrictiveInternetConnection())
+            {
                 stream = station.Streams.OrderByDescending(x => x.Bitrate).First(); //grab a higher bitrate stream
-            else
-                stream = station.Streams.OrderBy(x => x.Bitrate).First(); //grab a lower bitrate stream
-
-            var streamer = StreamerFactory.CreateStreamerFromServerType(stream.ServerType);
-
-            await streamer.ConnectAsync(station, stream, null);
-
-            bool willCrossFade = false; //todo make cross fade transitions a setting
-
-            if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.PreferUsingCrossFadeWhenChangingStations])
-            {
-                switch (CrystalApplication.GetDevicePlatform())
-                {
-                    case Crystal3.Core.Platform.Xbox:
-                    case Crystal3.Core.Platform.Desktop:
-                        willCrossFade = audioCoordinator.CurrentStreamer != null;
-                        break;
-                    default: //cross fade transitioning seems to studder on mobile. might be because of the SD400
-                        willCrossFade = false;
-                        break;
-
-                }
             }
-
-            if (streamer.IsConnected)
+            else
             {
-                currentStationModel = station;
+                var midQualityStreams = station.Streams.Where(x => x.Bitrate >= 64 && x.Bitrate <= 128).OrderBy(x => x.Bitrate);
 
-                currentStream = stream;
-
-                currentStationServerType = stream.ServerType;
-
-                if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
-
-                IsPlaying = true;
-
-                if (!willCrossFade)
+                if (midQualityStreams.Count() == 0)
                 {
-                    await audioCoordinator.StopStreamingCurrentStreamerAsync();
+                    var lowQualityStreams = station.Streams.Where(x => x.Bitrate < 64);
 
-                    await audioCoordinator.BeginStreamingAsync(streamer);
+                    if (lowQualityStreams.Count() == 0)
+                    {
+                        var dialogService = IoC.Current.ResolveDefault<IMessageDialogService>();
+                        if (dialogService != null)
+                        {
+                            if (await dialogService.AskYesOrNoAsync(
+                                "We see you're either on a metered connection or one thats approaching its data limit. We can't find any lower quality streams. "
+                                + "Would you like us to play a high quality one instead? This will use more data.",
+                                "Metered Connection Warning"))
+                            {
+                                stream = station.Streams.OrderByDescending(x => x.Bitrate).First();
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    await Task.Delay(3000); //wait to buffer
+                    stream = midQualityStreams.First(); //grab a mid-quality bitrate stream
+                }
+            }
 
-                    await audioCoordinator.BeginStreamingTransitionAsync(streamer);
+            if (stream != null)
+            {
+                var streamer = StreamerFactory.CreateStreamerFromServerType(stream.ServerType);
+
+                await streamer.ConnectAsync(station, stream, null);
+
+                bool willCrossFade = false; //todo make cross fade transitions a setting
+
+                if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.PreferUsingCrossFadeWhenChangingStations])
+                {
+                    switch (CrystalApplication.GetDevicePlatform())
+                    {
+                        case Crystal3.Core.Platform.Xbox:
+                        case Crystal3.Core.Platform.Desktop:
+                            willCrossFade = audioCoordinator.CurrentStreamer != null;
+                            break;
+                        default: //cross fade transitioning seems to studder on mobile. might be because of the SD400
+                            willCrossFade = false;
+                            break;
+
+                    }
                 }
 
-                //should be playing at this point.
+                if (streamer.IsConnected)
+                {
+                    currentStationModel = station;
 
-                IsPlaying = true;
+                    currentStream = stream;
 
-                if (ConnectingStatusChanged != null)
-                    ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
+                    currentStationServerType = stream.ServerType;
+
+                    if (CurrentStationChanged != null) CurrentStationChanged(null, EventArgs.Empty);
+
+                    IsPlaying = true;
+
+                    if (!willCrossFade)
+                    {
+                        await audioCoordinator.StopStreamingCurrentStreamerAsync();
+
+                        await audioCoordinator.BeginStreamingAsync(streamer);
+                    }
+                    else
+                    {
+                        await Task.Delay(3000); //wait to buffer
+
+                        await audioCoordinator.BeginStreamingTransitionAsync(streamer);
+                    }
+
+                    //should be playing at this point.
+
+                    IsPlaying = true;
+
+                    if (ConnectingStatusChanged != null)
+                        ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
+                }
+                else
+                {
+                    if (ConnectingStatusChanged != null)
+                        ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
+
+                    //connection error
+
+                    BackgroundAudioError?.Invoke(null, new StationMediaPlayerBackgroundAudioErrorEventArgs()
+                    {
+                        Exception = new Exception("Unable to connect."),
+                        Station = station,
+                        StillPlaying = audioCoordinator.CurrentStreamer != null ? audioCoordinator.CurrentStreamer.IsConnected : false
+                    });
+
+                    if (audioCoordinator.CurrentStreamer == null || !(bool)audioCoordinator.CurrentStreamer?.IsConnected)
+                    {
+                        IsPlaying = false;
+
+                        currentStationModel = null;
+
+                        currentStream = null;
+
+                        currentStationServerType = stream.ServerType;
+                    }
+                }
             }
             else
             {
+                //unable to find a stream for some reason.
+
                 if (ConnectingStatusChanged != null)
                     ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
 
-                //connection error
+                //var dialogService = IoC.Current.ResolveDefault<IMessageDialogService>();
+                //if (dialogService != null)
+                //{
+                //    await dialogService.ShowAsync("We were unable to find a stream for the station you selected.", "Whoops!");
+                //}
 
                 BackgroundAudioError?.Invoke(null, new StationMediaPlayerBackgroundAudioErrorEventArgs()
                 {
-                    Exception = new Exception("Unable to connect."),
+                    Exception = new Exception("We were unable to find a stream for the station you selected."),
                     Station = station,
-                    StillPlaying = audioCoordinator.CurrentStreamer != null ? audioCoordinator.CurrentStreamer.IsConnected : false
+                    StillPlaying = false
                 });
-
-                if (audioCoordinator.CurrentStreamer == null || !(bool)audioCoordinator.CurrentStreamer?.IsConnected)
-                {
-                    IsPlaying = false;
-
-                    currentStationModel = null;
-
-                    currentStream = null;
-
-                    currentStationServerType = stream.ServerType;
-                }
             }
 
             playStationResetEvent.Release();
