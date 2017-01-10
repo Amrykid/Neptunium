@@ -33,7 +33,7 @@ namespace Neptunium.Media.Streamers
 
         private void Source_StateChanged(MediaSource sender, MediaSourceStateChangedEventArgs args)
         {
-            IsConnected = args.NewState == MediaSourceState.Opened;
+            IsConnected = args.NewState == MediaSourceState.Opened || args.NewState == MediaSourceState.Opening;
         }
 
         public override Task DisconnectAsync()

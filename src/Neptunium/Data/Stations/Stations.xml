@@ -353,12 +353,12 @@
   </Station>
   <Station>
     <Name>LISTEN.moe</Name>
-    <Description><![CDATA[https://LISTEN.moe , the best Anime & JPop music stream!.]]></Description>
+    <Description><![CDATA[LISTEN.moe, the best Anime & JPop music stream!]]></Description>
     <Logo>
       <![CDATA[https://pbs.twimg.com/profile_images/792630035832266752/mmry-djk.jpg]]>
     </Logo>
     <Site>https://listen.moe/</Site>
-    <Genres><![CDATA[Anime; JPop]]></Genres>
+    <Genres><![CDATA[Anime; J-Pop]]></Genres>
     <Background>https://pbs.twimg.com/profile_banners/792628294793433088/1477813088/1500x500</Background>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" ServerType="Direct" RelativePath=";">
