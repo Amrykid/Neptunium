@@ -35,6 +35,26 @@ namespace Neptunium.ViewGlue
             auxillaryPivotItem = new PivotItem();
             auxillaryPivotItem.Header = "Aux";
 
+            CreateOrRecyclePivotItemAndNavService();
+        }
+
+        private void CreateOrRecyclePivotItemAndNavService()
+        {
+            if (auxillaryPivotItemNavService != null)
+            {
+                auxillaryPivotItemNavService.NavigationServicePreNavigatedSignaled -= AuxillaryPivotItemNavService_NavigationServicePreNavigatedSignaled;
+                auxillaryPivotItemNavService.Dispose();
+                auxillaryPivotItemNavService = null;
+            }
+
+            if (auxillaryPivotItemFrame != null)
+            {
+                if (auxillaryPivotItem.Content == auxillaryPivotItemFrame)
+                    auxillaryPivotItem.Content = null;
+
+                auxillaryPivotItemFrame = null;
+            }
+
             auxillaryPivotItemFrame = new Frame();
 
             auxillaryPivotItemNavService = new FrameNavigationService(auxillaryPivotItemFrame);
@@ -111,6 +131,8 @@ namespace Neptunium.ViewGlue
             {
                 HandleNavigateFromAuxPivotItem();
 
+                CreateOrRecyclePivotItemAndNavService();
+
                 if (CanGoBackward)
                 {
                     var backViewModel = viewModelBackStack.Pop();
@@ -145,14 +167,14 @@ namespace Neptunium.ViewGlue
             {
                 pivotControl.Items.Remove(auxillaryPivotItem);
 
-                auxillaryPivotItemFrame.Content = null;
-
                 var viewModel = auxillaryPivotItemNavService.GetNavigatedViewModel();
 
                 if (viewModel is UIViewModelBase)
                     SetViewModelUIElement(((UIViewModelBase)viewModel), null);
 
                 FireViewModelNavigatedFromEvent(viewModel, new CrystalNavigationEventArgs() { Direction = CrystalNavigationDirection.Backward });
+
+                auxillaryPivotItemFrame.Content = null;
             }
 
             pivotControl.IsLocked = false;
@@ -201,7 +223,7 @@ namespace Neptunium.ViewGlue
                     pivotControl.IsLocked = true;
                 }
 
-                auxillaryPivotItemNavService.SafeNavigateTo<T>(parameter);
+                auxillaryPivotItemNavService.NavigateTo<T>(parameter);
 
                 currentViewModel = auxillaryPivotItemNavService.GetNavigatedViewModel();
             }
@@ -214,7 +236,11 @@ namespace Neptunium.ViewGlue
         private void PivotNavigate(Type viewModelType, PivotItem requiredPivot)
         {
             if (currentViewModel != null)
+            {
+                if (viewModelType == currentViewModel.GetType()) return; //we're already on that page
+
                 viewModelBackStack.Push(currentViewModel);
+            }
 
             //top level viewmodel, just switch pivots
 
