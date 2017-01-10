@@ -219,6 +219,9 @@
     <Genres><![CDATA[J-Pop]]></Genres>
     <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
     <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="64" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://64.71.79.181:8024/
+      </Stream>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://64.71.79.181:8018/
       </Stream>
@@ -235,8 +238,14 @@
     <Genres><![CDATA[K-Pop]]></Genres>
     <Background>http://qantumthemes.com/demo/onair/wp-content/uploads/2015/06/wordpress-radio-theme-post-0041.jpg</Background>
     <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="64" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://64.71.79.181:8044/
+      </Stream>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://64.71.79.181:8040/
+      </Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://64.71.79.181:8042/
       </Stream>
     </Streams>
   </Station>
