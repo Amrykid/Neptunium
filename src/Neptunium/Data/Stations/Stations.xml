@@ -8,6 +8,7 @@
     <Site>http://www.animeamaze.com/#</Site>
     <Genres>Anime; J-Pop</Genres>
     <Streams>
+      <Stream ContentType="audio/aacp" Bitrate="64" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://stream.theradiator.org:8005/</Stream>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" RelativePath=";" ServerType="Shoutcast" HistoryPath="/played.html">http://stream.theradiator.org:10008/</Stream>
     </Streams>
     <StationMessages>
@@ -76,7 +77,7 @@
     <Site>http://www.japanaradio.com/index.php</Site>
     <Genres>J-Pop; Anime</Genres>
     <Streams>
-      <!--<Stream ContentType="audio/aac" Bitrate="48" SampleRate="44100" RelativePath="japan48k" ServerType="Icecast">http://audio.misproductions.com</Stream>-->
+      <Stream ContentType="audio/aac" Bitrate="48" SampleRate="44100" RelativePath="japan48k" ServerType="Icecast">http://audio.misproductions.com</Stream>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" RelativePath="japan128k" ServerType="Icecast">http://audio.misproductions.com/</Stream>
     </Streams>
   </Station>
@@ -347,6 +348,21 @@
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://192.99.62.212:9508/stream
+      </Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>LISTEN.moe</Name>
+    <Description><![CDATA[https://LISTEN.moe , the best Anime & JPop music stream!.]]></Description>
+    <Logo>
+      <![CDATA[https://pbs.twimg.com/profile_images/792630035832266752/mmry-djk.jpg]]>
+    </Logo>
+    <Site>https://listen.moe/</Site>
+    <Genres><![CDATA[Anime; JPop]]></Genres>
+    <Background>https://pbs.twimg.com/profile_banners/792628294793433088/1477813088/1500x500</Background>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" ServerType="Direct" RelativePath=";">
+        http://listen.moe:9999/stream
       </Stream>
     </Streams>
   </Station>
