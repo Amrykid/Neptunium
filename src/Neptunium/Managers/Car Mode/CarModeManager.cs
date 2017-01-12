@@ -42,6 +42,11 @@ namespace Neptunium.Managers.Car_Mode
 
         private static SemaphoreSlim songAnouncementLock = new SemaphoreSlim(1);
 
+        /// <summary>
+        /// Used for managing when we should announce songs. Mainly for guarding against announcing the current song when we first connect to a station since its a bit jarring.
+        /// </summary>
+        private static bool canAnnounce = false;
+
         #region Options
         public static bool ShouldAnnounceSongs { get; private set; }
         public static bool ShouldUseJapaneseVoice { get; private set; }
@@ -116,6 +121,7 @@ namespace Neptunium.Managers.Car_Mode
 
             SongManager.PreSongChanged += SongManager_PreSongChanged;
             StationMediaPlayer.BackgroundAudioReconnecting += StationMediaPlayer_BackgroundAudioReconnecting;
+            StationMediaPlayer.CurrentStationChanged += StationMediaPlayer_CurrentStationChanged;
 
             japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
                 x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female && x.DisplayName.Contains("Haruka"));
@@ -123,8 +129,20 @@ namespace Neptunium.Managers.Car_Mode
             IsInitialized = true;
         }
 
+        private static void StationMediaPlayer_CurrentStationChanged(object sender, EventArgs e)
+        {
+            canAnnounce = false; //make it so that we don't immediately try to announce the first song on a station when we change.
+        }
+
         private static async void SongManager_PreSongChanged(object sender, SongManagerSongChangedEventArgs e)
         {
+            if (!canAnnounce)
+            {
+                //don't announce the current song when we first connect.
+                canAnnounce = true;
+                return;
+            }
+
             if (e.IsUnknown || e.Metadata is UnknownSongMetadata) return;
 
             if (ShouldAnnounceSongs && IsInCarMode)
