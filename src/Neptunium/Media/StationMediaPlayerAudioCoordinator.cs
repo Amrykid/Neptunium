@@ -197,9 +197,30 @@ namespace Neptunium.Media
             //et.Properties.Add("Reason", Enum.GetName(typeof(MediaStreamSourceClosedReason), args.Request.Reason));
             //HockeyClient.Current.TrackEvent(et);
 
-            bool networkError = args.Error == MediaPlayerError.NetworkError || (args.Error == MediaPlayerError.DecodingError && args.ExtendedErrorCode.HResult == -1072872829);
+            Func<bool> shouldReconnect = () =>
+            {
+                if (args.Error == MediaPlayerError.NetworkError)
+                    return true;
 
-            if (networkError)
+                if (args.Error == MediaPlayerError.DecodingError)
+                {
+                    switch (args.ExtendedErrorCode.HResult)
+                    {
+                        case -1072872829:
+                        case -1072846852:
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+
+                if (args.ErrorMessage.Contains("0xC00D4283"))
+                    return true;
+
+                return false;
+            };
+
+            if (shouldReconnect())
             {
                 await Task.Delay(500); //give the system time to figure out the new network connection
                 var connectionProfile = NetworkInformation.GetInternetConnectionProfile();
@@ -219,7 +240,7 @@ namespace Neptunium.Media
                             if (CurrentStreamer.IsConnected)
                             {
                                 CurrentStreamer.Player.Play();
-
+                                internetConnectionProfile = NetworkInformation.GetInternetConnectionProfile();
                                 return;
                             }
                             else
