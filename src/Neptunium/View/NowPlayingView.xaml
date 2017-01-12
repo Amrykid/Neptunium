@@ -14,13 +14,13 @@
         <DataTemplate x:Key="NowPlayingSecondaryDataPanelTemplate">
             <Pivot>
                 <PivotItem Header="Album">
-                    
+
                 </PivotItem>
                 <PivotItem Header="Events" />
             </Pivot>
         </DataTemplate>
     </Page.Resources>
-    
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup CurrentStateChanging="VisualStateGroup_CurrentStateChanging"
@@ -81,13 +81,25 @@
                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                Margin="20 0 0 0"
                                VerticalAlignment="Bottom"
-                               Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" />
+                               Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBlock.Transitions>
+                            <TransitionCollection>
+                                <ContentThemeTransition />
+                            </TransitionCollection>
+                        </TextBlock.Transitions>
+                    </TextBlock>
 
                     <TextBlock Grid.Column="1" Grid.Row="1" 
                                Style="{ThemeResource SubtitleTextBlockStyle}"
                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                Margin="20 0 0 0"
-                               Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" />
+                               Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBlock.Transitions>
+                            <TransitionCollection>
+                                <ContentThemeTransition />
+                            </TransitionCollection>
+                        </TextBlock.Transitions>
+                    </TextBlock>
 
                 </Grid>
 
@@ -115,12 +127,24 @@
                                Margin="40 -10 40 0"
                                VerticalAlignment="Bottom"
                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                               Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}" />
+                               Text="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBlock.Transitions>
+                            <TransitionCollection>
+                                <ContentThemeTransition />
+                            </TransitionCollection>
+                        </TextBlock.Transitions>
+                    </TextBlock>
 
                     <TextBlock Grid.Row="2" Style="{ThemeResource BodyTextBlockStyle}"
                                Margin="40 0 40 0"
                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                               Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}" />
+                               Text="{Binding CurrentArtist, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBlock.Transitions>
+                            <TransitionCollection>
+                                <ContentThemeTransition />
+                            </TransitionCollection>
+                        </TextBlock.Transitions>
+                    </TextBlock>
 
                 </Grid>
 
