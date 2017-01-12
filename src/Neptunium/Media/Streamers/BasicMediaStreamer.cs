@@ -88,6 +88,17 @@ namespace Neptunium.Media.Streamers
 
         public double Volume { get { return (double)Player?.Volume; } }
 
+        public async Task SetVolumeAsync(double value)
+        {
+            if (value > 1.0 || value < 0.0) throw new ArgumentOutOfRangeException(nameof(value), actualValue: value, message: "Out of range.");
+
+            await volumeLock.WaitAsync();
+
+            Player.Volume = value;
+
+            volumeLock.Release();
+        }
+
         public async Task FadeVolumeDownToAsync(double value)
         {
             if (value > Player.Volume) throw new ArgumentOutOfRangeException(nameof(value), actualValue: value, message: "Out of range.");

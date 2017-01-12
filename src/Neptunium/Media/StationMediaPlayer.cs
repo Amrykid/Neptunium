@@ -135,7 +135,13 @@ namespace Neptunium.Media
         public static double Volume
         {
             get { return (double)audioCoordinator.CurrentStreamer?.Player.Volume; }
-            set { if (audioCoordinator.CurrentStreamer != null) { audioCoordinator.CurrentStreamer.Player.Volume = value; } }
+            set
+            {
+                if (audioCoordinator.CurrentStreamer != null)
+                {
+                    audioCoordinator.CurrentStreamer.Player.Volume = value;
+                }
+            }
         }
 
         internal static void Stop()
@@ -310,6 +316,10 @@ namespace Neptunium.Media
                     StillPlaying = false
                 });
             }
+
+            if (ConnectingStatusChanged != null)
+                ConnectingStatusChanged(null, new StationMediaPlayerConnectingStatusChangedEventArgs(false));
+
 
             playStationResetEvent.Release();
 

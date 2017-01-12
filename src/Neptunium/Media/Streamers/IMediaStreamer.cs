@@ -15,6 +15,8 @@ namespace Neptunium.Media.Streamers
         Task DisconnectAsync();
         Task ReconnectAsync();
 
+        Task SetVolumeAsync(double value);
+
         bool IsConnected { get; }
         StationModel CurrentStation { get; }
         StationModelStream CurrentStream { get; }

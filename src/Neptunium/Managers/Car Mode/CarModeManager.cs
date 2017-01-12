@@ -186,7 +186,15 @@ namespace Neptunium.Managers.Car_Mode
         {
             if (ShouldAnnounceSongs && IsInCarMode)
             {
-                double initialVolume = StationMediaPlayer.Volume;
+                double initialVolume = 0.0;
+                try
+                {
+                    initialVolume = StationMediaPlayer.Volume;
+                }
+                catch (Exception)
+                {
+                    initialVolume = 1.0;
+                }
 
                 var englishVoice = SpeechSynthesizer.AllVoices.Where(x => x.Language.ToLower().StartsWith("en")).First(x => x.Gender == VoiceGender.Female);
                 speechSynth.Voice = englishVoice;
