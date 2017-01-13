@@ -81,8 +81,8 @@ namespace Neptunium.ViewGlue
 
                 if (newPivotItem.DataContext is ViewModelBase && newPivotItem.DataContext != pivotControl.DataContext)
                 {
-                    if (currentViewModel != null)
-                        viewModelBackStack.Push(currentViewModel);
+                    //if (currentViewModel != null)
+                    //    viewModelBackStack.Push(currentViewModel);
 
                     var viewModel = ((ViewModelBase)newPivotItem.DataContext);
 
@@ -133,28 +133,28 @@ namespace Neptunium.ViewGlue
 
                 CreateOrRecyclePivotItemAndNavService();
 
-                if (CanGoBackward)
-                {
-                    var backViewModel = viewModelBackStack.Pop();
+                //if (CanGoBackward)
+                //{
+                //    var backViewModel = viewModelBackStack.Pop();
 
-                    PivotItem requiredPivot = (PivotItem)pivotControl.Items.FirstOrDefault(x =>
-                        (string)((PivotItem)x).GetValue(NavigationAttributes.NavigationHintProperty) == backViewModel.GetType().FullName);
+                //    PivotItem requiredPivot = (PivotItem)pivotControl.Items.FirstOrDefault(x =>
+                //        (string)((PivotItem)x).GetValue(NavigationAttributes.NavigationHintProperty) == backViewModel.GetType().FullName);
 
-                    if (requiredPivot != null)
-                    {
-                        //top level viewmodel, just switch pivots
+                //    if (requiredPivot != null)
+                //    {
+                //        //top level viewmodel, just switch pivots
 
-                        pivotControl.SelectedItem = requiredPivot;
+                //        pivotControl.SelectedItem = requiredPivot;
 
-                        if (requiredPivot.DataContext is ViewModelBase)
-                        {
-                            ViewModelBase viewModel = requiredPivot.DataContext as ViewModelBase;
-                            FireViewModelNavigatedToEvent(viewModel, new CrystalNavigationEventArgs() { Direction = CrystalNavigationDirection.Backward });
+                //        if (requiredPivot.DataContext is ViewModelBase)
+                //        {
+                //            ViewModelBase viewModel = requiredPivot.DataContext as ViewModelBase;
+                //            FireViewModelNavigatedToEvent(viewModel, new CrystalNavigationEventArgs() { Direction = CrystalNavigationDirection.Backward });
 
-                            currentViewModel = viewModel;
-                        }
-                    }
-                }
+                //            currentViewModel = viewModel;
+                //        }
+                //    }
+                //}
             }
 
             pivotControl.SelectionChanged += PivotControl_SelectionChanged;
@@ -209,8 +209,8 @@ namespace Neptunium.ViewGlue
             }
             else
             {
-                if (currentViewModel != null)
-                    viewModelBackStack.Push(currentViewModel);
+                //if (currentViewModel != null)
+                //    viewModelBackStack.Push(currentViewModel);
 
                 //we gotta actually navigate to it.
 
@@ -235,12 +235,12 @@ namespace Neptunium.ViewGlue
 
         private void PivotNavigate(Type viewModelType, PivotItem requiredPivot)
         {
-            if (currentViewModel != null)
-            {
-                if (viewModelType == currentViewModel.GetType()) return; //we're already on that page
+            //if (currentViewModel != null)
+            //{
+            //    if (viewModelType == currentViewModel.GetType()) return; //we're already on that page
 
-                viewModelBackStack.Push(currentViewModel);
-            }
+            //    viewModelBackStack.Push(currentViewModel);
+            //}
 
             //top level viewmodel, just switch pivots
 
