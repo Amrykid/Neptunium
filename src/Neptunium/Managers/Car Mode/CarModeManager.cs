@@ -233,7 +233,8 @@ namespace Neptunium.Managers.Car_Mode
 
                 media.CommandManager.IsEnabled = false;
                 media.Volume = 1.0;
-                media.AudioCategory = MediaPlayerAudioCategory.Speech;
+                //media.AudioCategory = MediaPlayerAudioCategory.Speech;
+                media.AudioCategory = MediaPlayerAudioCategory.Alerts; //Speech is too low.
                 media.Source = source;
 
                 Task mediaOpenTask = media.WaitForMediaOpenAsync();
