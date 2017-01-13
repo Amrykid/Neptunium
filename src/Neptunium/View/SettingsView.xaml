@@ -11,15 +11,6 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
-                <VisualState x:Name="XboxVisualState">
-                    <VisualState.Setters>
-                        <Setter Target="PageTitleBlock.Margin" Value="50,0,20,0" />
-                        <Setter Target="PageTitleBlock.Visibility" Value="Visible" />
-                    </VisualState.Setters>
-                    <VisualState.StateTriggers>
-                        <wst:DeviceFamilyStateTrigger DeviceFamily="Xbox" />
-                    </VisualState.StateTriggers>
-                </VisualState>
                 <VisualState x:Name="TabletVisualState">
                     <VisualState.StateTriggers>
                         <wst:CompositeStateTrigger Operator="And">

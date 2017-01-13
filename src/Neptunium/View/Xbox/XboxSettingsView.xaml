@@ -1,0 +1,43 @@
+﻿<Page
+    x:Class="Neptunium.View.Xbox.XboxSettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Neptunium.View.Xbox"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ScrollViewer>
+            <StackPanel>
+
+                <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="General" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Metadata" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"  />
+                <CheckBox Content="Fetch metadata when the song changes." Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" 
+                          IsChecked="{Binding ShouldFetchSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Notifications" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"  />
+                <CheckBox Content="Show song notifications" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" 
+                          IsChecked="{Binding ShouldShowSongNofitications, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Continuous App Experience (Handoff)" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"  />
+                <CheckBox Content="Stop playing on this device after successful handoff." Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" 
+                              IsChecked="{Binding ShouldStopPlayingAfterSuccessfulHandoff, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="UI" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Margin="0 10 0 0" />
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="General" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"  />
+                <CheckBox Content="When launching from a tile or url to play a station, navigate to that station." Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" 
+                              IsChecked="{Binding ShouldNavigateToStationPageWhenLaunching, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Media Bar" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"  />
+                <CheckBox Content="Media bar should match station's logo color." Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" 
+                          IsChecked="{Binding ShouldHaveMediaBarMatchStationColor, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Text="Media" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Margin="0 10 0 0" />
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Behaviors" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"  />
+                <CheckBox Content="Prefer cross fading when changing stations." Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" 
+                              IsChecked="{Binding ShouldPreferCrossFadingOnStationTransition, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

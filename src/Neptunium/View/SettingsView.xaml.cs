@@ -24,7 +24,7 @@ namespace Neptunium.View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    [Crystal3.Navigation.NavigationViewModel(typeof(SettingsViewViewModel))]
+    [Crystal3.Navigation.NavigationViewModel(typeof(SettingsViewViewModel), Crystal3.Navigation.NavigationViewSupportedPlatform.Desktop | Crystal3.Navigation.NavigationViewSupportedPlatform.Mobile)]
     public sealed partial class SettingsView : Page
     {
         public SettingsView()
@@ -36,14 +36,6 @@ namespace Neptunium.View
             if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Mobile)
                 mainPivot.Items.Remove(carModePivotItem);
 #endif
-
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
-            {
-#if DEBUG
-                if (Crystal3.CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
-                    VisualStateManager.GoToState(this, XboxVisualState.Name, true);
-#endif
-            }
         }
 
         private void UpdateCarModeStatusIndicator(bool isInCarMode)

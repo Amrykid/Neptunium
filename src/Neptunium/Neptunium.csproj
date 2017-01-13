@@ -204,6 +204,9 @@
     <Compile Include="View\Xbox\XboxNowPlayingView.xaml.cs">
       <DependentUpon>XboxNowPlayingView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Xbox\XboxSettingsView.xaml.cs">
+      <DependentUpon>XboxSettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Xbox\XboxStationsView.xaml.cs">
       <DependentUpon>XboxStationsView.xaml</DependentUpon>
     </Compile>
@@ -374,6 +377,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Xbox\XboxNowPlayingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Xbox\XboxSettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
