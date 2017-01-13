@@ -248,7 +248,7 @@ namespace Neptunium.ViewModel
             }
 
 #if !DEBUG
-            if (e.Exception != null)
+            if (e.Exception != null && e.ReportError == true)
             {
                 HockeyClient.Current.TrackException(e.Exception);
                 HockeyClient.Current.Flush();

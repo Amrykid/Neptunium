@@ -283,7 +283,8 @@ namespace Neptunium.Media
                         {
                             Exception = new Exception("Unable to connect."),
                             Station = station,
-                            StillPlaying = audioCoordinator.CurrentStreamer != null ? audioCoordinator.CurrentStreamer.IsConnected : false
+                            StillPlaying = audioCoordinator.CurrentStreamer != null ? audioCoordinator.CurrentStreamer.IsConnected : false,
+                            ReportError = false
                         });
 
                         if (audioCoordinator.CurrentStreamer == null || !(bool)audioCoordinator.CurrentStreamer?.IsConnected)
@@ -315,7 +316,8 @@ namespace Neptunium.Media
                     {
                         Exception = new Exception("We were unable to find a stream for the station you selected."),
                         Station = station,
-                        StillPlaying = false
+                        StillPlaying = false,
+                        ReportError = false
                     });
                 }
             }

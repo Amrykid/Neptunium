@@ -12,5 +12,6 @@ namespace Neptunium.Media
         public MediaStreamSourceClosedReason ClosedReason { get; internal set; }
         public ConnectionProfile NetworkConnectionProfile { get; internal set; }
         public bool StillPlaying { get; internal set; }
+        public bool ReportError { get; internal set; } = true;
     }
 }
