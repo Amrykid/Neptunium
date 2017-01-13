@@ -90,13 +90,9 @@ namespace Neptunium.Media
                         return;
                     }
 
-                    CurrentStreamer.Player.CommandManager.IsEnabled = false; //disable the media transport controls for the current streamer.
-
                     streamer.Player.Play();
                     UseStreamerBase(streamer);
-
                     await Task.WhenAll(streamer.FadeVolumeUpToAsync(1.0), ((BasicMediaStreamer)CurrentStreamer).FadeVolumeDownToAsync(0.0));
-
                     await StopStreamingCurrentStreamerAsync();
 
 
