@@ -30,6 +30,21 @@ namespace Neptunium.View.Xbox
         public XboxNowPlayingView()
         {
             this.InitializeComponent();
+
+            App.Current.EnteredBackground += Current_EnteredBackground;
+            App.Current.LeavingBackground += Current_LeavingBackground;
+        }
+
+        private void Current_LeavingBackground(object sender, Windows.ApplicationModel.LeavingBackgroundEventArgs e)
+        {
+            if (StationMediaPlayer.IsPlaying)
+                ColorPanel.StartAnimating();
+        }
+
+        private void Current_EnteredBackground(object sender, Windows.ApplicationModel.EnteredBackgroundEventArgs e)
+        {
+            if (StationMediaPlayer.IsPlaying)
+                ColorPanel.StopAnimating();
         }
 
         private void StationMediaPlayer_IsPlayingChanged(object sender, EventArgs e)
@@ -68,6 +83,8 @@ namespace Neptunium.View.Xbox
 
             if (StationMediaPlayer.IsPlaying)
                 ColorPanel.StartAnimating();
+
+            SetPlaybackButtonState(StationMediaPlayer.IsPlaying);
 
             //if (StationMediaPlayer.IsPlaying && StationMediaPlayer.CurrentStation != null)
             //{
