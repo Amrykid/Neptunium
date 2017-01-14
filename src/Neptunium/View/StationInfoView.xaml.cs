@@ -66,6 +66,14 @@ namespace Neptunium.View
             }
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            var animation = ConnectedAnimationService.GetForCurrentView();
+            animation.GetAnimation("SelectedStationLogo").TryStart(StationLogo);
+
+            base.OnNavigatedTo(e);
+        }
+
         private void StationInfoView_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
