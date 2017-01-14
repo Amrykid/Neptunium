@@ -21,6 +21,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -40,6 +41,7 @@ namespace Neptunium.View
         public StationInfoView()
         {
             this.InitializeComponent();
+
             this.KeyDown += StationInfoView_KeyDown;
             blurColor = Color.FromArgb(255, 245, 245, 245);
 
@@ -52,6 +54,15 @@ namespace Neptunium.View
                 if (Crystal3.CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
                     VisualStateManager.GoToState(this, XboxVisualState.Name, true);
 #endif
+            }
+            else
+            {
+                //set up a transition based on the platform.
+                var transitionCol = new TransitionCollection();
+                var navTransition = new NavigationThemeTransition();
+                navTransition.DefaultNavigationTransitionInfo = new ContinuumNavigationTransitionInfo();
+                transitionCol.Add(navTransition);
+                this.Transitions = transitionCol;
             }
         }
 
