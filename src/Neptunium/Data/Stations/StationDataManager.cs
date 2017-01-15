@@ -63,6 +63,9 @@ namespace Neptunium.Data
                     stream.Url = x.Value;
                     stream.RelativePath = x.Attribute("RelativePath")?.Value;
 
+                    if (x.Attribute("ChannelCount") != null)
+                        stream.ChannelCount = int.Parse(x.Attribute("ChannelCount").Value);
+
                     try
                     {
                         if (x.Attribute("ServerType") != null)

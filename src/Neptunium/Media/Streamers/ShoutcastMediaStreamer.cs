@@ -12,7 +12,7 @@ namespace Neptunium.Media.Streamers
 {
     public class ShoutcastMediaStreamer : BasicMediaStreamer
     {
-        private MediaSourceStream.ShoutcastMediaSourceStream shoutcastStream = null;
+        private ShoutcastMediaSourceStream shoutcastStream = null;
 
         internal ShoutcastMediaStreamer() : base()
         {
@@ -20,13 +20,15 @@ namespace Neptunium.Media.Streamers
 
         public override async Task ConnectAsync(StationModel station, StationModelStream stream, IEnumerable<KeyValuePair<string, object>> props = null)
         {
-            shoutcastStream = new MediaSourceStream.ShoutcastMediaSourceStream(new Uri(stream.Url), ConvertServerTypeToMediaServerType(stream.ServerType));
+            ShoutcastMediaSourceStream.UserAgent = "Neptunium (http://github.com/Amrykid)";
+
+            shoutcastStream = new ShoutcastMediaSourceStream(new Uri(stream.Url), ConvertServerTypeToMediaServerType(stream.ServerType));
 
             shoutcastStream.MetadataChanged += ShoutcastStream_MetadataChanged;
 
             try
             {
-                await shoutcastStream.ConnectAsync(stream.SampleRate, stream.RelativePath, true);
+                await shoutcastStream.ConnectAsync(stream.SampleRate, (uint)stream.ChannelCount, stream.RelativePath, true);
 
                 Source = MediaSource.CreateFromMediaStreamSource(shoutcastStream.MediaStreamSource);
                 Source.StateChanged += Source_StateChanged;

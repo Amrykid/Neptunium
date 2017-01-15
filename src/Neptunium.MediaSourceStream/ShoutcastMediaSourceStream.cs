@@ -18,7 +18,6 @@ namespace Neptunium.MediaSourceStream
     {
         public enum StreamAudioFormat
         {
-            ///"audio/mpeg";
             MP3,
             AAC
         }
@@ -27,13 +26,15 @@ namespace Neptunium.MediaSourceStream
         public ShoutcastStationInfo StationInfo { get; private set; }
 
         public bool ShouldGetMetadata { get; private set; }
+        public static string UserAgent { get; set; }
 
         StreamSocket socket = null;
         DataWriter socketWriter = null;
         DataReader socketReader = null;
         private volatile bool connected = false;
-        private string _relativePath = ";";
-        private uint _sampleRate = 44100;
+        private string relativePath = ";";
+        private uint sampleRate = 44100;
+        private uint channelCount = 2;
         private ShoutcastServerType serverType = ShoutcastServerType.Shoutcast;
 
         Uri streamUrl = null;
@@ -110,14 +111,13 @@ namespace Neptunium.MediaSourceStream
 
             socket = new StreamSocket();
 
-            await ConnectAsync(_sampleRate, _relativePath, ShouldGetMetadata);
+            await ConnectAsync(sampleRate, channelCount, relativePath, ShouldGetMetadata);
         }
-        public async Task<MediaStreamSource> ConnectAsync(uint sampleRate = 44100, string relativePath = ";", bool getMetadata = true)
+        public async Task<MediaStreamSource> ConnectAsync(uint sampleRate = 44100, uint channelCount = 2, string relativePath = ";", bool getMetadata = true)
         {
-
             ShouldGetMetadata = getMetadata;
 
-            await HandleConnection(relativePath);
+            await EstablishConnectionAsync(relativePath);
 
             if (connected == false) return null;
 
@@ -127,17 +127,14 @@ namespace Neptunium.MediaSourceStream
             {
                 case StreamAudioFormat.MP3:
                     {
-                        MediaStreamSource = new Windows.Media.Core.MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(sampleRate, 2, (uint)bitRate)));
-                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(48000, 2, (uint)bitRate)));
-                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(32000, 2, (uint)bitRate)));
-                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(24000, 2, (uint)bitRate)));
-                        //MediaStreamSource.AddStreamDescriptor(new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(22050, 2, (uint)bitRate)));
+                        MediaStreamSource = new Windows.Media.Core.MediaStreamSource(
+                            new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(sampleRate, channelCount, (uint)bitRate)));
                     }
                     break;
                 case StreamAudioFormat.AAC:
                     {
-                        //AudioEncodingProperties
-                        MediaStreamSource = new MediaStreamSource(new AudioStreamDescriptor(AudioEncodingProperties.CreateAacAdts(sampleRate, 2, (uint)bitRate)));
+                        MediaStreamSource = new MediaStreamSource(
+                            new AudioStreamDescriptor(AudioEncodingProperties.CreateAacAdts(sampleRate, channelCount, (uint)bitRate)));
                     }
                     break;
             }
@@ -148,8 +145,9 @@ namespace Neptunium.MediaSourceStream
             MediaStreamSource.Closed += MediaStreamSource_Closed;
 
             connected = true;
-            _relativePath = relativePath;
-            _sampleRate = sampleRate;
+            this.relativePath = relativePath;
+            this.sampleRate = sampleRate;
+            this.channelCount = channelCount;
 
             return MediaStreamSource;
 
@@ -233,7 +231,7 @@ namespace Neptunium.MediaSourceStream
             
         }
 
-        private async Task HandleConnection(string relativePath)
+        private async Task EstablishConnectionAsync(string relativePath)
         {
             //http://www.smackfu.com/stuff/programming/shoutcast.html
             try
@@ -277,7 +275,7 @@ namespace Neptunium.MediaSourceStream
 
             socketWriter.WriteString("Host: " + streamUrl.Host + Environment.NewLine);
             socketWriter.WriteString("Connection: Keep-Alive" + Environment.NewLine);
-            socketWriter.WriteString("User-Agent: Neptunium (http://github.com/Amrykid)" + Environment.NewLine);
+            socketWriter.WriteString("User-Agent: " + (UserAgent ?? "Shoutcast Player (http://github.com/Amrykid/UWPShoutcastMSS") + Environment.NewLine);
             socketWriter.WriteString(Environment.NewLine);
             await socketWriter.StoreAsync();
             await socketWriter.FlushAsync();
@@ -300,7 +298,7 @@ namespace Neptunium.MediaSourceStream
                 socket = new StreamSocket();
                 streamUrl = new Uri(parsedResponse.First(x => x.Key.ToLower() == "location").Value);
 
-                await HandleConnection(relativePath);
+                await EstablishConnectionAsync(relativePath);
 
                 return;
             }

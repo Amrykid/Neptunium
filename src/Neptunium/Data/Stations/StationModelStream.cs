@@ -24,6 +24,8 @@ namespace Neptunium.Data
         public StationModelStreamServerType ServerType { get; internal set; }
         [DataMember]
         public string Url { get; internal set; }
+        [DataMember]
+        public int ChannelCount { get; internal set; } = 2;
     }
 
     public enum StationModelStreamServerType
