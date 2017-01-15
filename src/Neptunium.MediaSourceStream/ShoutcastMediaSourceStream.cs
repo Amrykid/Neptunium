@@ -19,7 +19,8 @@ namespace Neptunium.MediaSourceStream
         public enum StreamAudioFormat
         {
             MP3,
-            AAC
+            AAC,
+            AAC_ADTS //https://en.wikipedia.org/wiki/High-Efficiency_Advanced_Audio_Coding
         }
 
         public Windows.Media.Core.MediaStreamSource MediaStreamSource { get; private set; }
@@ -117,7 +118,9 @@ namespace Neptunium.MediaSourceStream
         {
             ShouldGetMetadata = getMetadata;
 
-            await EstablishConnectionAsync(relativePath);
+            this.relativePath = relativePath;
+
+            await EstablishConnectionAsync();
 
             if (connected == false) return null;
 
@@ -131,6 +134,11 @@ namespace Neptunium.MediaSourceStream
                     }
                     break;
                 case StreamAudioFormat.AAC:
+                    {
+                        obtainedProperties = AudioEncodingProperties.CreateAac(sampleRate, channelCount, (uint)bitRate);
+                    }
+                    break;
+                case StreamAudioFormat.AAC_ADTS:
                     {
                         obtainedProperties = AudioEncodingProperties.CreateAacAdts(sampleRate, channelCount, (uint)bitRate);
                     }
@@ -228,10 +236,10 @@ namespace Neptunium.MediaSourceStream
 
         private void MediaStreamSource_Starting(MediaStreamSource sender, MediaStreamSourceStartingEventArgs args)
         {
-            
+
         }
 
-        private async Task EstablishConnectionAsync(string relativePath)
+        private async Task EstablishConnectionAsync()
         {
             //http://www.smackfu.com/stuff/programming/shoutcast.html
             try
@@ -298,7 +306,7 @@ namespace Neptunium.MediaSourceStream
                 socket = new StreamSocket();
                 streamUrl = new Uri(parsedResponse.First(x => x.Key.ToLower() == "location").Value);
 
-                await EstablishConnectionAsync(relativePath);
+                await EstablishConnectionAsync();
 
                 return;
             }
@@ -340,14 +348,16 @@ namespace Neptunium.MediaSourceStream
             bitRate = uint.Parse(headers.FirstOrDefault(x => x.Key == "ICY-BR").Value);
             metadataInt = uint.Parse(headers.First(x => x.Key == "ICY-METAINT").Value);
 
-            switch(headers.First(x => x.Key == "CONTENT-TYPE").Value.ToLower().Trim())
+            switch (headers.First(x => x.Key == "CONTENT-TYPE").Value.ToLower().Trim())
             {
                 case "audio/mpeg":
                     contentType = StreamAudioFormat.MP3;
                     break;
                 case "audio/aac":
-                case "audio/aacp":
                     contentType = StreamAudioFormat.AAC;
+                    break;
+                case "audio/aacp":
+                    contentType = StreamAudioFormat.AAC_ADTS;
                     break;
             }
         }
@@ -424,6 +434,7 @@ namespace Neptunium.MediaSourceStream
                                 sampleLength = result.Item2;
                             }
                             break;
+                        case StreamAudioFormat.AAC_ADTS:
                         case StreamAudioFormat.AAC:
                             {
                                 Tuple<MediaStreamSample, uint> result = await ParseAACSampleAsync(partial: true, partialBytes: partialFrame);
@@ -450,6 +461,7 @@ namespace Neptunium.MediaSourceStream
                                 //await MediaStreamSample.CreateFromStreamAsync(socket.InputStream, bitRate, new TimeSpan(0, 0, 1));
                             }
                             break;
+                        case StreamAudioFormat.AAC_ADTS:
                         case StreamAudioFormat.AAC:
                             {
                                 Tuple<MediaStreamSample, uint> result = await ParseAACSampleAsync();
