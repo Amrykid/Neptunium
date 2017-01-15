@@ -198,6 +198,12 @@
     <Background></Background>
     <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
+      <Stream ContentType="audio/aac" Bitrate="48" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://yggdrasilradio.net:8000/
+      </Stream>
+      <Stream ContentType="audio/aac" Bitrate="56" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://95.211.241.92:9100/
+      </Stream>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
         http://95.211.241.92:9200/
       </Stream>

@@ -69,7 +69,7 @@ namespace Neptunium.View
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             var animation = ConnectedAnimationService.GetForCurrentView();
-            animation.GetAnimation("SelectedStationLogo").TryStart(StationLogo);
+            animation.GetAnimation("SelectedStationLogo")?.TryStart(StationLogo);
 
             base.OnNavigatedTo(e);
         }
