@@ -121,23 +121,23 @@ namespace Neptunium.MediaSourceStream
 
             if (connected == false) return null;
 
-            //AudioEncodingProperties obtainedProperties = await GetEncodingPropertiesAsync();
+            AudioEncodingProperties obtainedProperties = null; //await GetEncodingPropertiesAsync();
 
             switch (contentType)
             {
                 case StreamAudioFormat.MP3:
                     {
-                        MediaStreamSource = new Windows.Media.Core.MediaStreamSource(
-                            new AudioStreamDescriptor(AudioEncodingProperties.CreateMp3(sampleRate, channelCount, (uint)bitRate)));
+                        obtainedProperties = AudioEncodingProperties.CreateMp3(sampleRate, channelCount, (uint)bitRate);
                     }
                     break;
                 case StreamAudioFormat.AAC:
                     {
-                        MediaStreamSource = new MediaStreamSource(
-                            new AudioStreamDescriptor(AudioEncodingProperties.CreateAacAdts(sampleRate, channelCount, (uint)bitRate)));
+                        obtainedProperties = AudioEncodingProperties.CreateAacAdts(sampleRate, channelCount, (uint)bitRate);
                     }
                     break;
             }
+
+            MediaStreamSource = new Windows.Media.Core.MediaStreamSource(new AudioStreamDescriptor(obtainedProperties));
 
             MediaStreamSource.SampleRequested += MediaStreamSource_SampleRequested;
             MediaStreamSource.CanSeek = false;
