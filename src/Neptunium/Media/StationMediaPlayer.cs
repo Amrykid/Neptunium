@@ -1,6 +1,4 @@
 ﻿using Neptunium.Data;
-using Neptunium.MediaSourceStream;
-using Neptunium.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +22,7 @@ using Neptunium.Media.Streamers;
 using Crystal3;
 using Windows.Storage;
 using Crystal3.Core;
+using UWPShoutcastMSS.Streaming;
 
 namespace Neptunium.Media
 {

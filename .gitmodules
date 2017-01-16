@@ -19,3 +19,6 @@ url=https://github.com/Amrykid/MusicBrainz.git
 [submodule "lib/iTunesSearch"]
 	path = lib/iTunesSearch
 	url = https://github.com/Amrykid/iTunesSearch.git
+[submodule "lib/UWPShoutcastMSS"]
+	path = lib/UWPShoutcastMSS
+	url = https://github.com/Amrykid/UWPShoutcastMSS.git

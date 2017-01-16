@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using UWPShoutcastMSS.Streaming;
 using Windows.Storage;
 
 namespace Neptunium.Managers.Songs
@@ -40,7 +41,7 @@ namespace Neptunium.Managers.Songs
             IsInitialized = true;
         }
 
-        private static async void StationMediaPlayer_MetadataChanged(object sender, MediaSourceStream.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
+        private static async void StationMediaPlayer_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
             if (StationMediaPlayer.CurrentStation.StationMessages.Contains(e.Title)) return; //don't play that pre-defined station message that happens every so often.
 

@@ -19,7 +19,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Neptunium.Shared;
 using Windows.Media.Playback;
 using System.Diagnostics;
 using Neptunium.Media;

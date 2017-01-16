@@ -310,17 +310,13 @@
       <Project>{08d4701e-168c-43d1-9c6e-34b079cfd934}</Project>
       <Name>Hqub.MusicBrainz.API.Portable</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\lib\UWPShoutcastMSS\src\UWPShoutcastMSS\UWPShoutcastMSS.csproj">
+      <Project>{99bf0efd-5f65-489a-b2f7-f11cc89b81b8}</Project>
+      <Name>UWPShoutcastMSS</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\lib\winrtxamltoolkit\WinRTXamlToolkit\WinRTXamlToolkit.csproj">
       <Project>{ffb67e2d-f098-48d9-8bf6-b4355c18cd80}</Project>
       <Name>WinRTXamlToolkit</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Neptunium.MediaSourceStream\Neptunium.MediaSourceStream.csproj">
-      <Project>{6cbb529c-d32a-48b0-90d7-073d7ae2cb41}</Project>
-      <Name>Neptunium.MediaSourceStream</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Neptunium.Shared\Neptunium.Shared.csproj">
-      <Project>{8006955b-8d3f-494f-98c6-7610a7e1b1a2}</Project>
-      <Name>Neptunium.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

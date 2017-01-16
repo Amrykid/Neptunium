@@ -10,7 +10,6 @@ using Neptunium.Fragments;
 using Neptunium.Managers;
 using Neptunium.Media;
 using Neptunium.Services.SnackBar;
-using Neptunium.Shared;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Collections.Generic;

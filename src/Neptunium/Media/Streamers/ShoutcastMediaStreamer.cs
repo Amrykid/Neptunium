@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Neptunium.Data;
 using Windows.Media.Core;
 using System.Reactive.Subjects;
-using Neptunium.MediaSourceStream;
+using UWPShoutcastMSS.Streaming;
 
 namespace Neptunium.Media.Streamers
 {
