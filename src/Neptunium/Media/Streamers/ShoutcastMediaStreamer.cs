@@ -22,13 +22,13 @@ namespace Neptunium.Media.Streamers
         {
             ShoutcastMediaSourceStream.UserAgent = "Neptunium (http://github.com/Amrykid)";
 
-            shoutcastStream = new ShoutcastMediaSourceStream(new Uri(stream.Url), ConvertServerTypeToMediaServerType(stream.ServerType));
+            shoutcastStream = new ShoutcastMediaSourceStream(new Uri(stream.Url), ConvertServerTypeToMediaServerType(stream.ServerType), relativePath: stream.RelativePath);
 
             shoutcastStream.MetadataChanged += ShoutcastStream_MetadataChanged;
 
             try
             {
-                await shoutcastStream.ConnectAsync(stream.SampleRate, (uint)stream.ChannelCount, stream.RelativePath, true);
+                await shoutcastStream.ConnectAsync();
 
                 Source = MediaSource.CreateFromMediaStreamSource(shoutcastStream.MediaStreamSource);
                 Source.StateChanged += Source_StateChanged;
