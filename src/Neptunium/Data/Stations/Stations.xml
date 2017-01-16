@@ -406,4 +406,67 @@
       </Stream>
     </Streams>
   </Station>
+  <Station>
+    <Name>KPOPWAY RADIO</Name>
+    <Description><![CDATA[Listen all the #kpop you love, 24/7]]></Description>
+    <Logo>
+      <![CDATA[https://pbs.twimg.com/profile_images/662410830126936073/VGHo-_8H.png]]>
+    </Logo>
+    <Site>http://kpopway.com/</Site>
+    <Genres><![CDATA[K-Pop]]></Genres>
+    <PrimaryLocale>KR</PrimaryLocale>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://198.105.214.140:6469/Live
+      </Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>Aewen Radio (K-Pop)</Name>
+    <Description><![CDATA[Your Online KPOP & KMUSIC Station]]></Description>
+    <StationGroup>Aewen Radio</StationGroup>
+    <Logo>
+      <![CDATA[https://scontent-ord1-1.xx.fbcdn.net/v/t1.0-9/11056643_1025351537498189_237698083822822903_n.jpg?oh=eae2ff58c9ffb62149a48d633af92d44&oe=5914D76E]]>
+    </Logo>
+    <Site>http://www.aewen.com/</Site>
+    <Genres><![CDATA[K-Pop]]></Genres>
+    <PrimaryLocale>KR</PrimaryLocale>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://37.72.100.39:8001/stream
+      </Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>Aewen Radio (K-Drama OSTs)</Name>
+    <Description><![CDATA[Your Online KPOP & KMUSIC Station]]></Description>
+    <StationGroup>Aewen Radio</StationGroup>
+    <Logo>
+      <![CDATA[https://scontent-ord1-1.xx.fbcdn.net/v/t1.0-9/11056643_1025351537498189_237698083822822903_n.jpg?oh=eae2ff58c9ffb62149a48d633af92d44&oe=5914D76E]]>
+    </Logo>
+    <Site>http://www.aewen.com/</Site>
+    <Genres><![CDATA[K-Pop; K-Drama]]></Genres>
+    <PrimaryLocale>KR</PrimaryLocale>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://37.72.100.39:8025/stream
+      </Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>Aewen Radio (K-Jpop)</Name>
+    <Description><![CDATA[Your Online KPOP & KMUSIC Station]]></Description>
+    <StationGroup>Aewen Radio</StationGroup>
+    <Logo>
+      <![CDATA[https://scontent-ord1-1.xx.fbcdn.net/v/t1.0-9/11056643_1025351537498189_237698083822822903_n.jpg?oh=eae2ff58c9ffb62149a48d633af92d44&oe=5914D76E]]>
+    </Logo>
+    <Site>http://www.aewen.com/</Site>
+    <Genres><![CDATA[K-Pop; K-Drama; K-JPop]]></Genres>
+    <PrimaryLocale>KR</PrimaryLocale>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="44100" ServerType="Shoutcast" RelativePath=";">
+        http://37.72.100.39:8031/stream
+      </Stream>
+    </Streams>
+  </Station>
 </Stations>
