@@ -54,6 +54,13 @@ namespace Neptunium.Fragments
                                 {
                                     UI.SendMessageToUI("hide");
                                 }
+                                catch (Exception ex)
+                                {
+#if !DEBUG
+                                    HockeyClient.Current.TrackException(e.Exception);
+                                    HockeyClient.Current.Flush();
+#endif
+                                }
                             }
                             else
                             {

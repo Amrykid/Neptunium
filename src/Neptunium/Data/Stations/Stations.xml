@@ -478,7 +478,7 @@
     <Site>http://radio.nyan.pw</Site>
     <!--https://twitter.com/nyanprojects-->
     <!--http://nyanserver.com:8000/-->
-    <Genres><![CDATA[J-Trance, Trance, Nyancore, Electronic]]></Genres>
+    <Genres><![CDATA[J-Trance; Trance; Nyancore; Electronic]]></Genres>
     <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="128" SampleRate="48000" ServerType="Icecast" RelativePath="nyan.mp3">
@@ -486,6 +486,22 @@
       </Stream>
       <Stream ContentType="audio/aac" Bitrate="128" SampleRate="48000" ServerType="Icecast" RelativePath="nyan">
         http://nyanserver.com:8000/
+      </Stream>
+    </Streams>
+  </Station>
+  <Station>
+    <Name>Vocaloid Radio</Name>
+    <Description><![CDATA[Fan ran, non-profit Vocaloid Radio station.]]></Description>
+    <Logo>
+      <![CDATA[https://pbs.twimg.com/profile_images/499998223419707392/rfF2XYN8.jpeg]]>
+    </Logo>
+    <Background>http://vocaloidradio.com/wp-content/uploads/2014/08/cropped-website.jpg</Background>
+    <Site>http://vocaloidradio.com/</Site>
+    <Genres><![CDATA[Vocaloid; J-Pop; Electronic]]></Genres>
+    <PrimaryLocale>JP</PrimaryLocale>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" ServerType="Shoutcast" RelativePath="stream">
+        http://curiosity.shoutca.st:8019/
       </Stream>
     </Streams>
   </Station>
