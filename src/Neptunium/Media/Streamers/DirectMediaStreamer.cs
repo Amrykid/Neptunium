@@ -18,7 +18,7 @@ namespace Neptunium.Media.Streamers
 
         public override Task ConnectAsync(StationModel station, StationModelStream stream, IEnumerable<KeyValuePair<string, object>> props = null)
         {
-            Source = MediaSource.CreateFromUri(new Uri(stream.Url));
+            Source = MediaSource.CreateFromUri(new Uri(stream.Url.Trim()));
             Source.StateChanged += Source_StateChanged;
 
             Player.Source = Source;

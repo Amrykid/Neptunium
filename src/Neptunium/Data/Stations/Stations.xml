@@ -402,7 +402,7 @@
     <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
       <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" ServerType="Direct" RelativePath=";">
-        http://listen.moe:9999/stream
+        http://listen.moe:9999/fallback
       </Stream>
     </Streams>
   </Station>
