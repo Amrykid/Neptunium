@@ -401,8 +401,8 @@
     <Background>https://pbs.twimg.com/profile_banners/792628294793433088/1477813088/1500x500</Background>
     <PrimaryLocale>JP</PrimaryLocale>
     <Streams>
-      <Stream ContentType="audio/mpeg" Bitrate="192" SampleRate="44100" ServerType="Direct" RelativePath=";">
-        http://listen.moe:9999/fallback
+      <Stream ContentType="audio/aac" Bitrate="192" SampleRate="44100" ServerType="Icecast" RelativePath="fallback">
+        http://listen.moe:9999/
       </Stream>
     </Streams>
   </Station>
