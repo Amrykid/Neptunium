@@ -1,4 +1,6 @@
 ﻿using Crystal3.Model;
+using Microsoft.HockeyApp;
+using Microsoft.HockeyApp.DataContracts;
 using Neptunium.Data;
 using Neptunium.Data.History;
 using System;
@@ -57,7 +59,7 @@ namespace Neptunium.Fragments
                                 catch (Exception ex)
                                 {
 #if !DEBUG
-                                    HockeyClient.Current.TrackException(e.Exception);
+                                    HockeyClient.Current.TrackException(ex);
                                     HockeyClient.Current.Flush();
 #endif
                                 }
