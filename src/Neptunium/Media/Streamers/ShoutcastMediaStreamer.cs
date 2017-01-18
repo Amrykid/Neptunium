@@ -24,20 +24,25 @@ namespace Neptunium.Media.Streamers
 
             shoutcastStream = new ShoutcastMediaSourceStream(new Uri(stream.Url), ConvertServerTypeToMediaServerType(stream.ServerType), relativePath: stream.RelativePath);
 
-            shoutcastStream.MetadataChanged += ShoutcastStream_MetadataChanged;
-
             try
             {
-                await shoutcastStream.ConnectAsync();
+                shoutcastStream.MetadataChanged += ShoutcastStream_MetadataChanged;
 
-                Source = MediaSource.CreateFromMediaStreamSource(shoutcastStream.MediaStreamSource);
-                Source.StateChanged += Source_StateChanged;
-                Player.Source = Source;
+                IsConnected = await shoutcastStream.ConnectAsync();
 
-                CurrentStation = station;
-                CurrentStream = stream;
+                if (IsConnected)
+                {
+                    Source = MediaSource.CreateFromMediaStreamSource(shoutcastStream.MediaStreamSource);
+                    Source.StateChanged += Source_StateChanged;
+                    Player.Source = Source;
 
-                IsConnected = true;
+                    CurrentStation = station;
+                    CurrentStream = stream;
+                }
+                else
+                {
+                    shoutcastStream.MetadataChanged -= ShoutcastStream_MetadataChanged;
+                }
             }
             catch (Exception ex)
             {
