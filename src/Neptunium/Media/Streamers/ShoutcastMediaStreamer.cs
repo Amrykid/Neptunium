@@ -56,7 +56,7 @@ namespace Neptunium.Media.Streamers
 
         private void Source_StateChanged(MediaSource sender, MediaSourceStateChangedEventArgs args)
         {
-            IsConnected = args.NewState == MediaSourceState.Opened;
+            IsConnected = args.NewState == MediaSourceState.Opened || args.NewState == MediaSourceState.Opening;
         }
 
         private void ShoutcastStream_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
