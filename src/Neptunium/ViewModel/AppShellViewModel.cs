@@ -109,7 +109,7 @@ namespace Neptunium.ViewModel
             if (!StationMediaPlayer.IsInitialized)
                 await StationMediaPlayer.InitializeAsync();
 
-            SongManager.PreSongChanged += SongManager_PreSongChanged;
+            SongManager.SongChanged += SongManager_SongChanged;
             StationMediaPlayer.CurrentStationChanged += ShoutcastStationMediaPlayer_CurrentStationChanged;
             StationMediaPlayer.BackgroundAudioError += ShoutcastStationMediaPlayer_BackgroundAudioError;
             StationMediaPlayer.BackgroundAudioReconnecting += StationMediaPlayer_BackgroundAudioReconnecting;
@@ -152,10 +152,10 @@ namespace Neptunium.ViewModel
             {
                 HandoffStationCommand.SetCanExecute(StationMediaPlayer.IsPlaying);
             });
-            
+
         }
 
-        private async void SongManager_PreSongChanged(object sender, SongManagerSongChangedEventArgs e)
+        private async void SongManager_SongChanged(object sender, SongManagerSongChangedEventArgs e)
         {
             if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.ShowSongNotifications] == true)
             {
@@ -347,6 +347,19 @@ namespace Neptunium.ViewModel
                     }
                 }
 
+                var heroImageUrl = StationMediaPlayer.CurrentStation?.Logo;
+                //if (nowPlaying.ITunesData != null)
+                //{
+                //    if (!string.IsNullOrWhiteSpace(nowPlaying.ITunesData.Album?.AlbumCoverUrl))
+                //        heroImageUrl = nowPlaying.ITunesData.Album?.AlbumCoverUrl;
+                //}
+                //else if (nowPlaying.MBData != null)
+                //{
+                //    if (!string.IsNullOrWhiteSpace(nowPlaying.MBData.Album?.AlbumCoverUrl))
+                //        heroImageUrl = nowPlaying.MBData.Album?.AlbumCoverUrl;
+                //}
+
+
                 ToastContent content = new ToastContent()
                 {
                     Launch = "nowPlaying",
@@ -374,7 +387,7 @@ namespace Neptunium.ViewModel
                                 },
                             HeroImage = new ToastGenericHeroImage()
                             {
-                                Source = StationMediaPlayer.CurrentStation?.Logo,
+                                Source = heroImageUrl,
                                 AlternateText = StationMediaPlayer.CurrentStation?.Name,
                             },
                         }
