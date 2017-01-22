@@ -35,9 +35,16 @@ namespace Neptunium.ViewModel
     {
         public NowPlayingViewViewModel()
         {
-            ViewAlbumOnMusicBrainzCommand = new ManualRelayCommand(x =>
+            ViewAlbumCommand = new RelayCommand(async x =>
             {
-                //await Launcher.LaunchUriAsync(new Uri("https://musicbrainz.org/release/" + CurrentSongAlbumData.AlbumID));
+                if (CurrentAlbum != null)
+                    await Launcher.LaunchUriAsync(new Uri(CurrentAlbum.AlbumLinkUrl));
+            });
+
+            ViewArtistCommand = new RelayCommand(async x =>
+            {
+                if (CurrentArtistData != null)
+                    await Launcher.LaunchUriAsync(new Uri(CurrentArtistData.ArtistLinkUrl));
             });
 
             PlayPauseCommand = new RelayCommand(item =>
@@ -99,6 +106,9 @@ namespace Neptunium.ViewModel
                 SongMetadata = song.Track + " by " + song.Artist;
 
                 UpdateCoverImage(song);
+
+                CurrentAlbum = song.GetAlbumData();
+                CurrentArtistData = song.GetArtistData();
             }
 
             SongManager.PreSongChanged += SongManager_PreSongChanged;
@@ -161,12 +171,19 @@ namespace Neptunium.ViewModel
                 await App.Dispatcher.RunAsync(() =>
                 {
                     UpdateCoverImage(e.Metadata);
+
+                    if (!e.IsUnknown)
+                    {
+                        CurrentAlbum = e.Metadata?.GetAlbumData();
+                        CurrentArtistData = e.Metadata?.GetArtistData();
+                    }
                 });
 
             }
         }
 
-        public ManualRelayCommand ViewAlbumOnMusicBrainzCommand { get; private set; }
+        public RelayCommand ViewAlbumCommand { get; private set; }
+        public RelayCommand ViewArtistCommand { get; private set; }
 
         public string SongMetadata
         {
@@ -184,7 +201,8 @@ namespace Neptunium.ViewModel
 
         public string CurrentSong { get { return GetPropertyValue<string>(); } private set { SetPropertyValue<string>(value: value); } }
         public string CurrentArtist { get { return GetPropertyValue<string>(); } private set { SetPropertyValue<string>(value: value); } }
-        public Uri CurrentAlbum { get { return GetPropertyValue<Uri>(); } private set { SetPropertyValue<Uri>(value: value); } }
+        public ArtistData CurrentArtistData { get { return GetPropertyValue<ArtistData>(); } private set { SetPropertyValue<ArtistData>(value: value); } }
+        public AlbumData CurrentAlbum { get { return GetPropertyValue<AlbumData>(); } private set { SetPropertyValue<AlbumData>(value: value); } }
         public Uri CoverImage { get { return GetPropertyValue<Uri>(); } private set { SetPropertyValue<Uri>(value: value); } }
 
         public string NowPlayingBackgroundImage { get { return GetPropertyValue<string>(); } set { SetPropertyValue<string>(value: value); } }

@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Neptunium.Data;
+using System.Runtime.Serialization;
 
 namespace Neptunium.Managers.Songs
 {
@@ -40,6 +41,26 @@ namespace Neptunium.Managers.Songs
             }
 
             return base.Equals(obj);
+        }
+
+        public AlbumData GetAlbumData()
+        {
+            if (MBData?.Album != null)
+                return MBData?.Album;
+            else if (ITunesData?.Album != null)
+                return ITunesData?.Album;
+            else
+                return null;
+        }
+
+        public ArtistData GetArtistData()
+        {
+            if (MBData?.Artist != null)
+                return MBData?.Artist;
+            else if (ITunesData?.Artist != null)
+                return ITunesData?.Artist;
+            else
+                return null;
         }
     }
 }

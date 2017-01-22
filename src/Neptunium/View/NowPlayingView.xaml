@@ -6,17 +6,97 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:nepcon="using:Neptunium.Controls"
+    xmlns:cconv="using:Crystal3.UI.Converters"
     xmlns:ki="using:Kimono.Controls"
     xmlns:uwpcon="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d" Loaded="Page_Loaded" DataContextChanged="Page_DataContextChanged" Unloaded="Page_Unloaded">
 
     <Page.Resources>
+        <cconv:NullToVisibilityConverter x:Key="NVConv" />
+        <cconv:InverseNullToVisibilityConverter x:Key="INVConv" />
+
         <DataTemplate x:Key="NowPlayingSecondaryDataPanelTemplate">
             <Pivot>
                 <PivotItem Header="Album">
+                    <Grid>
+                        <Grid Visibility="{Binding CurrentAlbum, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource INVConv}}">
+                            <TextBlock Text="No album data available for this song." />
+                        </Grid>
+                        <Grid Visibility="{Binding CurrentAlbum, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NVConv}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
 
+                            <TextBlock Text="{Binding CurrentAlbum.Album, UpdateSourceTrigger=PropertyChanged}" 
+                                       Grid.Row="0" Style="{ThemeResource TitleTextBlockStyle}" 
+                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+
+                            <TextBlock Text="{Binding CurrentAlbum.Artist, UpdateSourceTrigger=PropertyChanged}" 
+                                       Grid.Row="1" Style="{ThemeResource SubtitleTextBlockStyle}" 
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
+
+                            <TextBlock Grid.Row="2" Style="{ThemeResource BodyTextBlockStyle}" 
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
+                                <Span>
+                                    <Run Text="Release Date:" />
+                                    <Run Text="{Binding CurrentAlbum.Artist, UpdateSourceTrigger=PropertyChanged}" />
+                                </Span>
+                            </TextBlock>
+
+                            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                                <StackPanel.Resources>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Margin" Value="0 0 10 0" />
+                                    </Style>
+                                </StackPanel.Resources>
+
+                                <Button Content="View More" Command="{Binding ViewAlbumCommand}" />
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
                 </PivotItem>
-                <PivotItem Header="Events" />
+                <PivotItem Header="Artist">
+                    <ScrollViewer>
+                        <Grid>
+                            <Grid Visibility="{Binding CurrentArtistData, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource INVConv}}">
+                                <TextBlock Text="No artist data available for this song." />
+                            </Grid>
+                            <Grid Visibility="{Binding CurrentArtistData, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NVConv}}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" MaxHeight="300" />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <uwpcon:ImageEx IsCacheEnabled="True" Visibility="{Binding CurrentArtistData.ArtistImage, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NVConv}}"
+                                            Source="{Binding CurrentArtistData.ArtistImage, UpdateSourceTrigger=PropertyChanged}" Height="300" Width="300" HorizontalAlignment="Left" />
+
+                                <TextBlock Text="{Binding CurrentArtistData.Name, UpdateSourceTrigger=PropertyChanged}" 
+                                       Grid.Row="1" Style="{ThemeResource TitleTextBlockStyle}" 
+                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+
+                                <TextBlock Text="{Binding CurrentArtistData.Gender, UpdateSourceTrigger=PropertyChanged}" 
+                                       Grid.Row="2" Style="{ThemeResource SubtitleTextBlockStyle}" 
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
+
+
+                                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                                    <StackPanel.Resources>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Margin" Value="0 0 10 0" />
+                                        </Style>
+                                    </StackPanel.Resources>
+
+                                    <Button Content="View More" Command="{Binding ViewArtistCommand}" />
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </ScrollViewer>
+                </PivotItem>
             </Pivot>
         </DataTemplate>
     </Page.Resources>
@@ -110,7 +190,7 @@
                 </Grid>
 
             </Grid>
-            
+
             <Grid x:Name="MobileView">
                 <Grid>
                     <Grid.RowDefinitions>
