@@ -306,9 +306,9 @@
       <Project>{c05d6334-a960-4289-8104-7b554e987f0a}</Project>
       <Name>Kukkii</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\lib\MusicBrainz\Hqub.MusicBrainz\Hqub.MusicBrainz.API.Portable\Hqub.MusicBrainz.API.Portable.csproj">
-      <Project>{08d4701e-168c-43d1-9c6e-34b079cfd934}</Project>
-      <Name>Hqub.MusicBrainz.API.Portable</Name>
+    <ProjectReference Include="..\..\lib\MusicBrainz\Hqub.MusicBrainz\Hqub.MusicBrainz.API.UWP\Hqub.MusicBrainz.API.UWP.csproj">
+      <Project>{e2bf69ec-25bb-44b6-830f-1c383410dbe4}</Project>
+      <Name>Hqub.MusicBrainz.API.UWP</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\lib\UWPShoutcastMSS\src\UWPShoutcastMSS\UWPShoutcastMSS.csproj">
       <Project>{99bf0efd-5f65-489a-b2f7-f11cc89b81b8}</Project>

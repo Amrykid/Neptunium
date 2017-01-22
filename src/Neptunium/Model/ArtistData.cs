@@ -14,6 +14,8 @@ namespace Neptunium.Data
         [DataMember]
         public string Name { get; set; }
         [DataMember]
+        public string AlternateName { get; set; }
+        [DataMember]
         public string ArtistID { get; set; }
         [DataMember]
         public string Gender { get; set; }
@@ -21,5 +23,7 @@ namespace Neptunium.Data
         public string ArtistImage { get; set; }
         [DataMember]
         public string ArtistLinkUrl { get; set; }
+        [DataMember]
+        public string WikipediaUrl { get; internal set; }
     }
 }

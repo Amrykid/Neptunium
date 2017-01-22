@@ -14,7 +14,7 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
         {
             ArtistData data = new ArtistData();
 
-            var artistData = await Artist.GetAsync(artistID, "url-rels", "aliases");
+            var artistData = await Artist.GetAsync(artistID, "url-rels", "aliases", "artist-rels");
 
             if (artistData != null)
             {
@@ -33,6 +33,12 @@ namespace Neptunium.Managers.Songs.Metadata_Sources
                             if (await CheckIfUrlIsWebAccessibleAsync(new Uri(imageRel.Target)))
                                 data.ArtistImage = imageRel.Target;
                         }
+                    }
+
+                    var wikipediaRel = artistData.RelationLists.Items.FirstOrDefault(x => x.Type == "wikipedia");
+                    if (wikipediaRel != null)
+                    {
+                        data.WikipediaUrl = wikipediaRel.Target;
                     }
                 }
 
