@@ -322,6 +322,12 @@ namespace Neptunium.Media
             }
             catch (Exception ex)
             {
+                try
+                {
+                    await audioCoordinator.StopStreamingCurrentStreamerAsync();
+                }
+                catch (Exception) { }
+
                 BackgroundAudioError?.Invoke(null, new StationMediaPlayerBackgroundAudioErrorEventArgs()
                 {
                     Exception = ex,
