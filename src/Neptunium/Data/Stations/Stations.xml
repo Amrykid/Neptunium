@@ -505,4 +505,20 @@
       </Stream>
     </Streams>
   </Station>
+  <Station>
+    <Name>ToukuFM</Name>
+    <Description>ToukuFM is a world-wide radio station dedicated to bringing anime music and remixes, doujin music, J-core, and J-EDM to Western audiences!</Description>
+    <Logo>http://cdn-radiotime-logos.tunein.com/s253998q.png</Logo>
+    <Background>https://toukufm.com/images/bg/shibuya.jpg</Background>
+    <Site>https://toukufm.com/</Site>
+    <Genres>Anime; J-Core; J-EDM; Doujin</Genres>
+    <PrimaryLocale>JP</PrimaryLocale>
+    <Streams>
+      <Stream ContentType="audio/mpeg" Bitrate="120" SampleRate="44100" ServerType="Direct">http://dj.toukufm.com:8000/stream128.mp3</Stream>
+      <Stream ContentType="audio/mpeg" Bitrate="320" SampleRate="44100" ServerType="Direct">http://dj.toukufm.com:8000/stream320.mp3</Stream>
+    </Streams>
+    <!--<StationMessages>
+      <Message>AnimeAMAZE - Triple-M - AnimeAMAZE Internet Radio</Message>
+    </StationMessages>-->
+  </Station>
 </Stations>
