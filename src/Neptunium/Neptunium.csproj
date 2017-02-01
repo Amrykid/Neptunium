@@ -270,7 +270,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\WideLogo.scale-100.png" />
-    <Content Include="Data\Stations\Stations.xml">
+    <Content Include="Data\Stations\Data\Stations.xml">
       <SubType>Designer</SubType>
     </Content>
     <None Include="Package.StoreAssociation.xml" />

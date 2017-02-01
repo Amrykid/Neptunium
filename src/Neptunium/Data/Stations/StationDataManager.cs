@@ -24,7 +24,7 @@ namespace Neptunium.Data
 
             if (IsInitialized) return;
 
-            var file = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(@"Data\Stations\Stations.xml");
+            var file = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(@"Data\Stations\Data\Stations.xml");
             var reader = await file.OpenReadAsync();
             XDocument xmlDoc = XDocument.Load(reader.AsStream());
 
