@@ -73,6 +73,12 @@ namespace Neptunium.View
                 IoC.Current.Register<ISnackBarService>(new SnackBarService(snackBarGrid));
             }
 
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = ((SolidColorBrush)SplitViewContentGrid.Background)?.Color;
+                statusBar.BackgroundOpacity = 1.0;
+            }
         }
 
         private void AppShellView_KeyDown(object sender, KeyRoutedEventArgs e)
