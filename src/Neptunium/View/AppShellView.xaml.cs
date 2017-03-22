@@ -41,6 +41,7 @@ namespace Neptunium.View
     public partial class AppShellView : Page
     {
         private FrameNavigationService inlineNavService = null;
+        private AppShellViewModel viewModel = null;
         public AppShellView()
         {
             this.InitializeComponent();
@@ -128,7 +129,36 @@ namespace Neptunium.View
 
         private void AppShellView_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
+            viewModel = args.NewValue as AppShellViewModel;
+            if (viewModel != null)
+            {
+                this.DataContextChanged -= AppShellView_DataContextChanged;
 
+                viewModel.PropertyChanged += ViewModel_PropertyChanged;
+            }
+        }
+
+        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName)
+            {
+                case nameof(AppShellViewModel.IsBusy):
+                    {
+                        if (viewModel.IsBusy)
+                        {
+                            //hide while trying to connect or do another blocking task.
+                            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                        }
+                        else
+                        {
+                            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                                inlineFrame.CanGoBack ? AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void AppShellView_NavigationServicePreNavigatedSignaled(object sender, NavigationServicePreNavigatedSignaledEventArgs e)
