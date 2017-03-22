@@ -19,6 +19,7 @@ namespace Neptunium.Data.Stations
             if (station == null) throw new ArgumentNullException(nameof(station));
 
             string colorKey = "LogoColor|" + station.Name;
+            Color color = default(Color);
 
             if (await CookieJar.DeviceCache.ContainsObjectAsync(colorKey))
             {
@@ -27,11 +28,26 @@ namespace Neptunium.Data.Stations
                 return ColorUtilities.ParseFromHexString(hexCode);
             }
 
-            var streamRef = RandomAccessStreamReference.CreateFromUri(new Uri(station.Logo));
-            var stationLogoStream = await streamRef.OpenReadAsync();
-            var color = await ColorUtilities.GetDominantColorAsync(stationLogoStream);
+            IRandomAccessStreamWithContentType stationLogoStream = null;
+            try
+            {
+                var streamRef = RandomAccessStreamReference.CreateFromUri(new Uri(station.Logo));
+                stationLogoStream = await streamRef.OpenReadAsync();
+                color = await ColorUtilities.GetDominantColorAsync(stationLogoStream);
+            }
+            catch (Exception ex)
+            {
+                Dictionary<string, string> data = new Dictionary<string, string>();
+                data.Add("Station Name", station.Name);
+                data.Add("Station Logo URL", station.Logo);
+                data.Add("Station URL", station.Site);
 
-            stationLogoStream.Dispose();
+                Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, data);
+            }
+            finally
+            {
+                stationLogoStream?.Dispose();
+            }
 
             await CookieJar.DeviceCache.InsertObjectAsync<string>(colorKey, color.ToString());
 
