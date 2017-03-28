@@ -19,10 +19,12 @@ Also, I wasn't a fan of the name Hanasu. Hanasu is the Japanese verb for "to spe
 
 ## Screenshots
 More screenshots can be found [here](https://github.com/Amrykid/Neptunium/wiki/Screenshots).
-![img](/img/win10m/win10m-2.png)
+![img](/img/win10m/win10m-2_small.png)
 
 ## Download
-You can find Neptunium in the Windows Store via the following link: https://www.microsoft.com/store/apps/{app_id} where "app_id" is "9nblggh1r9cq" without the quotes. The reason that I am not directly linking to it is because I have the store listing set as hidden and I don't want it to be indexed in search engines.
+You can find Neptunium in the Windows Store via the following link: https://www.microsoft.com/store/apps/{app_id} where "app_id" is "9nblggh1r9cq" without the quotes. The reason that I am not directly linking to it is because I have the store listing set as hidden and I don't want it to be indexed in search engines at this time.
+
+Requires the Anniversary Update (Redstone 1).
 
 ## For Developers
 Here are some of the projects or libraries I've used when writing this:
