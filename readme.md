@@ -18,7 +18,8 @@ Neptunium was intended to be a codename for the next version of Hanasu. Early co
 Also, I wasn't a fan of the name Hanasu. Hanasu is the Japanese verb for "to speak" which didn't make very much sense for a music application. At the same time, the verb for "listening", "Kiku", didn't have the same ring to it. In the end, I decided to go along with Neptunium as a name.
 
 ## Screenshots
-*coming soon...*
+More screenshots can be found [here](https://github.com/Amrykid/Neptunium/wiki/Screenshots).
+![img](/img/win10m/win10m-2.png)
 
 ## Download
 You can find Neptunium in the Windows Store via the following link: https://www.microsoft.com/store/apps/{app_id} where "app_id" is "9nblggh1r9cq" without the quotes. The reason that I am not directly linking to it is because I have the store listing set as hidden and I don't want it to be indexed in search engines.
