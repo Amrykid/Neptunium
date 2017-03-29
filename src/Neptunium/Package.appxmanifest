@@ -35,7 +35,6 @@
     <uap3:Capability Name="backgroundMediaPlayback" />
     <uap3:Capability Name="remoteSystem" />
     <DeviceCapability Name="bluetooth" />
-    <DeviceCapability Name="microphone" />
     <DeviceCapability Name="proximity" />
     <DeviceCapability Name="radios" />
   </Capabilities>
