@@ -74,7 +74,9 @@ namespace Neptunium.Fragments
                 catch (Exception ex)
                 {
                     await IoC.Current.Resolve<IMessageDialogService>()
-                          .ShowAsync("Uh-oh!", "We weren't able to hand off.");
+                          .ShowAsync("Uh-oh!", "We weren't able to hand off.\r\n" + ex.ToString());
+
+                    Microsoft.HockeyApp.HockeyClient.Current?.TrackException(ex);
                 }
                 finally
                 {
