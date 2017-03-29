@@ -211,7 +211,7 @@ namespace Neptunium.ViewModel
         {
             StationMediaPlayer.BackgroundAudioError -= ShoutcastStationMediaPlayer_BackgroundAudioError; //throttle error messages
 
-            string title = "What the goodness?!";
+            string title = "Uh-oh!";
             string message = "An error occured while trying stream this station.";
 
             if (e.ClosedReason == Windows.Media.Core.MediaStreamSourceClosedReason.AppReportedError)
