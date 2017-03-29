@@ -8,7 +8,7 @@
     <Logo>Assets\NewStoreLogo.png</Logo>
   </Properties>
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
   </Dependencies>
   <Resources>
     <Resource Language="x-generate" />
@@ -23,6 +23,9 @@
       <Extensions>
         <uap:Extension Category="windows.protocol">
           <uap:Protocol Name="nep" />
+        </uap:Extension>
+        <uap:Extension Category="windows.appService">
+          <uap3:AppService Name="com.Amrykid.CAEAppService" SupportsRemoteSystems="true" />
         </uap:Extension>
         <!--<uap:Extension Category="windows.appService">
           <uap3:AppService Name="com.Amrykid.CAEAppService" SupportsRemoteSystems="true" />
