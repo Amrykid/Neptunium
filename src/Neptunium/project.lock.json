@@ -3,7 +3,7 @@
   "version": 1,
   "targets": {
     "UAP,Version=v10.0": {
-      "HockeySDK.Core/4.1.5": {
+      "HockeySDK.Core/4.1.6": {
         "compile": {
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         },
@@ -11,9 +11,9 @@
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         }
       },
-      "HockeySDK.UWP/4.1.5": {
+      "HockeySDK.UWP/4.1.6": {
         "dependencies": {
-          "HockeySDK.Core": "4.1.5"
+          "HockeySDK.Core": "4.1.6"
         },
         "compile": {
           "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
@@ -255,7 +255,7 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
-      "Microsoft.Toolkit.Uwp/1.2.0": {
+      "Microsoft.Toolkit.Uwp/1.4.1": {
         "dependencies": {
           "Newtonsoft.Json": "9.0.1"
         },
@@ -266,7 +266,7 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+      "Microsoft.Toolkit.Uwp.Notifications/1.4.1": {
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         },
@@ -274,9 +274,9 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
@@ -285,12 +285,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Animations/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Animations/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
           "Microsoft.Xaml.Behaviors.Uwp.Managed": "1.1.0",
-          "Win2D.uwp": "1.18.0"
+          "Win2D.uwp": "1.19.0"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
@@ -299,11 +299,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Controls/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Controls/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI.Animations": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI.Animations": "1.4.1",
+          "Robmikh.CompositionSurfaceFactory": "0.7.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls.dll": {}
@@ -412,6 +413,43 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
+        }
+      },
+      "Robmikh.CompositionSurfaceFactory/0.7.1": {
+        "dependencies": {
+          "Win2D.uwp": "1.19.0"
+        },
+        "compile": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "runtimeTargets": {
+          "runtimes/win10-arm/native/Robmikh.CompositionSurfaceFactory.dll": {
+            "assetType": "native",
+            "rid": "win10-arm"
+          },
+          "runtimes/win10-arm/native/Robmikh.CompositionSurfaceFactory.pri": {
+            "assetType": "native",
+            "rid": "win10-arm"
+          },
+          "runtimes/win10-x64/native/Robmikh.CompositionSurfaceFactory.dll": {
+            "assetType": "native",
+            "rid": "win10-x64"
+          },
+          "runtimes/win10-x64/native/Robmikh.CompositionSurfaceFactory.pri": {
+            "assetType": "native",
+            "rid": "win10-x64"
+          },
+          "runtimes/win10-x86/native/Robmikh.CompositionSurfaceFactory.dll": {
+            "assetType": "native",
+            "rid": "win10-x86"
+          },
+          "runtimes/win10-x86/native/Robmikh.CompositionSurfaceFactory.pri": {
+            "assetType": "native",
+            "rid": "win10-x86"
+          }
         }
       },
       "runtime.native.System.IO.Compression/4.1.0": {
@@ -2323,7 +2361,7 @@
       }
     },
     "UAP,Version=v10.0/win10-arm": {
-      "HockeySDK.Core/4.1.5": {
+      "HockeySDK.Core/4.1.6": {
         "compile": {
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         },
@@ -2331,9 +2369,9 @@
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         }
       },
-      "HockeySDK.UWP/4.1.5": {
+      "HockeySDK.UWP/4.1.6": {
         "dependencies": {
-          "HockeySDK.Core": "4.1.5"
+          "HockeySDK.Core": "4.1.6"
         },
         "compile": {
           "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
@@ -2522,7 +2560,7 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
-      "Microsoft.Toolkit.Uwp/1.2.0": {
+      "Microsoft.Toolkit.Uwp/1.4.1": {
         "dependencies": {
           "Newtonsoft.Json": "9.0.1"
         },
@@ -2533,7 +2571,7 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+      "Microsoft.Toolkit.Uwp.Notifications/1.4.1": {
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         },
@@ -2541,9 +2579,9 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
@@ -2552,12 +2590,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Animations/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Animations/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
           "Microsoft.Xaml.Behaviors.Uwp.Managed": "1.1.0",
-          "Win2D.uwp": "1.18.0"
+          "Win2D.uwp": "1.19.0"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
@@ -2566,11 +2604,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Controls/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Controls/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI.Animations": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI.Animations": "1.4.1",
+          "Robmikh.CompositionSurfaceFactory": "0.7.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls.dll": {}
@@ -2680,6 +2719,21 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
+        }
+      },
+      "Robmikh.CompositionSurfaceFactory/0.7.1": {
+        "dependencies": {
+          "Win2D.uwp": "1.19.0"
+        },
+        "compile": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-arm/native/Robmikh.CompositionSurfaceFactory.dll": {},
+          "runtimes/win10-arm/native/Robmikh.CompositionSurfaceFactory.pri": {}
         }
       },
       "runtime.any.System.Collections/4.0.11": {
@@ -4717,7 +4771,7 @@
       }
     },
     "UAP,Version=v10.0/win10-arm-aot": {
-      "HockeySDK.Core/4.1.5": {
+      "HockeySDK.Core/4.1.6": {
         "compile": {
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         },
@@ -4725,9 +4779,9 @@
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         }
       },
-      "HockeySDK.UWP/4.1.5": {
+      "HockeySDK.UWP/4.1.6": {
         "dependencies": {
-          "HockeySDK.Core": "4.1.5"
+          "HockeySDK.Core": "4.1.6"
         },
         "compile": {
           "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
@@ -4917,7 +4971,7 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
-      "Microsoft.Toolkit.Uwp/1.2.0": {
+      "Microsoft.Toolkit.Uwp/1.4.1": {
         "dependencies": {
           "Newtonsoft.Json": "9.0.1"
         },
@@ -4928,7 +4982,7 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+      "Microsoft.Toolkit.Uwp.Notifications/1.4.1": {
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         },
@@ -4936,9 +4990,9 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
@@ -4947,12 +5001,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Animations/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Animations/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
           "Microsoft.Xaml.Behaviors.Uwp.Managed": "1.1.0",
-          "Win2D.uwp": "1.18.0"
+          "Win2D.uwp": "1.19.0"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
@@ -4961,11 +5015,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Controls/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Controls/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI.Animations": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI.Animations": "1.4.1",
+          "Robmikh.CompositionSurfaceFactory": "0.7.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls.dll": {}
@@ -5075,6 +5130,21 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
+        }
+      },
+      "Robmikh.CompositionSurfaceFactory/0.7.1": {
+        "dependencies": {
+          "Win2D.uwp": "1.19.0"
+        },
+        "compile": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-arm/native/Robmikh.CompositionSurfaceFactory.dll": {},
+          "runtimes/win10-arm/native/Robmikh.CompositionSurfaceFactory.pri": {}
         }
       },
       "runtime.aot.System.Collections/4.0.10": {
@@ -7150,7 +7220,7 @@
       }
     },
     "UAP,Version=v10.0/win10-x64": {
-      "HockeySDK.Core/4.1.5": {
+      "HockeySDK.Core/4.1.6": {
         "compile": {
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         },
@@ -7158,9 +7228,9 @@
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         }
       },
-      "HockeySDK.UWP/4.1.5": {
+      "HockeySDK.UWP/4.1.6": {
         "dependencies": {
-          "HockeySDK.Core": "4.1.5"
+          "HockeySDK.Core": "4.1.6"
         },
         "compile": {
           "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
@@ -7353,7 +7423,7 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
-      "Microsoft.Toolkit.Uwp/1.2.0": {
+      "Microsoft.Toolkit.Uwp/1.4.1": {
         "dependencies": {
           "Newtonsoft.Json": "9.0.1"
         },
@@ -7364,7 +7434,7 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+      "Microsoft.Toolkit.Uwp.Notifications/1.4.1": {
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         },
@@ -7372,9 +7442,9 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
@@ -7383,12 +7453,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Animations/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Animations/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
           "Microsoft.Xaml.Behaviors.Uwp.Managed": "1.1.0",
-          "Win2D.uwp": "1.18.0"
+          "Win2D.uwp": "1.19.0"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
@@ -7397,11 +7467,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Controls/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Controls/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI.Animations": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI.Animations": "1.4.1",
+          "Robmikh.CompositionSurfaceFactory": "0.7.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls.dll": {}
@@ -7511,6 +7582,21 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
+        }
+      },
+      "Robmikh.CompositionSurfaceFactory/0.7.1": {
+        "dependencies": {
+          "Win2D.uwp": "1.19.0"
+        },
+        "compile": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-x64/native/Robmikh.CompositionSurfaceFactory.dll": {},
+          "runtimes/win10-x64/native/Robmikh.CompositionSurfaceFactory.pri": {}
         }
       },
       "runtime.any.System.Collections/4.0.11": {
@@ -9553,7 +9639,7 @@
       }
     },
     "UAP,Version=v10.0/win10-x64-aot": {
-      "HockeySDK.Core/4.1.5": {
+      "HockeySDK.Core/4.1.6": {
         "compile": {
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         },
@@ -9561,9 +9647,9 @@
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         }
       },
-      "HockeySDK.UWP/4.1.5": {
+      "HockeySDK.UWP/4.1.6": {
         "dependencies": {
-          "HockeySDK.Core": "4.1.5"
+          "HockeySDK.Core": "4.1.6"
         },
         "compile": {
           "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
@@ -9757,7 +9843,7 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
-      "Microsoft.Toolkit.Uwp/1.2.0": {
+      "Microsoft.Toolkit.Uwp/1.4.1": {
         "dependencies": {
           "Newtonsoft.Json": "9.0.1"
         },
@@ -9768,7 +9854,7 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+      "Microsoft.Toolkit.Uwp.Notifications/1.4.1": {
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         },
@@ -9776,9 +9862,9 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
@@ -9787,12 +9873,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Animations/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Animations/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
           "Microsoft.Xaml.Behaviors.Uwp.Managed": "1.1.0",
-          "Win2D.uwp": "1.18.0"
+          "Win2D.uwp": "1.19.0"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
@@ -9801,11 +9887,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Controls/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Controls/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI.Animations": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI.Animations": "1.4.1",
+          "Robmikh.CompositionSurfaceFactory": "0.7.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls.dll": {}
@@ -9915,6 +10002,21 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
+        }
+      },
+      "Robmikh.CompositionSurfaceFactory/0.7.1": {
+        "dependencies": {
+          "Win2D.uwp": "1.19.0"
+        },
+        "compile": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-x64/native/Robmikh.CompositionSurfaceFactory.dll": {},
+          "runtimes/win10-x64/native/Robmikh.CompositionSurfaceFactory.pri": {}
         }
       },
       "runtime.aot.System.Collections/4.0.10": {
@@ -11995,7 +12097,7 @@
       }
     },
     "UAP,Version=v10.0/win10-x86": {
-      "HockeySDK.Core/4.1.5": {
+      "HockeySDK.Core/4.1.6": {
         "compile": {
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         },
@@ -12003,9 +12105,9 @@
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         }
       },
-      "HockeySDK.UWP/4.1.5": {
+      "HockeySDK.UWP/4.1.6": {
         "dependencies": {
-          "HockeySDK.Core": "4.1.5"
+          "HockeySDK.Core": "4.1.6"
         },
         "compile": {
           "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
@@ -12198,7 +12300,7 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
-      "Microsoft.Toolkit.Uwp/1.2.0": {
+      "Microsoft.Toolkit.Uwp/1.4.1": {
         "dependencies": {
           "Newtonsoft.Json": "9.0.1"
         },
@@ -12209,7 +12311,7 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+      "Microsoft.Toolkit.Uwp.Notifications/1.4.1": {
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         },
@@ -12217,9 +12319,9 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
@@ -12228,12 +12330,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Animations/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Animations/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
           "Microsoft.Xaml.Behaviors.Uwp.Managed": "1.1.0",
-          "Win2D.uwp": "1.18.0"
+          "Win2D.uwp": "1.19.0"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
@@ -12242,11 +12344,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Controls/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Controls/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI.Animations": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI.Animations": "1.4.1",
+          "Robmikh.CompositionSurfaceFactory": "0.7.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls.dll": {}
@@ -12356,6 +12459,21 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
+        }
+      },
+      "Robmikh.CompositionSurfaceFactory/0.7.1": {
+        "dependencies": {
+          "Win2D.uwp": "1.19.0"
+        },
+        "compile": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-x86/native/Robmikh.CompositionSurfaceFactory.dll": {},
+          "runtimes/win10-x86/native/Robmikh.CompositionSurfaceFactory.pri": {}
         }
       },
       "runtime.any.System.Collections/4.0.11": {
@@ -14398,7 +14516,7 @@
       }
     },
     "UAP,Version=v10.0/win10-x86-aot": {
-      "HockeySDK.Core/4.1.5": {
+      "HockeySDK.Core/4.1.6": {
         "compile": {
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         },
@@ -14406,9 +14524,9 @@
           "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll": {}
         }
       },
-      "HockeySDK.UWP/4.1.5": {
+      "HockeySDK.UWP/4.1.6": {
         "dependencies": {
-          "HockeySDK.Core": "4.1.5"
+          "HockeySDK.Core": "4.1.6"
         },
         "compile": {
           "lib/uap10.0/Microsoft.HockeyApp.Kit.dll": {}
@@ -14602,7 +14720,7 @@
         }
       },
       "Microsoft.NETCore.Windows.ApiSets/1.0.1": {},
-      "Microsoft.Toolkit.Uwp/1.2.0": {
+      "Microsoft.Toolkit.Uwp/1.4.1": {
         "dependencies": {
           "Newtonsoft.Json": "9.0.1"
         },
@@ -14613,7 +14731,7 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
+      "Microsoft.Toolkit.Uwp.Notifications/1.4.1": {
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         },
@@ -14621,9 +14739,9 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
@@ -14632,12 +14750,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Animations/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Animations/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
           "Microsoft.Xaml.Behaviors.Uwp.Managed": "1.1.0",
-          "Win2D.uwp": "1.18.0"
+          "Win2D.uwp": "1.19.0"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
@@ -14646,11 +14764,12 @@
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll": {}
         }
       },
-      "Microsoft.Toolkit.Uwp.UI.Controls/1.2.0": {
+      "Microsoft.Toolkit.Uwp.UI.Controls/1.4.1": {
         "dependencies": {
-          "Microsoft.Toolkit.Uwp": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI": "1.2.0",
-          "Microsoft.Toolkit.Uwp.UI.Animations": "1.2.0"
+          "Microsoft.Toolkit.Uwp": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI": "1.4.1",
+          "Microsoft.Toolkit.Uwp.UI.Animations": "1.4.1",
+          "Robmikh.CompositionSurfaceFactory": "0.7.1"
         },
         "compile": {
           "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls.dll": {}
@@ -14760,6 +14879,21 @@
         },
         "runtime": {
           "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll": {}
+        }
+      },
+      "Robmikh.CompositionSurfaceFactory/0.7.1": {
+        "dependencies": {
+          "Win2D.uwp": "1.19.0"
+        },
+        "compile": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "runtime": {
+          "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd": {}
+        },
+        "native": {
+          "runtimes/win10-x86/native/Robmikh.CompositionSurfaceFactory.dll": {},
+          "runtimes/win10-x86/native/Robmikh.CompositionSurfaceFactory.pri": {}
         }
       },
       "runtime.aot.System.Collections/4.0.10": {
@@ -16841,12 +16975,11 @@
     }
   },
   "libraries": {
-    "HockeySDK.Core/4.1.5": {
-      "sha512": "jwoz5oEmPuje2cBaylsP1aZhE82/y6F1sOGBH2uaPeK9DsqAaFrb7UrB6WtuQ0QTpALPDsJesThlRh1G0cAcYQ==",
+    "HockeySDK.Core/4.1.6": {
+      "sha512": "zpK17DihA+mUBYjoKX8gotGQaMQP7LkWdKp9c0J6qUD7AKlJWRMe/AYuuOqDSKDbmbP+a2tmMBrEdB/kN7rgtw==",
       "type": "package",
-      "path": "hockeysdk.core/4.1.5",
       "files": [
-        "HockeySDK.Core.4.1.5.nupkg.sha512",
+        "HockeySDK.Core.4.1.6.nupkg.sha512",
         "HockeySDK.Core.nuspec",
         "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll",
         "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.Core45.dll.CodeAnalysisLog.xml",
@@ -16854,12 +16987,11 @@
         "lib/portable-net45+win8+wp8+wpa81+win81+uap10.0/Microsoft.HockeyApp.XML"
       ]
     },
-    "HockeySDK.UWP/4.1.5": {
-      "sha512": "Vd5gNxe2LeMuwQcObzXhdY09bDpKESqI7Ewr5w4Z9GoPDg4WCK2fQW/zViTCtPtp1ndP3RoMPxRmkOZIIHm+fg==",
+    "HockeySDK.UWP/4.1.6": {
+      "sha512": "tpJIPvbfHIYETysg+XJq+TZxnBuphk/ObrJGLwYkJxhiSO/8C3iH2pWiPkNQYT8sjEKCsq0uyAJ85UZsKof0yQ==",
       "type": "package",
-      "path": "hockeysdk.uwp/4.1.5",
       "files": [
-        "HockeySDK.UWP.4.1.5.nupkg.sha512",
+        "HockeySDK.UWP.4.1.6.nupkg.sha512",
         "HockeySDK.UWP.nuspec",
         "lib/uap10.0/Microsoft.HockeyApp.Kit.dll",
         "lib/uap10.0/Microsoft.HockeyApp.Kit.dll.CodeAnalysisLog.xml",
@@ -17092,12 +17224,11 @@
         "runtime.json"
       ]
     },
-    "Microsoft.Toolkit.Uwp/1.2.0": {
-      "sha512": "YZZTfjWNLV3PZ770PtgxxcPRE0ej4S1lLrdOZbCs62OA9Gt0EJOowvwXElPDTBNozn9JtgVZZKn4aBrAlWZ7og==",
+    "Microsoft.Toolkit.Uwp/1.4.1": {
+      "sha512": "9bThPlEnIREgukNQQe4ufQSl86kODoGkRLOWrSanUDuApe9X68sgVBN61diPdy7LDQ9wvcEa6vYw5+Tao/Tk1A==",
       "type": "package",
-      "path": "microsoft.toolkit.uwp/1.2.0",
       "files": [
-        "Microsoft.Toolkit.Uwp.1.2.0.nupkg.sha512",
+        "Microsoft.Toolkit.Uwp.1.4.1.nupkg.sha512",
         "Microsoft.Toolkit.Uwp.nuspec",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.dll",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.pdb",
@@ -17105,12 +17236,11 @@
         "lib/uap10.0/Microsoft.Toolkit.Uwp.xml"
       ]
     },
-    "Microsoft.Toolkit.Uwp.Notifications/1.2.0": {
-      "sha512": "YbCSSxNytBG+WWHsvyvnPupE2W2r4IiXogpy0HJ9yhF5qoC1SpgGnYR772fg25ny2fqG1q13NIy8ULYx8Y7zBg==",
+    "Microsoft.Toolkit.Uwp.Notifications/1.4.1": {
+      "sha512": "Xi32HrnQLgas2Tz4a/3LZGZvY+4KZnlQZQdPFkK0G3AfMHKDxnREI/QKUOyLK6zxr62uaCME18pyStu8ueP1FA==",
       "type": "package",
-      "path": "microsoft.toolkit.uwp.notifications/1.2.0",
       "files": [
-        "Microsoft.Toolkit.Uwp.Notifications.1.2.0.nupkg.sha512",
+        "Microsoft.Toolkit.Uwp.Notifications.1.4.1.nupkg.sha512",
         "Microsoft.Toolkit.Uwp.Notifications.nuspec",
         "build/native/Microsoft.Toolkit.Uwp.Notifications.targets",
         "lib/dotnet/Microsoft.Toolkit.Uwp.Notifications.dll",
@@ -17129,25 +17259,23 @@
         "lib/uap10.0/Microsoft.Toolkit.Uwp.Notifications.xml"
       ]
     },
-    "Microsoft.Toolkit.Uwp.UI/1.2.0": {
-      "sha512": "G534s6yLmM8T18uSghrte0MuHrde84wEajhwsfocBZYZ88VvLuJRoPVcgpB8RwSst9pLv2nqSBbN82PThXyYGA==",
+    "Microsoft.Toolkit.Uwp.UI/1.4.1": {
+      "sha512": "UMQD7B756FgCnu7Tt6C6xxqDG8ojJKwnOv6R/+ErCCDMH5HzDxLqkLOTFI95s8uzNVF/m+jZLZONuf5ltmrs9g==",
       "type": "package",
-      "path": "microsoft.toolkit.uwp.ui/1.2.0",
       "files": [
-        "Microsoft.Toolkit.Uwp.UI.1.2.0.nupkg.sha512",
+        "Microsoft.Toolkit.Uwp.UI.1.4.1.nupkg.sha512",
         "Microsoft.Toolkit.Uwp.UI.nuspec",
+        "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.XML",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.dll",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.pdb",
-        "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.pri",
-        "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.xml"
+        "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.pri"
       ]
     },
-    "Microsoft.Toolkit.Uwp.UI.Animations/1.2.0": {
-      "sha512": "uitHw6qNyo7z28FrGV5a+LDBxLBt39gZEyUQpYdelhO6hzHKzbjEO2FJWSLQohFH04DkMv4hT9DcZOFXLFg0bQ==",
+    "Microsoft.Toolkit.Uwp.UI.Animations/1.4.1": {
+      "sha512": "o1FA/JPT2AMlcGWa7ikTic87XuTK/AlfTyVKxXIP4AJ65UXJYdDwGx73tdMZV6J9GhtqNQEobACJnQjJruRqHA==",
       "type": "package",
-      "path": "microsoft.toolkit.uwp.ui.animations/1.2.0",
       "files": [
-        "Microsoft.Toolkit.Uwp.UI.Animations.1.2.0.nupkg.sha512",
+        "Microsoft.Toolkit.Uwp.UI.Animations.1.4.1.nupkg.sha512",
         "Microsoft.Toolkit.Uwp.UI.Animations.nuspec",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.dll",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.pdb",
@@ -17155,31 +17283,36 @@
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Animations.xml"
       ]
     },
-    "Microsoft.Toolkit.Uwp.UI.Controls/1.2.0": {
-      "sha512": "MrDNHZm3Dfq6pWikiRLE9tJESb/jZMrnkCALNySLoxATdOTiQNaK1GOMBawvv6pWIaPwqevYpIO2v2JjqS12WA==",
+    "Microsoft.Toolkit.Uwp.UI.Controls/1.4.1": {
+      "sha512": "PP61sDIQh0CHYzoAq4LNIeeEcZCyGo/HbWB6kuFR2EPldeCN4ZnBoI7BfK7G6Qj9hlgFwUz+n/jiE1C9hvwGUw==",
       "type": "package",
-      "path": "microsoft.toolkit.uwp.ui.controls/1.2.0",
       "files": [
-        "Microsoft.Toolkit.Uwp.UI.Controls.1.2.0.nupkg.sha512",
+        "Microsoft.Toolkit.Uwp.UI.Controls.1.4.1.nupkg.sha512",
         "Microsoft.Toolkit.Uwp.UI.Controls.nuspec",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls.dll",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls.pdb",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls.pri",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls.xml",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/BladeView/BladeView.xaml",
+        "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/Carousel/Carousel.xaml",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/DropShadowPanel/DropShadowPanel.xaml",
+        "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/Expander/Expander.xaml",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/GridSplitter/GridSplitter.xaml",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/HamburgerMenu/HamburgerMenu.xaml",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/HeaderedTextBlock/HeaderedTextBlock.xaml",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/ImageEx/ImageEx.xaml",
+        "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/Loading/Loading.xaml",
+        "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/MarkdownTextBlock/MarkdownTextBlock.xaml",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/MasterDetailsView/MasterDetailsView.xaml",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/Microsoft.Toolkit.Uwp.UI.Controls.xr.xml",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/PullToRefreshListView/PullToRefreshListView.xaml",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/RadialGauge/RadialGauge.xaml",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/RangeSelector/RangeSelector.xaml",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/RotatorTile/RotatorTile.xaml",
+        "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/ScrollHeader/ScrollHeader.xaml",
         "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/SlidableListItem/SlidableListItem.xaml",
-        "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/Themes/Generic.xaml"
+        "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/Themes/Generic.xaml",
+        "lib/uap10.0/Microsoft.Toolkit.Uwp.UI.Controls/TileControl/TileControl.xaml"
       ]
     },
     "Microsoft.VisualBasic/10.0.1": {
@@ -17311,6 +17444,24 @@
         "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll",
         "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.xml",
         "tools/install.ps1"
+      ]
+    },
+    "Robmikh.CompositionSurfaceFactory/0.7.1": {
+      "sha512": "wbTtNg4/svj+foIP3sRZszbL/SwA2bioLTQzd58HKdcfFE2CIQyhwQeL829ioWseo0zU0fIqZyiw5CUDqKWS3g==",
+      "type": "package",
+      "files": [
+        "Robmikh.CompositionSurfaceFactory.0.7.1.nupkg.sha512",
+        "Robmikh.CompositionSurfaceFactory.nuspec",
+        "build/native/Robmikh.CompositionSurfaceFactory.props",
+        "build/native/Robmikh.CompositionSurfaceFactory.targets",
+        "lib/uap10.0/Robmikh.CompositionSurfaceFactory.winmd",
+        "lib/uap10.0/Robmikh.CompositionSurfaceFactory.xml",
+        "runtimes/win10-arm/native/Robmikh.CompositionSurfaceFactory.dll",
+        "runtimes/win10-arm/native/Robmikh.CompositionSurfaceFactory.pri",
+        "runtimes/win10-x64/native/Robmikh.CompositionSurfaceFactory.dll",
+        "runtimes/win10-x64/native/Robmikh.CompositionSurfaceFactory.pri",
+        "runtimes/win10-x86/native/Robmikh.CompositionSurfaceFactory.dll",
+        "runtimes/win10-x86/native/Robmikh.CompositionSurfaceFactory.pri"
       ]
     },
     "runtime.any.System.Collections/4.0.11": {
@@ -23443,11 +23594,11 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "HockeySDK.UWP >= 4.1.5",
+      "HockeySDK.UWP >= 4.1.6",
       "Microsoft.NETCore.UniversalWindowsPlatform >= 5.2.2",
-      "Microsoft.Toolkit.Uwp >= 1.2.0",
-      "Microsoft.Toolkit.Uwp.Notifications >= 1.2.0",
-      "Microsoft.Toolkit.Uwp.UI.Controls >= 1.2.0",
+      "Microsoft.Toolkit.Uwp >= 1.4.1",
+      "Microsoft.Toolkit.Uwp.Notifications >= 1.4.1",
+      "Microsoft.Toolkit.Uwp.UI.Controls >= 1.4.1",
       "System.Reactive >= 3.1.1",
       "System.Reactive.Core >= 3.1.1",
       "Win2D.uwp >= 1.20.0",

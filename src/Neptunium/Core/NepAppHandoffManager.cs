@@ -1,74 +1,51 @@
-﻿using Crystal3.Core;
-using Crystal3.InversionOfControl;
-using Neptunium.Data;
-using Neptunium.Media;
-using Neptunium.Services.SnackBar;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.IO;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
-using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
-using Windows.Storage;
 using Windows.System;
 using Windows.System.RemoteSystems;
-using Crystal3.Navigation;
-using Crystal3;
 
-namespace Neptunium.Managers
+namespace Neptunium
 {
-    public static class ContinuedAppExperienceManager
+    public class NepAppHandoffManager
     {
+        internal NepAppHandoffManager()
+        {
+        }
+
         public const string ContinuedAppExperienceAppServiceName = "com.Amrykid.CAEAppService";
         public const string StopPlayingMusicAfterGoodHandoff = "StopPlayingMusicAfterGoodHandoff";
         public const string AppPackageName = "61121Amrykid.Neptunium_h1dcj6f978yqr";
 
         #region Variables and Code-Properties
-        private static ObservableCollection<RemoteSystem> systemList = null;
-        private static RemoteSystemWatcher remoteSystemWatcher = null;
-        private static AutoResetEvent watcherLock = null;
+        private ObservableCollection<RemoteSystem> systemList = null;
+        private RemoteSystemWatcher remoteSystemWatcher = null;
+        private AutoResetEvent watcherLock = null;
 
-        public static bool IsRunning { get; private set; }
+        public bool IsRunning { get; private set; }
 
-        public static event EventHandler IsRunningChanged;
+        public event EventHandler IsRunningChanged;
 
-        public static ReadOnlyObservableCollection<RemoteSystem> RemoteSystemsList { get; private set; }
+        public ReadOnlyObservableCollection<RemoteSystem> RemoteSystemsList { get; private set; }
 
-        public static RemoteSystemAccessStatus RemoteSystemAccess { get; private set; }
+        public RemoteSystemAccessStatus RemoteSystemAccess { get; private set; }
 
-        public static bool IsSupported { get; private set; }
+        public bool IsSupported { get; private set; }
 
-        public static bool IsInitialized { get; private set; }
+        public bool IsInitialized { get; private set; }
         #endregion
-        public static async Task InitializeAsync()
+        public async Task InitializeAsync()
         {
             if (IsInitialized) return;
 
             IsSupported = Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.System.RemoteSystems.RemoteSystem");
 
             if (!IsSupported) return;
-
-            if (!await CheckRemoteAppServiceEnabledAsync())
-            {
-                //app service listing got removed while building for store.
-
-                App.MessageQueue.Enqueue("Handoff functionality is disabled.");
-                IsSupported = false;
-
-                return;
-            }
-
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(StopPlayingMusicAfterGoodHandoff))
-                ApplicationData.Current.LocalSettings.Values.Add(StopPlayingMusicAfterGoodHandoff, true);
-
-            StopPlayingStationOnThisDeviceAfterSuccessfulHandoff = (bool)ApplicationData.Current.LocalSettings.Values[StopPlayingMusicAfterGoodHandoff];
 
             RemoteSystemAccess = await await App.Dispatcher.RunAsync(() => RemoteSystem.RequestAccessAsync());
 
@@ -86,7 +63,7 @@ namespace Neptunium.Managers
             }
         }
 
-        public static async Task ScanForRemoteSystemsAsync()
+        public async Task ScanForRemoteSystemsAsync()
         {
             StartWatchingForRemoteSystems();
 
@@ -95,7 +72,7 @@ namespace Neptunium.Managers
             StopWatchingForRemoteSystems();
         }
 
-        private static async Task<bool> CheckRemoteAppServiceEnabledAsync()
+        private async Task<bool> CheckRemoteAppServiceEnabledAsync()
         {
             //Package.appxmanifest -> AppxManifest.xml upon installation
             var manifestFile = await Package.Current.InstalledLocation.GetFileAsync("AppxManifest.xml");
@@ -128,7 +105,7 @@ namespace Neptunium.Managers
             return result;
         }
 
-        private static async void StartWatchingForRemoteSystems()
+        private async void StartWatchingForRemoteSystems()
         {
             if (!IsSupported) return;
             if (!IsInitialized) return;
@@ -152,7 +129,7 @@ namespace Neptunium.Managers
             }
         }
 
-        private static void StopWatchingForRemoteSystems()
+        private void StopWatchingForRemoteSystems()
         {
             if (!IsSupported) return;
             if (!IsInitialized) return;
@@ -186,7 +163,7 @@ namespace Neptunium.Managers
                 RemoteSystemsListUpdated(null, EventArgs.Empty);
         }
 
-        private static void RemoteSystemWatcher_RemoteSystemRemoved(RemoteSystemWatcher sender, RemoteSystemRemovedEventArgs args)
+        private void RemoteSystemWatcher_RemoteSystemRemoved(RemoteSystemWatcher sender, RemoteSystemRemovedEventArgs args)
         {
             var systemToRemove = systemList.FirstOrDefault(x => x.Id == args.RemoteSystemId);
 
@@ -200,7 +177,7 @@ namespace Neptunium.Managers
 
         }
 
-        private static void RemoteSystemWatcher_RemoteSystemAdded(RemoteSystemWatcher sender, RemoteSystemAddedEventArgs args)
+        private void RemoteSystemWatcher_RemoteSystemAdded(RemoteSystemWatcher sender, RemoteSystemAddedEventArgs args)
         {
             if (!systemList.Any(x => x.Id == args.RemoteSystem.Id))
                 systemList.Add(args.RemoteSystem);
@@ -209,21 +186,9 @@ namespace Neptunium.Managers
                 RemoteSystemsListUpdated(null, EventArgs.Empty);
         }
 
-        public static event EventHandler RemoteSystemsListUpdated;
+        public event EventHandler RemoteSystemsListUpdated;
 
-        #region Settings and Settings-Properties
-        public static bool StopPlayingStationOnThisDeviceAfterSuccessfulHandoff { get; private set; }
-
-        internal static void SetStopPlayingStationOnThisDeviceAfterSuccessfulHandoff(bool shouldStopPlayingAfterSuccessfulHandoff)
-        {
-            StopPlayingStationOnThisDeviceAfterSuccessfulHandoff = shouldStopPlayingAfterSuccessfulHandoff;
-
-            ApplicationData.Current.LocalSettings.Values[StopPlayingMusicAfterGoodHandoff] = shouldStopPlayingAfterSuccessfulHandoff;
-        }
-        #endregion
-
-
-        private static async Task<Tuple<AppServiceResponse, AppServiceConnection>> SendDataToDeviceAsync(RemoteSystem device, ValueSet data, bool keepAlive = false)
+        private async Task<Tuple<AppServiceResponse, AppServiceConnection>> SendDataToDeviceAsync(RemoteSystem device, ValueSet data, bool keepAlive = false)
         {
             if (!IsSupported) return null;
 
@@ -299,52 +264,42 @@ namespace Neptunium.Managers
             return false;
         }
 
-        public static async void CheckForReverseHandoffOpportunities()
+        public async Task<int> CheckForReverseHandoffOpportunitiesAsync()
         {
-            if (!IsInitialized)
-                await InitializeAsync();
-
             if (IsSupported)
             {
                 var streamingDevices = await DetectStreamingDevicesAsync();
 
-                if (streamingDevices == null) return; //nothing to see here.
+                if (streamingDevices == null) return 0; //nothing to see here.
 
-                if (streamingDevices.Count > 0)
-                {
-                    if (streamingDevices.Count == 1)
-                    {
-                        var streamingDevice = streamingDevices.First();
-                        await IoC.Current.Resolve<ISnackBarService>().ShowActionableSnackAsync(
-                            "You're streaming on \'" + streamingDevice.Item1.DisplayName + "\'.",
-                            "Transfer playback",
-                            async x =>
-                            {
-                                //do reverse handoff
 
-                                var cmd = new ValueSet();
-                                cmd.Add("Message", "CAE:StopPlayback");
-                                var stopMsgTask = SendDataToDeviceOverExistingConnectionAsync(streamingDevice.Item3, cmd, keepAlive: false);
+                //var streamingDevice = streamingDevices.First();
+                //await IoC.Current.Resolve<ISnackBarService>().ShowActionableSnackAsync(
+                //    "You're streaming on \'" + streamingDevice.Item1.DisplayName + "\'.",
+                //    "Transfer playback",
+                //    async x =>
+                //    {
+                //        //do reverse handoff
 
-                                var playStationTask = StationMediaPlayer.PlayStationAsync(streamingDevice.Item2);
+                //        var cmd = new ValueSet();
+                //        cmd.Add("Message", "CAE:StopPlayback");
+                //        var stopMsgTask = SendDataToDeviceOverExistingConnectionAsync(streamingDevice.Item3, cmd, keepAlive: false);
 
-                                await Task.WhenAny(stopMsgTask, playStationTask);
-                            },
-                            10000);
-                    }
-                    else
-                    {
-                        await IoC.Current.ResolveDefault<ISnackBarService>()?.ShowSnackAsync("You have multiple devices streaming.", 3000);
-                    }
-                }
+                //        var playStationTask = StationMediaPlayer.PlayStationAsync(streamingDevice.Item2);
+
+                //        await Task.WhenAny(stopMsgTask, playStationTask);
+                //    },
+                //    10000);
+
+                return streamingDevices.Count;
+
             }
+
+            return 0;
         }
 
-        private static async Task<List<Tuple<RemoteSystem, StationModel, AppServiceConnection>>> DetectStreamingDevicesAsync()
+        private async Task<List<Tuple<RemoteSystem, StationModel, AppServiceConnection>>> DetectStreamingDevicesAsync()
         {
-            if (!IsInitialized)
-                await InitializeAsync();
-
             if (!IsSupported) return null;
 
             if (RemoteSystemAccess != RemoteSystemAccessStatus.Allowed) return null;
@@ -389,7 +344,7 @@ namespace Neptunium.Managers
         }
 
         #region Handling app service requests
-        internal static void HandleBackgroundActivation(AppServiceTriggerDetails appServiceTriggerDetails)
+        internal void HandleBackgroundActivation(AppServiceTriggerDetails appServiceTriggerDetails)
         {
             if (appServiceTriggerDetails != null)
             {
@@ -399,13 +354,13 @@ namespace Neptunium.Managers
             }
         }
 
-        private static void AppServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
+        private void AppServiceConnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
             sender.RequestReceived -= AppServiceConnection_RequestReceived;
             sender.ServiceClosed -= AppServiceConnection_ServiceClosed;
         }
 
-        private static async void AppServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        private async void AppServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             var deferral = args.GetDeferral();
 

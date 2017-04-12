@@ -106,8 +106,10 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ApplicationCommands.cs" />
     <Compile Include="AppSettings.cs" />
+    <Compile Include="Core\NepAppHandoffManager.cs" />
+    <Compile Include="Core\NepAppMediaPlayerManager.cs" />
+    <Compile Include="Core\NepAppSettingsManager.cs" />
     <Compile Include="ColorUtilities.cs" />
     <Compile Include="Controls\TransitioningColorGlassPanel.xaml.cs">
       <DependentUpon>TransitioningColorGlassPanel.xaml</DependentUpon>
@@ -116,100 +118,36 @@
       <DependentUpon>GlassPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="JapaneseTextUtilities.cs" />
+    <Compile Include="Managers\Car Mode\CarModeManager.cs" />
     <Compile Include="Managers\Car Mode\CarModeManagerBluetoothDeviceCoordinator.cs" />
+    <Compile Include="Managers\Car Mode\CarModeManagerCarModeStatusChangedEventArgs.cs" />
     <Compile Include="Managers\Car Mode\CarModeManagerSongAnnouncementFrequency.cs" />
-    <Compile Include="Managers\Songs\UnknownSongMetadata.cs" />
-    <Compile Include="Media\StationMediaPlayerAudioCoordinator.cs" />
-    <Compile Include="Media\Streamers\BasicMediaStreamer.cs" />
-    <Compile Include="Media\Streamers\DirectMediaStreamer.cs" />
-    <Compile Include="Media\Streamers\IMediaStreamer.cs" />
-    <Compile Include="Media\Streamers\ShoutcastMediaStreamer.cs" />
-    <Compile Include="Media\Streamers\StreamerFactory.cs" />
-    <Compile Include="Services\Vibration\HapticFeedbackService.cs" />
-    <Compile Include="StringUtilities.cs" />
-    <Compile Include="ViewGlue\XboxAppShellViewPivotNavigationService.cs" />
-    <Compile Include="View\Fragments\NowPlayingInfoBar.xaml.cs">
-      <DependentUpon>NowPlayingInfoBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\StationItemControl.xaml.cs">
-      <DependentUpon>StationItemControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Data\Stations\StationSupplementaryDataManager.cs" />
-    <Compile Include="Fragments\SleepTimerFlyoutViewFragment.cs" />
-    <Compile Include="Fragments\StationInfoViewSongHistoryFragment.cs" />
+    <Compile Include="Managers\Songs\Metadata Sources\BaseSongMetadataSource.cs" />
     <Compile Include="Managers\Songs\Metadata Sources\ISongMetadata.cs" />
     <Compile Include="Managers\Songs\Metadata Sources\ITunesMetadataSource.cs" />
     <Compile Include="Managers\Songs\Metadata Sources\ITunesSongMetadata.cs" />
-    <Compile Include="Managers\Songs\Metadata Sources\BaseSongMetadataSource.cs" />
     <Compile Include="Managers\Songs\Metadata Sources\MusicBrainzMetadataSource.cs" />
     <Compile Include="Managers\Songs\Metadata Sources\MusicBrainzSongMetadata.cs" />
+    <Compile Include="Managers\Songs\Song History\SongHistoryManager.cs" />
     <Compile Include="Managers\Songs\Song History\SongHistoryManagerItemAddedEventArgs.cs" />
     <Compile Include="Managers\Songs\Song History\SongHistoryManagerItemRemovedEventArgs.cs" />
     <Compile Include="Managers\Songs\SongManager.cs" />
     <Compile Include="Managers\Songs\SongManagerSongChangedEventArgs.cs" />
     <Compile Include="Managers\Songs\SongMetadata.cs" />
+    <Compile Include="Managers\Songs\SongMetadataManager.cs" />
+    <Compile Include="Managers\Songs\UnknownSongMetadata.cs" />
+    <Compile Include="Core\NepApp.cs" />
+    <Compile Include="StringUtilities.cs" />
+    <Compile Include="Controls\StationItemControl.xaml.cs">
+      <DependentUpon>StationItemControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Stations\StationSupplementaryDataManager.cs" />
     <Compile Include="MediaExtensions.cs" />
-    <Compile Include="Model\AlbumData.cs" />
     <Compile Include="Data\History\HistoryItemModel.cs" />
     <Compile Include="Data\Stations\StationDataManager.cs" />
     <Compile Include="Data\Stations\StationModel.cs" />
     <Compile Include="Data\Stations\StationModelStream.cs" />
-    <Compile Include="Fragments\HandOffFlyoutViewFragment.cs" />
-    <Compile Include="Fragments\NowPlayingViewFragment.cs" />
-    <Compile Include="Managers\Car Mode\CarModeManager.cs" />
-    <Compile Include="Managers\Car Mode\CarModeManagerCarModeStatusChangedEventArgs.cs" />
-    <Compile Include="Managers\ContinuedAppExperienceManager.cs" />
-    <Compile Include="Model\ArtistData.cs" />
-    <Compile Include="Model\SongHistoryItem.cs" />
-    <Compile Include="Managers\Songs\Song History\SongHistoryManager.cs" />
-    <Compile Include="Managers\Songs\SongMetadataManager.cs" />
-    <Compile Include="Media\BasicSongInfo.cs" />
-    <Compile Include="Media\StationMediaPlayer.cs" />
-    <Compile Include="Media\StationMediaPlayerConnectingStatusChangedEventArgs.cs" />
-    <Compile Include="Data\ShoutcastInformationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\SnackBar\ISnackBarService.cs" />
-    <Compile Include="Services\SnackBar\SnackBarService.cs" />
-    <Compile Include="ViewModel\AppShellViewModel.cs" />
-    <Compile Include="ViewModel\NowPlayingViewViewModel.cs" />
-    <Compile Include="ViewModel\SettingsViewViewModel.cs" />
-    <Compile Include="Media\StationMediaPlayerBackgroundAudioErrorEventArgs.cs" />
-    <Compile Include="ViewModel\SongHistoryViewModel.cs" />
-    <Compile Include="ViewModel\StationInfoViewModel.cs" />
-    <Compile Include="ViewModel\StationsViewViewModel.cs" />
-    <Compile Include="View\AppShellView.xaml.cs">
-      <DependentUpon>AppShellView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Fragments\StationInfoViewSongHistoryFragmentView.xaml.cs">
-      <DependentUpon>StationInfoViewSongHistoryFragmentView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\NowPlayingView.xaml.cs">
-      <DependentUpon>NowPlayingView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\SettingsView.xaml.cs">
-      <DependentUpon>SettingsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\SongHistoryView.xaml.cs">
-      <DependentUpon>SongHistoryView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\StationInfoView.xaml.cs">
-      <DependentUpon>StationInfoView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\StationsView.xaml.cs">
-      <DependentUpon>StationsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Xbox\XboxAppShellView.xaml.cs">
-      <DependentUpon>XboxAppShellView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Xbox\XboxNowPlayingView.xaml.cs">
-      <DependentUpon>XboxNowPlayingView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Xbox\XboxSettingsView.xaml.cs">
-      <DependentUpon>XboxSettingsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Xbox\XboxStationsView.xaml.cs">
-      <DependentUpon>XboxStationsView.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -328,10 +266,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\Fragments\NowPlayingInfoBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\StationItemControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -340,54 +274,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\AppShellView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Fragments\StationInfoViewSongHistoryFragmentView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\NowPlayingView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\SettingsView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\SongHistoryView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\StationInfoView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\StationsView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Xbox\XboxAppShellView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Xbox\XboxNowPlayingView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Xbox\XboxSettingsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Xbox\XboxStationsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="External\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0">
       <Name>Microsoft Engagement Framework</Name>

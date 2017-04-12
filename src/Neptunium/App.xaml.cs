@@ -65,25 +65,13 @@ namespace Neptunium
             this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
             ElementSoundPlayer.State = ElementSoundPlayerState.Auto;
 
-            CookieJar.ApplicationName = "Neptunium";
+           
 
-            Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Major + " ( amrykid@gmail.com )";
-
-            //initialize app settings
-            //todo add all settings
-
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.ShowSongNotifications))
-                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.ShowSongNotifications, true);
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.TryToFindSongMetadata))
-                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.TryToFindSongMetadata, true);
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.NavigateToStationWhenLaunched))
-                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.NavigateToStationWhenLaunched, true);
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.MediaBarMatchStationColor))
-                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.MediaBarMatchStationColor, true);
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.PreferUsingCrossFadeWhenChangingStations))
-                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.PreferUsingCrossFadeWhenChangingStations, true);
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(AppSettings.UseHapticFeedbackForNavigation))
-                ApplicationData.Current.LocalSettings.Values.Add(AppSettings.UseHapticFeedbackForNavigation, true);
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
+                    .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+            }
 
 
             Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
@@ -194,103 +182,28 @@ namespace Neptunium
             this.Options.HandleSystemBackNavigation = true;
         }
 
-        private static async Task TryInitOrHealCookieContainerAsync(Kukkii.Core.IPersistentCookieContainer container)
-        {
-            if (container == null) return;
-
-            try
-            {
-                await container.InitializeAsync();
-            }
-            catch (CacheCannotBeLoadedException)
-            {
-                await container.RegenerateCacheAsync();
-
-                var msg = "Regenerating data...";
-                if (App.MessageQueue.Contains(msg))
-                    App.MessageQueue.Enqueue(msg);
-            }
-        }
-
         protected override async Task OnApplicationInitializedAsync()
         {
-            await CoreInitAsync();
-        }
-
-        private static bool coreInitialized = false;
-        private static async Task CoreInitAsync()
-        {
-            if (coreInitialized) return;
-
-            try
-            {
-                await TryInitOrHealCookieContainerAsync(CookieJar.Device);
-                await TryInitOrHealCookieContainerAsync(CookieJar.DeviceCache);
-            }
-            catch (Exception) { }
-
-            FragmentManager.RegisterFragmentView<StationInfoViewSongHistoryFragment, StationInfoViewSongHistoryFragmentView>();
-            FragmentManager.RegisterFragmentView<NowPlayingViewFragment, NowPlayingInfoBar>();
-
-            await StationDataManager.InitializeAsync();
-
-            await SongManager.InitializeAsync();
-            await StationMediaPlayer.InitializeAsync();
-
-            coreInitialized = true;
+            await NepApp.InitializeAsync();
         }
 
         private async Task PostUIInitAsync()
-        {
-            SnackBarAppearance.Opacity = 1.0;
-
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
-            {
-                SnackBarAppearance.MessageFontSize = 14;
-                SnackBarAppearance.Transition = new PopupThemeTransition();
-
-                Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
-                    .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
-            }
-            else
-            {
-                SnackBarAppearance.MessageFontSize = 12;
-                SnackBarAppearance.Transition = new AddDeleteThemeTransition();
-            }
-
+        {      
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
-
-#if !DEBUG
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-#endif
-            if (!CarModeManager.IsInitialized)
-                await CarModeManager.InitializeAsync();
-
-
-            //Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-
-            if (!ContinuedAppExperienceManager.IsInitialized)
-                await ContinuedAppExperienceManager.InitializeAsync();
-
         }
 
-        public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
+        public override Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
             WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.NavigateTo<AppShellViewModel>();
-            await PostUIInitAsync();
+            return Task.CompletedTask;
         }
 
         public override async Task OnActivationAsync(IActivatedEventArgs args)
         {
-            if (!WindowManager.GetNavigationManagerForCurrentWindow()
-                .RootNavigationService.IsNavigatedTo<AppShellViewModel>())
-            {
-                WindowManager.GetNavigationManagerForCurrentWindow()
-                .RootNavigationService.NavigateTo<AppShellViewModel>();
-                await PostUIInitAsync();
-            }
+            WindowManager.GetNavigationManagerForCurrentWindow()
+                 .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
 
             if (args.Kind == ActivationKind.Protocol)
             {
@@ -317,37 +230,31 @@ namespace Neptunium
             {
                 case "play-station":
                     {
-                        try
-                        {
-                            var query = uri.Query
-                                .Substring(1)
-                                .Split('&')
-                                .Select(x =>
-                                    new KeyValuePair<string, string>(
-                                        x.Split('=')[0],
-                                        x.Split('=')[1])); //remote the "?"
+                        var query = uri.Query
+                            .Substring(1)
+                            .Split('&')
+                            .Select(x =>
+                                new KeyValuePair<string, string>(
+                                    x.Split('=')[0],
+                                    x.Split('=')[1])); //remote the "?"
 
-                            var stationName = query.First(x => x.Key.ToLower() == "station").Value;
-                            stationName = stationName.Replace("%20", " ");
+                        var stationName = query.First(x => x.Key.ToLower() == "station").Value;
+                        stationName = stationName.Replace("%20", " ");
 
-                            var station = StationDataManager.Stations.First(x => x.Name == stationName);
+                        var station = StationDataManager.Stations.First(x => x.Name == stationName);
 
-                            if (await StationMediaPlayer.PlayStationAsync(station))
-                            {
-                                if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.NavigateToStationWhenLaunched])
-                                {
-                                    WindowManager.GetNavigationManagerForCurrentWindow()
-                                    .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
-                                    .NavigateTo<StationInfoViewModel>(station.Name);
-                                }
-                            }
-                        }
-                        catch (Exception)
-                        {
+                        //if (await StationMediaPlayer.PlayStationAsync(station))
+                        //{
+                        //    if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.NavigateToStationWhenLaunched])
+                        //    {
+                        //        WindowManager.GetNavigationManagerForCurrentWindow()
+                        //        .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
+                        //        .NavigateTo<StationInfoViewModel>(station.Name);
+                        //    }
+                        //}
 
-                        }
+                        throw new NotImplementedException();
                     }
-                    break;
             }
         }
 
@@ -386,26 +293,7 @@ namespace Neptunium
 
         protected override async Task OnSuspendingAsync()
         {
-            using (ExtendedExecutionSession session = new ExtendedExecutionSession())
-            {
-                session.Reason = ExtendedExecutionReason.SavingData;
 
-                await SongManager.FlushAsync();
-
-
-                var extendedAccess = await session.RequestExtensionAsync();
-
-
-                //clears the tile if we're suspending.
-                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-
-                if (extendedAccess == ExtendedExecutionResult.Allowed)
-                {
-                    await Task.WhenAll(CookieJar.DeviceCache.FlushAsync(), CookieJar.Device.FlushAsync());
-                }
-            }
-
-            await base.OnSuspendingAsync();
         }
 
         protected override async Task OnResumingAsync()
