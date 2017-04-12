@@ -106,6 +106,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ApplicationCommands.cs" />
     <Compile Include="AppSettings.cs" />
     <Compile Include="Core\NepAppHandoffManager.cs" />
     <Compile Include="Core\NepAppMediaPlayerManager.cs" />
@@ -118,35 +119,12 @@
       <DependentUpon>GlassPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="JapaneseTextUtilities.cs" />
-    <Compile Include="Managers\Car Mode\CarModeManager.cs" />
-    <Compile Include="Managers\Car Mode\CarModeManagerBluetoothDeviceCoordinator.cs" />
-    <Compile Include="Managers\Car Mode\CarModeManagerCarModeStatusChangedEventArgs.cs" />
-    <Compile Include="Managers\Car Mode\CarModeManagerSongAnnouncementFrequency.cs" />
-    <Compile Include="Managers\Songs\Metadata Sources\BaseSongMetadataSource.cs" />
-    <Compile Include="Managers\Songs\Metadata Sources\ISongMetadata.cs" />
-    <Compile Include="Managers\Songs\Metadata Sources\ITunesMetadataSource.cs" />
-    <Compile Include="Managers\Songs\Metadata Sources\ITunesSongMetadata.cs" />
-    <Compile Include="Managers\Songs\Metadata Sources\MusicBrainzMetadataSource.cs" />
-    <Compile Include="Managers\Songs\Metadata Sources\MusicBrainzSongMetadata.cs" />
-    <Compile Include="Managers\Songs\Song History\SongHistoryManager.cs" />
-    <Compile Include="Managers\Songs\Song History\SongHistoryManagerItemAddedEventArgs.cs" />
-    <Compile Include="Managers\Songs\Song History\SongHistoryManagerItemRemovedEventArgs.cs" />
-    <Compile Include="Managers\Songs\SongManager.cs" />
-    <Compile Include="Managers\Songs\SongManagerSongChangedEventArgs.cs" />
-    <Compile Include="Managers\Songs\SongMetadata.cs" />
-    <Compile Include="Managers\Songs\SongMetadataManager.cs" />
-    <Compile Include="Managers\Songs\UnknownSongMetadata.cs" />
     <Compile Include="Core\NepApp.cs" />
     <Compile Include="StringUtilities.cs" />
     <Compile Include="Controls\StationItemControl.xaml.cs">
       <DependentUpon>StationItemControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Data\Stations\StationSupplementaryDataManager.cs" />
     <Compile Include="MediaExtensions.cs" />
-    <Compile Include="Data\History\HistoryItemModel.cs" />
-    <Compile Include="Data\Stations\StationDataManager.cs" />
-    <Compile Include="Data\Stations\StationModel.cs" />
-    <Compile Include="Data\Stations\StationModelStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -208,9 +186,6 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\WideLogo.scale-100.png" />
-    <Content Include="Data\Stations\Data\Stations.xml">
-      <SubType>Designer</SubType>
-    </Content>
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\Old\LockScreenLogo.scale-200.png" />

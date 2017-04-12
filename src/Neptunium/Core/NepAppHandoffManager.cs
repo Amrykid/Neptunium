@@ -9,6 +9,9 @@ using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 using Windows.System;
 using Windows.System.RemoteSystems;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.IO;
+using System.Linq;
 
 namespace Neptunium
 {
@@ -147,7 +150,7 @@ namespace Neptunium
             }
         }
 
-        private static void RemoteSystemWatcher_RemoteSystemUpdated(RemoteSystemWatcher sender, RemoteSystemUpdatedEventArgs args)
+        private void RemoteSystemWatcher_RemoteSystemUpdated(RemoteSystemWatcher sender, RemoteSystemUpdatedEventArgs args)
         {
             if (!systemList.Any(x => x.Id == args.RemoteSystem.Id))
             {
@@ -219,7 +222,7 @@ namespace Neptunium
             }
         }
 
-        private static async Task<AppServiceResponse> SendDataToDeviceOverExistingConnectionAsync(AppServiceConnection connection, ValueSet data, bool keepAlive = true)
+        private async Task<AppServiceResponse> SendDataToDeviceOverExistingConnectionAsync(AppServiceConnection connection, ValueSet data, bool keepAlive = true)
         {
             if (!IsSupported) return null;
             if (!IsInitialized) return null;
@@ -233,7 +236,7 @@ namespace Neptunium
 
         }
 
-        private static async Task<RemoteLaunchUriStatus> LaunchAppOnDeviceAsync(RemoteSystem device, string args)
+        private async Task<RemoteLaunchUriStatus> LaunchAppOnDeviceAsync(RemoteSystem device, string args)
         {
             if (!IsSupported) return RemoteLaunchUriStatus.Unknown;
 
@@ -241,7 +244,7 @@ namespace Neptunium
             return await RemoteLauncher.LaunchUriAsync(request, new Uri("nep:" + args));
         }
 
-        public static async Task<bool> HandoffStationToRemoteDeviceAsync(RemoteSystem device, StationModel station)
+        public async Task<bool> HandoffStationToRemoteDeviceAsync(RemoteSystem device, StationModel station)
         {
             if (!IsSupported) return false;
 
@@ -253,10 +256,10 @@ namespace Neptunium
 
             if (status == RemoteLaunchUriStatus.Success)
             {
-                if (StopPlayingStationOnThisDeviceAfterSuccessfulHandoff)
-                {
-                    StationMediaPlayer.Stop();
-                }
+                //if (StopPlayingStationOnThisDeviceAfterSuccessfulHandoff)
+                //{
+                //    StationMediaPlayer.Stop();
+                //}
 
                 return true;
             }
@@ -330,9 +333,10 @@ namespace Neptunium
                             {
                                 if (bool.Parse(responseMsg["IsPlaying"].ToString()) == true)
                                 {
-                                    var station = StationDataManager.Stations.FirstOrDefault(x => x.Name == responseMsg["CurrentStation"].ToString());
+                                    //var station = StationDataManager.Stations.FirstOrDefault(x => x.Name == responseMsg["CurrentStation"].ToString());
 
-                                    devices.Add(new Tuple<RemoteSystem, StationModel, AppServiceConnection>(system, station, connection));
+                                    //devices.Add(new Tuple<RemoteSystem, StationModel, AppServiceConnection>(system, station, connection));
+                                    throw new NotImplementedException();
                                 }
                             }
                         }

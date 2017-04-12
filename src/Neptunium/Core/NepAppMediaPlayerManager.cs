@@ -2,8 +2,6 @@
 {
     public class NepAppMediaPlayerManager
     {
-        public StationModel
-
         internal NepAppMediaPlayerManager()
         {
 

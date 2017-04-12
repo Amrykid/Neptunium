@@ -23,7 +23,3 @@ url=https://github.com/Amrykid/MusicBrainz.git
 	path = lib/UWPShoutcastMSS
 	url = https://github.com/Amrykid/UWPShoutcastMSS.git
 
-[submodule "src/Neptunium/Data/Stations/Data"]
-
-	path = src/Neptunium/Data/Stations/Data
-	url = git@github.com:Amrykid/Neptunium-Stations.git

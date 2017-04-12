@@ -1,47 +1,19 @@
 ﻿using Crystal3;
 using Crystal3.Navigation;
-using Neptunium.Data;
-using Neptunium.ViewModel;
+using Microsoft.HockeyApp;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.UI.ViewManagement;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Windows.Media.Playback;
 using System.Diagnostics;
-using Neptunium.Media;
+using System.Linq;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Email;
-using Neptunium.Managers;
-using Windows.Storage;
+using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
-using Windows.System.RemoteSystems;
-using Kukkii;
-using Windows.System;
-using Windows.Networking.Connectivity;
 using Windows.Gaming.Input;
-using Kimono.Controls.SnackBar;
-using Microsoft.HockeyApp;
-using Windows.UI.Xaml.Media.Animation;
-using Neptunium.Fragments;
-using Neptunium.View.Fragments;
-using Windows.ApplicationModel.ExtendedExecution;
-using Windows.UI.Notifications;
-using Neptunium.Managers.Songs;
-using Neptunium.Managers.Car_Mode;
+using Windows.Networking.Connectivity;
+using Windows.System;
+using Windows.System.RemoteSystems;
+using Windows.UI.Xaml;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -153,9 +125,6 @@ namespace Neptunium
         {
             if (isInBackground)
             {
-                if (StationDataManager.IsInitialized)
-                    StationDataManager.DeinitializeAsync();
-
                 GC.Collect();
             }
         }
@@ -241,7 +210,7 @@ namespace Neptunium
                         var stationName = query.First(x => x.Key.ToLower() == "station").Value;
                         stationName = stationName.Replace("%20", " ");
 
-                        var station = StationDataManager.Stations.First(x => x.Name == stationName);
+                        //var station = StationDataManager.Stations.First(x => x.Name == stationName);
 
                         //if (await StationMediaPlayer.PlayStationAsync(station))
                         //{
@@ -298,11 +267,11 @@ namespace Neptunium
 
         protected override async Task OnResumingAsync()
         {
-            if (ContinuedAppExperienceManager.RemoteSystemAccess == RemoteSystemAccessStatus.Unspecified)
-                await ContinuedAppExperienceManager.InitializeAsync();
-            await ContinuedAppExperienceManager.ScanForRemoteSystemsAsync();
+            if (NepApp.Handoff.RemoteSystemAccess == RemoteSystemAccessStatus.Unspecified)
+                await NepApp.Handoff.InitializeAsync();
+            await NepApp.Handoff.ScanForRemoteSystemsAsync();
 
-            ContinuedAppExperienceManager.CheckForReverseHandoffOpportunities();
+            await NepApp.Handoff.CheckForReverseHandoffOpportunitiesAsync();
 
             await base.OnResumingAsync();
         }
@@ -318,8 +287,8 @@ namespace Neptunium
 
                         switch (asTD.Name)
                         {
-                            case ContinuedAppExperienceManager.ContinuedAppExperienceAppServiceName:
-                                ContinuedAppExperienceManager.HandleBackgroundActivation(asTD);
+                            case NepAppHandoffManager.ContinuedAppExperienceAppServiceName:
+                                NepApp.Handoff.HandleBackgroundActivation(asTD);
                                 break;
                         }
                     }
