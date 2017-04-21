@@ -47,5 +47,10 @@ namespace Neptunium.View
         {
 
         }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            glassPanel.TurnOnGlass();
+        }
     }
 }
