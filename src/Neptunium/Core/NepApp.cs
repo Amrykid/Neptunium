@@ -15,6 +15,7 @@ namespace Neptunium
         public static NepAppHandoffManager Handoff { get; private set; }
         public static NepAppMediaPlayerManager Media { get; private set; }
         public static NepAppSettingsManager Settings { get; private set; }
+        public static NepAppUIManager UI { get; private set; }
         public static Task InitializeAsync()
         {
             CookieJar.ApplicationName = "Neptunium";
@@ -24,7 +25,7 @@ namespace Neptunium
             Settings = new NepAppSettingsManager();
             Media = new NepAppMediaPlayerManager();
             Handoff = new NepAppHandoffManager();
-
+            UI = new NepAppUIManager();
 
             return Task.CompletedTask;
         }

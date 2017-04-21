@@ -32,6 +32,22 @@
                             <Style BasedOn="{StaticResource SplitViewRadioButtonStyle}" TargetType="RadioButton" />
                         </StackPanel.Resources>
 
+                        <ItemsControl x:Name="SplitViewNavigationList">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <RadioButton
+                                        Command="{Binding Command, Mode=OneTime}"
+                                        Content="{Binding DisplayText, Mode=OneTime}"
+                                        GroupName="Navigation"
+                                        Style="{StaticResource SplitViewRadioButtonStyle}">
+                                        <RadioButton.Tag>
+                                            <TextBlock FontSize="{StaticResource SplitViewLargeNavFontSize}" Text="{Binding Symbol, Mode=OneTime}" />
+                                        </RadioButton.Tag>
+                                    </RadioButton>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
                         <!--  font family = Segoe MDL2 Assets  -->
                         <!--<RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Stations"
                                  Command="{Binding GoToStationsViewCommand}" x:Name="stationsNavButton">
@@ -90,6 +106,7 @@
             Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
             Visibility="Visible">
             <TextBlock
+                x:Name="MobilePageTitleBlock"
                 VerticalAlignment="Center"
                 FontSize="15"
                 FontWeight="Bold"

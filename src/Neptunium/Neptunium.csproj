@@ -118,6 +118,7 @@
     <Compile Include="Controls\GlassPanel.xaml.cs">
       <DependentUpon>GlassPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\NepAppUIManager.cs" />
     <Compile Include="JapaneseTextUtilities.cs" />
     <Compile Include="Core\NepApp.cs" />
     <Compile Include="StringUtilities.cs" />

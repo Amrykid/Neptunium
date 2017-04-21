@@ -27,6 +27,20 @@ namespace Neptunium.View
         public AppShellView()
         {
             this.InitializeComponent();
+
+            Binding pageTitleBinding = new Binding();
+            pageTitleBinding.Source = NepApp.UI;
+            pageTitleBinding.Path = new PropertyPath(nameof(NepApp.UI.ViewTitle));
+            pageTitleBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+
+            MobilePageTitleBlock.SetBinding(TextBlock.TextProperty, pageTitleBinding);
+
+            Binding navItemBinding = new Binding();
+            navItemBinding.Source = NepApp.UI;
+            navItemBinding.Path = new PropertyPath(nameof(NepApp.UI.NavigationItems));
+            navItemBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+
+            SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, navItemBinding);
         }
 
         private void FeedbackButton_Click(object sender, RoutedEventArgs e)
