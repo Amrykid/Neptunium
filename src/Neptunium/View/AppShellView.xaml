@@ -86,9 +86,9 @@
         <Grid
             x:Name="MobileHeader"
             Height="50"
+            Padding="100,0,0,0"
             Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
-            Visibility="Visible"
-            Padding="100,0,0,0">
+            Visibility="Visible">
             <TextBlock
                 VerticalAlignment="Center"
                 FontSize="15"
