@@ -10,9 +10,16 @@ namespace Neptunium.ViewModel
 {
     public class AppShellViewModel: ViewModelBase
     {
+        public AppShellViewModel()
+        {
+            NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), "");
+        }
+
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             base.OnNavigatedTo(sender, e);
+
+            
         }
     }
 }

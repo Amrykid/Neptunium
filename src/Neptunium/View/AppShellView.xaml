@@ -41,7 +41,12 @@
                                         GroupName="Navigation"
                                         Style="{StaticResource SplitViewRadioButtonStyle}">
                                         <RadioButton.Tag>
-                                            <TextBlock FontSize="{StaticResource SplitViewLargeNavFontSize}" Text="{Binding Symbol, Mode=OneTime}" />
+                                            <TextBlock
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                FontSize="{StaticResource SplitViewLargeNavFontSize}"
+                                                Text="{Binding Symbol, Mode=OneTime}" />
                                         </RadioButton.Tag>
                                     </RadioButton>
                                 </DataTemplate>

@@ -128,6 +128,7 @@
     <Compile Include="MediaExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AppShellViewModel.cs" />
+    <Compile Include="ViewModel\StationsPageViewModel.cs" />
     <Compile Include="View\AppShellView.xaml.cs">
       <DependentUpon>AppShellView.xaml</DependentUpon>
     </Compile>
