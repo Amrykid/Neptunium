@@ -141,6 +141,8 @@
                         <Setter Target="RootSplitView.IsPaneOpen" Value="True" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
                         <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
+                        <Setter Target="RootSplitViewPaneStackPanel.Margin" Value="0,50,0,0" />
+                        <Setter Target="MobileHeader.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -154,6 +156,8 @@
                         <Setter Target="RootSplitView.IsPaneOpen" Value="False" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
                         <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
+                        <Setter Target="RootSplitViewPaneStackPanel.Margin" Value="0,50,0,0" />
+                        <Setter Target="MobileHeader.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -165,6 +169,8 @@
                     <VisualState.Setters>
                         <Setter Target="RootSplitView.DisplayMode" Value="Overlay" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="240" />
+                        <Setter Target="RootSplitViewPaneStackPanel.Margin" Value="0,0,0,0" />
+                        <Setter Target="MobileHeader.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
