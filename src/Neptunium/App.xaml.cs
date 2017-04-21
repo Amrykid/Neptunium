@@ -1,6 +1,7 @@
 ﻿using Crystal3;
 using Crystal3.Navigation;
 using Microsoft.HockeyApp;
+using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -37,18 +38,14 @@ namespace Neptunium
             this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
             ElementSoundPlayer.State = ElementSoundPlayerState.Auto;
 
-           
-
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
             {
                 Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
             }
 
-
             Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
             Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;
-
 
             if (!Debugger.IsAttached)
             {
@@ -74,12 +71,8 @@ namespace Neptunium
         {
             if (!Debugger.IsAttached)
             {
-                try
-                {
-                    HockeyClient.Current.TrackException(e.Exception);
-                    HockeyClient.Current.Flush();
-                }
-                catch (NullReferenceException) { }
+                HockeyClient.Current.TrackException(e.Exception);
+                HockeyClient.Current.Flush();
             }
             else
             {
@@ -100,7 +93,6 @@ namespace Neptunium
             isInBackground = true;
             return base.OnBackgroundingAsync();
         }
-
 
         #region Memory reduction stuff based on https://msdn.microsoft.com/en-us/windows/uwp/audio-video-camera/background-audio
         private void MemoryManager_AppMemoryUsageLimitChanging(object sender, AppMemoryUsageLimitChangingEventArgs e)
@@ -157,16 +149,17 @@ namespace Neptunium
         }
 
         private async Task PostUIInitAsync()
-        {      
+        {
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
         }
 
-        public override Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
+        public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
             WindowManager.GetNavigationManagerForCurrentWindow()
                 .RootNavigationService.NavigateTo<AppShellViewModel>();
-            return Task.CompletedTask;
+
+            await PostUIInitAsync();
         }
 
         public override async Task OnActivationAsync(IActivatedEventArgs args)
@@ -193,7 +186,7 @@ namespace Neptunium
             }
         }
 
-        private static async Task ExecuteQueryCommandsAsync(Uri uri)
+        private static Task ExecuteQueryCommandsAsync(Uri uri)
         {
             switch (uri.LocalPath.ToLower())
             {
@@ -210,21 +203,11 @@ namespace Neptunium
                         var stationName = query.First(x => x.Key.ToLower() == "station").Value;
                         stationName = stationName.Replace("%20", " ");
 
-                        //var station = StationDataManager.Stations.First(x => x.Name == stationName);
-
-                        //if (await StationMediaPlayer.PlayStationAsync(station))
-                        //{
-                        //    if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.NavigateToStationWhenLaunched])
-                        //    {
-                        //        WindowManager.GetNavigationManagerForCurrentWindow()
-                        //        .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
-                        //        .NavigateTo<StationInfoViewModel>(station.Name);
-                        //    }
-                        //}
-
                         throw new NotImplementedException();
                     }
             }
+
+            return Task.CompletedTask;
         }
 
         internal static bool GetIfPrimaryWindowVisible()
@@ -260,41 +243,18 @@ namespace Neptunium
             return true;
         }
 
-        protected override async Task OnSuspendingAsync()
+        protected override Task OnSuspendingAsync()
         {
-
+            return Task.CompletedTask;
         }
 
         protected override async Task OnResumingAsync()
         {
-            if (NepApp.Handoff.RemoteSystemAccess == RemoteSystemAccessStatus.Unspecified)
-                await NepApp.Handoff.InitializeAsync();
-            await NepApp.Handoff.ScanForRemoteSystemsAsync();
-
-            await NepApp.Handoff.CheckForReverseHandoffOpportunitiesAsync();
-
             await base.OnResumingAsync();
         }
 
         public override Task OnBackgroundActivatedAsync(BackgroundActivatedEventArgs args)
         {
-            switch (args.TaskInstance.Task.Name)
-            {
-                default:
-                    if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails)
-                    {
-                        var asTD = args.TaskInstance.TriggerDetails as AppServiceTriggerDetails;
-
-                        switch (asTD.Name)
-                        {
-                            case NepAppHandoffManager.ContinuedAppExperienceAppServiceName:
-                                NepApp.Handoff.HandleBackgroundActivation(asTD);
-                                break;
-                        }
-                    }
-                    break;
-            }
-
             return Task.CompletedTask;
         }
     }

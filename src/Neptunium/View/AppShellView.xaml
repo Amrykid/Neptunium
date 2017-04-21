@@ -1,0 +1,151 @@
+﻿<Page
+    x:Class="Neptunium.View.AppShellView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Neptunium.View"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uwp="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:wst="using:WindowsStateTriggers"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <SplitView
+            x:Name="RootSplitView"
+            Grid.Row="1"
+            Margin="0,0,0,0"
+            DisplayMode="CompactInline">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel x:Name="RootSplitViewPaneStackPanel" Grid.Row="0">
+                        <StackPanel.Resources>
+                            <Style BasedOn="{StaticResource SplitViewTextBlockStyle}" TargetType="TextBlock" />
+                            <Style BasedOn="{StaticResource SplitViewRadioButtonStyle}" TargetType="RadioButton" />
+                        </StackPanel.Resources>
+
+                        <!--  font family = Segoe MDL2 Assets  -->
+                        <!--<RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Stations"
+                                 Command="{Binding GoToStationsViewCommand}" x:Name="stationsNavButton">
+                            <RadioButton.Tag>
+                                <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                            </RadioButton.Tag>
+                        </RadioButton>-->
+                        <!--<RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Now Playing"
+                                 Command="{Binding GoToNowPlayingViewCommand}" x:Name="nowPlayingNavButton">
+                            <RadioButton.Tag>
+                                <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                            </RadioButton.Tag>
+                        </RadioButton>
+                        <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Song History"
+                                 Command="{Binding GoToSongHistoryViewCommand}" x:Name="songHistoryNavButton">
+                            <RadioButton.Tag>
+                                <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                            </RadioButton.Tag>
+                        </RadioButton>
+                        <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Settings"
+                                 Command="{Binding GoToSettingsViewCommand}" x:Name="settingsNavButton">
+                            <RadioButton.Tag>
+                                <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
+                            </RadioButton.Tag>
+                        </RadioButton>
+                    </StackPanel>-->
+
+                        <StackPanel Grid.Row="1">
+                            <StackPanel.Resources>
+                                <Style BasedOn="{StaticResource SplitViewTextBlockStyle}" TargetType="TextBlock" />
+                            </StackPanel.Resources>
+
+                            <Button
+                                x:Name="FeedbackButton"
+                                Click="FeedbackButton_Click"
+                                Content="Feedback"
+                                Style="{StaticResource SplitViewButtonStyle}"
+                                Visibility="Collapsed">
+                                <Button.Tag>
+                                    <TextBlock FontSize="{StaticResource SplitViewLargeNavFontSize}" Text="" />
+                                </Button.Tag>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <Grid />
+            </SplitView.Content>
+        </SplitView>
+
+        <Grid
+            x:Name="MobileHeader"
+            Height="50"
+            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
+            Visibility="Visible"
+            Padding="100,0,0,0">
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="15"
+                FontWeight="Bold"
+                Text="PAGE TITLE" />
+        </Grid>
+
+        <ToggleButton
+            x:Name="TogglePaneButton"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            AutomationProperties.Name="Menu"
+            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+            IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
+            Style="{StaticResource SplitViewTogglePaneButtonStyle}"
+            TabIndex="1"
+            ToolTipService.ToolTip="Menu" />
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="DesktopVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:AdaptiveTrigger MinWindowWidth="1080" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="RootSplitView.DisplayMode" Value="CompactInline" />
+                        <Setter Target="RootSplitView.IsPaneOpen" Value="True" />
+                        <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
+                        <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="TabletVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="RootSplitView.DisplayMode" Value="CompactInline" />
+                        <Setter Target="RootSplitView.IsPaneOpen" Value="False" />
+                        <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
+                        <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="PhoneVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="RootSplitView.DisplayMode" Value="Overlay" />
+                        <Setter Target="RootSplitView.OpenPaneLength" Value="240" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</Page>
