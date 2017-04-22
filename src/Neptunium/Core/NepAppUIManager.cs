@@ -42,6 +42,13 @@ namespace Neptunium.Core
             NavigationItems = new ReadOnlyObservableCollection<NepAppUINavigationItem>(navigationItems);
         }
 
+        internal void SetNavigationService(NavigationServiceBase navService)
+        {
+            if (navService == null) throw new ArgumentNullException(nameof(navService));
+
+            inlineNavigationService = navService;
+        }
+
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
             if (string.IsNullOrWhiteSpace(propertyName)) throw new ArgumentNullException("propertyName");
@@ -62,12 +69,17 @@ namespace Neptunium.Core
             navItem.NavigationViewModelType = navigationViewModel;
             navItem.Command = new RelayCommand(x =>
             {
-                if (inlineNavigationService == null)
-                    throw new InvalidOperationException(nameof(inlineNavigationService) + " is null.");
-
-                inlineNavigationService.Navigate(navItem.NavigationViewModelType);
+                NavigateToItem(navItem, x);
             });
             navigationItems.Add(navItem);
+        }
+
+        public void NavigateToItem(NepAppUINavigationItem navItem, object parameter = null)
+        {
+            if (inlineNavigationService == null)
+                throw new InvalidOperationException(nameof(inlineNavigationService) + " is null.");
+
+            inlineNavigationService.Navigate(navItem.NavigationViewModelType, parameter);
         }
     }
 }

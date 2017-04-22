@@ -1,4 +1,5 @@
-﻿using Neptunium.ViewModel;
+﻿using Crystal3.Navigation;
+using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,7 +41,10 @@ namespace Neptunium.View
             navItemBinding.Path = new PropertyPath(nameof(NepApp.UI.NavigationItems));
             navItemBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
 
+            //todo figure out a way to update the selected radio item.
             SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, navItemBinding);
+
+            NepApp.UI.SetNavigationService(WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two));
         }
 
         private void FeedbackButton_Click(object sender, RoutedEventArgs e)

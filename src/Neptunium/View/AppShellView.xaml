@@ -17,13 +17,6 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <con:GlassPanel
-            x:Name="glassPanel"
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch" />
-
         <SplitView
             x:Name="RootSplitView"
             Grid.Row="1"
@@ -35,6 +28,13 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
+                    <con:GlassPanel
+                        x:Name="glassPanel"
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch" />
+
                     <StackPanel x:Name="RootSplitViewPaneStackPanel" Grid.Row="0">
                         <StackPanel.Resources>
                             <Style BasedOn="{StaticResource SplitViewTextBlockStyle}" TargetType="TextBlock" />
@@ -109,7 +109,9 @@
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>
-                <Grid />
+                <Grid>
+                    <Frame x:Name="InlineFrame" />
+                </Grid>
             </SplitView.Content>
         </SplitView>
 

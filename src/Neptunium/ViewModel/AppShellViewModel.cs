@@ -19,7 +19,9 @@ namespace Neptunium.ViewModel
         {
             base.OnNavigatedTo(sender, e);
 
-            
+            var stationsPage = NepApp.UI.NavigationItems.FirstOrDefault(X => X.NavigationViewModelType == typeof(StationsPageViewModel));
+            if (stationsPage == null) throw new Exception("Stations page not found.");
+            NepApp.UI.NavigateToItem(stationsPage);
         }
     }
 }

@@ -132,6 +132,9 @@
     <Compile Include="View\AppShellView.xaml.cs">
       <DependentUpon>AppShellView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\StationsPage.xaml.cs">
+      <DependentUpon>StationsPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -256,6 +259,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\AppShellView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\StationsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
