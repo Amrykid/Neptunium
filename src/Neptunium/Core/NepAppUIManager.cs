@@ -31,6 +31,7 @@ namespace Neptunium.Core
             public string DisplayText { get; internal set; }
             public Type NavigationViewModelType { get; internal set; }
             public RelayCommand Command { get; internal set; }
+            public bool IsSelected { get { return GetPropertyValue<bool>(); } internal set { SetPropertyValue<bool>(value: value); } }
         }
 
         private NavigationServiceBase inlineNavigationService = null;
@@ -46,7 +47,25 @@ namespace Neptunium.Core
         {
             if (navService == null) throw new ArgumentNullException(nameof(navService));
 
+            if (inlineNavigationService != null)
+            {
+                //unsubscribe from the previous nav service
+                inlineNavigationService.Navigated -= InlineNavigationService_Navigated;
+            }
+
             inlineNavigationService = navService;
+            inlineNavigationService.Navigated += InlineNavigationService_Navigated;
+        }
+
+        private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
+        {
+            UpdateSelectedNavigationItems();
+        }
+
+        private void UpdateSelectedNavigationItems()
+        {
+            foreach (NepAppUINavigationItem item in navigationItems)
+                item.IsSelected = inlineNavigationService.IsNavigatedTo(item.NavigationViewModelType);
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")

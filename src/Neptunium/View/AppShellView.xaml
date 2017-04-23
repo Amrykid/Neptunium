@@ -18,12 +18,12 @@
                 <ToggleButton
                     x:Name="TogglePaneButton"
                     AutomationProperties.Name="Menu"
-                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                     Checked="TogglePaneButton_Checked"
-                    Unchecked="TogglePaneButton_Unchecked"
+                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                     Style="{StaticResource SplitViewTogglePaneButtonStyle}"
                     TabIndex="1"
-                    ToolTipService.ToolTip="Menu" />
+                    ToolTipService.ToolTip="Menu"
+                    Unchecked="TogglePaneButton_Unchecked" />
             </CommandBar.Content>
         </CommandBar>
     </Page.TopAppBar>
@@ -53,6 +53,7 @@
                                         Command="{Binding Command, Mode=OneTime}"
                                         Content="{Binding DisplayText, Mode=OneTime}"
                                         GroupName="Navigation"
+                                        IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
                                         Style="{StaticResource SplitViewRadioButtonStyle}">
                                         <RadioButton.Tag>
                                             <TextBlock
