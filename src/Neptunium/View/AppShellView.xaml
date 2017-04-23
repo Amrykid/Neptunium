@@ -8,18 +8,29 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:uwp="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:wst="using:WindowsStateTriggers"
+    x:Name="ShellPage"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Page.TopAppBar>
+        <CommandBar>
+            <CommandBar.Content>
+                <ToggleButton
+                    x:Name="TogglePaneButton"
+                    AutomationProperties.Name="Menu"
+                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                    Checked="TogglePaneButton_Checked"
+                    Unchecked="TogglePaneButton_Unchecked"
+                    Style="{StaticResource SplitViewTogglePaneButtonStyle}"
+                    TabIndex="1"
+                    ToolTipService.ToolTip="Menu" />
+            </CommandBar.Content>
+        </CommandBar>
+    </Page.TopAppBar>
 
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <SplitView
             x:Name="RootSplitView"
-            Grid.Row="1"
             Margin="0,0,0,0"
             DisplayMode="CompactInline">
             <SplitView.Pane>
@@ -28,12 +39,6 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <con:GlassPanel
-                        x:Name="glassPanel"
-                        Grid.Row="0"
-                        Grid.RowSpan="2"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch" />
 
                     <StackPanel x:Name="RootSplitViewPaneStackPanel" Grid.Row="0">
                         <StackPanel.Resources>
@@ -115,31 +120,6 @@
             </SplitView.Content>
         </SplitView>
 
-        <Grid
-            x:Name="MobileHeader"
-            Height="50"
-            Padding="100,0,0,0"
-            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"
-            Visibility="Visible">
-            <TextBlock
-                x:Name="MobilePageTitleBlock"
-                VerticalAlignment="Center"
-                FontSize="15"
-                FontWeight="Bold"
-                Text="PAGE TITLE" />
-        </Grid>
-
-        <ToggleButton
-            x:Name="TogglePaneButton"
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            AutomationProperties.Name="Menu"
-            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-            IsChecked="{Binding IsPaneOpen, ElementName=RootSplitView, Mode=TwoWay}"
-            Style="{StaticResource SplitViewTogglePaneButtonStyle}"
-            TabIndex="1"
-            ToolTipService.ToolTip="Menu" />
-
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="DesktopVisualState">
@@ -152,8 +132,6 @@
                         <Setter Target="RootSplitView.IsPaneOpen" Value="True" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
                         <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
-                        <Setter Target="RootSplitViewPaneStackPanel.Margin" Value="0,50,0,0" />
-                        <Setter Target="MobileHeader.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -167,8 +145,6 @@
                         <Setter Target="RootSplitView.IsPaneOpen" Value="False" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
                         <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
-                        <Setter Target="RootSplitViewPaneStackPanel.Margin" Value="0,50,0,0" />
-                        <Setter Target="MobileHeader.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -180,8 +156,6 @@
                     <VisualState.Setters>
                         <Setter Target="RootSplitView.DisplayMode" Value="Overlay" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="240" />
-                        <Setter Target="RootSplitViewPaneStackPanel.Margin" Value="0,0,0,0" />
-                        <Setter Target="MobileHeader.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

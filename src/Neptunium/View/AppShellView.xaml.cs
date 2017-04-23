@@ -29,13 +29,6 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
-            Binding pageTitleBinding = new Binding();
-            pageTitleBinding.Source = NepApp.UI;
-            pageTitleBinding.Path = new PropertyPath(nameof(NepApp.UI.ViewTitle));
-            pageTitleBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-
-            MobilePageTitleBlock.SetBinding(TextBlock.TextProperty, pageTitleBinding);
-
             Binding navItemBinding = new Binding();
             navItemBinding.Source = NepApp.UI;
             navItemBinding.Path = new PropertyPath(nameof(NepApp.UI.NavigationItems));
@@ -54,7 +47,17 @@ namespace Neptunium.View
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            glassPanel.TurnOnGlass();
+            
+        }
+
+        private void TogglePaneButton_Checked(object sender, RoutedEventArgs e)
+        {
+            RootSplitView.IsPaneOpen = true;
+        }
+
+        private void TogglePaneButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            RootSplitView.IsPaneOpen = false;
         }
     }
 }
