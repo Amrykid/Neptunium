@@ -1,6 +1,6 @@
 ﻿using static Neptunium.NepApp;
 
-namespace Neptunium
+namespace Neptunium.Media
 {
     public class NepAppMediaPlayerManager: INepAppFunctionManager
     {
