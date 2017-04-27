@@ -1,5 +1,6 @@
 ﻿using Kukkii;
 using Neptunium.Core;
+using Neptunium.Core.Stations;
 using Neptunium.Media;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace Neptunium
         public static NepAppHandoffManager Handoff { get; private set; }
         public static NepAppMediaPlayerManager Media { get; private set; }
         public static NepAppSettingsManager Settings { get; private set; }
+        public static NepAppStationsManager Stations { get; private set; }
         public static NepAppUIManager UI { get; private set; }
         public static Task InitializeAsync()
         {
@@ -29,6 +31,7 @@ namespace Neptunium
                 "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Major + " ( amrykid@gmail.com )";
 
             Settings = new NepAppSettingsManager();
+            Stations = new NepAppStationsManager();
             Media = new NepAppMediaPlayerManager();
             Handoff = new NepAppHandoffManager();
             UI = new NepAppUIManager();
