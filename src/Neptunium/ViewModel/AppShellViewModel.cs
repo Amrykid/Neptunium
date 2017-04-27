@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Crystal3.Navigation;
+using Neptunium.Core;
 
 namespace Neptunium.ViewModel
 {
@@ -12,7 +13,17 @@ namespace Neptunium.ViewModel
     {
         public AppShellViewModel()
         {
+            App.Current.UnhandledException += Current_UnhandledException;
+
             NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), "");
+        }
+
+        private void Current_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            if (e.Exception is NeptuniumException)
+            {
+                e.Handled = true;
+            }
         }
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)

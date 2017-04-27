@@ -108,6 +108,9 @@
     </Compile>
     <Compile Include="ApplicationCommands.cs" />
     <Compile Include="AppSettings.cs" />
+    <Compile Include="Core\Media\DirectStationMediaStreamer.cs" />
+    <Compile Include="Core\Media\INepAppMediaStreamer.cs" />
+    <Compile Include="Core\Media\ShoutcastStationMediaStreamer.cs" />
     <Compile Include="Core\NepAppHandoffManager.cs" />
     <Compile Include="Core\Media\NepAppMediaPlayerManager.cs" />
     <Compile Include="Core\NepAppSettingsManager.cs" />
@@ -119,9 +122,11 @@
       <DependentUpon>GlassPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\NepAppUIManager.cs" />
+    <Compile Include="Core\NeptuniumException.cs" />
     <Compile Include="Core\Stations\NepAppStationsManager.cs" />
     <Compile Include="Core\Stations\StationItem.cs" />
     <Compile Include="Core\Stations\StationStream.cs" />
+    <Compile Include="Core\Stations\StationStreamServerFormat.cs" />
     <Compile Include="JapaneseTextUtilities.cs" />
     <Compile Include="Core\NepApp.cs" />
     <Compile Include="StringUtilities.cs" />

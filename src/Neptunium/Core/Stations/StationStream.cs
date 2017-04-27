@@ -7,6 +7,7 @@ namespace Neptunium.Core.Stations
         public virtual string SpecificTitle { get { return ParentStation?.Name; } }
         public StationItem ParentStation { get; private set; }
         public Uri StreamUrl { get; private set; }
+        public StationStreamServerFormat ServerFormat { get; private set; }
 
         public override string ToString()
         {
