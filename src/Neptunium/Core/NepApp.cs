@@ -7,11 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Media.Playback;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Data;
 
 namespace Neptunium
 {
     public static class NepApp
     {
+        public interface INepAppFunctionManager { }
+
         public static NepAppHandoffManager Handoff { get; private set; }
         public static NepAppMediaPlayerManager Media { get; private set; }
         public static NepAppSettingsManager Settings { get; private set; }
@@ -20,7 +24,8 @@ namespace Neptunium
         {
             CookieJar.ApplicationName = "Neptunium";
 
-            Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Major + " ( amrykid@gmail.com )";
+            Hqub.MusicBrainz.API.MyHttpClient.UserAgent = 
+                "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Major + " ( amrykid@gmail.com )";
 
             Settings = new NepAppSettingsManager();
             Media = new NepAppMediaPlayerManager();
@@ -28,6 +33,15 @@ namespace Neptunium
             UI = new NepAppUIManager();
 
             return Task.CompletedTask;
+        }
+
+        public static Binding CreateBinding(INepAppFunctionManager source, string propertyPath)
+        {
+            Binding binding = new Windows.UI.Xaml.Data.Binding();
+            binding.Source = NepApp.UI;
+            binding.Path = new PropertyPath(propertyPath);
+            binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            return binding;
         }
     }
 }

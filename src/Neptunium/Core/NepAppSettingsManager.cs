@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
+using static Neptunium.NepApp;
 
 namespace Neptunium.Core
 {
-    public class NepAppSettingsManager
+    public class NepAppSettingsManager: INepAppFunctionManager
     {
         internal NepAppSettingsManager()
         {

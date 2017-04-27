@@ -12,10 +12,11 @@ using Windows.System.RemoteSystems;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.IO;
 using System.Linq;
+using static Neptunium.NepApp;
 
 namespace Neptunium
 {
-    public class NepAppHandoffManager
+    public class NepAppHandoffManager: INepAppFunctionManager
     {
         internal NepAppHandoffManager()
         {

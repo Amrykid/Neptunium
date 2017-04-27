@@ -9,10 +9,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using static Neptunium.NepApp;
 
 namespace Neptunium.Core
 {
-    public class NepAppUIManager: INotifyPropertyChanged
+    public class NepAppUIManager: INotifyPropertyChanged, INepAppFunctionManager
     {
         /// <summary>
         /// From INotifyPropertyChanged

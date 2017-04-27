@@ -1,6 +1,8 @@
-﻿namespace Neptunium
+﻿using static Neptunium.NepApp;
+
+namespace Neptunium
 {
-    public class NepAppMediaPlayerManager
+    public class NepAppMediaPlayerManager: INepAppFunctionManager
     {
         internal NepAppMediaPlayerManager()
         {

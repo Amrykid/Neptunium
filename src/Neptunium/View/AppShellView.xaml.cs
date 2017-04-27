@@ -29,10 +29,7 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
-            Binding navItemBinding = new Binding();
-            navItemBinding.Source = NepApp.UI;
-            navItemBinding.Path = new PropertyPath(nameof(NepApp.UI.NavigationItems));
-            navItemBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            Binding navItemBinding = NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems));
 
             //todo figure out a way to update the selected radio item.
             SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, navItemBinding);
