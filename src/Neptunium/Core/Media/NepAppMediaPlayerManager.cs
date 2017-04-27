@@ -1,4 +1,5 @@
-﻿using Neptunium.Core.Stations;
+﻿using Neptunium.Core;
+using Neptunium.Core.Stations;
 using System.Threading.Tasks;
 using static Neptunium.NepApp;
 
@@ -26,17 +27,10 @@ namespace Neptunium.Media
 
         public async Task TryStreamStationAsync(StationStream stream)
         {
-            if (!NepApp.Network.IsConnected())
+            if (!NepApp.Network.IsConnected) throw new NeptuniumNetworkConnectionRequiredException();
 
             INepAppMediaStreamer streamer = CreateStreamerForServerFormat(stream.ServerFormat);
-            try
-            {
-
-            }
-            catch (Exception)
-            {
-
-            }
+            await streamer.TryConnectAsync(stream); //a failure to connect is caught as a Neptunium.Core.NeptuniumStreamConnectionFailedException by AppShellViewModel
         }
     }
 }

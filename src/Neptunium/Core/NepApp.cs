@@ -20,6 +20,7 @@ namespace Neptunium
 
         public static NepAppHandoffManager Handoff { get; private set; }
         public static NepAppMediaPlayerManager Media { get; private set; }
+        public static NepAppNetworkManager Network { get; private set; }
         public static NepAppSettingsManager Settings { get; private set; }
         public static NepAppStationsManager Stations { get; private set; }
         public static NepAppUIManager UI { get; private set; }
@@ -33,6 +34,7 @@ namespace Neptunium
             Settings = new NepAppSettingsManager();
             Stations = new NepAppStationsManager();
             Media = new NepAppMediaPlayerManager();
+            Network = new NepAppNetworkManager();
             Handoff = new NepAppHandoffManager();
             UI = new NepAppUIManager();
 

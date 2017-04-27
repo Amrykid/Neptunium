@@ -23,6 +23,8 @@ namespace Neptunium.ViewModel
             if (e.Exception is NeptuniumException)
             {
                 e.Handled = true;
+
+                //todo show a popup here.
             }
         }
 
