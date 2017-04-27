@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Neptunium.View"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tk="using:WinRTXamlToolkit.Controls"
     xmlns:uwp="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:wst="using:WindowsStateTriggers"
     x:Name="ShellPage"
@@ -27,6 +28,27 @@
             </CommandBar.Content>
         </CommandBar>
     </Page.TopAppBar>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <CommandBar.Content>
+                <Button Style="{x:Null}">
+                    <Grid Width="400" Height="100">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <uwp:ImageEx
+                            x:Name="NowPlayingImage"
+                            Grid.Column="0"
+                            IsCacheEnabled="True" />
+
+                    </Grid>
+                </Button>
+            </CommandBar.Content>
+        </CommandBar>
+    </Page.BottomAppBar>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <SplitView
