@@ -1,6 +1,7 @@
 ﻿using Neptunium.Core;
 using Neptunium.Core.Stations;
 using System.Threading.Tasks;
+using Windows.Media.Playback;
 using static Neptunium.NepApp;
 
 namespace Neptunium.Media
@@ -12,7 +13,9 @@ namespace Neptunium.Media
 
         }
 
-        private INepAppMediaStreamer CreateStreamerForServerFormat(StationStreamServerFormat format)
+        public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
+
+        private BasicNepAppMediaStreamer CreateStreamerForServerFormat(StationStreamServerFormat format)
         {
             switch(format)
             {
@@ -29,8 +32,24 @@ namespace Neptunium.Media
         {
             if (!NepApp.Network.IsConnected) throw new NeptuniumNetworkConnectionRequiredException();
 
-            INepAppMediaStreamer streamer = CreateStreamerForServerFormat(stream.ServerFormat);
+            BasicNepAppMediaStreamer streamer = CreateStreamerForServerFormat(stream.ServerFormat);
             await streamer.TryConnectAsync(stream); //a failure to connect is caught as a Neptunium.Core.NeptuniumStreamConnectionFailedException by AppShellViewModel
+
+            if (CurrentStreamer != null)
+            {
+                CurrentStreamer.Pause();
+                CurrentStreamer.Dispose();
+            }
+
+            MediaPlayer player = new MediaPlayer();
+            player.AudioCategory = MediaPlayerAudioCategory.Media;
+            streamer.InitializePlayback(player);
+
+            streamer.Play();
+
+            CurrentStreamer = streamer;
         }
+
+
     }
 }

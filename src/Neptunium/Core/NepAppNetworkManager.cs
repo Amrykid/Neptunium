@@ -3,7 +3,7 @@ using static Neptunium.NepApp;
 
 namespace Neptunium
 {
-    internal class NepAppNetworkManager: INepAppFunctionManager
+    public class NepAppNetworkManager: INepAppFunctionManager
     {
         public NepAppNetworkManager()
         {

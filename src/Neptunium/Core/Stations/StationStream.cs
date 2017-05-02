@@ -4,6 +4,12 @@ namespace Neptunium.Core.Stations
 {
     public class StationStream
     {
+        public StationStream(StationItem parent, Uri url)
+        {
+            ParentStation = parent;
+            StreamUrl = url;
+        }
+
         public virtual string SpecificTitle { get { return ParentStation?.Name; } }
         public StationItem ParentStation { get; private set; }
         public Uri StreamUrl { get; private set; }

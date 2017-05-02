@@ -1,20 +1,41 @@
 ﻿using Neptunium.Core.Stations;
 using System;
+using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.Storage.Streams;
+using Windows.Web.Http;
 
 namespace Neptunium.Media
 {
     internal class DirectStationMediaStreamer : BasicNepAppMediaStreamer
     {
+        HttpClient httpClient = new HttpClient();
         public override void InitializePlayback(MediaPlayer player)
         {
-            throw new NotImplementedException();
+            Player = player;
+            Player.Source = StreamMediaSource;
         }
 
-        public override Task TryConnectAsync(StationStream stream)
+        public override async Task TryConnectAsync(StationStream stream)
         {
-            throw new NotImplementedException();
+            var httpRequest = new HttpRequestMessage(HttpMethod.Get, stream.StreamUrl); //some servers don't support head. we need a better way to poke the server
+            var httpResponse = await httpClient.SendRequestAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead);
+
+            if (!httpResponse.IsSuccessStatusCode) throw new Neptunium.Core.NeptuniumStreamConnectionFailedException(stream);
+
+            //collect header information here
+
+            httpRequest.Dispose();
+            httpResponse.Dispose();
+            httpClient.Dispose();
+
+            await Task.Delay(500);
+
+            StreamMediaSource = MediaSource.CreateFromUri(stream.StreamUrl);
         }
     }
 }
