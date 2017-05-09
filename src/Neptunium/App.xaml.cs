@@ -42,6 +42,7 @@ using Windows.ApplicationModel.ExtendedExecution;
 using Windows.UI.Notifications;
 using Neptunium.Managers.Songs;
 using Neptunium.Managers.Car_Mode;
+using Microsoft.Services.Store.Engagement;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -236,6 +237,9 @@ namespace Neptunium
 
             await SongManager.InitializeAsync();
             await StationMediaPlayer.InitializeAsync();
+
+            //StoreServicesEngagementManager engagementManager = StoreServicesEngagementManager.GetDefault();
+            //await engagementManager.RegisterNotificationChannelAsync();
 
             coreInitialized = true;
         }
