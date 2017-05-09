@@ -106,8 +106,15 @@ namespace Neptunium.View.Fragments
                 {
                     if ((bool)ApplicationData.Current.LocalSettings.Values[AppSettings.MediaBarMatchStationColor])
                     {
-                        var color = await StationSupplementaryDataManager.GetStationLogoDominantColorAsync(fragment.CurrentStation);
-                        PART_GlassPane.ChangeBlurColor(color);
+                        try
+                        {
+                            var color = await StationSupplementaryDataManager.GetStationLogoDominantColorAsync(fragment.CurrentStation);
+                            PART_GlassPane.ChangeBlurColor(color);
+                        }
+                        catch (KeyNotFoundException)
+                        {
+                            PART_GlassPane.ChangeBlurColor(PART_GlassPane.DefaultBlurColor);
+                        }
                     }
                 }
             }

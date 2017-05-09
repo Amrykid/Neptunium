@@ -24,6 +24,7 @@ namespace Neptunium.Controls
     public sealed partial class GlassPanel : UserControl
     {
         private SpriteVisual glassVisual;
+        public readonly Color DefaultBlurColor = Color.FromArgb(255, 245, 245, 245);
         private Color blurColor = Color.FromArgb(255, 245, 245, 245);
         private Color lastBlurColor = Colors.Transparent;
 

@@ -2,6 +2,7 @@
   "dependencies": {
     "HockeySDK.UWP": "4.1.5",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
+    "Microsoft.Services.Store.SDK": "10.1703.19001",
     "Microsoft.Toolkit.Uwp": "1.2.0",
     "Microsoft.Toolkit.Uwp.Notifications": "1.2.0",
     "Microsoft.Toolkit.Uwp.UI.Controls": "1.2.0",
