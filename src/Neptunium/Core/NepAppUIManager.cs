@@ -13,7 +13,7 @@ using static Neptunium.NepApp;
 
 namespace Neptunium.Core
 {
-    public class NepAppUIManager: INotifyPropertyChanged, INepAppFunctionManager
+    public class NepAppUIManager : INotifyPropertyChanged, INepAppFunctionManager
     {
         /// <summary>
         /// From INotifyPropertyChanged
@@ -51,14 +51,14 @@ namespace Neptunium.Core
             if (inlineNavigationService != null)
             {
                 //unsubscribe from the previous nav service
-                inlineNavigationService.Navigated -= InlineNavigationService_Navigated;
+                ((FrameNavigationService)inlineNavigationService).NavigationFrame.Navigated -= NavigationFrame_Navigated;
             }
 
             inlineNavigationService = navService;
-            inlineNavigationService.Navigated += InlineNavigationService_Navigated;
+            ((FrameNavigationService)inlineNavigationService).NavigationFrame.Navigated += NavigationFrame_Navigated;
         }
 
-        private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
+        private void NavigationFrame_Navigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
         {
             UpdateSelectedNavigationItems();
         }
@@ -77,7 +77,7 @@ namespace Neptunium.Core
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public string ViewTitle { get { return _viewTitle.ToUpper(); } private set { _viewTitle = value;  RaisePropertyChanged(nameof(ViewTitle)); } }
+        public string ViewTitle { get { return _viewTitle.ToUpper(); } private set { _viewTitle = value; RaisePropertyChanged(nameof(ViewTitle)); } }
         public ReadOnlyObservableCollection<NepAppUINavigationItem> NavigationItems { get; private set; }
         #endregion
 
@@ -99,7 +99,10 @@ namespace Neptunium.Core
             if (inlineNavigationService == null)
                 throw new InvalidOperationException(nameof(inlineNavigationService) + " is null.");
 
-            inlineNavigationService.Navigate(navItem.NavigationViewModelType, parameter);
+            if (!((FrameNavigationService)inlineNavigationService).IsNavigatedTo(navItem.NavigationViewModelType))
+                ((FrameNavigationService)inlineNavigationService).Navigate(navItem.NavigationViewModelType, parameter);
+
+            UpdateSelectedNavigationItems();
         }
     }
 }

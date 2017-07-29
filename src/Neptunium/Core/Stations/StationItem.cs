@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Neptunium.Core.Stations
 {
-    public class StationItem: ModelBase
+    public class StationItem : ModelBase
     {
         public StationItem(string name, string description, Uri stationLogo, StationStream[] streams)
         {
@@ -18,10 +18,9 @@ namespace Neptunium.Core.Stations
             Description = description;
             StationLogoUrl = stationLogo;
 
-            foreach(var stream in streams)
+            foreach (var stream in streams)
             {
-                if (stream.ParentStation != this)
-                    throw new Exception(string.Format("{0} stream's parent station doesn't match {1}", stream.ToString(), Name));
+                stream.ParentStation = this;
 
                 if (stream.StreamUrl == null) throw new Exception(string.Format("{0} stream doesn't have a url.", stream.ToString()));
             }
@@ -34,6 +33,11 @@ namespace Neptunium.Core.Stations
         public Uri StationLogoUrl { get; private set; }
 
         public StationStream[] Streams { get; private set; }
+        public string Background { get; internal set; }
+        public string Site { get; internal set; }
+        public string[] Genres { get; internal set; }
+        public string PrimaryLocale { get; internal set; }
+        public string[] StationMessages { get; internal set; }
     }
 
     //Used in cases where one provider (e.g. asia dream radio) has multiple different streams under their name.
