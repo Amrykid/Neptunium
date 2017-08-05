@@ -50,10 +50,14 @@ namespace Neptunium.View
                     case Visibility.Collapsed:
                         topAppBar.IsEnabled = true;
                         bottomAppBar.IsEnabled = true;
+                        topAppBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;
+                        bottomAppBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;
                         break;
                     case Visibility.Visible:
                         topAppBar.IsEnabled = false;
                         bottomAppBar.IsEnabled = false;
+                        topAppBar.ClosedDisplayMode = AppBarClosedDisplayMode.Hidden;
+                        bottomAppBar.ClosedDisplayMode = AppBarClosedDisplayMode.Hidden;
                         break;
                 }
             }));
