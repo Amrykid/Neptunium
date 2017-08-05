@@ -1,5 +1,6 @@
 ﻿using Crystal3.Navigation;
 using Neptunium.ViewModel;
+using Neptunium.ViewModel.Dialog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,6 +36,26 @@ namespace Neptunium.View
             SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, navItemBinding);
 
             NepApp.UI.SetNavigationService(WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two));
+
+            NepApp.UI.SetOverlayParent(OverlayPanel);
+
+            OverlayPanel.RegisterPropertyChangedCallback(Grid.VisibilityProperty, new DependencyPropertyChangedCallback((grid, p) =>
+            {
+                Visibility property = (Visibility)grid.GetValue(Grid.VisibilityProperty);
+                switch (property)
+                {
+                    case Visibility.Collapsed:
+                        topAppBar.IsEnabled = true;
+                        bottomAppBar.IsEnabled = true;
+                        break;
+                    case Visibility.Visible:
+                        topAppBar.IsEnabled = false;
+                        bottomAppBar.IsEnabled = false;
+                        break;
+                }
+            }));
+
+            NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
         }
 
         private void FeedbackButton_Click(object sender, RoutedEventArgs e)
@@ -44,7 +65,7 @@ namespace Neptunium.View
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
         private void TogglePaneButton_Checked(object sender, RoutedEventArgs e)

@@ -1,0 +1,41 @@
+﻿<Page
+    x:Class="Neptunium.View.StationInfoDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Neptunium.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Text="{Binding Station.Name, UpdateSourceTrigger=PropertyChanged}" 
+                       Grid.Row="0"
+                       Style="{ThemeResource TitleTextBlockStyle}" />
+            <TextBlock Text="{Binding Station.Description, UpdateSourceTrigger=PropertyChanged}" 
+                       Grid.Row="1"
+                       Style="{ThemeResource SubtitleTextBlockStyle}" />
+        </Grid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Margin" Value="0 0 10 0" />
+                </Style>
+            </StackPanel.Resources>
+            <Button Content="Cancel" Grid.Column="0" />
+
+            <Button Content="Play" Grid.Column="1" />
+        </StackPanel>
+    </Grid>
+</Page>

@@ -122,12 +122,16 @@
     <Compile Include="Controls\GlassPanel.xaml.cs">
       <DependentUpon>GlassPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Core\NepAppUIManager.cs" />
+    <Compile Include="Core\UI\NepAppUIDialogFragment.cs" />
+    <Compile Include="Core\UI\NepAppUIManager.cs" />
     <Compile Include="Core\NeptuniumException.cs" />
     <Compile Include="Core\Stations\NepAppStationsManager.cs" />
     <Compile Include="Core\Stations\StationItem.cs" />
     <Compile Include="Core\Stations\StationStream.cs" />
     <Compile Include="Core\Stations\StationStreamServerFormat.cs" />
+    <Compile Include="Core\UI\NepAppUIManagerDialogResult.cs" />
+    <Compile Include="Core\UI\NepAppUIManagerOverlayHandle.cs" />
+    <Compile Include="Core\UI\NepAppUINavigationItem.cs" />
     <Compile Include="JapaneseTextUtilities.cs" />
     <Compile Include="Core\NepApp.cs" />
     <Compile Include="StringUtilities.cs" />
@@ -137,9 +141,13 @@
     <Compile Include="MediaExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AppShellViewModel.cs" />
+    <Compile Include="ViewModel\Dialog\StationInfoDialogFragment.cs" />
     <Compile Include="ViewModel\StationsPageViewModel.cs" />
     <Compile Include="View\AppShellView.xaml.cs">
       <DependentUpon>AppShellView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dialog\StationInfoDialog.xaml.cs">
+      <DependentUpon>StationInfoDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\StationsPage.xaml.cs">
       <DependentUpon>StationsPage.xaml</DependentUpon>
@@ -269,6 +277,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\AppShellView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dialog\StationInfoDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

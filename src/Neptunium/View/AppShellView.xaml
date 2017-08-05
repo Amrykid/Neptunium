@@ -14,7 +14,7 @@
     mc:Ignorable="d">
 
     <Page.TopAppBar>
-        <CommandBar>
+        <CommandBar x:Name="topAppBar">
             <CommandBar.Content>
                 <ToggleButton
                     x:Name="TogglePaneButton"
@@ -30,7 +30,7 @@
     </Page.TopAppBar>
 
     <Page.BottomAppBar>
-        <CommandBar>
+        <CommandBar x:Name="bottomAppBar">
             <CommandBar.Content>
                 <Button Style="{x:Null}">
                     <Grid Width="400" Height="100">
@@ -142,6 +142,19 @@
                 </Grid>
             </SplitView.Content>
         </SplitView>
+
+        <Grid x:Name="OverlayPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity=".9">
+            <Grid.Transitions>
+                <TransitionCollection>
+                    <ContentThemeTransition />
+                </TransitionCollection>
+            </Grid.Transitions>
+            <Grid.ChildrenTransitions>
+                <TransitionCollection>
+                    <AddDeleteThemeTransition />
+                </TransitionCollection>
+            </Grid.ChildrenTransitions>
+        </Grid>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>

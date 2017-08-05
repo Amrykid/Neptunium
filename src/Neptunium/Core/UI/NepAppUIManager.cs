@@ -1,5 +1,4 @@
-﻿using Crystal3.Model;
-using Crystal3.Navigation;
+﻿using Crystal3.Navigation;
 using Crystal3.UI.Commands;
 using System;
 using System.Collections.Generic;
@@ -8,12 +7,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 using static Neptunium.NepApp;
 
-namespace Neptunium.Core
+namespace Neptunium.Core.UI
 {
-    public class NepAppUIManager : INotifyPropertyChanged, INepAppFunctionManager
+    public partial class NepAppUIManager : INotifyPropertyChanged, INepAppFunctionManager
     {
         /// <summary>
         /// From INotifyPropertyChanged
@@ -21,20 +22,6 @@ namespace Neptunium.Core
         public event PropertyChangedEventHandler PropertyChanged;
 
         #region Core
-        public class NepAppUINavigationItem : ModelBase
-        {
-            internal NepAppUINavigationItem()
-            {
-
-            }
-
-            public string Symbol { get; internal set; }
-            public string DisplayText { get; internal set; }
-            public Type NavigationViewModelType { get; internal set; }
-            public RelayCommand Command { get; internal set; }
-            public bool IsSelected { get { return GetPropertyValue<bool>(); } internal set { SetPropertyValue<bool>(value: value); } }
-        }
-
         private NavigationServiceBase inlineNavigationService = null;
         private string _viewTitle = "PAGE TITLE";
         private ObservableCollection<NepAppUINavigationItem> navigationItems = null;
@@ -58,6 +45,13 @@ namespace Neptunium.Core
             ((FrameNavigationService)inlineNavigationService).NavigationFrame.Navigated += NavigationFrame_Navigated;
         }
 
+        internal void SetOverlayParent(Grid parentControl)
+        {
+            if (parentControl == null) throw new ArgumentNullException(nameof(parentControl));
+
+            Overlay = new NepAppUIManagerOverlayHandle(this, parentControl);
+        }
+
         private void NavigationFrame_Navigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
         {
             UpdateSelectedNavigationItems();
@@ -79,6 +73,7 @@ namespace Neptunium.Core
 
         public string ViewTitle { get { return _viewTitle.ToUpper(); } private set { _viewTitle = value; RaisePropertyChanged(nameof(ViewTitle)); } }
         public ReadOnlyObservableCollection<NepAppUINavigationItem> NavigationItems { get; private set; }
+        public NepAppUIManagerOverlayHandle Overlay { get; private set; }
         #endregion
 
         public void AddNavigationRoute(string displayText, Type navigationViewModel, string symbol = "")
