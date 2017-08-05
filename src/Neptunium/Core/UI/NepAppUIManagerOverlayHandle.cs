@@ -4,8 +4,10 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using static Neptunium.NepApp;
 
 namespace Neptunium.Core.UI
@@ -79,7 +81,8 @@ namespace Neptunium.Core.UI
             view.DataContext = fragment;
 
             inlineFrame.Content = view;
-            inlineFrame.Padding = new Thickness(5);
+            inlineFrame.BorderBrush = new SolidColorBrush((Color)view.Resources["SystemAccentColor"]);
+            inlineFrame.BorderThickness = new Thickness(1.5);
             inlineFrame.Focus(Windows.UI.Xaml.FocusState.Pointer);
 
             //todo handle escape button and the back button

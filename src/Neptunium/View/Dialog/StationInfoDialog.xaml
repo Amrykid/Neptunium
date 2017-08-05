@@ -5,9 +5,10 @@
     xmlns:local="using:Neptunium.View"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="5 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="150" />
             <RowDefinition Height="*" />
@@ -21,10 +22,14 @@
             </Grid.RowDefinitions>
             <TextBlock Text="{Binding Station.Name, UpdateSourceTrigger=PropertyChanged}" 
                        Grid.Row="0"
+                       Margin="10 0"
+                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                        Style="{ThemeResource TitleTextBlockStyle}" />
             <TextBlock Text="{Binding Station.Description, UpdateSourceTrigger=PropertyChanged}" 
                        Grid.Row="1"
-                       Style="{ThemeResource SubtitleTextBlockStyle}" />
+                       Margin="10 0"
+                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                       Style="{ThemeResource BodyTextBlockStyle}" />
         </Grid>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -33,9 +38,10 @@
                     <Setter Property="Margin" Value="0 0 10 0" />
                 </Style>
             </StackPanel.Resources>
-            <Button Content="Cancel" Grid.Column="0" Command="{Binding CancelCommand}" />
+            <Button Content="Cancel" Grid.Column="0" Command="{Binding CancelCommand}" MinWidth="75" x:Name="CancelButton" />
 
-            <Button Content="Play" Grid.Column="1" Command="{Binding PlayCommand}"/>
+            <Button Content="Play" Grid.Column="1" Command="{Binding PlayCommand}"
+                    Background="{ThemeResource AccentButtonBackground}" MinWidth="75" />
         </StackPanel>
     </Grid>
 </Page>

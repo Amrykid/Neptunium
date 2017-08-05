@@ -26,5 +26,11 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
         }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            //Focus on the cancel button.
+            CancelButton.Focus(FocusState.Programmatic);
+        }
     }
 }
