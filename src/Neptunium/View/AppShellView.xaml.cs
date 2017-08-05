@@ -30,10 +30,7 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
-            Binding navItemBinding = NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems));
-
-            //todo figure out a way to update the selected radio item.
-            SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, navItemBinding);
+            SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
 
             NepApp.UI.SetNavigationService(WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two));
 
@@ -64,17 +61,35 @@ namespace Neptunium.View
 
             NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
 
-            Binding nowPlayingBinding = NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata));
+            NowPlayingButton.SetBinding(Button.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
+            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+            //            NowPlayingButton.RegisterPropertyChangedCallback(Button.DataContextProperty, new DependencyPropertyChangedCallback((btn, dp) =>
+            //            {
+            //#if DEBUG
+            //                var x = btn.GetValue(Button.DataContextProperty);
+            //                var y = x;
+            //                System.Diagnostics.Debugger.Break();
+            //#endif
+            //            }));
+        }
 
-            NowPlayingButton.SetBinding(Button.DataContextProperty, nowPlayingBinding);
-//            NowPlayingButton.RegisterPropertyChangedCallback(Button.DataContextProperty, new DependencyPropertyChangedCallback((btn, dp) =>
-//            {
-//#if DEBUG
-//                var x = btn.GetValue(Button.DataContextProperty);
-//                var y = x;
-//                System.Diagnostics.Debugger.Break();
-//#endif
-//            }));
+        private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                if (e.IsPlaying)
+                {
+                    PlayButton.Label = "Pause";
+                    PlayButton.Icon = new SymbolIcon(Symbol.Pause);
+                    PlayButton.Command = ((AppShellViewModel)this.DataContext).PausePlaybackCommand;
+                }
+                else
+                {
+                    PlayButton.Label = "Play";
+                    PlayButton.Icon = new SymbolIcon(Symbol.Play);
+                    PlayButton.Command = ((AppShellViewModel)this.DataContext).ResumePlaybackCommand;
+                }
+            });
         }
 
         private void FeedbackButton_Click(object sender, RoutedEventArgs e)

@@ -1,6 +1,7 @@
 ﻿using Neptunium.Core;
 using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
+using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.Media.Playback;
@@ -8,7 +9,7 @@ using static Neptunium.NepApp;
 
 namespace Neptunium.Media
 {
-    public class NepAppMediaPlayerManager: INepAppFunctionManager, INotifyPropertyChanged
+    public class NepAppMediaPlayerManager : INepAppFunctionManager, INotifyPropertyChanged
     {
         internal NepAppMediaPlayerManager()
         {
@@ -17,6 +18,22 @@ namespace Neptunium.Media
 
         public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
         public SongMetadata CurrentMetadata { get; private set; }
+
+        internal void Pause()
+        {
+            if (CurrentPlayer == null) return;
+            if (CurrentPlayer.Source == null) return;
+            CurrentPlayer.Pause();
+        }
+
+        internal void Resume()
+        {
+            if (CurrentPlayer == null) return;
+            if (CurrentPlayer.Source == null) return;
+            CurrentPlayer.Play();
+        }
+
+        private MediaPlayer CurrentPlayer { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -27,7 +44,7 @@ namespace Neptunium.Media
 
         private BasicNepAppMediaStreamer CreateStreamerForServerFormat(StationStreamServerFormat format)
         {
-            switch(format)
+            switch (format)
             {
                 case StationStreamServerFormat.Direct:
                     return new DirectStationMediaStreamer();
@@ -54,9 +71,16 @@ namespace Neptunium.Media
                 CurrentStreamer.Dispose();
             }
 
-            MediaPlayer player = new MediaPlayer();
-            player.AudioCategory = MediaPlayerAudioCategory.Media;
-            streamer.InitializePlayback(player);
+            if (CurrentPlayer != null)
+            {
+                CurrentPlayer.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
+                CurrentPlayer.Dispose();
+            }
+
+            CurrentPlayer = new MediaPlayer();
+            CurrentPlayer.AudioCategory = MediaPlayerAudioCategory.Media;
+            CurrentPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+            streamer.InitializePlayback(CurrentPlayer);
 
             UpdateMetadata(streamer.SongMetadata);
 
@@ -65,6 +89,32 @@ namespace Neptunium.Media
             streamer.Play();
 
             CurrentStreamer = streamer;
+        }
+
+        private void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
+        {
+            switch (sender.PlaybackState)
+            {
+                case MediaPlaybackState.Buffering:
+                case MediaPlaybackState.Opening:
+                case MediaPlaybackState.Paused:
+                case MediaPlaybackState.None:
+                    //show play
+                    IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(false));
+                    break;
+                case MediaPlaybackState.Playing:
+                    //show pause
+                    IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(true));
+                    break;
+            }
+        }
+
+        public event EventHandler<NepAppMediaPlayerManagerIsPlayingEventArgs> IsPlayingChanged;
+
+        public class NepAppMediaPlayerManagerIsPlayingEventArgs : EventArgs
+        {
+            internal NepAppMediaPlayerManagerIsPlayingEventArgs(bool isPlaying) { IsPlaying = isPlaying; }
+            public bool IsPlaying { get; private set; }
         }
 
         private void Streamer_MetadataChanged(object sender, MediaStreamerMetadataChangedEventArgs e)

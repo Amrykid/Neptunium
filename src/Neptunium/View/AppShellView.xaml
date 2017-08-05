@@ -79,6 +79,9 @@
                     </Grid>
                 </Button>
             </CommandBar.Content>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
+            </CommandBar.PrimaryCommands>
         </CommandBar>
     </Page.BottomAppBar>
 

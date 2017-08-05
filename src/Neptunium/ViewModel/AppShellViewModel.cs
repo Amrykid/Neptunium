@@ -6,11 +6,22 @@ using System.Text;
 using System.Threading.Tasks;
 using Crystal3.Navigation;
 using Neptunium.Core;
+using Crystal3.UI.Commands;
 
 namespace Neptunium.ViewModel
 {
     public class AppShellViewModel: ViewModelBase
     {
+        public RelayCommand ResumePlaybackCommand => new RelayCommand(x =>
+        {
+            NepApp.Media.Resume();
+        });
+
+        public RelayCommand PausePlaybackCommand => new RelayCommand(x =>
+        {
+            NepApp.Media.Pause();
+        });
+
         public AppShellViewModel()
         {
             App.Current.UnhandledException += Current_UnhandledException;
@@ -35,6 +46,8 @@ namespace Neptunium.ViewModel
             var stationsPage = NepApp.UI.NavigationItems.FirstOrDefault(X => X.NavigationViewModelType == typeof(StationsPageViewModel));
             if (stationsPage == null) throw new Exception("Stations page not found.");
             NepApp.UI.NavigateToItem(stationsPage);
+
+            RaisePropertyChanged(nameof(ResumePlaybackCommand));
         }
     }
 }
