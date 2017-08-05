@@ -98,6 +98,8 @@ namespace Neptunium.Core.UI
                 ((FrameNavigationService)inlineNavigationService).Navigate(navItem.NavigationViewModelType, parameter);
 
             UpdateSelectedNavigationItems();
+
+            ViewTitle = navItem.DisplayText;
         }
     }
 }

@@ -39,6 +39,9 @@ namespace Neptunium.View
 
             NepApp.UI.SetOverlayParent(OverlayPanel);
 
+            PageTitleBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
+            //PageTitleBlock.SetValue(TextBlock.TextProperty, NepApp.UI.ViewTitle);
+
             OverlayPanel.RegisterPropertyChangedCallback(Grid.VisibilityProperty, new DependencyPropertyChangedCallback((grid, p) =>
             {
                 Visibility property = (Visibility)grid.GetValue(Grid.VisibilityProperty);

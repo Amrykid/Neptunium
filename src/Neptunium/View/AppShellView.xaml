@@ -16,15 +16,25 @@
     <Page.TopAppBar>
         <CommandBar x:Name="topAppBar">
             <CommandBar.Content>
-                <ToggleButton
-                    x:Name="TogglePaneButton"
-                    AutomationProperties.Name="Menu"
-                    Checked="TogglePaneButton_Checked"
-                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                    Style="{StaticResource SplitViewTogglePaneButtonStyle}"
-                    TabIndex="1"
-                    ToolTipService.ToolTip="Menu"
-                    Unchecked="TogglePaneButton_Unchecked" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <ToggleButton
+                        Grid.Column="0"
+                        x:Name="TogglePaneButton"
+                        AutomationProperties.Name="Menu"
+                        Checked="TogglePaneButton_Checked"
+                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                        Style="{StaticResource SplitViewTogglePaneButtonStyle}"
+                        TabIndex="1"
+                        ToolTipService.ToolTip="Menu"
+                        Unchecked="TogglePaneButton_Unchecked" />
+
+                    <TextBlock Name="PageTitleBlock" Grid.Column="1" VerticalAlignment="Center" Style="{ThemeResource BaseTextBlockStyle}" />
+                </Grid>
             </CommandBar.Content>
         </CommandBar>
     </Page.TopAppBar>
