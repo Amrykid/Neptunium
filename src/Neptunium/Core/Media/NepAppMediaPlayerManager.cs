@@ -3,14 +3,19 @@ using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
 using System;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Windows.Media;
 using Windows.Media.Playback;
+using Windows.Storage.Streams;
 using static Neptunium.NepApp;
 
 namespace Neptunium.Media
 {
     public class NepAppMediaPlayerManager : INepAppFunctionManager, INotifyPropertyChanged
     {
+        private SystemMediaTransportControls systemMediaTransportControls = null;
+
         internal NepAppMediaPlayerManager()
         {
 
@@ -78,15 +83,31 @@ namespace Neptunium.Media
             }
 
             CurrentPlayer = new MediaPlayer();
+
+            systemMediaTransportControls = CurrentPlayer.SystemMediaTransportControls;
+            systemMediaTransportControls.IsChannelDownEnabled = false;
+            systemMediaTransportControls.IsChannelUpEnabled = false;
+            systemMediaTransportControls.IsFastForwardEnabled = false;
+            systemMediaTransportControls.IsNextEnabled = false;
+            systemMediaTransportControls.IsPreviousEnabled = false;
+            systemMediaTransportControls.IsRewindEnabled = false;
+            systemMediaTransportControls.IsRewindEnabled = false;
+            systemMediaTransportControls.IsPlayEnabled = true;
+            systemMediaTransportControls.IsPauseEnabled = true;
+
             CurrentPlayer.AudioCategory = MediaPlayerAudioCategory.Media;
+            CurrentPlayer.CommandManager.IsEnabled = true;
+            CurrentPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Multimedia;
             CurrentPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
             streamer.InitializePlayback(CurrentPlayer);
 
-            UpdateMetadata(streamer.SongMetadata);
+            await CurrentPlayer.WaitForMediaOpenAsync();
 
             streamer.MetadataChanged += Streamer_MetadataChanged;
 
             streamer.Play();
+
+            UpdateMetadata(streamer.SongMetadata);
 
             CurrentStreamer = streamer;
         }
@@ -97,14 +118,20 @@ namespace Neptunium.Media
             {
                 case MediaPlaybackState.Buffering:
                 case MediaPlaybackState.Opening:
+                    //show play
+                    IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(false));
+                    systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Changing;
+                    break;
                 case MediaPlaybackState.Paused:
                 case MediaPlaybackState.None:
                     //show play
                     IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(false));
+                    systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
                     break;
                 case MediaPlaybackState.Playing:
                     //show pause
                     IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(true));
+                    systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
                     break;
             }
         }
@@ -124,9 +151,24 @@ namespace Neptunium.Media
 
         private void UpdateMetadata(SongMetadata metadata)
         {
+            if (metadata == null) return;
+
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
                 CurrentMetadata = metadata;
+
+                try
+                {
+                    var updater = systemMediaTransportControls.DisplayUpdater;
+                    updater.Type = MediaPlaybackType.Music;
+                    updater.MusicProperties.Title = metadata.Track;
+                    updater.MusicProperties.Artist = metadata.Artist;
+                    updater.AppMediaId = metadata.StationPlayedOn.Name.GetHashCode().ToString();
+                    updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(metadata.StationPlayedOn.StationLogoUrl);
+                    updater.Update();
+                }
+                catch (COMException) { }
+
                 RaisePropertyChanged(nameof(CurrentMetadata));
             });
         }
