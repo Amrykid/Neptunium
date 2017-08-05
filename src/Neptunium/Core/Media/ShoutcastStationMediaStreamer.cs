@@ -23,7 +23,8 @@ namespace Neptunium.Media
             {
                 streamSource = await ShoutcastStreamFactory.ConnectAsync(stream.StreamUrl, new ShoutcastStreamFactoryConnectionSettings()
                 {
-                    UserAgent = "Neptunium (http://github.com/Amrykid/Neptunium)"
+                    UserAgent = "Neptunium (http://github.com/Amrykid/Neptunium)",
+                    RelativePath = stream.RelativePath
                 });
 
                 streamSource.MetadataChanged += ShoutcastStream_MetadataChanged;

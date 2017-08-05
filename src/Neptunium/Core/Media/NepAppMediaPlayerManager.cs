@@ -39,6 +39,7 @@ namespace Neptunium.Media
         }
 
         private MediaPlayer CurrentPlayer { get; set; }
+        private MediaPlaybackSession CurrentPlayerSession { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -78,7 +79,7 @@ namespace Neptunium.Media
 
             if (CurrentPlayer != null)
             {
-                CurrentPlayer.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
+                CurrentPlayerSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
                 CurrentPlayer.Dispose();
             }
 
@@ -98,7 +99,8 @@ namespace Neptunium.Media
             CurrentPlayer.AudioCategory = MediaPlayerAudioCategory.Media;
             CurrentPlayer.CommandManager.IsEnabled = true;
             CurrentPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Multimedia;
-            CurrentPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+            CurrentPlayerSession = CurrentPlayer.PlaybackSession;
+            CurrentPlayerSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
             streamer.InitializePlayback(CurrentPlayer);
 
             await CurrentPlayer.WaitForMediaOpenAsync();
