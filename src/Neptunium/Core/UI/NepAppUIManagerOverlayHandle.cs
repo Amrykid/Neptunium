@@ -29,7 +29,6 @@ namespace Neptunium.Core.UI
             inlineFrame.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Center;
             inlineFrame.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
 
-
             //todo handle orientation, etc
             Window.Current.SizeChanged += Current_SizeChanged;
             ResizeInlineFrameDialog(Window.Current.Bounds.Height, Window.Current.Bounds.Width);

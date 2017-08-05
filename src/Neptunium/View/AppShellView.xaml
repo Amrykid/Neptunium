@@ -176,14 +176,9 @@
         </SplitView>
 
         <Grid x:Name="OverlayPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity=".95">
-            <Grid.Transitions>
-                <TransitionCollection>
-                    <ContentThemeTransition />
-                </TransitionCollection>
-            </Grid.Transitions>
             <Grid.ChildrenTransitions>
                 <TransitionCollection>
-                    <AddDeleteThemeTransition />
+                    <RepositionThemeTransition />
                 </TransitionCollection>
             </Grid.ChildrenTransitions>
         </Grid>

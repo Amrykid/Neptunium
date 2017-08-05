@@ -14,7 +14,7 @@ using static Neptunium.NepApp;
 
 namespace Neptunium.Core.UI
 {
-    public partial class NepAppUIManager : INotifyPropertyChanged, INepAppFunctionManager
+    public class NepAppUIManager : INotifyPropertyChanged, INepAppFunctionManager
     {
         /// <summary>
         /// From INotifyPropertyChanged
