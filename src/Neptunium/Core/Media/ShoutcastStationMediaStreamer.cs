@@ -32,7 +32,7 @@ namespace Neptunium.Media
             }
             catch(Exception ex)
             {
-                throw new Neptunium.Core.NeptuniumStreamConnectionFailedException(stream);
+                throw new Neptunium.Core.NeptuniumStreamConnectionFailedException(stream, ex);
             }
         }
 
