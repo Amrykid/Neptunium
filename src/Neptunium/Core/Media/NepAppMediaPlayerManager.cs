@@ -1,12 +1,14 @@
 ﻿using Neptunium.Core;
+using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.Media.Playback;
 using static Neptunium.NepApp;
 
 namespace Neptunium.Media
 {
-    public class NepAppMediaPlayerManager: INepAppFunctionManager
+    public class NepAppMediaPlayerManager: INepAppFunctionManager, INotifyPropertyChanged
     {
         internal NepAppMediaPlayerManager()
         {
@@ -14,6 +16,14 @@ namespace Neptunium.Media
         }
 
         public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
+        public SongMetadata CurrentMetadata { get; private set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void RaisePropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         private BasicNepAppMediaStreamer CreateStreamerForServerFormat(StationStreamServerFormat format)
         {
@@ -38,6 +48,8 @@ namespace Neptunium.Media
 
             if (CurrentStreamer != null)
             {
+                CurrentStreamer.MetadataChanged -= Streamer_MetadataChanged;
+
                 CurrentStreamer.Pause();
                 CurrentStreamer.Dispose();
             }
@@ -46,11 +58,24 @@ namespace Neptunium.Media
             player.AudioCategory = MediaPlayerAudioCategory.Media;
             streamer.InitializePlayback(player);
 
+            streamer.MetadataChanged += Streamer_MetadataChanged;
+
+            UpdateMetadata(streamer.SongMetadata);
+
             streamer.Play();
 
             CurrentStreamer = streamer;
         }
 
+        private void Streamer_MetadataChanged(object sender, MediaStreamerMetadataChangedEventArgs e)
+        {
+            UpdateMetadata(e.Metadata);
+        }
 
+        private void UpdateMetadata(SongMetadata metadata)
+        {
+            CurrentMetadata = metadata;
+            RaisePropertyChanged(nameof(CurrentMetadata));
+        }
     }
 }

@@ -3,10 +3,21 @@ using Neptunium.Core.Stations;
 using System.Threading.Tasks;
 using System;
 using Windows.Media.Core;
+using Neptunium.Core.Media.Metadata;
 
 namespace Neptunium.Media
 {
-    internal interface INepAppMediaStreamer: IDisposable
+    public class MediaStreamerMetadataChangedEventArgs : EventArgs
+    {
+        internal MediaStreamerMetadataChangedEventArgs(SongMetadata meta)
+        {
+            Metadata = meta;
+        }
+
+        public SongMetadata Metadata { get; private set; }
+    }
+
+    internal interface INepAppMediaStreamer : IDisposable
     {
         void InitializePlayback(MediaPlayer player);
         Task TryConnectAsync(StationStream stream);
@@ -17,9 +28,12 @@ namespace Neptunium.Media
         bool IsConnected { get; }
         MediaPlayer Player { get; }
         MediaSource StreamMediaSource { get; }
+        SongMetadata SongMetadata { get; }
 
         void Play();
         void Pause();
+
+        event EventHandler<MediaStreamerMetadataChangedEventArgs> MetadataChanged;
     }
 
     public abstract class BasicNepAppMediaStreamer : INepAppMediaStreamer
@@ -32,6 +46,8 @@ namespace Neptunium.Media
         public MediaPlayer Player { get; protected set; }
 
         public StationItem StationPlaying { get; protected set; }
+
+        public SongMetadata SongMetadata { get; private set; }
 
         public double Volume
         {
@@ -46,6 +62,14 @@ namespace Neptunium.Media
                 if (Player == null) throw new InvalidOperationException();
                 Player.Volume = value;
             }
+        }
+
+        public event EventHandler<MediaStreamerMetadataChangedEventArgs> MetadataChanged;
+
+        protected void RaiseMetadataChanged(SongMetadata metadata)
+        {
+            this.SongMetadata = metadata;
+            MetadataChanged?.Invoke(this, new MediaStreamerMetadataChangedEventArgs(metadata));
         }
 
         public abstract void InitializePlayback(MediaPlayer player);

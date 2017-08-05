@@ -56,6 +56,10 @@ namespace Neptunium.View
             }));
 
             NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
+
+            Binding nowPlayingBinding = NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata));
+
+            NowPlayingButton.SetBinding(Button.DataContextProperty, nowPlayingBinding);
         }
 
         private void FeedbackButton_Click(object sender, RoutedEventArgs e)
@@ -76,6 +80,16 @@ namespace Neptunium.View
         private void TogglePaneButton_Unchecked(object sender, RoutedEventArgs e)
         {
             RootSplitView.IsPaneOpen = false;
+        }
+
+        private void bottomAppBar_Opened(object sender, object e)
+        {
+            NowPlayingButton.Height = double.NaN;
+        }
+
+        private void bottomAppBar_Closed(object sender, object e)
+        {
+            NowPlayingButton.Height = 45;
         }
     }
 }

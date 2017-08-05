@@ -36,6 +36,8 @@ namespace Neptunium.Media
             await Task.Delay(500);
 
             StreamMediaSource = MediaSource.CreateFromUri(stream.StreamUrl);
+
+            RaiseMetadataChanged(new Core.Media.Metadata.SongMetadata() { Artist = "Unknown Artist", Track = "Unknown Song", StationPlayedOn = stream.ParentStation });
         }
     }
 }

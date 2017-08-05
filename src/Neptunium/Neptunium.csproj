@@ -110,6 +110,7 @@
     <Compile Include="AppSettings.cs" />
     <Compile Include="Core\Media\DirectStationMediaStreamer.cs" />
     <Compile Include="Core\Media\INepAppMediaStreamer.cs" />
+    <Compile Include="Core\Media\Metadata\SongMetadata.cs" />
     <Compile Include="Core\Media\ShoutcastStationMediaStreamer.cs" />
     <Compile Include="Core\NepAppHandoffManager.cs" />
     <Compile Include="Core\Media\NepAppMediaPlayerManager.cs" />
