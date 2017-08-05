@@ -21,7 +21,11 @@ namespace Neptunium.Media
         {      
             try
             {
-                streamSource = await ShoutcastStreamFactory.ConnectAsync(stream.StreamUrl);
+                streamSource = await ShoutcastStreamFactory.ConnectAsync(stream.StreamUrl, new ShoutcastStreamFactoryConnectionSettings()
+                {
+                    UserAgent = "Neptunium (http://github.com/Amrykid/Neptunium)"
+                });
+
                 streamSource.MetadataChanged += ShoutcastStream_MetadataChanged;
                 StreamMediaSource = MediaSource.CreateFromMediaStreamSource(streamSource.MediaStreamSource);
                 this.StationPlaying = stream.ParentStation;
