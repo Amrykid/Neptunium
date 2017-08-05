@@ -36,7 +36,7 @@ namespace Neptunium.Core.Stations
 
                     if (x.Attribute("ServerType") != null)
                     {
-                        stream.ServerType = (StationStreamServerFormat)Enum.Parse(typeof(StationStreamServerFormat), x.Attribute("ServerType").Value);
+                        stream.ServerFormat = (StationStreamServerFormat)Enum.Parse(typeof(StationStreamServerFormat), x.Attribute("ServerType").Value);
                     }
 
                     return stream;
