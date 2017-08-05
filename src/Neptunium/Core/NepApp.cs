@@ -45,7 +45,7 @@ namespace Neptunium
         public static Binding CreateBinding(INepAppFunctionManager source, string propertyPath)
         {
             Binding binding = new Windows.UI.Xaml.Data.Binding();
-            binding.Source = NepApp.UI;
+            binding.Source = source;
             binding.Path = new PropertyPath(propertyPath);
             binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
             return binding;

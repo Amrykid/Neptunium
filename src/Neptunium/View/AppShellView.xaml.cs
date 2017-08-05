@@ -60,6 +60,14 @@ namespace Neptunium.View
             Binding nowPlayingBinding = NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata));
 
             NowPlayingButton.SetBinding(Button.DataContextProperty, nowPlayingBinding);
+//            NowPlayingButton.RegisterPropertyChangedCallback(Button.DataContextProperty, new DependencyPropertyChangedCallback((btn, dp) =>
+//            {
+//#if DEBUG
+//                var x = btn.GetValue(Button.DataContextProperty);
+//                var y = x;
+//                System.Diagnostics.Debugger.Break();
+//#endif
+//            }));
         }
 
         private void FeedbackButton_Click(object sender, RoutedEventArgs e)
@@ -85,11 +93,13 @@ namespace Neptunium.View
         private void bottomAppBar_Opened(object sender, object e)
         {
             NowPlayingButton.Height = double.NaN;
+            NowPlayingImage.Visibility = Visibility.Visible;
         }
 
         private void bottomAppBar_Closed(object sender, object e)
         {
             NowPlayingButton.Height = 45;
+            NowPlayingImage.Visibility = Visibility.Collapsed;
         }
     }
 }

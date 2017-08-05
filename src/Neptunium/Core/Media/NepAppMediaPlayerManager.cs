@@ -58,9 +58,9 @@ namespace Neptunium.Media
             player.AudioCategory = MediaPlayerAudioCategory.Media;
             streamer.InitializePlayback(player);
 
-            streamer.MetadataChanged += Streamer_MetadataChanged;
-
             UpdateMetadata(streamer.SongMetadata);
+
+            streamer.MetadataChanged += Streamer_MetadataChanged;
 
             streamer.Play();
 
@@ -74,8 +74,11 @@ namespace Neptunium.Media
 
         private void UpdateMetadata(SongMetadata metadata)
         {
-            CurrentMetadata = metadata;
-            RaisePropertyChanged(nameof(CurrentMetadata));
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                CurrentMetadata = metadata;
+                RaisePropertyChanged(nameof(CurrentMetadata));
+            });
         }
     }
 }

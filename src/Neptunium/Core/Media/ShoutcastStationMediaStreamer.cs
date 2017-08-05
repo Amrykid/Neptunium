@@ -9,7 +9,7 @@ namespace Neptunium.Media
 {
     internal class ShoutcastStationMediaStreamer : BasicNepAppMediaStreamer
     {
-        private ShoutcastMediaSourceStream streamSource = null;
+        private ShoutcastStream streamSource = null;
         public override void InitializePlayback(MediaPlayer player)
         {
             Player = player;
@@ -18,21 +18,21 @@ namespace Neptunium.Media
         }
 
         public override async Task TryConnectAsync(StationStream stream)
-        {
-            streamSource = new ShoutcastMediaSourceStream(stream.StreamUrl, UWPShoutcastMSS.Streaming.ShoutcastServerType.Shoutcast, getMetadata: true);
-            if (await streamSource.ConnectAsync())
+        {      
+            try
             {
-                streamSource.MetadataChanged += StreamSource_MetadataChanged;
+                streamSource = await ShoutcastStreamFactory.ConnectAsync(stream.StreamUrl);
+                streamSource.MetadataChanged += ShoutcastStream_MetadataChanged;
                 StreamMediaSource = MediaSource.CreateFromMediaStreamSource(streamSource.MediaStreamSource);
                 this.StationPlaying = stream.ParentStation;
             }
-            else
+            catch(Exception ex)
             {
                 throw new Neptunium.Core.NeptuniumStreamConnectionFailedException(stream);
             }
         }
 
-        private void StreamSource_MetadataChanged(object sender, UWPShoutcastMSS.Streaming.ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
+        private void ShoutcastStream_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
         {
             RaiseMetadataChanged(new Core.Media.Metadata.SongMetadata()
             {
@@ -47,7 +47,7 @@ namespace Neptunium.Media
             if (streamSource != null)
             {
                 streamSource.Disconnect();
-                streamSource.MetadataChanged -= StreamSource_MetadataChanged;
+                streamSource.MetadataChanged -= ShoutcastStream_MetadataChanged;
             }
 
             base.Dispose();

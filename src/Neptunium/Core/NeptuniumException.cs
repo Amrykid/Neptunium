@@ -11,7 +11,7 @@ namespace Neptunium.Core
     {
     }
 
-    public class NeptuniumNetworkConnectionRequiredException: Exception
+    public class NeptuniumNetworkConnectionRequiredException: NeptuniumException
     {
         public override string Message
         {
@@ -22,7 +22,7 @@ namespace Neptunium.Core
         }
     }
 
-    public class NeptuniumStreamConnectionFailedException: Exception
+    public class NeptuniumStreamConnectionFailedException: NeptuniumException
     {
         public StationStream Stream { get; private set; }
 
