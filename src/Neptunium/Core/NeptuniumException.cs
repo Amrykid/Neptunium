@@ -9,6 +9,7 @@ namespace Neptunium.Core
 {
     public abstract class NeptuniumException: Exception
     {
+        public NeptuniumException(Exception inner = null): base("", inner) { }
     }
 
     public class NeptuniumNetworkConnectionRequiredException: NeptuniumException
@@ -26,7 +27,7 @@ namespace Neptunium.Core
     {
         public StationStream Stream { get; private set; }
 
-        public NeptuniumStreamConnectionFailedException(StationStream stream)
+        public NeptuniumStreamConnectionFailedException(StationStream stream, Exception inner = null): base(inner)
         {
             if (stream == null) throw new ArgumentNullException(nameof(stream));
 
