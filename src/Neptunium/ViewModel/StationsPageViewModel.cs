@@ -38,7 +38,18 @@ namespace Neptunium.ViewModel
 
         public RelayCommand ShowStationInfoCommand => new RelayCommand(async station =>
         {
-            await NepApp.UI.Overlay.ShowDialogFragmentAsync<StationInfoDialogFragment>(station);
+            StationItem stationItem = (StationItem)station;
+            if ((await NepApp.UI.Overlay.ShowDialogFragmentAsync<StationInfoDialogFragment>(stationItem)).ResultType == Core.UI.NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive)
+            {
+                try
+                {
+                    await NepApp.Media.TryStreamStationAsync(stationItem.Streams[0]);
+                }
+                catch (Neptunium.Core.NeptuniumException ex)
+                {
+                    //todo show error
+                }
+            }
         });
     }
 }

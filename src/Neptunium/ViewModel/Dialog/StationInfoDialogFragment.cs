@@ -1,4 +1,5 @@
-﻿using Neptunium.Core.Stations;
+﻿using Crystal3.UI.Commands;
+using Neptunium.Core.Stations;
 using Neptunium.Core.UI;
 using System;
 using System.Collections.Generic;
@@ -10,17 +11,19 @@ namespace Neptunium.ViewModel.Dialog
 {
     public class StationInfoDialogFragment: NepAppUIDialogFragment
     {
-        private TaskCompletionSource<NepAppUIManagerDialogResult> resultTask = null;
+        private TaskCompletionSource<NepAppUIManagerDialogResult> resultTask = new TaskCompletionSource<NepAppUIManagerDialogResult>();
 
         public StationItem Station { get { return GetPropertyValue<StationItem>(); } private set { SetPropertyValue<StationItem>(value: value); } }
+
+        public RelayCommand CancelCommand => new RelayCommand(x => resultTask.SetResult(NepAppUIManagerDialogResult.Declined));
+        public RelayCommand PlayCommand => new RelayCommand(x => 
+            resultTask.SetResult(new NepAppUIManagerDialogResult() { ResultType = NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive }));
 
         public override Task<NepAppUIManagerDialogResult> InvokeAsync(object parameter)
         {
             if (parameter == null || !(parameter is StationItem)) Task.FromResult<NepAppUIManagerDialogResult>(NepAppUIManagerDialogResult.Declined);
 
             Station = parameter as StationItem;
-
-            resultTask = new TaskCompletionSource<NepAppUIManagerDialogResult>();
 
             return resultTask.Task;
         }

@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using static Neptunium.NepApp;
 
@@ -28,8 +29,8 @@ namespace Neptunium.Core.UI
 
 
             //todo handle orientation, etc
-            inlineFrame.Height = 400;
-            inlineFrame.Width = 300;
+            Window.Current.SizeChanged += Current_SizeChanged;
+            ResizeInlineFrameDialog(Window.Current.Bounds.Height, Window.Current.Bounds.Width);
 
             overlayGridControl.Children.Add(inlineFrame);
 
@@ -37,6 +38,25 @@ namespace Neptunium.Core.UI
             overlayGridControl.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Stretch;
             overlayGridControl.IsHitTestVisible = true;
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+        }
+
+        private void Current_SizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
+        {
+            ResizeInlineFrameDialog(e.Size.Height, e.Size.Width);
+        }
+
+        private void ResizeInlineFrameDialog(double height, double width)
+        {
+            if (width >= 720)
+            {
+                inlineFrame.Width = 400;
+                inlineFrame.Height = 600;
+            }
+            else
+            {
+                inlineFrame.Width = width;
+                inlineFrame.Height = height;
+            }
         }
 
         public void Dispose()
@@ -59,7 +79,10 @@ namespace Neptunium.Core.UI
             view.DataContext = fragment;
 
             inlineFrame.Content = view;
+            inlineFrame.Padding = new Thickness(5);
             inlineFrame.Focus(Windows.UI.Xaml.FocusState.Pointer);
+
+            //todo handle escape button and the back button
 
             var result = await fragment.InvokeAsync(parameter);
 

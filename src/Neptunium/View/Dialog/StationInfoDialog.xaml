@@ -33,9 +33,9 @@
                     <Setter Property="Margin" Value="0 0 10 0" />
                 </Style>
             </StackPanel.Resources>
-            <Button Content="Cancel" Grid.Column="0" />
+            <Button Content="Cancel" Grid.Column="0" Command="{Binding CancelCommand}" />
 
-            <Button Content="Play" Grid.Column="1" />
+            <Button Content="Play" Grid.Column="1" Command="{Binding PlayCommand}"/>
         </StackPanel>
     </Grid>
 </Page>

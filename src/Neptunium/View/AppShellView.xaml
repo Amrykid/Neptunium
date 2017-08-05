@@ -143,7 +143,7 @@
             </SplitView.Content>
         </SplitView>
 
-        <Grid x:Name="OverlayPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity=".9">
+        <Grid x:Name="OverlayPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity=".95">
             <Grid.Transitions>
                 <TransitionCollection>
                     <ContentThemeTransition />
