@@ -75,7 +75,7 @@ namespace Neptunium.Media
         public abstract void InitializePlayback(MediaPlayer player);
         public abstract Task TryConnectAsync(StationStream stream);
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (Player != null)
             {
