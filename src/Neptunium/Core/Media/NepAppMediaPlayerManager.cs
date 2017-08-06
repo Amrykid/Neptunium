@@ -67,6 +67,8 @@ namespace Neptunium.Media
         {
             if (!NepApp.Network.IsConnected) throw new NeptuniumNetworkConnectionRequiredException();
 
+            //todo use a lock for this.
+
             BasicNepAppMediaStreamer streamer = CreateStreamerForServerFormat(stream.ServerFormat);
 
             Task timeoutTask = null;
