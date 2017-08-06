@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -31,7 +32,8 @@ namespace Neptunium.Core.UI
 
             //todo handle orientation, etc
             Window.Current.SizeChanged += Current_SizeChanged;
-            ResizeInlineFrameDialog(Window.Current.Bounds.Height, Window.Current.Bounds.Width);
+            Rect bounds = GetScreenBounds();
+            ResizeInlineFrameDialog(bounds.Height, bounds.Width);
 
             overlayGridControl.Children.Add(inlineFrame);
 
@@ -41,9 +43,33 @@ namespace Neptunium.Core.UI
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
         }
 
+        private Rect GetScreenBounds()
+        {
+            //todo check if table mode counts. i forgot.
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            {
+                if (AreOnScreenNavigationButtonsVisibleOnMobile())
+                {
+                    return Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().VisibleBounds;
+                }
+            }
+
+            return Window.Current.Bounds;
+        }
+
+        private bool AreOnScreenNavigationButtonsVisibleOnMobile()
+        {
+            //https://social.msdn.microsoft.com/Forums/sqlserver/en-US/dd050898-ef62-4dec-aac4-32a05142931e/on-screen-software-buttons?forum=wpdevelop
+            var visible = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().VisibleBounds;
+            var window = Window.Current.Bounds;
+            return (visible.Height != window.Height || visible.Width != window.Width);
+        }
+
         private void Current_SizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
         {
-            ResizeInlineFrameDialog(e.Size.Height, e.Size.Width);
+            var visibleScreen = GetScreenBounds();
+            ResizeInlineFrameDialog(visibleScreen.Height, visibleScreen.Width);
+
         }
 
         private void ResizeInlineFrameDialog(double height, double width)
@@ -57,6 +83,7 @@ namespace Neptunium.Core.UI
             {
                 inlineFrame.Width = width;
                 inlineFrame.Height = height;
+                
             }
         }
 
