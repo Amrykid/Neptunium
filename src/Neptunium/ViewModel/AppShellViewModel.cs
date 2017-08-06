@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Crystal3.Navigation;
 using Neptunium.Core;
 using Crystal3.UI.Commands;
+using Microsoft.HockeyApp;
 
 namespace Neptunium.ViewModel
 {
@@ -36,6 +37,14 @@ namespace Neptunium.ViewModel
                 e.Handled = true;
 
                 await NepApp.UI.ShowErrorDialogAsync("Uh-oh! Something went wrong!", e.Exception.Message);
+            }
+            else
+            {
+                if (!System.Diagnostics.Debugger.IsAttached)
+                {
+                    HockeyClient.Current.TrackException(e.Exception);
+                    HockeyClient.Current.Flush();
+                }
             }
         }
 

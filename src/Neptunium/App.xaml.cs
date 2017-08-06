@@ -49,8 +49,6 @@ namespace Neptunium
 
             if (!Debugger.IsAttached)
             {
-                App.Current.UnhandledException += Current_UnhandledException;
-
                 Microsoft.HockeyApp.HockeyClient.Current.Configure("2f0ab4c93b2341a0a4bbbd5ec98917f9", new TelemetryConfiguration()
                 {
                     EnableDiagnostics = true
@@ -58,26 +56,6 @@ namespace Neptunium
                 {
                     return "Exception HResult: " + ex.HResult.ToString();
                 });
-            }
-            else
-            {
-#if DEBUG
-                App.Current.UnhandledException += Current_UnhandledException;
-#endif
-            }
-        }
-
-        private void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            if (!Debugger.IsAttached)
-            {
-                HockeyClient.Current.TrackException(e.Exception);
-                HockeyClient.Current.Flush();
-            }
-            else
-            {
-                Debugger.Break();
-                e.Handled = true;
             }
         }
 
