@@ -29,13 +29,13 @@ namespace Neptunium.ViewModel
             NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), "");
         }
 
-        private void Current_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        private async void Current_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             if (e.Exception is NeptuniumException)
             {
                 e.Handled = true;
 
-                //todo show a popup here.
+                await NepApp.UI.ShowErrorDialogAsync("Uh-oh! Something went wrong!", e.Exception.Message);
             }
         }
 

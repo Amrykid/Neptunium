@@ -47,7 +47,7 @@ namespace Neptunium.ViewModel
                 }
                 catch (Neptunium.Core.NeptuniumException ex)
                 {
-                    //todo show error
+                    await NepApp.UI.ShowErrorDialogAsync("Uh-oh! Couldn't do that!", ex.Message);
                 }
             }
         });

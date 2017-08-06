@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using static Neptunium.NepApp;
 
@@ -74,6 +75,12 @@ namespace Neptunium.Core.UI
         public string ViewTitle { get { return _viewTitle.ToUpper(); } private set { _viewTitle = value; RaisePropertyChanged(nameof(ViewTitle)); } }
         public ReadOnlyObservableCollection<NepAppUINavigationItem> NavigationItems { get; private set; }
         public NepAppUIManagerOverlayHandle Overlay { get; private set; }
+        public async Task ShowErrorDialogAsync(string title, string message)
+        {
+            MessageDialog dialog = new MessageDialog(message);
+            dialog.Title = title;
+            await dialog.ShowAsync();
+        }
         #endregion
 
         public void AddNavigationRoute(string displayText, Type navigationViewModel, string symbol = "")
