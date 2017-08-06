@@ -27,14 +27,20 @@ namespace Neptunium.Media
                     RelativePath = stream.RelativePath
                 });
 
+                streamSource.Reconnected += StreamSource_Reconnected;
                 streamSource.MetadataChanged += ShoutcastStream_MetadataChanged;
                 StreamMediaSource = MediaSource.CreateFromMediaStreamSource(streamSource.MediaStreamSource);
                 this.StationPlaying = stream.ParentStation;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Neptunium.Core.NeptuniumStreamConnectionFailedException(stream, ex);
             }
+        }
+
+        private void StreamSource_Reconnected(object sender, EventArgs e)
+        {
+            
         }
 
         private void ShoutcastStream_MetadataChanged(object sender, ShoutcastMediaSourceStreamMetadataChangedEventArgs e)
@@ -52,6 +58,7 @@ namespace Neptunium.Media
             if (streamSource != null)
             {
                 streamSource.Disconnect();
+                streamSource.Reconnected -= StreamSource_Reconnected;
                 streamSource.MetadataChanged -= ShoutcastStream_MetadataChanged;
             }
 
