@@ -40,7 +40,8 @@
     </Page.TopAppBar>
 
     <Page.BottomAppBar>
-        <CommandBar x:Name="bottomAppBar" Opened="bottomAppBar_Opened" Closed="bottomAppBar_Closed" OverflowButtonVisibility="Visible">
+        <CommandBar x:Name="bottomAppBar" Opened="bottomAppBar_Opened" IsDynamicOverflowEnabled="False"
+                    Closed="bottomAppBar_Closed" OverflowButtonVisibility="Visible">
             <CommandBar.Content>
                 <Button Style="{x:Null}" Background="Transparent" x:Name="NowPlayingButton" Height="45">
                     <Grid Width="400" Height="100">
