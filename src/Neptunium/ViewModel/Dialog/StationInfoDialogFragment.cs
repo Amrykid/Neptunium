@@ -11,13 +11,16 @@ namespace Neptunium.ViewModel.Dialog
 {
     public class StationInfoDialogFragment: NepAppUIDialogFragment
     {
-        private TaskCompletionSource<NepAppUIManagerDialogResult> resultTask = new TaskCompletionSource<NepAppUIManagerDialogResult>();
+        public StationInfoDialogFragment()
+        {
+            ResultTaskCompletionSource = new TaskCompletionSource<NepAppUIManagerDialogResult>();
+        }
 
         public StationItem Station { get { return GetPropertyValue<StationItem>(); } private set { SetPropertyValue<StationItem>(value: value); } }
 
-        public RelayCommand CancelCommand => new RelayCommand(x => resultTask.SetResult(NepAppUIManagerDialogResult.Declined));
-        public RelayCommand PlayCommand => new RelayCommand(x => 
-            resultTask.SetResult(new NepAppUIManagerDialogResult() { ResultType = NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive }));
+        public RelayCommand CancelCommand => new RelayCommand(x => ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined));
+        public RelayCommand PlayCommand => new RelayCommand(x =>
+            ResultTaskCompletionSource.SetResult(new NepAppUIManagerDialogResult() { ResultType = NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive }));
 
         public override Task<NepAppUIManagerDialogResult> InvokeAsync(object parameter)
         {
@@ -25,7 +28,7 @@ namespace Neptunium.ViewModel.Dialog
 
             Station = parameter as StationItem;
 
-            return resultTask.Task;
+            return ResultTaskCompletionSource.Task;
         }
     }
 }
