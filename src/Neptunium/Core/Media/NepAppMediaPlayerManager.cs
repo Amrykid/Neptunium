@@ -122,23 +122,27 @@ namespace Neptunium.Media
                 case MediaPlaybackState.Buffering:
                 case MediaPlaybackState.Opening:
                     //show play
+                    IsPlaying = false;
                     IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(false));
                     systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Changing;
                     break;
                 case MediaPlaybackState.Paused:
                 case MediaPlaybackState.None:
                     //show play
+                    IsPlaying = false;
                     IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(false));
                     systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
                     break;
                 case MediaPlaybackState.Playing:
                     //show pause
+                    IsPlaying = true;
                     IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(true));
                     systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
                     break;
             }
         }
-
+        
+        public bool IsPlaying { get; private set; }
         public event EventHandler<NepAppMediaPlayerManagerIsPlayingEventArgs> IsPlayingChanged;
 
         public class NepAppMediaPlayerManagerIsPlayingEventArgs : EventArgs

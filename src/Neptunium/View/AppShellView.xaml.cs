@@ -114,8 +114,11 @@ namespace Neptunium.View
 
         private void bottomAppBar_Opened(object sender, object e)
         {
-            NowPlayingButton.Height = double.NaN;
-            NowPlayingImage.Visibility = Visibility.Visible;
+            if (NepApp.Media.CurrentStreamer != null) //only show the image if we're actually streaming something
+            {
+                NowPlayingButton.Height = double.NaN;
+                NowPlayingImage.Visibility = Visibility.Visible;
+            }
         }
 
         private void bottomAppBar_Closed(object sender, object e)
