@@ -56,6 +56,7 @@ namespace Neptunium.Media
                     return new DirectStationMediaStreamer();
                 case StationStreamServerFormat.Shoutcast:
                 case StationStreamServerFormat.Icecast:
+                case StationStreamServerFormat.Radionomy:
                     return new ShoutcastStationMediaStreamer();
             }
 

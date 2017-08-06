@@ -77,9 +77,12 @@ namespace Neptunium.Core.UI
         public NepAppUIManagerOverlayHandle Overlay { get; private set; }
         public async Task ShowErrorDialogAsync(string title, string message)
         {
-            MessageDialog dialog = new MessageDialog(message);
-            dialog.Title = title;
-            await dialog.ShowAsync();
+            await await App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                MessageDialog dialog = new MessageDialog(message);
+                dialog.Title = title;
+                return dialog.ShowAsync();
+            });
         }
         #endregion
 
