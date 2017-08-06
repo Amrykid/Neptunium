@@ -25,6 +25,8 @@ namespace Neptunium.Core
 
     public class NeptuniumStreamConnectionFailedException: NeptuniumException
     {
+        private string _message = null;
+
         public StationStream Stream { get; private set; }
 
         public NeptuniumStreamConnectionFailedException(StationStream stream, Exception inner = null): base(inner)
@@ -32,14 +34,19 @@ namespace Neptunium.Core
             if (stream == null) throw new ArgumentNullException(nameof(stream));
 
             Stream = stream;
+
+            _message = string.Format("We were unable to stream {0} for some reason.", Stream.SpecificTitle);
         }
 
-        public override string Message
+        public NeptuniumStreamConnectionFailedException(StationStream stream, string message, Exception inner = null) : base(inner)
         {
-            get
-            {
-                return string.Format("We were unable to stream {0} for some reason.", Stream.SpecificTitle);
-            }
+            if (stream == null) throw new ArgumentNullException(nameof(stream));
+            if (string.IsNullOrWhiteSpace(message)) throw new ArgumentNullException(nameof(message));
+
+            Stream = stream;
+            _message = message;
         }
+
+        public override string Message { get { return _message; } }
     }
 }
