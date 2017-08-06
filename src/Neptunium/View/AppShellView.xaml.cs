@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -35,6 +36,14 @@ namespace Neptunium.View
             NepApp.UI.SetNavigationService(WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two));
 
             NepApp.UI.SetOverlayParent(OverlayPanel);
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                //sets the mobile status bar to match the top app bar.
+                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
+                statusBar.BackgroundOpacity = 1.0;
+            }
 
             PageTitleBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
             //PageTitleBlock.SetValue(TextBlock.TextProperty, NepApp.UI.ViewTitle);
