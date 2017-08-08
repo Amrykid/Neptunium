@@ -9,6 +9,7 @@ using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using static Neptunium.NepApp;
@@ -123,27 +124,45 @@ namespace Neptunium.Core.UI
             inlineFrame.BorderThickness = new Thickness(1.5);
             inlineFrame.Focus(Windows.UI.Xaml.FocusState.Pointer);
 
-            //todo handle escape button
+            KeyEventHandler escapeHandler = null;
+            bool escapeHandlerReleased = false;
+            escapeHandler = new KeyEventHandler((s, e) =>
+            {
+                //handles the escape button.
+                if (e.Key == Windows.System.VirtualKey.Escape)
+                {
+                    view.KeyDown -= escapeHandler;
+                    escapeHandlerReleased = true;
+                    fragment.ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined);
+                }
+            });
+            view.KeyDown += escapeHandler;
 
             var navManager = SystemNavigationManager.GetForCurrentView();
-            EventHandler<BackRequestedEventArgs> handler = null;
-            bool handlerReleased = false;
-            handler = new EventHandler<BackRequestedEventArgs>((o, e) =>
+            EventHandler<BackRequestedEventArgs> backHandler = null;
+            bool backHandlerReleased = false;
+            backHandler = new EventHandler<BackRequestedEventArgs>((o, e) =>
             {
                 //hack to handle the back button.
                 e.Handled = true;
-                navManager.BackRequested -= handler;
+                navManager.BackRequested -= backHandler;
+                backHandlerReleased = true;
                 fragment.ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined);
-                handlerReleased = true;
             });
-            navManager.BackRequested += handler;
+            navManager.BackRequested += backHandler;
 
             var result = await fragment.InvokeAsync(parameter);
 
-            if (!handlerReleased)
+            if (!backHandlerReleased)
             {
-                navManager.BackRequested -= handler;
+                navManager.BackRequested -= backHandler;
             }
+
+            if (!escapeHandlerReleased)
+            {
+                view.KeyDown -= escapeHandler;
+            }
+
             inlineFrame.Content = null;
             overlayGridControl.Children.Remove(inlineFrame);
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
