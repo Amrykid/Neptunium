@@ -10,6 +10,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using static Neptunium.NepApp;
 
 namespace Neptunium.Core.UI
@@ -31,17 +32,25 @@ namespace Neptunium.Core.UI
             inlineFrame.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Center;
             inlineFrame.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
 
+            inlineFrame.ContentTransitions = new TransitionCollection();
+            inlineFrame.ContentTransitions.Add(new AddDeleteThemeTransition());
+            inlineFrame.ContentTransitions.Add(new ContentThemeTransition());
+
             //todo handle orientation, etc
             Window.Current.SizeChanged += Current_SizeChanged;
             Rect bounds = GetScreenBounds();
             ResizeInlineFrameDialog(bounds.Height, bounds.Width);
 
-            overlayGridControl.Children.Add(inlineFrame);
-
             overlayGridControl.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Stretch;
             overlayGridControl.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Stretch;
             overlayGridControl.IsHitTestVisible = true;
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
+            overlayGridControl.ChildrenTransitions.Add(new ContentThemeTransition());
+            overlayGridControl.ChildrenTransitions.Add(new AddDeleteThemeTransition());
+
+            overlayGridControl.Transitions = new TransitionCollection();
+            overlayGridControl.Transitions.Add(new PaneThemeTransition());
         }
 
         private Rect GetScreenBounds()
@@ -107,6 +116,8 @@ namespace Neptunium.Core.UI
 
             view.DataContext = fragment;
 
+            overlayGridControl.Children.Add(inlineFrame);
+
             inlineFrame.Content = view;
             inlineFrame.BorderBrush = new SolidColorBrush((Color)view.Resources["SystemAccentColor"]);
             inlineFrame.BorderThickness = new Thickness(1.5);
@@ -134,6 +145,7 @@ namespace Neptunium.Core.UI
                 navManager.BackRequested -= handler;
             }
             inlineFrame.Content = null;
+            overlayGridControl.Children.Remove(inlineFrame);
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             overlayLock.Release();
 
