@@ -4,6 +4,7 @@ using Neptunium.Core.Stations;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Media.Playback;
@@ -15,10 +16,11 @@ namespace Neptunium.Media
     public class NepAppMediaPlayerManager : INepAppFunctionManager, INotifyPropertyChanged
     {
         private SystemMediaTransportControls systemMediaTransportControls = null;
+        private SemaphoreSlim playLock = null;
 
         internal NepAppMediaPlayerManager()
         {
-
+            playLock = new SemaphoreSlim(1);
         }
 
         public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
@@ -67,7 +69,7 @@ namespace Neptunium.Media
         {
             if (!NepApp.Network.IsConnected) throw new NeptuniumNetworkConnectionRequiredException();
 
-            //todo use a lock for this.
+            await playLock.WaitAsync();
 
             BasicNepAppMediaStreamer streamer = CreateStreamerForServerFormat(stream.ServerFormat);
 
@@ -81,6 +83,7 @@ namespace Neptunium.Media
             Task result = await Task.WhenAny(connectionTask, timeoutTask);
             if (result == timeoutTask)
             {
+                playLock.Release();
                 throw new NeptuniumStreamConnectionFailedException(stream, message: "Connection to server timed out.");
             }
 
@@ -127,6 +130,8 @@ namespace Neptunium.Media
             UpdateMetadata(streamer.SongMetadata);
 
             CurrentStreamer = streamer;
+
+            playLock.Release();
         }
 
         private void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
