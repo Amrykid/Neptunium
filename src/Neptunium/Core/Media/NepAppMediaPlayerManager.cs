@@ -71,6 +71,8 @@ namespace Neptunium.Media
 
             await playLock.WaitAsync();
 
+            ConnectingBegin?.Invoke(this, EventArgs.Empty);
+
             BasicNepAppMediaStreamer streamer = CreateStreamerForServerFormat(stream.ServerFormat);
 
             Task timeoutTask = null;
@@ -81,8 +83,9 @@ namespace Neptunium.Media
             connectionTask = streamer.TryConnectAsync(stream); //a failure to connect is caught as a Neptunium.Core.NeptuniumStreamConnectionFailedException by AppShellViewModel
 
             Task result = await Task.WhenAny(connectionTask, timeoutTask);
-            if (result == timeoutTask)
+            if (result == timeoutTask || connectionTask.IsFaulted)
             {
+                ConnectingEnd?.Invoke(this, EventArgs.Empty);
                 playLock.Release();
                 throw new NeptuniumStreamConnectionFailedException(stream, message: "Connection to server timed out.");
             }
@@ -127,6 +130,8 @@ namespace Neptunium.Media
 
             streamer.Play();
 
+            ConnectingEnd?.Invoke(this, EventArgs.Empty);
+
             UpdateMetadata(streamer.SongMetadata);
 
             CurrentStreamer = streamer;
@@ -160,6 +165,9 @@ namespace Neptunium.Media
                     break;
             }
         }
+
+        public event EventHandler ConnectingBegin;
+        public event EventHandler ConnectingEnd;
 
         public bool IsPlaying { get; private set; }
         public event EventHandler<NepAppMediaPlayerManagerIsPlayingEventArgs> IsPlayingChanged;

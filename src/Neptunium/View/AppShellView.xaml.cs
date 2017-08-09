@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using static Crystal3.UI.StatusManager.StatusManager;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -72,6 +73,8 @@ namespace Neptunium.View
 
             NowPlayingButton.SetBinding(Button.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
             NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+            NepApp.Media.ConnectingBegin += Media_ConnectingBegin;
+            NepApp.Media.ConnectingEnd += Media_ConnectingEnd;
             //            NowPlayingButton.RegisterPropertyChangedCallback(Button.DataContextProperty, new DependencyPropertyChangedCallback((btn, dp) =>
             //            {
             //#if DEBUG
@@ -80,6 +83,21 @@ namespace Neptunium.View
             //                System.Diagnostics.Debugger.Break();
             //#endif
             //            }));
+        }
+
+        IndefiniteWorkStatusManagerControl statusControl = null;
+        private void Media_ConnectingEnd(object sender, EventArgs e)
+        {
+            bottomAppBar.IsEnabled = true;
+
+            statusControl = WindowManager.GetStatusManagerForCurrentWindow().DoIndefiniteWork(null, "Connecting...");
+        }
+
+        private void Media_ConnectingBegin(object sender, EventArgs e)
+        {
+            bottomAppBar.IsEnabled = false;
+
+            statusControl?.Dispose();
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
