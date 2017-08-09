@@ -16,7 +16,7 @@ namespace Neptunium.ViewModel
     {
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            if (e.Direction == CrystalNavigationDirection.Forward)
+            if (AvailableStations == null || AvailableStations?.Count == 0)
             {
                 AvailableStations = new ObservableCollection<StationItem>(await NepApp.Stations.GetStationsAsync());
             }
