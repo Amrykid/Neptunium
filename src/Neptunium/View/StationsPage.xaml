@@ -38,7 +38,11 @@
                                      Height="75"
                                      Margin="0 5 0 0"
                                      VerticalAlignment="Top"
-                                     IsCacheEnabled="True" Source="{Binding StationLogoUrl, Mode=OneTime}" />
+                                     IsCacheEnabled="True">
+                                <uwp:ImageEx.Source>
+                                    <BitmapImage UriSource="{Binding StationLogoUrl, Mode=OneTime}" />
+                                </uwp:ImageEx.Source>
+                            </uwp:ImageEx>
 
                             <TextBlock Grid.Column="1" VerticalAlignment="Top"
                                    Margin="10 0 0 0"
@@ -81,14 +85,16 @@
                             </uwp:ImageEx>
 
                             <TextBlock TextAlignment="Left"
-                               Grid.Row="1" TextWrapping="WrapWholeWords"
-                               Text="{Binding Name, Mode=OneTime}"
-                               Style="{ThemeResource BaseTextBlockStyle}" 
-                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                                       Grid.Row="1" TextWrapping="WrapWholeWords"
+                                       Text="{Binding Name, Mode=OneTime}"
+                                       Style="{ThemeResource BaseTextBlockStyle}"
+                                       Margin="5 0"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
 
                             <TextBlock Grid.Row="2" Text="{Binding Genres[0], Mode=OneTime}"
-                               Style="{ThemeResource BodyTextBlockStyle}" 
-                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
+                                       Style="{ThemeResource BodyTextBlockStyle}"
+                                       Margin="5 0"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
 
                             <ToolTipService.ToolTip>
                                 <TextBlock Text="{Binding Description, Mode=OneTime}" />
