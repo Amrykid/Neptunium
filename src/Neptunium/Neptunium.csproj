@@ -132,6 +132,7 @@
     <Compile Include="Core\Stations\StationStreamServerFormat.cs" />
     <Compile Include="Core\UI\NepAppUIManagerDialogResult.cs" />
     <Compile Include="Core\UI\NepAppUIManagerOverlayHandle.cs" />
+    <Compile Include="Core\UI\NepAppUIManagerNotifier.cs" />
     <Compile Include="Core\UI\NepAppUINavigationItem.cs" />
     <Compile Include="JapaneseTextUtilities.cs" />
     <Compile Include="Core\NepApp.cs" />

@@ -75,6 +75,7 @@ namespace Neptunium.View
             NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
             NepApp.Media.ConnectingBegin += Media_ConnectingBegin;
             NepApp.Media.ConnectingEnd += Media_ConnectingEnd;
+            
             //            NowPlayingButton.RegisterPropertyChangedCallback(Button.DataContextProperty, new DependencyPropertyChangedCallback((btn, dp) =>
             //            {
             //#if DEBUG

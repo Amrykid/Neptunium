@@ -178,9 +178,17 @@ namespace Neptunium.Media
             public bool IsPlaying { get; private set; }
         }
 
-        private void Streamer_MetadataChanged(object sender, MediaStreamerMetadataChangedEventArgs e)
+        private async void Streamer_MetadataChanged(object sender, MediaStreamerMetadataChangedEventArgs e)
         {
             UpdateMetadata(e.Metadata);
+
+            //todo get extended metadata info.
+
+            if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+            {
+                NepApp.UI.ToastNotifier.ShowSongToastNotification(e.Metadata);
+                //todo update tile with now playing info
+            }
         }
 
         private void UpdateMetadata(SongMetadata metadata)
