@@ -19,6 +19,10 @@ namespace Neptunium.Core.UI
             ToastContent content = new ToastContent()
             {
                 Launch = "now-playing",
+                Audio = new ToastAudio()
+                {
+                    Silent = true,
+                },
                 Visual = new ToastVisual()
                 {
                     BindingGeneric = new ToastBindingGeneric()
