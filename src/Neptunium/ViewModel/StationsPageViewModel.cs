@@ -39,6 +39,8 @@ namespace Neptunium.ViewModel
         public RelayCommand ShowStationInfoCommand => new RelayCommand(async station =>
         {
             StationItem stationItem = (StationItem)station;
+            if (NepApp.Media.CurrentStreamer?.StationPlaying == stationItem) return; //don't show a dialog to play the current station
+
             if ((await NepApp.UI.Overlay.ShowDialogFragmentAsync<StationInfoDialogFragment>(stationItem)).ResultType == Core.UI.NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive)
             {
                 try
