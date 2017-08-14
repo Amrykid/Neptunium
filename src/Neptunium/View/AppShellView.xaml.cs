@@ -91,14 +91,14 @@ namespace Neptunium.View
         {
             bottomAppBar.IsEnabled = true;
 
-            statusControl = WindowManager.GetStatusManagerForCurrentWindow().DoIndefiniteWork(null, "Connecting...");
+            statusControl?.Dispose();
         }
 
         private void Media_ConnectingBegin(object sender, EventArgs e)
         {
             bottomAppBar.IsEnabled = false;
 
-            statusControl?.Dispose();
+            statusControl = WindowManager.GetStatusManagerForCurrentWindow().DoIndefiniteWork(null, "Connecting...");
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
