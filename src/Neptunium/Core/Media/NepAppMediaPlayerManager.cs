@@ -90,19 +90,7 @@ namespace Neptunium.Media
                 throw new NeptuniumStreamConnectionFailedException(stream, message: "Connection to server timed out.");
             }
 
-            if (CurrentStreamer != null)
-            {
-                CurrentStreamer.MetadataChanged -= Streamer_MetadataChanged;
-
-                CurrentStreamer.Pause();
-                CurrentStreamer.Dispose();
-            }
-
-            if (CurrentPlayer != null)
-            {
-                CurrentPlayerSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
-                CurrentPlayer.Dispose();
-            }
+            ShutdownPreviousPlaybackSession();
 
             CurrentPlayer = new MediaPlayer();
 
@@ -120,6 +108,7 @@ namespace Neptunium.Media
             CurrentPlayer.AudioCategory = MediaPlayerAudioCategory.Media;
             CurrentPlayer.CommandManager.IsEnabled = true;
             CurrentPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Multimedia;
+            CurrentPlayer.MediaFailed += CurrentPlayer_MediaFailed;
             CurrentPlayerSession = CurrentPlayer.PlaybackSession;
             CurrentPlayerSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
             streamer.InitializePlayback(CurrentPlayer);
@@ -137,6 +126,30 @@ namespace Neptunium.Media
             CurrentStreamer = streamer;
 
             playLock.Release();
+        }
+
+        private void ShutdownPreviousPlaybackSession()
+        {
+            if (CurrentStreamer != null)
+            {
+                CurrentStreamer.MetadataChanged -= Streamer_MetadataChanged;
+
+                CurrentStreamer.Pause();
+                CurrentStreamer.Dispose();
+            }
+
+            if (CurrentPlayer != null)
+            {
+                CurrentPlayer.MediaFailed -= CurrentPlayer_MediaFailed;
+                CurrentPlayerSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
+                CurrentPlayer.Dispose();
+            }
+        }
+
+        private void CurrentPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
+        {
+            ShutdownPreviousPlaybackSession();
+            throw new NeptuniumStreamConnectionFailedException(null, args.ErrorMessage);
         }
 
         private void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
