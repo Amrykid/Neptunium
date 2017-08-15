@@ -35,7 +35,7 @@ namespace Neptunium.Core
 
             Stream = stream;
 
-            _message = string.Format("We were unable to stream {0} for some reason.", Stream.SpecificTitle);
+            _message = string.Format("We were unable to stream {0} for some reason. ", Stream.SpecificTitle) + inner?.Message;
         }
 
         public NeptuniumStreamConnectionFailedException(StationStream stream, string message, Exception inner = null) : base(inner)
