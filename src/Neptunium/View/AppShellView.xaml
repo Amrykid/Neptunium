@@ -189,7 +189,7 @@
         </Grid>
 
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
+            <VisualStateGroup x:Name="ShellVisualStateGroup">
                 <VisualState x:Name="DesktopVisualState">
                     <VisualState.StateTriggers>
                         <wst:AdaptiveTrigger MinWindowWidth="1080" />

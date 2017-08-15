@@ -91,16 +91,35 @@ namespace Neptunium.View
             //            }));
         }
 
+        private VisualStateChangedEventHandler noChromeHandler = null;
         private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
         {
             if (inlineNavigationService.NavigationFrame.Content?.GetType().GetTypeInfo().GetCustomAttribute<NepAppUINoChromePageAttribute>() != null)
             {
                 //no chrome mode
 
-                topAppBar.Visibility = Visibility.Collapsed;
-                bottomAppBar.Visibility = Visibility.Collapsed;
+                Action noChrome = () =>
+                {
+                    topAppBar.Visibility = Visibility.Collapsed;
+                    bottomAppBar.Visibility = Visibility.Collapsed;
 
-                RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
+                    RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
+
+                    RootSplitView.IsPaneOpen = false;
+                };
+
+                noChrome();
+
+                noChromeHandler = new VisualStateChangedEventHandler((o, args) =>
+                {
+                    //this is to "fix" the splitview opening when extending the window in no chrome mode. it doesn't work very will
+                    RootSplitView.Visibility = Visibility.Collapsed;
+                    noChrome();
+                    RootSplitView.Visibility = Visibility.Visible;
+                });
+
+                ShellVisualStateGroup.CurrentStateChanged += noChromeHandler;
+                ShellVisualStateGroup.CurrentStateChanging += noChromeHandler;
             }
             else
             {
@@ -121,6 +140,13 @@ namespace Neptunium.View
                     {
                         RootSplitView.DisplayMode = SplitViewDisplayMode.CompactInline;
                     }
+                }
+
+                if (noChromeHandler != null)
+                {
+                    ShellVisualStateGroup.CurrentStateChanged -= noChromeHandler;
+                    ShellVisualStateGroup.CurrentStateChanging -= noChromeHandler;
+                    noChromeHandler = null;
                 }
             }
         }
