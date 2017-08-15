@@ -100,7 +100,7 @@ namespace Neptunium.View
                 topAppBar.Visibility = Visibility.Collapsed;
                 bottomAppBar.Visibility = Visibility.Collapsed;
 
-                RootSplitView.Visibility = Visibility.Collapsed;
+                RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
             }
             else
             {
@@ -109,7 +109,19 @@ namespace Neptunium.View
                 topAppBar.Visibility = Visibility.Visible;
                 bottomAppBar.Visibility = Visibility.Visible;
 
-                RootSplitView.Visibility = Visibility.Visible;
+                //todo remember splitview state instead of trying to guess below.
+                if (Window.Current.Bounds.Width >= 720)
+                {
+                    if (Window.Current.Bounds.Width >= 1080)
+                    {
+                        RootSplitView.DisplayMode = SplitViewDisplayMode.Inline;
+                        RootSplitView.IsPaneOpen = true;
+                    }
+                    else
+                    {
+                        RootSplitView.DisplayMode = SplitViewDisplayMode.CompactInline;
+                    }
+                }
             }
         }
 
