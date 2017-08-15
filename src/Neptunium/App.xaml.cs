@@ -1,7 +1,9 @@
 ﻿using Crystal3;
 using Crystal3.Navigation;
 using Microsoft.HockeyApp;
+using Neptunium.View;
 using Neptunium.ViewModel;
+using Neptunium.ViewModel.Dialog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -124,6 +126,8 @@ namespace Neptunium
         protected override async Task OnApplicationInitializedAsync()
         {
             await NepApp.InitializeAsync();
+
+            NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
         }
 
         private async Task PostUIInitAsync()
