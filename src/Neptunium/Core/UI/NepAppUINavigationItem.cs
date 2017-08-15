@@ -17,6 +17,6 @@ namespace Neptunium.Core.UI
         public string DisplayText { get; internal set; }
         public Type NavigationViewModelType { get; internal set; }
         public RelayCommand Command { get; internal set; }
-        public bool IsSelected { get { return GetPropertyValue<bool>(); } internal set { SetPropertyValue<bool>(value: value); } }
+        public bool IsSelected { get { return GetPropertyValue<bool>(); } set { SetPropertyValue<bool>(value: value); } }
     }
 }

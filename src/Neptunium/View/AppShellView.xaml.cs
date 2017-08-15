@@ -99,6 +99,8 @@ namespace Neptunium.View
 
                 topAppBar.Visibility = Visibility.Collapsed;
                 bottomAppBar.Visibility = Visibility.Collapsed;
+
+                RootSplitView.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -106,6 +108,8 @@ namespace Neptunium.View
 
                 topAppBar.Visibility = Visibility.Visible;
                 bottomAppBar.Visibility = Visibility.Visible;
+
+                RootSplitView.Visibility = Visibility.Visible;
             }
         }
 
@@ -176,6 +180,12 @@ namespace Neptunium.View
         {
             NowPlayingButton.Height = 45;
             NowPlayingImage.Visibility = Visibility.Collapsed;
+        }
+
+        private void NowPlayingButton_Click(object sender, RoutedEventArgs e)
+        {
+            //todo make a binding
+            inlineNavigationService.SafeNavigateTo<NowPlayingPageViewModel>();
         }
     }
 }

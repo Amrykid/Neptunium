@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -26,11 +27,13 @@ namespace Neptunium.Core.UI
         private NavigationServiceBase inlineNavigationService = null;
         private string _viewTitle = "PAGE TITLE";
         private ObservableCollection<NepAppUINavigationItem> navigationItems = null;
+        private WindowService windowService = null;
         internal NepAppUIManager()
         {
             navigationItems = new ObservableCollection<NepAppUINavigationItem>();
             NavigationItems = new ReadOnlyObservableCollection<NepAppUINavigationItem>(navigationItems);
             ToastNotifier = new NepAppUIManagerNotifier();
+            windowService = WindowManager.GetWindowServiceForCurrentWindow();
         }
 
         internal void SetNavigationService(NavigationServiceBase navService)
@@ -40,11 +43,18 @@ namespace Neptunium.Core.UI
             if (inlineNavigationService != null)
             {
                 //unsubscribe from the previous nav service
-                ((FrameNavigationService)inlineNavigationService).NavigationFrame.Navigated -= NavigationFrame_Navigated;
+                ((FrameNavigationService)inlineNavigationService).Navigated -= NepAppUIManager_Navigated;
             }
 
             inlineNavigationService = navService;
-            ((FrameNavigationService)inlineNavigationService).NavigationFrame.Navigated += NavigationFrame_Navigated;
+            ((FrameNavigationService)inlineNavigationService).Navigated += NepAppUIManager_Navigated;
+        }
+
+        private void NepAppUIManager_Navigated(object sender, CrystalNavigationEventArgs e)
+        {
+            UpdateSelectedNavigationItems();
+
+            windowService.SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
         }
 
         internal void SetOverlayParent(Grid parentControl)
@@ -54,15 +64,23 @@ namespace Neptunium.Core.UI
             Overlay = new NepAppUIManagerOverlayHandle(this, parentControl);
         }
 
-        private void NavigationFrame_Navigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
-        {
-            UpdateSelectedNavigationItems();
-        }
-
         private void UpdateSelectedNavigationItems()
         {
-            foreach (NepAppUINavigationItem item in navigationItems)
-                item.IsSelected = inlineNavigationService.IsNavigatedTo(item.NavigationViewModelType);
+            var pageType = ((FrameNavigationService)inlineNavigationService).NavigationFrame.CurrentSourcePageType;
+
+            foreach (NepAppUINavigationItem navItem in navigationItems)
+            {
+                navItem.IsSelected = false;
+            }
+
+            NepAppUINavigationItem item = null;
+            item = navigationItems.First(x =>
+            {
+                var navAttr = pageType.GetTypeInfo().GetCustomAttribute<Crystal3.Navigation.NavigationViewModelAttribute>();
+                return navAttr.ViewModel == x.NavigationViewModelType;
+            });
+
+            item.IsSelected = true;
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
@@ -109,7 +127,7 @@ namespace Neptunium.Core.UI
             if (!((FrameNavigationService)inlineNavigationService).IsNavigatedTo(navItem.NavigationViewModelType))
                 ((FrameNavigationService)inlineNavigationService).Navigate(navItem.NavigationViewModelType, parameter);
 
-            UpdateSelectedNavigationItems();
+            //UpdateSelectedNavigationItems();
 
             ViewTitle = navItem.DisplayText;
         }

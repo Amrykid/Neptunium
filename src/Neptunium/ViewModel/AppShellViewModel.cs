@@ -28,6 +28,7 @@ namespace Neptunium.ViewModel
             App.Current.UnhandledException += Current_UnhandledException;
 
             NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), "");
+            NepApp.UI.AddNavigationRoute("Now Playing", typeof(NowPlayingPageViewModel), "");
         }
 
         private async void Current_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)

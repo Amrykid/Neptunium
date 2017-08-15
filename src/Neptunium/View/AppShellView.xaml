@@ -43,7 +43,8 @@
         <CommandBar x:Name="bottomAppBar" Opened="bottomAppBar_Opened" IsDynamicOverflowEnabled="False"
                     Closed="bottomAppBar_Closed" OverflowButtonVisibility="Visible">
             <CommandBar.Content>
-                <Button Style="{x:Null}" Background="Transparent" x:Name="NowPlayingButton" Height="45">
+                <Button Style="{x:Null}" Background="Transparent" x:Name="NowPlayingButton" Height="45"
+                        Click="NowPlayingButton_Click">
                     <Grid Width="400" Height="100">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MaxWidth="100" Width="Auto" />
@@ -111,7 +112,7 @@
                                         Command="{Binding Command, Mode=OneTime}"
                                         Content="{Binding DisplayText, Mode=OneTime}"
                                         GroupName="Navigation"
-                                        IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                                        IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                         Style="{StaticResource SplitViewRadioButtonStyle}">
                                         <RadioButton.Tag>
                                             <TextBlock
