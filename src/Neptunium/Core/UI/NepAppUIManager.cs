@@ -74,13 +74,21 @@ namespace Neptunium.Core.UI
             }
 
             NepAppUINavigationItem item = null;
-            item = navigationItems.First(x =>
+            item = navigationItems.FirstOrDefault(x =>
             {
                 var navAttr = pageType.GetTypeInfo().GetCustomAttribute<Crystal3.Navigation.NavigationViewModelAttribute>();
                 return navAttr.ViewModel == x.NavigationViewModelType;
             });
 
-            item.IsSelected = true;
+            if (item != null)
+            {
+                item.IsSelected = true;
+                ViewTitle = item.DisplayText;
+            }
+            else
+            {
+                ViewTitle = "";
+            }
         }
 
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
