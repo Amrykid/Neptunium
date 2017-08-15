@@ -1,10 +1,12 @@
 ﻿using Crystal3.Navigation;
+using Neptunium.Core.UI;
 using Neptunium.ViewModel;
 using Neptunium.ViewModel.Dialog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -28,13 +30,16 @@ namespace Neptunium.View
     [Crystal3.Navigation.NavigationViewModel(typeof(AppShellViewModel))]
     public sealed partial class AppShellView : Page
     {
+        private FrameNavigationService inlineNavigationService = null;
         public AppShellView()
         {
             this.InitializeComponent();
 
             SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
 
-            NepApp.UI.SetNavigationService(WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two));
+            inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
+            NepApp.UI.SetNavigationService(inlineNavigationService);
+            inlineNavigationService.Navigated += InlineNavigationService_Navigated;
 
             NepApp.UI.SetOverlayParent(OverlayPanel);
 
@@ -84,6 +89,24 @@ namespace Neptunium.View
             //                System.Diagnostics.Debugger.Break();
             //#endif
             //            }));
+        }
+
+        private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
+        {
+            if (inlineNavigationService.NavigationFrame.Content?.GetType().GetTypeInfo().GetCustomAttribute<NepAppUINoChromePageAttribute>() != null)
+            {
+                //no chrome mode
+
+                topAppBar.Visibility = Visibility.Collapsed;
+                bottomAppBar.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                //reactivate chrome
+
+                topAppBar.Visibility = Visibility.Visible;
+                bottomAppBar.Visibility = Visibility.Visible;
+            }
         }
 
         IndefiniteWorkStatusManagerControl statusControl = null;

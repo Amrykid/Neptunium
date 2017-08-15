@@ -134,6 +134,7 @@
     <Compile Include="Core\UI\NepAppUIManagerOverlayHandle.cs" />
     <Compile Include="Core\UI\NepAppUIManagerNotifier.cs" />
     <Compile Include="Core\UI\NepAppUINavigationItem.cs" />
+    <Compile Include="Core\UI\NepAppUINoChromePageAttribute.cs" />
     <Compile Include="JapaneseTextUtilities.cs" />
     <Compile Include="Core\NepApp.cs" />
     <Compile Include="StringUtilities.cs" />
