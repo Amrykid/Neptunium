@@ -39,6 +39,38 @@ namespace Neptunium.View
             NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
 
             NowPlayingTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
+
+            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+        }
+
+        private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
+        {
+            //if (e.IsPlaying)
+            //{
+            //if (NepApp.Media.CurrentStreamer != null)
+            //{
+            //    App.Dispatcher.RunAsync(() =>
+            //    {
+            //        TransportControlsGridMediaPlayerElement.SetMediaPlayer(NepApp.Media.CurrentStreamer.Player);
+            //    });
+            //}
+            //}
+
+            App.Dispatcher.RunAsync(() =>
+            {
+                 if (e.IsPlaying)
+                 {
+                     PlayButton.Label = "Pause";
+                     PlayButton.Icon = new SymbolIcon(Symbol.Pause);
+                     PlayButton.Command = ((AppShellViewModel)this.DataContext).PausePlaybackCommand;
+                 }
+                 else
+                 {
+                     PlayButton.Label = "Play";
+                     PlayButton.Icon = new SymbolIcon(Symbol.Play);
+                     PlayButton.Command = ((AppShellViewModel)this.DataContext).ResumePlaybackCommand;
+                 }
+            });
         }
 
         private void FeedbackButton_Click(object sender, RoutedEventArgs e)
@@ -55,12 +87,12 @@ namespace Neptunium.View
                     InlineFrame.IsEnabled = false;
                     TransportControlGrid.Visibility = Visibility.Visible;
                     PlayButton.Focus(FocusState.Programmatic);
+                    //TransportControlsGridMediaPlayerElement.Focus(FocusState.Programmatic);
                 }
                 else
                 {
                     TransportControlGrid.Visibility = Visibility.Collapsed;
                     InlineFrame.IsEnabled = true;
-                    InlineFrame.Focus(FocusState.Programmatic);
                 }
 
                 e.Handled = true;

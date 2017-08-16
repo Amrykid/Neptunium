@@ -40,7 +40,7 @@ namespace Neptunium
             this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
             ElementSoundPlayer.State = ElementSoundPlayerState.Auto;
 
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox && !CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
             {
                 Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);

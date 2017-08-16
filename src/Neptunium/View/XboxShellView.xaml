@@ -74,13 +74,14 @@
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" Height="50" Width="50" Foreground="White"
                               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20 20 0 0"/>
 
-                    <Grid x:Name="TransportControlGrid" Width="325" 
-                          Height="105" VerticalAlignment="Bottom"
+                    <Grid x:Name="TransportControlGrid" Width="330" 
+                          Height="110" VerticalAlignment="Bottom"
+                          Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                           HorizontalAlignment="Right" Margin="0 0 20 20"
                           Visibility="Collapsed"
                           BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}"
                           BorderThickness="1"
-                          Padding="1">
+                          Padding="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="20" />
                             <RowDefinition Height="20" />
@@ -100,6 +101,7 @@
                         <StackPanel Orientation="Horizontal" Grid.Row="2">
                             <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
+                        <!--<MediaPlayerElement Grid.Row="2" AreTransportControlsEnabled="True" x:Name="TransportControlsGridMediaPlayerElement"  />-->
                     </Grid>
                 </Grid>
             </SplitView.Content>
