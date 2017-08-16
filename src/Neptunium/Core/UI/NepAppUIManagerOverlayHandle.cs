@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -38,6 +39,7 @@ namespace Neptunium.Core.UI
             inlineFrame.ContentTransitions.Add(new ContentThemeTransition());
 
             //todo handle orientation, etc
+            ApplicationView.GetForCurrentView().VisibleBoundsChanged += NepAppUIManagerOverlayHandle_VisibleBoundsChanged;
             Window.Current.SizeChanged += Current_SizeChanged;
             Rect bounds = GetScreenBounds();
             ResizeInlineFrameDialog(bounds.Height, bounds.Width);
@@ -54,15 +56,18 @@ namespace Neptunium.Core.UI
             overlayGridControl.Transitions.Add(new PaneThemeTransition());
         }
 
+        private void NepAppUIManagerOverlayHandle_VisibleBoundsChanged(ApplicationView sender, object args)
+        {
+            var visibleScreen = GetScreenBounds();
+            ResizeInlineFrameDialog(visibleScreen.Height, visibleScreen.Width);
+        }
+
         private Rect GetScreenBounds()
         {
-            //todo check if table mode counts. i forgot.
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile 
+                || UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Touch)
             {
-                if (AreOnScreenNavigationButtonsVisibleOnMobile())
-                {
-                    return Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().VisibleBounds;
-                }
+                return Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().VisibleBounds;
             }
 
             return Window.Current.Bounds;
@@ -80,7 +85,6 @@ namespace Neptunium.Core.UI
         {
             var visibleScreen = GetScreenBounds();
             ResizeInlineFrameDialog(visibleScreen.Height, visibleScreen.Width);
-
         }
 
         private void ResizeInlineFrameDialog(double height, double width)
@@ -93,8 +97,8 @@ namespace Neptunium.Core.UI
             else
             {
                 inlineFrame.Width = width;
-                inlineFrame.Height = height;
-                
+                inlineFrame.Height = height - 20;
+
             }
         }
 
