@@ -5,6 +5,7 @@
     xmlns:local="using:Neptunium.View"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    KeyDown="Page_KeyDown"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -69,11 +70,43 @@
             <SplitView.Content>
                 <Grid>
                     <Frame x:Name="InlineFrame" />
+
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" Height="50" Width="50" Foreground="White"
+                              VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20 20 0 0"/>
+
+                    <Grid x:Name="TransportControlGrid" Width="300" 
+                          Height="105" VerticalAlignment="Bottom"
+                          HorizontalAlignment="Right" Margin="0 0 20 20"
+                          Opacity=".95"
+                          Visibility="Collapsed"
+                          BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}"
+                          BorderThickness="1"
+                          Padding="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Row="0" HorizontalAlignment="Center" Foreground="White" />
+
+                        <TextBlock Grid.Row="1" x:Name="NowPlayingTextBlock">
+                            <Span>
+                                <Run Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}" />
+                                <Run Text="-" />
+                                <Run Text="{Binding Track, UpdateSourceTrigger=PropertyChanged}" />
+                            </Span>
+                        </TextBlock>
+                        
+                        <StackPanel Orientation="Horizontal" Grid.Row="2">
+                            <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </Grid>
                 </Grid>
             </SplitView.Content>
         </SplitView>
 
-        <Grid x:Name="OverlayPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity=".95">
+        <Grid x:Name="OverlayPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity=".95" Visibility="Collapsed">
             <Grid.ChildrenTransitions>
                 <TransitionCollection>
                     <RepositionThemeTransition />

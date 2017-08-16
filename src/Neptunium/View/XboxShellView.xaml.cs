@@ -37,11 +37,35 @@ namespace Neptunium.View
             NepApp.UI.SetOverlayParent(OverlayPanel);
 
             NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
+
+            NowPlayingTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
         }
 
         private void FeedbackButton_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void Page_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.GamepadY)
+            {
+                if (TransportControlGrid.Visibility == Visibility.Collapsed)
+                {
+                    InlineFrame.IsEnabled = false;
+                    TransportControlGrid.Visibility = Visibility.Visible;
+                    PlayButton.Focus(FocusState.Programmatic);
+                }
+                else
+                {
+                    TransportControlGrid.Visibility = Visibility.Collapsed;
+                    InlineFrame.IsEnabled = true;
+                    InlineFrame.Focus(FocusState.Programmatic);
+                }
+
+                e.Handled = true;
+            }
+            
         }
     }
 }
