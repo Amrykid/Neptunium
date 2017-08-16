@@ -51,18 +51,20 @@
                        Grid.Column="0" Width="100" Height="100" />
                 <Grid Grid.Column="1" VerticalAlignment="Center" x:Name="TrackArtistPanel" Margin="0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="50" />
+                        <RowDefinition Height="Auto" MaxHeight="125" />
                         <RowDefinition Height="50" />
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Text="{Binding CurrentSong.Track, UpdateSourceTrigger=PropertyChanged}"
                                x:Name="TrackTextBlock"
                                VerticalAlignment="Bottom"
-                               Style="{ThemeResource TitleTextBlockStyle}" />
+                               Style="{ThemeResource TitleTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
 
                     <TextBlock Grid.Row="1" Text="{Binding CurrentSong.Artist, UpdateSourceTrigger=PropertyChanged}"
                                x:Name="ArtistTrackBlock"
-                               Style="{ThemeResource SubtitleTextBlockStyle}" />
+                               Style="{ThemeResource SubtitleTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
                 </Grid>
             </Grid>
 
