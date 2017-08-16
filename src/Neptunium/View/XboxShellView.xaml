@@ -69,10 +69,10 @@
             </SplitView.Pane>
             <SplitView.Content>
                 <Grid>
-                    <Frame x:Name="InlineFrame" />
+                    <Frame x:Name="InlineFrame" Margin="0 50 0 0" />
 
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" Height="50" Width="50" Foreground="White"
-                              VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20 20 0 0"/>
+                              VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0"/>
 
                     <Grid x:Name="TransportControlGrid" Width="330" 
                           Height="110" VerticalAlignment="Bottom"

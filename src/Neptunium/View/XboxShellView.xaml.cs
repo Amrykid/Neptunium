@@ -31,6 +31,7 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
+            SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
             inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
             NepApp.UI.SetNavigationService(inlineNavigationService);
 
@@ -96,6 +97,11 @@ namespace Neptunium.View
                 }
 
                 e.Handled = true;
+            }
+            else if (e.Key == Windows.System.VirtualKey.GamepadMenu)
+            {
+                e.Handled = true;
+                RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
             }
             
         }
