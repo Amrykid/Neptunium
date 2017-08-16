@@ -1,6 +1,7 @@
 ﻿using Crystal3;
 using Crystal3.Navigation;
 using Microsoft.HockeyApp;
+using Neptunium.Core;
 using Neptunium.View;
 using Neptunium.ViewModel;
 using Neptunium.ViewModel.Dialog;
@@ -36,6 +37,8 @@ namespace Neptunium
         /// </summary>
         public App()
         {
+            App.Current.UnhandledException += Current_UnhandledException;
+
             //For Xbox One
             this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
             ElementSoundPlayer.State = ElementSoundPlayerState.Auto;
@@ -236,6 +239,25 @@ namespace Neptunium
         public override Task OnBackgroundActivatedAsync(BackgroundActivatedEventArgs args)
         {
             return Task.CompletedTask;
+        }
+
+
+        private async void Current_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            if (e.Exception is NeptuniumException)
+            {
+                e.Handled = true;
+
+                await NepApp.UI.ShowErrorDialogAsync("Uh-oh! Something went wrong!", e.Exception.Message);
+            }
+            else
+            {
+                if (!System.Diagnostics.Debugger.IsAttached)
+                {
+                    HockeyClient.Current.TrackException(e.Exception);
+                    HockeyClient.Current.Flush();
+                }
+            }
         }
     }
 }

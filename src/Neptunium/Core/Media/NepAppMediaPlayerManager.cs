@@ -25,6 +25,7 @@ namespace Neptunium.Media
 
         public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
         public SongMetadata CurrentMetadata { get; private set; }
+        internal StationStream CurrentStream { get; private set; }
 
         internal void Pause()
         {
@@ -124,6 +125,7 @@ namespace Neptunium.Media
             UpdateMetadata(streamer.SongMetadata);
 
             CurrentStreamer = streamer;
+            CurrentStream = stream;
 
             playLock.Release();
         }
@@ -136,6 +138,7 @@ namespace Neptunium.Media
 
                 CurrentStreamer.Pause();
                 CurrentStreamer.Dispose();
+                CurrentStreamer = null;
             }
 
             if (CurrentPlayer != null)
@@ -143,13 +146,32 @@ namespace Neptunium.Media
                 CurrentPlayer.MediaFailed -= CurrentPlayer_MediaFailed;
                 CurrentPlayerSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
                 CurrentPlayer.Dispose();
+                CurrentPlayer = null;
             }
+
+            CurrentStream = null;
+            CurrentMetadata = null;
+
+            App.Dispatcher.RunAsync(() =>
+            {
+                RaisePropertyChanged(nameof(CurrentMetadata));
+                IsPlaying = false;
+                RaisePropertyChanged(nameof(IsPlaying));
+            });
         }
 
-        private void CurrentPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
+        private async void CurrentPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
         {
+            var stream = CurrentStream;
             ShutdownPreviousPlaybackSession();
-            throw new NeptuniumStreamConnectionFailedException(null, args.ErrorMessage);
+            if (!NepApp.Network.IsConnected)
+            {
+                await NepApp.UI.ShowErrorDialogAsync("Uh-Oh!", "Network connection lost!");
+            }
+            else
+            {
+                await NepApp.UI.ShowErrorDialogAsync("Uh-Oh!", "An unknown error occurred.");
+            }
         }
 
         private void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
