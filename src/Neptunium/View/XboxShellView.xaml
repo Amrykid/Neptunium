@@ -74,10 +74,9 @@
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" Height="50" Width="50" Foreground="White"
                               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20 20 0 0"/>
 
-                    <Grid x:Name="TransportControlGrid" Width="300" 
+                    <Grid x:Name="TransportControlGrid" Width="325" 
                           Height="105" VerticalAlignment="Bottom"
                           HorizontalAlignment="Right" Margin="0 0 20 20"
-                          Opacity=".95"
                           Visibility="Collapsed"
                           BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}"
                           BorderThickness="1"
@@ -90,7 +89,7 @@
 
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Row="0" HorizontalAlignment="Center" Foreground="White" />
 
-                        <TextBlock Grid.Row="1" x:Name="NowPlayingTextBlock">
+                        <TextBlock Grid.Row="1" x:Name="NowPlayingTextBlock" TextTrimming="WordEllipsis">
                             <Span>
                                 <Run Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}" />
                                 <Run Text="-" />
