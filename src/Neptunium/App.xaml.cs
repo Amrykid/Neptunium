@@ -126,8 +126,6 @@ namespace Neptunium
         protected override async Task OnApplicationInitializedAsync()
         {
             await NepApp.InitializeAsync();
-
-            NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
         }
 
         private async Task PostUIInitAsync()

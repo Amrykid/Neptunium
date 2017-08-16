@@ -1,5 +1,6 @@
 ﻿using Crystal3.Navigation;
 using Neptunium.ViewModel;
+using Neptunium.ViewModel.Dialog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,6 +35,8 @@ namespace Neptunium.View
             NepApp.UI.SetNavigationService(inlineNavigationService);
 
             NepApp.UI.SetOverlayParent(OverlayPanel);
+
+            NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
         }
 
         private void FeedbackButton_Click(object sender, RoutedEventArgs e)
