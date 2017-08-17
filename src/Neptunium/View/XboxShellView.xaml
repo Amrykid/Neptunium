@@ -76,6 +76,38 @@
                 <Grid>
                     <Frame x:Name="InlineFrame" Margin="0" />
 
+
+                    <Grid x:Name="MediaGrid" Width="Auto" 
+                          Height="75" VerticalAlignment="Bottom"
+                          HorizontalAlignment="Left" Margin="20 0 50 0"
+                          Visibility="Collapsed"
+                          BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}"
+                          BorderThickness="1"
+                          Padding="10">
+                        <Grid.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                                <PopupThemeTransition />
+                                <ContentThemeTransition />
+                            </TransitionCollection>
+                        </Grid.Transitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32.5" />
+                            <RowDefinition Height="32.5" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" x:Name="NowPlayingTrackTextBlock" 
+                                   Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                   Style="{ThemeResource TitleTextBlockStyle}"
+                                   Text="{Binding Track, UpdateSourceTrigger=PropertyChanged}" />
+                        
+                        <TextBlock Grid.Row="1" x:Name="NowPlayingArtistTextBlock" 
+                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                   Style="{ThemeResource SubtitleTextBlockStyle}"
+                                   Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+
                     <Grid x:Name="TransportControlGrid" Width="330" 
                           Height="110" VerticalAlignment="Bottom"
                           Background="{ThemeResource SystemControlBackgroundAccentBrush}"
@@ -86,21 +118,12 @@
                           Padding="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="20" />
-                            <RowDefinition Height="20" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Row="0" HorizontalAlignment="Center" Foreground="White" />
 
-                        <TextBlock Grid.Row="1" x:Name="NowPlayingTextBlock" TextTrimming="WordEllipsis">
-                            <Span>
-                                <Run Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}" />
-                                <Run Text="-" />
-                                <Run Text="{Binding Track, UpdateSourceTrigger=PropertyChanged}" />
-                            </Span>
-                        </TextBlock>
-                        
-                        <StackPanel Orientation="Horizontal" Grid.Row="2">
+                        <StackPanel Orientation="Horizontal" Grid.Row="1">
                             <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
                         <!--<MediaPlayerElement Grid.Row="2" AreTransportControlsEnabled="True" x:Name="TransportControlsGridMediaPlayerElement"  />-->

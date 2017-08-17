@@ -43,10 +43,12 @@ namespace Neptunium.View
             NepApp.UI.Overlay.DialogShown += Overlay_DialogShown;
             NepApp.UI.Overlay.DialogHidden += Overlay_DialogHidden;
 
-            NowPlayingTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
+            NowPlayingTrackTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
+            NowPlayingArtistTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
 
             NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
         }
+
 
         private void Overlay_DialogShown(object sender, EventArgs e)
         {
@@ -79,18 +81,22 @@ namespace Neptunium.View
 
             App.Dispatcher.RunAsync(() =>
             {
-                 if (e.IsPlaying)
-                 {
-                     PlayButton.Label = "Pause";
-                     PlayButton.Icon = new SymbolIcon(Symbol.Pause);
-                     PlayButton.Command = ((AppShellViewModel)this.DataContext).PausePlaybackCommand;
-                 }
-                 else
-                 {
-                     PlayButton.Label = "Play";
-                     PlayButton.Icon = new SymbolIcon(Symbol.Play);
-                     PlayButton.Command = ((AppShellViewModel)this.DataContext).ResumePlaybackCommand;
-                 }
+                if (e.IsPlaying)
+                {
+                    PlayButton.Label = "Pause";
+                    PlayButton.Icon = new SymbolIcon(Symbol.Pause);
+                    PlayButton.Command = ((AppShellViewModel)this.DataContext).PausePlaybackCommand;
+
+                    MediaGrid.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    PlayButton.Label = "Play";
+                    PlayButton.Icon = new SymbolIcon(Symbol.Play);
+                    PlayButton.Command = ((AppShellViewModel)this.DataContext).ResumePlaybackCommand;
+
+                    MediaGrid.Visibility = Visibility.Collapsed;
+                }
             });
         }
 
@@ -137,7 +143,7 @@ namespace Neptunium.View
                 e.Handled = true;
                 RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
             }
-            
+
         }
     }
 }
