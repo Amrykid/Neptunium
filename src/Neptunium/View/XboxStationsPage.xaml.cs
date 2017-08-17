@@ -41,9 +41,17 @@ namespace Neptunium.View
                 {
                     //try and force focus on the first item when we load this page.
                     stationsGridView.UnregisterPropertyChangedCallback(GridView.ItemsSourceProperty, itemsSourceHandler);
-                    await Task.Delay(1000);
-                    var firstItem = (GridViewItem)stationsGridView.ContainerFromIndex(0);
+
+                    //wait until we can get an item from the station grid view to focus. this is a hack but it'll have to do.
+                    GridViewItem firstItem = null;
+                    do
+                    {
+                        firstItem = (GridViewItem)stationsGridView.ContainerFromIndex(0);
+                        await Task.Delay(50);
+                    } while (firstItem == null);
+
                     firstItem.Focus(FocusState.Keyboard);
+
                 }
             }));
         }
@@ -81,17 +89,17 @@ namespace Neptunium.View
 
         public void SetRightFocus(UIElement elementToTheRight)
         {
-            
+
         }
 
         public void SetTopFocus(UIElement elementAbove)
         {
-            
+
         }
 
         public void SetBottomFocus(UIElement elementBelow)
         {
-            
+
         }
     }
 }
