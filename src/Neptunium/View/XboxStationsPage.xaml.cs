@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -30,7 +31,23 @@ namespace Neptunium.View
         public XboxStationsPage()
         {
             this.InitializeComponent();
+
+            stationsGridView.SingleSelectionFollowsFocus = true;
+
+            long itemsSourceHandler = 0;
+            itemsSourceHandler = stationsGridView.RegisterPropertyChangedCallback(GridView.ItemsSourceProperty, new DependencyPropertyChangedCallback(async (obj, dp) =>
+            {
+                if (obj.GetValue(dp) != null)
+                {
+                    //try and force focus on the first item when we load this page.
+                    stationsGridView.UnregisterPropertyChangedCallback(GridView.ItemsSourceProperty, itemsSourceHandler);
+                    await Task.Delay(1000);
+                    var firstItem = (GridViewItem)stationsGridView.ContainerFromIndex(0);
+                    firstItem.Focus(FocusState.Keyboard);
+                }
+            }));
         }
+
 
         private GridViewItem focusedItem = null;
         public void PreserveFocus()

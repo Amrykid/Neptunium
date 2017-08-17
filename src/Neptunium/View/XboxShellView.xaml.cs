@@ -141,12 +141,13 @@ namespace Neptunium.View
                 if (TransportControlGrid.Visibility == Visibility.Collapsed)
                 {
                     InlineFrame.IsEnabled = false;
-                    TransportControlGrid.Visibility = Visibility.Visible;
 
                     if (InlineFrame.Content is IXboxInputPage)
                     {
                         ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
                     }
+
+                    TransportControlGrid.Visibility = Visibility.Visible;
 
                     PlayButton.Focus(FocusState.Keyboard);
                 }
@@ -154,6 +155,7 @@ namespace Neptunium.View
                 {
                     TransportControlGrid.Visibility = Visibility.Collapsed;
                     InlineFrame.IsEnabled = true;
+                    InlineFrame.Focus(FocusState.Keyboard);
 
                     if (InlineFrame.Content is IXboxInputPage)
                     {
