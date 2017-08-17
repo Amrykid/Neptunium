@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Neptunium.Glue;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,11 +23,21 @@ namespace Neptunium.View
     /// </summary>
     [Crystal3.Navigation.NavigationViewModel(typeof(Neptunium.ViewModel.NowPlayingPageViewModel), Crystal3.Navigation.NavigationViewSupportedPlatform.Xbox)]
     [Neptunium.Core.UI.NepAppUINoChromePage()]
-    public sealed partial class XboxNowPlayingPage : Page
+    public sealed partial class XboxNowPlayingPage : Page, IXboxInputPage
     {
         public XboxNowPlayingPage()
         {
             this.InitializeComponent();
+        }
+
+        public void PreserveFocus()
+        {
+            
+        }
+
+        public void RestoreFocus()
+        {
+            
         }
     }
 }
