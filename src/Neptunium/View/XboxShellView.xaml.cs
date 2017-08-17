@@ -40,9 +40,28 @@ namespace Neptunium.View
 
             NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
 
+            NepApp.UI.Overlay.DialogShown += Overlay_DialogShown;
+            NepApp.UI.Overlay.DialogHidden += Overlay_DialogHidden;
+
             NowPlayingTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
 
             NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+        }
+
+        private void Overlay_DialogShown(object sender, EventArgs e)
+        {
+            if (InlineFrame.Content is IXboxInputPage)
+            {
+                ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
+            }
+        }
+
+        private void Overlay_DialogHidden(object sender, EventArgs e)
+        {
+            if (InlineFrame.Content is IXboxInputPage)
+            {
+                ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
+            }
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)

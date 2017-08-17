@@ -26,6 +26,9 @@ namespace Neptunium.Core.UI
 
         public bool IsDialogVisible { get; private set; }
 
+        public event EventHandler DialogShown;
+        public event EventHandler DialogHidden;
+
         internal NepAppUIManagerOverlayHandle(NepAppUIManager parent, Grid overlayControl)
         {
             parentUIManager = parent;
@@ -117,6 +120,8 @@ namespace Neptunium.Core.UI
             IsDialogVisible = true;
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
+            DialogShown?.Invoke(this, EventArgs.Empty);
+
 
             var fragment = Activator.CreateInstance<T>() as NepAppUIDialogFragment;
 
@@ -175,6 +180,7 @@ namespace Neptunium.Core.UI
             overlayGridControl.Children.Remove(inlineFrame);
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             IsDialogVisible = false;
+            DialogHidden?.Invoke(this, EventArgs.Empty);
             overlayLock.Release();
 
             return result;
