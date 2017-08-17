@@ -30,9 +30,20 @@ namespace Neptunium.View
             this.InitializeComponent();
         }
 
+        private GridViewItem focusedItem = null;
+        public void PreserveFocus()
+        {
+            var selection = stationsGridView.SelectedItem;
+            focusedItem = (GridViewItem)stationsGridView.ContainerFromItem(selection);
+        }
+
         public void RestoreFocus()
         {
-            throw new NotImplementedException();
+            if (focusedItem != null)
+            {
+                focusedItem.Focus(FocusState.Keyboard);
+                focusedItem = null;
+            }
         }
     }
 }

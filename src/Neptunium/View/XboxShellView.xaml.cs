@@ -88,12 +88,19 @@ namespace Neptunium.View
                 {
                     InlineFrame.IsEnabled = false;
                     TransportControlGrid.Visibility = Visibility.Visible;
+
+                    if (InlineFrame.Content is IXboxInputPage)
+                    {
+                        ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
+                    }
+
                     PlayButton.Focus(FocusState.Keyboard);
                 }
                 else
                 {
                     TransportControlGrid.Visibility = Visibility.Collapsed;
                     InlineFrame.IsEnabled = true;
+
                     if (InlineFrame.Content is IXboxInputPage)
                     {
                         ((IXboxInputPage)InlineFrame.Content).RestoreFocus();

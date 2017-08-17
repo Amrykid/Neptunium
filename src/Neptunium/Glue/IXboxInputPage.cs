@@ -9,5 +9,6 @@ namespace Neptunium.Glue
     public interface IXboxInputPage
     {
         void RestoreFocus();
+        void PreserveFocus();
     }
 }

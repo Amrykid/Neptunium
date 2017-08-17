@@ -15,7 +15,6 @@
                   SelectionMode="Single"
                   Margin="5"
                   x:Name="stationsGridView"
-                  Visibility="Collapsed"
                   IsItemClickEnabled="True">
             <GridView.ItemTemplate>
                 <DataTemplate>
