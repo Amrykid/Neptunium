@@ -1,4 +1,5 @@
 ﻿using Crystal3.Navigation;
+using Neptunium.Core.UI;
 using Neptunium.Glue;
 using Neptunium.ViewModel;
 using Neptunium.ViewModel.Dialog;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -35,6 +37,7 @@ namespace Neptunium.View
             SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
             inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
             NepApp.UI.SetNavigationService(inlineNavigationService);
+            inlineNavigationService.Navigated += InlineNavigationService_Navigated;
 
             NepApp.UI.SetOverlayParent(OverlayPanel);
 
@@ -49,6 +52,29 @@ namespace Neptunium.View
             NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
         }
 
+        private bool isInNoChromeMode = false;
+        private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
+        {
+            if (inlineNavigationService.NavigationFrame.Content?.GetType().GetTypeInfo().GetCustomAttribute<NepAppUINoChromePageAttribute>() != null)
+            {
+                //no chrome mode
+                RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
+                RootSplitView.IsPaneOpen = false;
+                MediaGrid.Visibility = Visibility.Collapsed;
+                isInNoChromeMode = true;
+            }
+            else
+            {
+                //reactivate chrome
+
+                RootSplitView.DisplayMode = SplitViewDisplayMode.CompactInline;
+
+                if (NepApp.Media.IsPlaying)
+                    MediaGrid.Visibility = Visibility.Visible;
+
+                isInNoChromeMode = false;
+            }
+        }
 
         private void Overlay_DialogShown(object sender, EventArgs e)
         {
@@ -110,6 +136,7 @@ namespace Neptunium.View
             if (e.Key == Windows.System.VirtualKey.GamepadY)
             {
                 if (NepApp.UI.Overlay.IsDialogVisible) return;
+                if (isInNoChromeMode) return;
 
                 if (TransportControlGrid.Visibility == Visibility.Collapsed)
                 {
@@ -139,6 +166,7 @@ namespace Neptunium.View
             else if (e.Key == Windows.System.VirtualKey.GamepadMenu)
             {
                 if (NepApp.UI.Overlay.IsDialogVisible) return;
+                if (isInNoChromeMode) return;
 
                 e.Handled = true;
                 RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
