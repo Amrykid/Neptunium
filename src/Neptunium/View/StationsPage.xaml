@@ -27,12 +27,8 @@
                                 <ColumnDefinition Width="75" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
 
-                            <uwp:ImageEx Grid.Column="0" Grid.RowSpan="2"
+                            <uwp:ImageEx Grid.Column="0"
                                      Stretch="Fill"
                                      Width="75"
                                      Height="75"
@@ -44,18 +40,12 @@
                                 </uwp:ImageEx.Source>
                             </uwp:ImageEx>
 
-                            <TextBlock Grid.Column="1" VerticalAlignment="Top"
-                                   Margin="10 0 0 0"
-                                   Text="{Binding Name, Mode=OneTime}"
-                                   Style="{ThemeResource BaseTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-
-                            <TextBlock Grid.Column="1" VerticalAlignment="Top"
-                                   Grid.Row="1"
-                                   Margin="10 0"
-                                   Text="{Binding Description, Mode=OneTime}"
-                                   Style="{ThemeResource BodyTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                       Margin="10 0 0 0"
+                                       Text="{Binding Name, Mode=OneTime}"
+                                       Style="{ThemeResource BaseTextBlockStyle}"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
                         </Grid>
                     </wrt:ListItemButton>
                 </DataTemplate>
