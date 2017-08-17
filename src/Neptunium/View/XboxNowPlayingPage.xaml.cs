@@ -37,7 +37,27 @@ namespace Neptunium.View
 
         public void RestoreFocus()
         {
-            
+
+        }
+
+        public void SetLeftFocus(UIElement elementToTheLeft)
+        {
+
+        }
+
+        public void SetRightFocus(UIElement elementToTheRight)
+        {
+
+        }
+
+        public void SetTopFocus(UIElement elementAbove)
+        {
+
+        }
+
+        public void SetBottomFocus(UIElement elementBelow)
+        {
+
         }
     }
 }

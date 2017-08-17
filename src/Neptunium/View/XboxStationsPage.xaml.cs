@@ -73,5 +73,25 @@ namespace Neptunium.View
             if (viewModel.ShowStationInfoCommand.CanExecute(item))
                 viewModel.ShowStationInfoCommand.Execute(item);
         }
+
+        public void SetLeftFocus(UIElement elementToTheLeft)
+        {
+            stationsGridView.XYFocusLeft = elementToTheLeft;
+        }
+
+        public void SetRightFocus(UIElement elementToTheRight)
+        {
+            
+        }
+
+        public void SetTopFocus(UIElement elementAbove)
+        {
+            
+        }
+
+        public void SetBottomFocus(UIElement elementBelow)
+        {
+            
+        }
     }
 }

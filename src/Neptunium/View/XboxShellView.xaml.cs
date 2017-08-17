@@ -73,6 +73,15 @@ namespace Neptunium.View
                     MediaGrid.Visibility = Visibility.Visible;
 
                 isInNoChromeMode = false;
+
+                if (InlineFrame.Content is IXboxInputPage)
+                {
+                    //makes sure that if we go left from the inline frame, we end up selecting the current page's item in the nav list.
+                    IEnumerable<NepAppUINavigationItem> items = (IEnumerable<NepAppUINavigationItem>)SplitViewNavigationList.ItemsSource;
+                    var selectedItem = items.First(x => x.IsSelected);
+                    var container = SplitViewNavigationList.ContainerFromItem(selectedItem);
+                    ((IXboxInputPage)InlineFrame.Content).SetLeftFocus((UIElement)container);
+                }
             }
         }
 
