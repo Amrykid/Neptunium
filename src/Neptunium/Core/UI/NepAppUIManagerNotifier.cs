@@ -1,6 +1,8 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
 using Windows.UI.Notifications;
 using Neptunium.Core.Media.Metadata;
+using System;
+using Neptunium.Core.Stations;
 
 namespace Neptunium.Core.UI
 {
@@ -57,6 +59,42 @@ namespace Neptunium.Core.UI
 
             var notification = new ToastNotification(content.GetXml());
             notification.Tag = "song-notif";
+            notification.NotificationMirroring = NotificationMirroring.Disabled;
+            toastNotifier.Show(notification);
+        }
+
+        internal void ShowErrorToastNotification(StationStream stream, string title, string message)
+        {
+            ToastContent content = new ToastContent()
+            {
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = title,
+                                HintStyle = AdaptiveTextStyle.Title
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = message,
+                                HintStyle = AdaptiveTextStyle.Subtitle
+                            },
+                        },
+                        AppLogoOverride = new ToastGenericAppLogo()
+                        {
+                            Source = stream.ParentStation?.StationLogoUrl.ToString(),
+                        }
+                    }
+                }
+            };
+
+            var notification = new ToastNotification(content.GetXml());
+            notification.Tag = "error";
             notification.NotificationMirroring = NotificationMirroring.Disabled;
             toastNotifier.Show(notification);
         }

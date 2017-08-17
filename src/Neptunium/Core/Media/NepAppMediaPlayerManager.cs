@@ -166,11 +166,25 @@ namespace Neptunium.Media
             ShutdownPreviousPlaybackSession();
             if (!NepApp.Network.IsConnected)
             {
-                await NepApp.UI.ShowErrorDialogAsync("Uh-Oh!", "Network connection lost!");
+                if (!await App.GetIfPrimaryWindowVisibleAsync())
+                {
+                    NepApp.UI.ToastNotifier.ShowErrorToastNotification(stream, "Uh-Oh!", "Network connection lost!");
+                }
+                else
+                {
+                    await NepApp.UI.ShowErrorDialogAsync("Uh-Oh!", "Network connection lost!");
+                }
             }
             else
             {
-                await NepApp.UI.ShowErrorDialogAsync("Uh-Oh!", "An unknown error occurred.");
+                if (!await App.GetIfPrimaryWindowVisibleAsync())
+                {
+                    NepApp.UI.ToastNotifier.ShowErrorToastNotification(stream, "Uh-Oh!", "An unknown error occurred.");
+                }
+                else
+                {
+                    await NepApp.UI.ShowErrorDialogAsync("Uh-Oh!", "An unknown error occurred.");
+                }
             }
         }
 
