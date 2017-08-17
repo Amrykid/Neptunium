@@ -16,11 +16,16 @@
             <SplitView.Pane>
                 <Grid>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <StackPanel x:Name="RootSplitViewPaneStackPanel" Grid.Row="0">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" Height="50" Width="50" Foreground="White"
+                              HorizontalAlignment="Left"
+                              Grid.Row="0"/>
+
+                    <StackPanel x:Name="RootSplitViewPaneStackPanel" Grid.Row="1">
                         <StackPanel.Resources>
                             <Style BasedOn="{StaticResource SplitViewTextBlockStyle}" TargetType="TextBlock" />
                             <Style BasedOn="{StaticResource SplitViewRadioButtonStyle}" TargetType="RadioButton" />
@@ -69,10 +74,7 @@
             </SplitView.Pane>
             <SplitView.Content>
                 <Grid>
-                    <Frame x:Name="InlineFrame" Margin="0 50 0 0" />
-
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" Height="50" Width="50" Foreground="White"
-                              VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0"/>
+                    <Frame x:Name="InlineFrame" Margin="0" />
 
                     <Grid x:Name="TransportControlGrid" Width="330" 
                           Height="110" VerticalAlignment="Bottom"

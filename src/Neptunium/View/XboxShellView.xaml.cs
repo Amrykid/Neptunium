@@ -84,6 +84,8 @@ namespace Neptunium.View
         {
             if (e.Key == Windows.System.VirtualKey.GamepadY)
             {
+                if (NepApp.UI.Overlay.IsDialogVisible) return;
+
                 if (TransportControlGrid.Visibility == Visibility.Collapsed)
                 {
                     InlineFrame.IsEnabled = false;
@@ -111,6 +113,8 @@ namespace Neptunium.View
             }
             else if (e.Key == Windows.System.VirtualKey.GamepadMenu)
             {
+                if (NepApp.UI.Overlay.IsDialogVisible) return;
+
                 e.Handled = true;
                 RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
             }

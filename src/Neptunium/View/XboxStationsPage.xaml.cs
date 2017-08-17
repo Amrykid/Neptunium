@@ -1,4 +1,6 @@
-﻿using Neptunium.Glue;
+﻿using Crystal3.UI;
+using Crystal3.Utilities;
+using Neptunium.Glue;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -44,6 +46,14 @@ namespace Neptunium.View
                 focusedItem.Focus(FocusState.Keyboard);
                 focusedItem = null;
             }
+        }
+
+        private void stationsGridView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var item = e.ClickedItem;
+            var viewModel = this.GetViewModel<StationsPageViewModel>();
+            if (viewModel.ShowStationInfoCommand.CanExecute(item))
+                viewModel.ShowStationInfoCommand.Execute(item);
         }
     }
 }
