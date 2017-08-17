@@ -77,13 +77,19 @@
                     <Frame x:Name="InlineFrame" Margin="0" />
 
 
-                    <Grid x:Name="MediaGrid" Width="Auto" 
-                          Height="75" VerticalAlignment="Bottom"
-                          HorizontalAlignment="Left" Margin="20 0 50 0"
+                    <Grid x:Name="MediaGrid"
+                          Width="Auto"
+                          MaxWidth="600"
+                          Height="Auto"
+                          MaxHeight="100"
+                          VerticalAlignment="Bottom"
+                          HorizontalAlignment="Left" Margin="20 0 0 40"
                           Visibility="Collapsed"
+                          Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                          Opacity=".8"
                           BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}"
                           BorderThickness="1"
-                          Padding="10">
+                          Padding="15">
                         <Grid.Transitions>
                             <TransitionCollection>
                                 <RepositionThemeTransition />
