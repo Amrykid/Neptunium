@@ -135,6 +135,7 @@
     <Compile Include="Core\UI\NepAppUIManagerNotifier.cs" />
     <Compile Include="Core\UI\NepAppUINavigationItem.cs" />
     <Compile Include="Core\UI\NepAppUINoChromePageAttribute.cs" />
+    <Compile Include="Glue\IXboxInputPage.cs" />
     <Compile Include="JapaneseTextUtilities.cs" />
     <Compile Include="Core\NepApp.cs" />
     <Compile Include="StringUtilities.cs" />
@@ -161,6 +162,9 @@
     </Compile>
     <Compile Include="View\XboxShellView.xaml.cs">
       <DependentUpon>XboxShellView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\XboxStationsPage.xaml.cs">
+      <DependentUpon>XboxStationsPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -303,6 +307,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\XboxShellView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\XboxStationsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

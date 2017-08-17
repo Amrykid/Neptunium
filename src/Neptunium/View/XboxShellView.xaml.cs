@@ -1,4 +1,5 @@
 ﻿using Crystal3.Navigation;
+using Neptunium.Glue;
 using Neptunium.ViewModel;
 using Neptunium.ViewModel.Dialog;
 using System;
@@ -87,13 +88,16 @@ namespace Neptunium.View
                 {
                     InlineFrame.IsEnabled = false;
                     TransportControlGrid.Visibility = Visibility.Visible;
-                    PlayButton.Focus(FocusState.Programmatic);
-                    //TransportControlsGridMediaPlayerElement.Focus(FocusState.Programmatic);
+                    PlayButton.Focus(FocusState.Keyboard);
                 }
                 else
                 {
                     TransportControlGrid.Visibility = Visibility.Collapsed;
                     InlineFrame.IsEnabled = true;
+                    if (InlineFrame.Content is IXboxInputPage)
+                    {
+                        ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
+                    }
                 }
 
                 e.Handled = true;
