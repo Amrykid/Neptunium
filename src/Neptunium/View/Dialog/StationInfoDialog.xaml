@@ -11,6 +11,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="5 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="150" />
+            <RowDefinition Height="55" />
             <RowDefinition Height="*" />
             <RowDefinition Height="75" />
         </Grid.RowDefinitions>
@@ -32,7 +33,12 @@
                        Style="{ThemeResource BodyTextBlockStyle}" />
         </Grid>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <AppBarButton Label="Website" Icon="Globe" />
+            <AppBarButton Label="Pin" Icon="Pin" />
+        </StackPanel>
+        
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <StackPanel.Resources>
                 <Style TargetType="Button">
                     <Setter Property="Margin" Value="0 0 10 0" />
