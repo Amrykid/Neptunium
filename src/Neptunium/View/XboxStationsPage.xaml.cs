@@ -35,6 +35,7 @@ namespace Neptunium.View
         private GridViewItem focusedItem = null;
         public void PreserveFocus()
         {
+            //requires SelectionMode = Single
             var selection = stationsGridView.SelectedItem;
             focusedItem = (GridViewItem)stationsGridView.ContainerFromItem(selection);
         }
