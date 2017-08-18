@@ -109,6 +109,8 @@
     <Compile Include="ApplicationCommands.cs" />
     <Compile Include="AppSettings.cs" />
     <Compile Include="Core\Media\DirectStationMediaStreamer.cs" />
+    <Compile Include="Core\Media\History\SongHistorian.cs" />
+    <Compile Include="Core\Media\History\SongHistoryItem.cs" />
     <Compile Include="Core\Media\INepAppMediaStreamer.cs" />
     <Compile Include="Core\Media\Metadata\MetadataFinder.cs" />
     <Compile Include="Core\Media\Metadata\SongMetadata.cs" />
@@ -148,6 +150,7 @@
     <Compile Include="ViewModel\AppShellViewModel.cs" />
     <Compile Include="ViewModel\Dialog\StationInfoDialogFragment.cs" />
     <Compile Include="ViewModel\NowPlayingPageViewModel.cs" />
+    <Compile Include="ViewModel\SongHistoryPageViewModel.cs" />
     <Compile Include="ViewModel\StationsPageViewModel.cs" />
     <Compile Include="View\AppShellView.xaml.cs">
       <DependentUpon>AppShellView.xaml</DependentUpon>
@@ -157,6 +160,9 @@
     </Compile>
     <Compile Include="View\NowPlayingPage.xaml.cs">
       <DependentUpon>NowPlayingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SongHistoryPage.xaml.cs">
+      <DependentUpon>SongHistoryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\StationsPage.xaml.cs">
       <DependentUpon>StationsPage.xaml</DependentUpon>
@@ -303,6 +309,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\NowPlayingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SongHistoryPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,4 +1,5 @@
 ﻿using Neptunium.Core;
+using Neptunium.Core.Media.History;
 using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
 using System;
@@ -26,6 +27,8 @@ namespace Neptunium.Media
         public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
         public SongMetadata CurrentMetadata { get; private set; }
         internal StationStream CurrentStream { get; private set; }
+
+        public SongHistorian History { get; private set; } = new SongHistorian();
 
         internal void Pause()
         {
@@ -233,6 +236,8 @@ namespace Neptunium.Media
 
             //todo get extended metadata info.
             var newMetadata = await MetadataFinder.FindMetadataAsync(e.Metadata);
+
+            await History.AddSongAsync(newMetadata);
 
             if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
             {
