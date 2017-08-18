@@ -232,10 +232,11 @@ namespace Neptunium.Media
             UpdateMetadata(e.Metadata);
 
             //todo get extended metadata info.
+            var newMetadata = await MetadataFinder.FindMetadataAsync(e.Metadata);
 
             if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
             {
-                NepApp.UI.ToastNotifier.ShowSongToastNotification(e.Metadata);
+                NepApp.UI.ToastNotifier.ShowSongToastNotification(newMetadata);
                 //todo update tile with now playing info
             }
         }

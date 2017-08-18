@@ -16,6 +16,17 @@ namespace Neptunium.Core.Media.Metadata
 
     public class ExtendedSongMetadata: SongMetadata
     {
+        //todo to fill out
 
+        public ExtendedSongMetadata()
+        {
+
+        }
+        public ExtendedSongMetadata(SongMetadata original)
+        {
+            Track = original.Track;
+            Artist = original.Artist;
+            StationPlayedOn = original.StationPlayedOn;
+        }
     }
 }
