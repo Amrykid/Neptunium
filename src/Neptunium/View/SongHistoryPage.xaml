@@ -5,6 +5,9 @@
     xmlns:local="using:Neptunium.View"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uwp="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:wrt="using:WinRTXamlToolkit.Controls"
+    xmlns:wst="using:WindowsStateTriggers"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -26,7 +29,31 @@
 
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Metadata.Track}"  HorizontalAlignment="Center" FontWeight="Bold"/>
+                    <Grid Height="90">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="45" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationPlayedOn.StationLogoUrl}" Grid.Column="0"
+                                     Width="45" Height="45" Stretch="UniformToFill" />
+
+                        <Grid Grid.Column="1" Margin="5 0" VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="45" />
+                                <RowDefinition Height="45" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="{Binding Metadata.Track}" Grid.Row="0" Style="{ThemeResource TitleTextBlockStyle}"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                       VerticalAlignment="Bottom"/>
+                            <TextBlock Text="{Binding Metadata.Artist}" Grid.Row="1"
+                                       VerticalAlignment="Top"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                       Style="{ThemeResource SubtitleTextBlockStyle}" />
+                        </Grid>
+                    </Grid>
+                    
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
