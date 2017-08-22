@@ -36,6 +36,9 @@
                     <TextBlock Name="PageTitleBlock" Grid.Column="1" VerticalAlignment="Center" Style="{ThemeResource BaseTextBlockStyle}" />
                 </Grid>
             </CommandBar.Content>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Icon="Upload" Label="Cast/Handoff" />
+            </CommandBar.PrimaryCommands>
         </CommandBar>
     </Page.TopAppBar>
 
