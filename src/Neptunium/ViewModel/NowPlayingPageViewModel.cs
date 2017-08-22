@@ -53,7 +53,7 @@ namespace Neptunium.ViewModel
         private void UpdateMetadata()
         {
             CurrentSong = NepApp.Media.CurrentMetadata;
-            CurrentStation = NepApp.Media.CurrentStream.ParentStation;
+            CurrentStation = NepApp.Media.CurrentStream?.ParentStation;
         }
     }
 }
