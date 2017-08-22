@@ -8,12 +8,14 @@
     xmlns:uwp="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:wrt="using:WinRTXamlToolkit.Controls"
     xmlns:wst="using:WindowsStateTriggers"
+    xmlns:cconv="using:Crystal3.UI.Converters"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
         <Grid.Resources>
             <CollectionViewSource x:Key="GroupedSongItems" IsSourceGrouped="True" Source="{Binding History, UpdateSourceTrigger=PropertyChanged}" />
+            <cconv:RelativeTimeConverter TimeMode="Past" x:Key="TimeConv" />
 
             <DataTemplate x:Key="MobileSongHistoryItemTemplate">
                 <Grid Height="90">
@@ -27,8 +29,8 @@
 
                     <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="45" />
-                            <RowDefinition Height="45" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
                         <TextBlock Text="{Binding Metadata.Track}" Grid.Row="0" 
@@ -36,30 +38,36 @@
                                        x:Name="TrackTextBlock"
                                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                        VerticalAlignment="Bottom"/>
-                        <TextBlock Text="{Binding Metadata.Artist}" Grid.Row="1"
+                        <TextBlock Grid.Row="1"
                                        VerticalAlignment="Top"
                                        x:Name="ArtistTextBlock"
                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                       Style="{ThemeResource BodyTextBlockStyle}" />
+                                       Style="{ThemeResource BodyTextBlockStyle}">
+                            <Span>
+                                <Run Text="{Binding Metadata.Artist}" />
+                                <Run Text="·" FontWeight="ExtraBold" />
+                                <Run Text="{Binding Metadata.StationPlayedOn}" />
+                            </Span>
+                        </TextBlock>
                     </Grid>
                 </Grid>
 
             </DataTemplate>
 
             <DataTemplate x:Key="TabletOrHigherSongHistoryItemTemplate">
-                <Grid Height="90">
+                <Grid Height="100" Margin="0 0 0 5">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="45" />
+                        <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationLogo}" Grid.Column="0"
-                                     Width="45" Height="45" Stretch="UniformToFill" />
+                                     Width="85" Height="85" Stretch="UniformToFill" />
 
                     <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="45" />
-                            <RowDefinition Height="45" />
+                            <RowDefinition Height="3*" />
+                            <RowDefinition Height="1*" />
                         </Grid.RowDefinitions>
 
                         <TextBlock Text="{Binding Metadata.Track}" Grid.Row="0" 
@@ -67,11 +75,17 @@
                                        x:Name="TrackTextBlock"
                                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                        VerticalAlignment="Bottom"/>
-                        <TextBlock Text="{Binding Metadata.Artist}" Grid.Row="1"
-                                       VerticalAlignment="Top"
-                                       x:Name="ArtistTextBlock"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                       Style="{ThemeResource SubtitleTextBlockStyle}" />
+                        <TextBlock Grid.Row="1"
+                                    VerticalAlignment="Top"
+                                    x:Name="ArtistTextBlock"
+                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                    Style="{ThemeResource BodyTextBlockStyle}">
+                            <Span>
+                                <Run Text="{Binding Metadata.Artist}" />
+                                <Run Text="·" FontWeight="ExtraBold" />
+                                <Run Text="{Binding Metadata.StationPlayedOn}" />
+                            </Span>
+                        </TextBlock>
                     </Grid>
                 </Grid>
 
@@ -83,7 +97,7 @@
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Key.Date}"/>
+                            <TextBlock Text="{Binding Key.Date, Converter={StaticResource TimeConv}}"/>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
                 </GroupStyle>
