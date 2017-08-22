@@ -49,7 +49,8 @@ namespace Neptunium.Media
             {
                 Artist = e.Artist,
                 Track = e.Title,
-                StationPlayedOn = this.StationPlaying
+                StationPlayedOn = this.StationPlaying.Name,
+                StationLogo = this.StationPlaying.StationLogoUrl
             });
         }
 

@@ -22,13 +22,15 @@ namespace Neptunium.Media
         internal NepAppMediaPlayerManager()
         {
             playLock = new SemaphoreSlim(1);
+            History = new SongHistorian();
+            History.InitializeAsync();
         }
 
         public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
         public SongMetadata CurrentMetadata { get; private set; }
         internal StationStream CurrentStream { get; private set; }
 
-        public SongHistorian History { get; private set; } = new SongHistorian();
+        public SongHistorian History { get; private set; }
 
         internal void Pause()
         {
@@ -260,8 +262,8 @@ namespace Neptunium.Media
                     updater.Type = MediaPlaybackType.Music;
                     updater.MusicProperties.Title = metadata.Track;
                     updater.MusicProperties.Artist = metadata.Artist;
-                    updater.AppMediaId = metadata.StationPlayedOn.Name.GetHashCode().ToString();
-                    updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(metadata.StationPlayedOn.StationLogoUrl);
+                    updater.AppMediaId = metadata.StationPlayedOn.GetHashCode().ToString();
+                    updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(metadata.StationLogo);
                     updater.Update();
                 }
                 catch (COMException) { }

@@ -22,7 +22,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationPlayedOn.StationLogoUrl}" Grid.Column="0"
+                    <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationLogo}" Grid.Column="0"
                                      Width="45" Height="45" Stretch="UniformToFill" />
 
                     <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
@@ -53,7 +53,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationPlayedOn.StationLogoUrl}" Grid.Column="0"
+                    <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationLogo}" Grid.Column="0"
                                      Width="45" Height="45" Stretch="UniformToFill" />
 
                     <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">

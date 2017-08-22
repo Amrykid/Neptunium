@@ -45,13 +45,13 @@ namespace Neptunium.Core.UI
 
                             new AdaptiveText()
                             {
-                                Text = metaData.StationPlayedOn?.Name,
+                                Text = metaData.StationPlayedOn,
                                 HintStyle = AdaptiveTextStyle.Caption
                             },
                         },
                         AppLogoOverride = new ToastGenericAppLogo()
                         {
-                            Source = metaData.StationPlayedOn?.StationLogoUrl.ToString(),
+                            Source = metaData.StationLogo.ToString(),
                         }
                     }
                 }

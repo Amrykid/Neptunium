@@ -2,16 +2,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Neptunium.Core.Media.Metadata
 {
+    [DataContract]
     public class SongMetadata
     {
+        [DataMember]
         public string Track { get; set; }
+        [DataMember]
         public string Artist { get; set; }
-        public StationItem StationPlayedOn { get; set; }
+        [DataMember]
+        public string StationPlayedOn { get; set; }
+        [DataMember]
+        public Uri StationLogo { get; set; }
     }
 
     public class ExtendedSongMetadata: SongMetadata
@@ -27,6 +34,7 @@ namespace Neptunium.Core.Media.Metadata
             Track = original.Track;
             Artist = original.Artist;
             StationPlayedOn = original.StationPlayedOn;
+            StationLogo = original.StationLogo;
         }
     }
 }
