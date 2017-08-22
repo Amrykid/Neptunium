@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Crystal3.Navigation;
 using Neptunium.Core.Media.Metadata;
+using Neptunium.Core.Stations;
 
 namespace Neptunium.ViewModel
 {
@@ -15,6 +16,12 @@ namespace Neptunium.ViewModel
         {
             get { return GetPropertyValue<SongMetadata>(); }
             set { SetPropertyValue<SongMetadata>(value: value); }
+        }
+
+        public StationItem CurrentStation
+        {
+            get { return GetPropertyValue<StationItem>(); }
+            set { SetPropertyValue<StationItem>(value: value); }
         }
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
@@ -46,6 +53,7 @@ namespace Neptunium.ViewModel
         private void UpdateMetadata()
         {
             CurrentSong = NepApp.Media.CurrentMetadata;
+            CurrentStation = NepApp.Media.CurrentStream.ParentStation;
         }
     }
 }

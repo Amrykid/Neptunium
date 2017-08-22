@@ -17,7 +17,7 @@
             </Grid.RowDefinitions>
             <Grid Grid.RowSpan="3">
                 <Image HorizontalAlignment="Stretch"
-                       Source="{Binding CurrentSong.StationPlayedOn.Background, UpdateSourceTrigger=PropertyChanged}"
+                       Source="{Binding CurrentStation.Background, UpdateSourceTrigger=PropertyChanged}"
                        Stretch="UniformToFill"
                        Opacity=".4"
                        VerticalAlignment="Stretch" />
@@ -29,7 +29,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Image Source="{Binding CurrentSong.StationPlayedOn.StationLogoUrl, UpdateSourceTrigger=PropertyChanged}" 
+                <Image Source="{Binding CurrentSong.StationLogo, UpdateSourceTrigger=PropertyChanged}" 
                        x:Name="SmallStationImage"
                        Grid.Column="0" Width="100" Height="100" />
                 <Grid Grid.Column="1" VerticalAlignment="Center" x:Name="TrackArtistPanel" Margin="0">
@@ -50,7 +50,7 @@
                                Style="{ThemeResource SubtitleTextBlockStyle}"
                                Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
 
-                    <TextBlock Grid.Row="2" Text="{Binding CurrentSong.StationPlayedOn.Name, UpdateSourceTrigger=PropertyChanged}"
+                    <TextBlock Grid.Row="2" Text="{Binding CurrentSong.StationPlayedOn, UpdateSourceTrigger=PropertyChanged}"
                                Style="{ThemeResource CaptionTextBlockStyle}"
                                Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
                 </Grid>
