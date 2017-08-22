@@ -61,7 +61,7 @@
                             x:Name="NowPlayingImage"
                             Grid.Column="0"
                             Visibility="Collapsed"
-                            Source="{Binding StationPlayedOn.StationLogoUrl, UpdateSourceTrigger=PropertyChanged}"
+                            Source="{Binding StationLogo, UpdateSourceTrigger=PropertyChanged}"
                             IsCacheEnabled="True" />
 
                         <Grid Grid.Column="1" Margin="10 -5 10 0">
