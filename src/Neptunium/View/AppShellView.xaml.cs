@@ -80,7 +80,7 @@ namespace Neptunium.View
             NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
             NepApp.Media.ConnectingBegin += Media_ConnectingBegin;
             NepApp.Media.ConnectingEnd += Media_ConnectingEnd;
-            
+
             //            NowPlayingButton.RegisterPropertyChangedCallback(Button.DataContextProperty, new DependencyPropertyChangedCallback((btn, dp) =>
             //            {
             //#if DEBUG
@@ -224,6 +224,13 @@ namespace Neptunium.View
         {
             //todo make a binding
             inlineNavigationService.SafeNavigateTo<NowPlayingPageViewModel>();
+        }
+
+        private void RadioButton_Click(object sender, RoutedEventArgs e)
+        {
+            //dismiss the menu if its open.
+            if (RootSplitView.DisplayMode == SplitViewDisplayMode.Overlay)
+                TogglePaneButton.IsChecked = false;
         }
     }
 }

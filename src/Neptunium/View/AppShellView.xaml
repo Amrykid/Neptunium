@@ -37,7 +37,7 @@
                 </Grid>
             </CommandBar.Content>
             <CommandBar.PrimaryCommands>
-                <AppBarButton Icon="Upload" Label="Cast/Handoff" />
+                <AppBarButton Icon="Upload" Label="Cast/Handoff" LabelPosition="Collapsed" />
             </CommandBar.PrimaryCommands>
         </CommandBar>
     </Page.TopAppBar>
@@ -112,6 +112,7 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <RadioButton
+                                        Click="RadioButton_Click"
                                         Command="{Binding Command, Mode=OneTime}"
                                         Content="{Binding DisplayText, Mode=OneTime}"
                                         GroupName="Navigation"
