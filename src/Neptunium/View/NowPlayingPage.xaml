@@ -22,7 +22,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="200" />
-                <RowDefinition Height="50" />
+                <RowDefinition Height="75" />
             </Grid.RowDefinitions>
             <Grid Grid.RowSpan="3">
                 <Image HorizontalAlignment="Stretch"
@@ -78,7 +78,8 @@
                 <AppBarButton Icon="Play" Label="Play" x:Name="playPauseButton" />
                 <AppBarButton Icon="Upload" Label="Cast/Handoff" />
                 <AppBarToggleButton Icon="FullScreen" Label="Fullscreen" />
-                <AppBarButton Icon="Attach" Label="Mini Player" />
+                <AppBarToggleButton Icon="Attach" Label="Mini Player" x:Name="compactViewButton" 
+                                    Visibility="Collapsed" />
             </StackPanel>
         </Grid>
 
