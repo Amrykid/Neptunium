@@ -1,4 +1,5 @@
 ﻿using Neptunium.Glue;
+using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,6 +29,31 @@ namespace Neptunium.View
         public XboxNowPlayingPage()
         {
             this.InitializeComponent();
+            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+        }
+
+        private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                UpdatePlaybackStatus(e.IsPlaying);
+            });
+        }
+
+        private void UpdatePlaybackStatus(bool isPlaying)
+        {
+            if (isPlaying)
+            {
+                playPauseButton.Label = "Pause";
+                playPauseButton.Icon = new SymbolIcon(Symbol.Pause);
+                playPauseButton.Command = ((NowPlayingPageViewModel)this.DataContext).PausePlaybackCommand;
+            }
+            else
+            {
+                playPauseButton.Label = "Play";
+                playPauseButton.Icon = new SymbolIcon(Symbol.Play);
+                playPauseButton.Command = ((NowPlayingPageViewModel)this.DataContext).ResumePlaybackCommand;
+            }
         }
 
         public void PreserveFocus()
@@ -58,6 +84,11 @@ namespace Neptunium.View
         public void SetBottomFocus(UIElement elementBelow)
         {
 
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdatePlaybackStatus(NepApp.Media.IsPlaying);
         }
     }
 }

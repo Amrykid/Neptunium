@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Crystal3.Navigation;
 using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
+using Crystal3.UI.Commands;
 
 namespace Neptunium.ViewModel
 {
@@ -23,6 +24,16 @@ namespace Neptunium.ViewModel
             get { return GetPropertyValue<StationItem>(); }
             set { SetPropertyValue<StationItem>(value: value); }
         }
+
+        public RelayCommand ResumePlaybackCommand => new RelayCommand(x =>
+        {
+            NepApp.Media.Resume();
+        });
+
+        public RelayCommand PausePlaybackCommand => new RelayCommand(x =>
+        {
+            NepApp.Media.Pause();
+        });
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {

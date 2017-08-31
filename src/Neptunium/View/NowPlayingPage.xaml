@@ -9,7 +9,8 @@
     xmlns:uwp="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:wst="using:WindowsStateTriggers"
     RequestedTheme="Dark"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
 
     <Page.Resources>
         <cconv:NullToVisibilityConverter x:Key="NullToVisConv" />
@@ -50,7 +51,7 @@
 
             <Grid Grid.Row="1" Grid.ColumnSpan="3">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="SmallStationImageColumn" Width="135" MaxWidth="135" />
+                    <ColumnDefinition x:Name="SmallStationImageColumn" Width="135" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
@@ -149,8 +150,8 @@
 
                 <VisualState x:Name="CompactVisualState">
                     <VisualState.Setters>
-                        <Setter Target="SmallStationImageColumn.Width" Value="0" />
-                        <Setter Target="SmallStationImage.Visibility" Value="Collapsed" />
+                        <Setter Target="SmallStationImageColumn.Width" Value="135" />
+                        <Setter Target="SmallStationImage.Visibility" Value="Visible" />
                         <Setter Target="LargeStationImage.Visibility" Value="Collapsed" />
                         <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
                         <Setter Target="CommandPanel.Margin" Value="20 0" />

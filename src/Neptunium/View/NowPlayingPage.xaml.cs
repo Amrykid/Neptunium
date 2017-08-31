@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Neptunium.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -31,6 +32,7 @@ namespace Neptunium.View
             this.InitializeComponent();
 
             ShellVisualStateGroup.CurrentStateChanged += ShellVisualStateGroup_CurrentStateChanged;
+            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
 
             if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
             {
@@ -40,6 +42,30 @@ namespace Neptunium.View
                 compactViewButton.IsChecked = ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay;
                 compactViewButton.Checked += compactViewButton_Checked;
                 compactViewButton.Unchecked += compactViewButton_Unchecked;
+            }
+        }
+
+        private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                UpdatePlaybackStatus(e.IsPlaying);
+            });
+        }
+
+        private void UpdatePlaybackStatus(bool isPlaying)
+        {
+            if (isPlaying)
+            {
+                playPauseButton.Label = "Pause";
+                playPauseButton.Icon = new SymbolIcon(Symbol.Pause);
+                playPauseButton.Command = ((NowPlayingPageViewModel)this.DataContext).PausePlaybackCommand;
+            }
+            else
+            {
+                playPauseButton.Label = "Play";
+                playPauseButton.Icon = new SymbolIcon(Symbol.Play);
+                playPauseButton.Command = ((NowPlayingPageViewModel)this.DataContext).ResumePlaybackCommand;
             }
         }
 
@@ -57,6 +83,9 @@ namespace Neptunium.View
                 compactViewButton.Checked -= compactViewButton_Checked;
                 compactViewButton.Unchecked -= compactViewButton_Unchecked;
             }
+
+            NepApp.Media.IsPlayingChanged -= Media_IsPlayingChanged;
+            ShellVisualStateGroup.CurrentStateChanged -= ShellVisualStateGroup_CurrentStateChanged;
 
             base.OnNavigatingFrom(e);
         }
@@ -125,6 +154,11 @@ namespace Neptunium.View
             {
                 e.NewState = CompactVisualState;
             }
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdatePlaybackStatus(NepApp.Media.IsPlaying);
         }
     }
 }
