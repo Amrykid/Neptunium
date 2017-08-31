@@ -37,7 +37,7 @@ namespace Neptunium.ViewModel
 
         private void UpdateHistory(ObservableCollection<SongHistoryItem> collection)
         {
-            History = collection.GroupBy(x => x.PlayedDate.Date).OrderBy(x => x.Key).Select(x => x);
+            History = collection.GroupBy(x => x.PlayedDate.Date).OrderByDescending(x => x.Key).Select(x => x);
         }
 
         public IEnumerable<IGrouping<DateTime, SongHistoryItem>> History
