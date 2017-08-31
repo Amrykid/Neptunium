@@ -4,6 +4,7 @@ using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -239,6 +240,9 @@ namespace Neptunium.Media
 
         private async void Streamer_MetadataChanged(object sender, MediaStreamerMetadataChangedEventArgs e)
         {
+            if (CurrentStream.ParentStation.StationMessages.Contains(e.Metadata.Track) || CurrentStream.ParentStation.StationMessages.Contains(e.Metadata.Artist))
+                return;
+
             UpdateMetadata(e.Metadata);
 
             //todo get extended metadata info.
@@ -251,6 +255,8 @@ namespace Neptunium.Media
 
             if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
             {
+                if (CurrentMetadata.Track != newMetadata.Track) return; //the song has changed since we started.
+
                 NepApp.UI.ToastNotifier.ShowSongToastNotification(newMetadata);
                 //todo update tile with now playing info
             }
