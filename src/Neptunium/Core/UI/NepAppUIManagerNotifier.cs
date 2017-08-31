@@ -16,7 +16,7 @@ namespace Neptunium.Core.UI
             tileUpdater = TileUpdateManager.CreateTileUpdaterForApplication();
         }
 
-        public void ShowSongToastNotification(SongMetadata metaData)
+        public void ShowSongToastNotification(ExtendedSongMetadata metaData)
         {
             ToastContent content = new ToastContent()
             {
@@ -51,7 +51,7 @@ namespace Neptunium.Core.UI
                         },
                         AppLogoOverride = new ToastGenericAppLogo()
                         {
-                            Source = metaData.StationLogo.ToString(),
+                            Source = !string.IsNullOrWhiteSpace(metaData.Album?.AlbumCoverUrl) ? metaData.Album?.AlbumCoverUrl : metaData.StationLogo.ToString(),
                         }
                     }
                 }
