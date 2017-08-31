@@ -112,7 +112,9 @@
     <Compile Include="Core\Media\History\SongHistorian.cs" />
     <Compile Include="Core\Media\History\SongHistoryItem.cs" />
     <Compile Include="Core\Media\INepAppMediaStreamer.cs" />
+    <Compile Include="Core\Media\Metadata\BaseSongMetadataSource.cs" />
     <Compile Include="Core\Media\Metadata\MetadataFinder.cs" />
+    <Compile Include="Core\Media\Metadata\MusicBrainzMetadataSource.cs" />
     <Compile Include="Core\Media\Metadata\SongMetadata.cs" />
     <Compile Include="Core\Media\ShoutcastStationMediaStreamer.cs" />
     <Compile Include="Core\NepAppHandoffManager.cs" />
@@ -141,6 +143,8 @@
     <Compile Include="Glue\IXboxInputPage.cs" />
     <Compile Include="JapaneseTextUtilities.cs" />
     <Compile Include="Core\NepApp.cs" />
+    <Compile Include="Model\AlbumData.cs" />
+    <Compile Include="Model\ArtistData.cs" />
     <Compile Include="StringUtilities.cs" />
     <Compile Include="Controls\StationItemControl.xaml.cs">
       <DependentUpon>StationItemControl.xaml</DependentUpon>
@@ -334,7 +338,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Model\" />
     <Folder Include="ViewModel\Fragments\" />
   </ItemGroup>
   <ItemGroup>

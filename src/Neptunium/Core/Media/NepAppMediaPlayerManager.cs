@@ -28,6 +28,7 @@ namespace Neptunium.Media
 
         public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
         public SongMetadata CurrentMetadata { get; private set; }
+        public ExtendedSongMetadata CurrentMetadataExtended { get; private set; }
         internal StationStream CurrentStream { get; private set; }
 
         public SongHistorian History { get; private set; }
@@ -53,7 +54,10 @@ namespace Neptunium.Media
 
         private void RaisePropertyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            App.Dispatcher.RunAsync(() =>
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            });
         }
 
         private BasicNepAppMediaStreamer CreateStreamerForServerFormat(StationStreamServerFormat format)
@@ -156,6 +160,7 @@ namespace Neptunium.Media
 
             CurrentStream = null;
             CurrentMetadata = null;
+            CurrentMetadataExtended = null;
 
             App.Dispatcher.RunAsync(() =>
             {
@@ -237,7 +242,10 @@ namespace Neptunium.Media
             UpdateMetadata(e.Metadata);
 
             //todo get extended metadata info.
-            var newMetadata = await MetadataFinder.FindMetadataAsync(e.Metadata);
+            ExtendedSongMetadata newMetadata = await MetadataFinder.FindMetadataAsync(e.Metadata);
+
+            CurrentMetadataExtended = newMetadata;
+            RaisePropertyChanged(nameof(CurrentMetadataExtended));
 
             await History.AddSongAsync(newMetadata);
 

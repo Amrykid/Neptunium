@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Neptunium.Model;
 
 namespace Neptunium.Core.Media.Metadata
 {
@@ -36,5 +37,7 @@ namespace Neptunium.Core.Media.Metadata
             StationPlayedOn = original.StationPlayedOn;
             StationLogo = original.StationLogo;
         }
+
+        public AlbumData Album { get; internal set; }
     }
 }

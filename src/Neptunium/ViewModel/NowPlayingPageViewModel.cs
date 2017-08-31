@@ -35,6 +35,12 @@ namespace Neptunium.ViewModel
             NepApp.Media.Pause();
         });
 
+        public Uri Background
+        {
+            get { return GetPropertyValue<Uri>(); }
+            private set { SetPropertyValue<Uri>(value: value); }
+        }
+
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             NepApp.Media.PropertyChanged += Media_PropertyChanged;
@@ -55,8 +61,25 @@ namespace Neptunium.ViewModel
         {
             switch(e.PropertyName)
             {
-                case "CurrentMetadata":
+                case "CurrentMetadata": //todo fix these hard coded strings
                     UpdateMetadata();
+                    break;
+                case "CurrentMetadataExtended":
+                    {
+                        if (NepApp.Media.CurrentMetadataExtended.Album != null)
+                        {
+                            var extendedData = NepApp.Media.CurrentMetadataExtended;
+
+                            if (!string.IsNullOrWhiteSpace(extendedData.Album?.AlbumCoverUrl))
+                            {
+                                App.Dispatcher.RunWhenIdleAsync(() =>
+                                {
+                                    Background = new Uri(extendedData.Album?.AlbumCoverUrl);
+                                });
+                            }
+                            //todo else if for artist background?
+                        }
+                    }
                     break;
             }
         }
@@ -65,6 +88,14 @@ namespace Neptunium.ViewModel
         {
             CurrentSong = NepApp.Media.CurrentMetadata;
             CurrentStation = NepApp.Media.CurrentStream?.ParentStation;
+
+            if (Background == null && !string.IsNullOrWhiteSpace(CurrentStation?.Background))
+            {
+                App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    Background = new Uri(CurrentStation?.Background);
+                });
+            }
         }
     }
 }

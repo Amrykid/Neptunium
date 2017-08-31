@@ -32,7 +32,7 @@
             </Grid.ColumnDefinitions>
             <Grid Grid.RowSpan="3" Grid.ColumnSpan="3">
                 <Image HorizontalAlignment="Stretch"
-                       Source="{Binding CurrentStation.Background, UpdateSourceTrigger=PropertyChanged}"
+                       Source="{Binding Background, UpdateSourceTrigger=PropertyChanged}"
                        Stretch="UniformToFill"
                        Opacity=".4"
                        VerticalAlignment="Stretch" />

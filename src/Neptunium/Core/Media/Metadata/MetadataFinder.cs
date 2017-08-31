@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Neptunium.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,8 +11,24 @@ namespace Neptunium.Core.Media.Metadata
     {
         public static async Task<ExtendedSongMetadata> FindMetadataAsync(SongMetadata originalMetadata)
         {
-            //todo to actually fill out.
-            return await Task.FromResult<ExtendedSongMetadata>(new ExtendedSongMetadata(originalMetadata));
+            var metaSrc = new MusicBrainzMetadataSource();
+            AlbumData albumData = null;
+
+            try
+            {
+                await metaSrc.TryFindAlbumAsync(originalMetadata.Track, originalMetadata.Artist);
+            }
+            catch { }
+
+            var extendedMetadata = new ExtendedSongMetadata(originalMetadata);
+
+            if (albumData != null)
+            {
+                //todo cache
+                extendedMetadata.Album = albumData;
+            }
+
+            return extendedMetadata;
         }
     }
 }
