@@ -30,6 +30,8 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
+            ShellVisualStateGroup.CurrentStateChanged += ShellVisualStateGroup_CurrentStateChanged;
+
             if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
             {
                 //https://blogs.msdn.microsoft.com/universal-windows-app-model/2017/02/11/compactoverlay-mode-aka-picture-in-picture/
@@ -59,20 +61,70 @@ namespace Neptunium.View
             base.OnNavigatingFrom(e);
         }
 
+        private VisualState lastVisualState = null;
+        private bool isInCompactMode = false;
+
         private async void compactViewButton_Checked(object sender, RoutedEventArgs e)
         {
             ViewModePreferences compactOptions = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
-            compactOptions.CustomSize = new Windows.Foundation.Size(320, 200);
+            compactOptions.CustomSize = new Windows.Foundation.Size(320, 280);
 
             bool modeSwitched = await ApplicationView.GetForCurrentView()
                 .TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, compactOptions);
+
+            if (modeSwitched)
+            {
+                if (ShellVisualStateGroup.States.Contains(TabletVisualState))
+                {
+                    ShellVisualStateGroup.States.Remove(TabletVisualState);
+                    ShellVisualStateGroup.States.Remove(DesktopVisualState);
+                    ShellVisualStateGroup.States.Remove(PhoneVisualState);
+                }
+
+                isInCompactMode = true;
+                ShellVisualStateGroup.CurrentStateChanged -= ShellVisualStateGroup_CurrentStateChanged;
+                VisualStateManager.GoToState(this, CompactVisualState.Name, true);
+            }
         }
 
         private async void compactViewButton_Unchecked(object sender, RoutedEventArgs e)
         {
             bool modeSwitched = await ApplicationView.GetForCurrentView()
-                .TryEnterViewModeAsync(ApplicationViewMode.Default, 
+                .TryEnterViewModeAsync(ApplicationViewMode.Default,
                     ViewModePreferences.CreateDefault(ApplicationViewMode.Default));
+
+            if (modeSwitched)
+            {
+                if (!ShellVisualStateGroup.States.Contains(TabletVisualState))
+                {
+                    ShellVisualStateGroup.States.Add(TabletVisualState);
+                    ShellVisualStateGroup.States.Add(DesktopVisualState);
+                    ShellVisualStateGroup.States.Add(PhoneVisualState);
+                }
+
+                isInCompactMode = false;
+
+                if (lastVisualState != null)
+                    VisualStateManager.GoToState(this, lastVisualState.Name, true);
+
+                ShellVisualStateGroup.CurrentStateChanged += ShellVisualStateGroup_CurrentStateChanged;
+            }
+        }
+
+        private void ShellVisualStateGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        {
+            if (e.NewState != CompactVisualState)
+            {
+                lastVisualState = e.NewState;
+            }
+        }
+
+        private void ShellVisualStateGroup_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
+        {
+            if (isInCompactMode)
+            {
+                e.NewState = CompactVisualState;
+            }
         }
     }
 }

@@ -21,10 +21,15 @@
               Visibility="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="200" />
+                <RowDefinition x:Name="SongInfoRowDef" Height="200" />
                 <RowDefinition Height="75" />
             </Grid.RowDefinitions>
-            <Grid Grid.RowSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".33*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width=".33*" />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.RowSpan="3" Grid.ColumnSpan="3">
                 <Image HorizontalAlignment="Stretch"
                        Source="{Binding CurrentStation.Background, UpdateSourceTrigger=PropertyChanged}"
                        Stretch="UniformToFill"
@@ -33,14 +38,17 @@
             </Grid>
 
             <Image x:Name="LargeStationImage"
-                   Height="300"
-                   Width="300"
+                   Grid.Column="1"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
+                   MaxHeight="300"
+                   MaxWidth="300"
+                   MinHeight="100"
+                   MinWidth="100"
                    Source="{Binding CurrentSong.StationLogo, UpdateSourceTrigger=PropertyChanged}"
                    Visibility="Collapsed" />
 
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="1" Grid.ColumnSpan="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="SmallStationImageColumn" Width="135" MaxWidth="135" />
                     <ColumnDefinition Width="*" />
@@ -73,7 +81,7 @@
                 </Grid>
             </Grid>
 
-            <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0" x:Name="CommandPanel">
+            <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="3" Margin="0" x:Name="CommandPanel">
                 <!--todo add a play button, a full screen button and some casting buttons -->
                 <AppBarButton Icon="Play" Label="Play" x:Name="playPauseButton" />
                 <AppBarButton Icon="Upload" Label="Cast/Handoff" />
@@ -90,7 +98,7 @@
         </Grid>
 
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="ShellVisualStateGroup">
+            <VisualStateGroup x:Name="ShellVisualStateGroup" CurrentStateChanging="ShellVisualStateGroup_CurrentStateChanging">
                 <VisualState x:Name="DesktopVisualState">
                     <VisualState.StateTriggers>
                         <wst:AdaptiveTrigger MinWindowWidth="1080" />
@@ -100,6 +108,7 @@
                         <Setter Target="SmallStationImageColumn.Width" Value="135" />
                         <Setter Target="SmallStationImage.Visibility" Value="Visible" />
                         <Setter Target="LargeStationImage.Visibility" Value="Collapsed" />
+                        <Setter Target="SongInfoRowDef.Height" Value="200" />
                         <Setter Target="TrackArtistPanel.Margin" Value="0" />
                         <Setter Target="CommandPanel.Margin" Value="0" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
@@ -115,6 +124,7 @@
                         <Setter Target="SmallStationImageColumn.Width" Value="135" />
                         <Setter Target="SmallStationImage.Visibility" Value="Visible" />
                         <Setter Target="LargeStationImage.Visibility" Value="Collapsed" />
+                        <Setter Target="SongInfoRowDef.Height" Value="200" />
                         <Setter Target="TrackArtistPanel.Margin" Value="0" />
                         <Setter Target="CommandPanel.Margin" Value="0" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
@@ -123,16 +133,27 @@
 
                 <VisualState x:Name="PhoneVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="0" />
+                        <wst:AdaptiveTrigger MinWindowWidth="320" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
                         <Setter Target="SmallStationImageColumn.Width" Value="0" />
                         <Setter Target="SmallStationImage.Visibility" Value="Collapsed" />
                         <Setter Target="LargeStationImage.Visibility" Value="Visible" />
+                        <Setter Target="SongInfoRowDef.Height" Value="150" />
                         <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
                         <Setter Target="CommandPanel.Margin" Value="20 0" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="CompactVisualState">
+                    <VisualState.Setters>
+                        <Setter Target="SmallStationImageColumn.Width" Value="0" />
+                        <Setter Target="SmallStationImage.Visibility" Value="Collapsed" />
+                        <Setter Target="LargeStationImage.Visibility" Value="Collapsed" />
+                        <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
+                        <Setter Target="CommandPanel.Margin" Value="20 0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
