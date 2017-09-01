@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace Neptunium
 {
-    public static class AppSettings
+    public enum AppSettings
     {
-        public const string ShowSongNotifications = nameof(ShowSongNotifications);
-        public const string TryToFindSongMetadata = nameof(TryToFindSongMetadata);
+        ShowSongNotifications,
+        TryToFindSongMetadata,
 
-        public const string MediaBarMatchStationColor = nameof(MediaBarMatchStationColor);
-        public const string NavigateToStationWhenLaunched = nameof(NavigateToStationWhenLaunched);
+        MediaBarMatchStationColor,
+        NavigateToStationWhenLaunched,
 
-        public const string PreferUsingCrossFadeWhenChangingStations = nameof(PreferUsingCrossFadeWhenChangingStations);
+        PreferUsingCrossFadeWhenChangingStations,
 
-        public const string UseHapticFeedbackForNavigation = nameof(UseHapticFeedbackForNavigation);
+        UseHapticFeedbackForNavigation,
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Kukkii;
 using Neptunium.Core;
+using Neptunium.Core.Settings;
 using Neptunium.Core.Stations;
 using Neptunium.Core.UI;
 using Neptunium.Media;
