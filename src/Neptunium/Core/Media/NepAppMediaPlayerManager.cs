@@ -179,7 +179,7 @@ namespace Neptunium.Media
             {
                 if (!await App.GetIfPrimaryWindowVisibleAsync())
                 {
-                    NepApp.UI.ToastNotifier.ShowErrorToastNotification(stream, "Uh-Oh!", "Network connection lost!");
+                    NepApp.UI.Notifier.ShowErrorToastNotification(stream, "Uh-Oh!", "Network connection lost!");
                 }
                 else
                 {
@@ -190,7 +190,7 @@ namespace Neptunium.Media
             {
                 if (!await App.GetIfPrimaryWindowVisibleAsync())
                 {
-                    NepApp.UI.ToastNotifier.ShowErrorToastNotification(stream, "Uh-Oh!", "An unknown error occurred.");
+                    NepApp.UI.Notifier.ShowErrorToastNotification(stream, "Uh-Oh!", "An unknown error occurred.");
                 }
                 else
                 {
@@ -258,10 +258,10 @@ namespace Neptunium.Media
                 if (CurrentMetadata.Track != newMetadata.Track) return; //the song has changed since we started.
 
                 if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
-                    NepApp.UI.ToastNotifier.ShowSongToastNotification(newMetadata);
-
-                //todo update tile with now playing info
+                    NepApp.UI.Notifier.ShowSongToastNotification(newMetadata);
             }
+
+            NepApp.UI.Notifier.UpdateLiveTile(newMetadata);
         }
 
         private void UpdateMetadata(SongMetadata metadata)

@@ -32,7 +32,7 @@ namespace Neptunium.Core.UI
         {
             navigationItems = new ObservableCollection<NepAppUINavigationItem>();
             NavigationItems = new ReadOnlyObservableCollection<NepAppUINavigationItem>(navigationItems);
-            ToastNotifier = new NepAppUIManagerNotifier();
+            Notifier = new NepAppUIManagerNotifier();
             windowService = WindowManager.GetWindowServiceForCurrentWindow();
         }
 
@@ -101,7 +101,7 @@ namespace Neptunium.Core.UI
 
         public string ViewTitle { get { return _viewTitle.ToUpper(); } private set { _viewTitle = value; RaisePropertyChanged(nameof(ViewTitle)); } }
         public ReadOnlyObservableCollection<NepAppUINavigationItem> NavigationItems { get; private set; }
-        public NepAppUIManagerNotifier ToastNotifier { get; private set; }
+        public NepAppUIManagerNotifier Notifier { get; private set; }
         public NepAppUIManagerOverlayHandle Overlay { get; private set; }
         public async Task ShowErrorDialogAsync(string title, string message)
         {

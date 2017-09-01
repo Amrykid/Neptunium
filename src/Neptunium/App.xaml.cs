@@ -17,6 +17,7 @@ using Windows.Gaming.Input;
 using Windows.Networking.Connectivity;
 using Windows.System;
 using Windows.System.RemoteSystems;
+using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
@@ -228,6 +229,10 @@ namespace Neptunium
 
         protected override Task OnSuspendingAsync()
         {
+            //clears the tile if we're suspending.
+
+            TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+
             return Task.CompletedTask;
         }
 

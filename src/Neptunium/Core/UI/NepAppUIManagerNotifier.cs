@@ -98,5 +98,60 @@ namespace Neptunium.Core.UI
             notification.NotificationMirroring = NotificationMirroring.Disabled;
             toastNotifier.Show(notification);
         }
+
+        public void UpdateLiveTile(ExtendedSongMetadata nowPlaying)
+        {
+            var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
+
+            TileBindingContentAdaptive bindingContent = null;
+
+            bindingContent = new TileBindingContentAdaptive()
+            {
+                PeekImage = new TilePeekImage()
+                {
+                    Source = nowPlaying.Album?.AlbumCoverUrl?.ToString() ?? nowPlaying.StationLogo.ToString(),
+                    AlternateText = nowPlaying.StationPlayedOn,
+                    HintCrop = TilePeekImageCrop.None
+                },
+                Children =
+                    {
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Track,
+                            HintStyle = AdaptiveTextStyle.Body
+                        },
+
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Artist,
+                            HintWrap = true,
+                            HintStyle = AdaptiveTextStyle.CaptionSubtle
+                        }
+                    }
+            };
+
+
+            TileBinding binding = new TileBinding()
+            {
+                Branding = TileBranding.NameAndLogo,
+
+                DisplayName =  "Now Playing on Neptunium",
+
+                Content = bindingContent
+            };
+
+            TileContent content = new TileContent()
+            {
+                Visual = new TileVisual()
+                {
+                    TileMedium = binding,
+                    TileWide = binding,
+                    TileLarge = binding
+                }
+            };
+
+            var tile = new TileNotification(content.GetXml());
+            tiler.Update(tile);
+        }
     }
 }
