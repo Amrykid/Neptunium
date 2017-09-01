@@ -43,6 +43,11 @@ namespace Neptunium.View
                 compactViewButton.Checked += compactViewButton_Checked;
                 compactViewButton.Unchecked += compactViewButton_Unchecked;
             }
+
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
+            {
+                fullScreenButton.Visibility = Visibility.Visible;
+            }
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
@@ -95,6 +100,7 @@ namespace Neptunium.View
 
         private async void compactViewButton_Checked(object sender, RoutedEventArgs e)
         {
+            //switch to compact overlay mode
             ViewModePreferences compactOptions = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
             compactOptions.CustomSize = new Windows.Foundation.Size(320, 280);
 
@@ -113,11 +119,15 @@ namespace Neptunium.View
                 isInCompactMode = true;
                 ShellVisualStateGroup.CurrentStateChanged -= ShellVisualStateGroup_CurrentStateChanged;
                 VisualStateManager.GoToState(this, CompactVisualState.Name, true);
+
+                //hide the full screen button while in compact mode.
+                fullScreenButton.Visibility = Visibility.Collapsed;
             }
         }
 
         private async void compactViewButton_Unchecked(object sender, RoutedEventArgs e)
         {
+            //switch back to regular mode
             bool modeSwitched = await ApplicationView.GetForCurrentView()
                 .TryEnterViewModeAsync(ApplicationViewMode.Default,
                     ViewModePreferences.CreateDefault(ApplicationViewMode.Default));
@@ -137,6 +147,12 @@ namespace Neptunium.View
                     VisualStateManager.GoToState(this, lastVisualState.Name, true);
 
                 ShellVisualStateGroup.CurrentStateChanged += ShellVisualStateGroup_CurrentStateChanged;
+
+                if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
+                {
+                    //only show the full screen button again if we're on the desktop.
+                    fullScreenButton.Visibility = Visibility.Visible;
+                }
             }
         }
 
