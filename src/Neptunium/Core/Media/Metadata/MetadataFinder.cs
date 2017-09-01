@@ -16,7 +16,10 @@ namespace Neptunium.Core.Media.Metadata
 
             try
             {
-                albumData = await metaSrc.TryFindAlbumAsync(originalMetadata.Track, originalMetadata.Artist);
+                if ((bool)NepApp.Settings.GetSetting(AppSettings.TryToFindSongMetadata))
+                {
+                    albumData = await metaSrc.TryFindAlbumAsync(originalMetadata.Track, originalMetadata.Artist);
+                }
             }
             catch { }
 

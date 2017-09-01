@@ -257,7 +257,9 @@ namespace Neptunium.Media
             {
                 if (CurrentMetadata.Track != newMetadata.Track) return; //the song has changed since we started.
 
-                NepApp.UI.ToastNotifier.ShowSongToastNotification(newMetadata);
+                if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
+                    NepApp.UI.ToastNotifier.ShowSongToastNotification(newMetadata);
+
                 //todo update tile with now playing info
             }
         }

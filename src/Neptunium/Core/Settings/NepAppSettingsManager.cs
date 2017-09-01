@@ -32,13 +32,31 @@ namespace Neptunium.Core.Settings
 
         public IEnumerable<KeyValuePair<string, object>> GetAllSettings()
         {
+            //yield seems to prevent the call on this method from working. doing it the old and terrible way.
+
             List<KeyValuePair<string, object>> settings = new List<KeyValuePair<string, object>>();
-            foreach (string info in Enum.GetNames(typeof(AppSettings)))
+
+            foreach (string settingName in Enum.GetNames(typeof(AppSettings)))
             {
-                settings.Add(new KeyValuePair<string, object>(info, ApplicationData.Current.LocalSettings.Values[info]));
+                settings.Add(new KeyValuePair<string, object>(settingName, ApplicationData.Current.LocalSettings.Values[settingName]));
             }
 
             return settings;
+        }
+
+        public object GetSetting(string settingName)
+        {
+            if (string.IsNullOrWhiteSpace(settingName)) throw new ArgumentNullException(nameof(settingName));
+            if (!Enum.GetNames(typeof(AppSettings)).Contains(settingName))
+                throw new ArgumentOutOfRangeException(paramName: nameof(settingName), message: "Setting not found.");
+
+
+            return ApplicationData.Current.LocalSettings.Values[settingName];
+        }
+
+        public object GetSetting(AppSettings setting)
+        {
+            return GetSetting(Enum.GetName(typeof(AppSettings), setting));
         }
     }
 }
