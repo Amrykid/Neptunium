@@ -14,7 +14,7 @@
     mc:Ignorable="d">
 
     <Page.TopAppBar>
-        <CommandBar x:Name="topAppBar">
+        <CommandBar x:Name="topAppBar" Background="{ThemeResource SystemControlBackgroundAccentBrush}">
             <CommandBar.Content>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -44,7 +44,7 @@
 
     <Page.BottomAppBar>
         <CommandBar x:Name="bottomAppBar" Opened="bottomAppBar_Opened" IsDynamicOverflowEnabled="False"
-                    Closed="bottomAppBar_Closed" OverflowButtonVisibility="Visible">
+                    Closed="bottomAppBar_Closed" OverflowButtonVisibility="Visible" Background="{ThemeResource SystemControlBackgroundAccentBrush}">
             <CommandBar.Content>
                 <Button Style="{x:Null}" Background="Transparent" x:Name="NowPlayingButton" Height="45"
                         Click="NowPlayingButton_Click">
