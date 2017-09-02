@@ -18,7 +18,7 @@ namespace Neptunium.ViewModel
         {
             if (AvailableStations == null || AvailableStations?.Count == 0)
             {
-                AvailableStations = new ObservableCollection<StationItem>(await NepApp.Stations.GetStationsAsync());
+                AvailableStations = new ObservableCollection<StationItem>((await NepApp.Stations.GetStationsAsync())?.OrderBy(x => x.Name));
             }
 
             base.OnNavigatedTo(sender, e);
