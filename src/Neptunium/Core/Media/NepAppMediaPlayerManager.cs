@@ -45,6 +45,7 @@ namespace Neptunium.Media
         {
             if (CurrentPlayer == null) return;
             if (CurrentPlayer.Source == null) return;
+            if (CurrentPlayer.PlaybackSession?.PlaybackState != MediaPlaybackState.Paused) return;
             CurrentPlayer.Play();
         }
 
@@ -55,7 +56,7 @@ namespace Neptunium.Media
 
         private void RaisePropertyChanged(string propertyName)
         {
-            App.Dispatcher.RunAsync(() =>
+            App.Dispatcher.RunWhenIdleAsync(() =>
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             });
@@ -163,12 +164,12 @@ namespace Neptunium.Media
             CurrentMetadata = null;
             CurrentMetadataExtended = null;
 
-            App.Dispatcher.RunAsync(() =>
-            {
-                RaisePropertyChanged(nameof(CurrentMetadata));
-                IsPlaying = false;
-                RaisePropertyChanged(nameof(IsPlaying));
-            });
+            RaisePropertyChanged(nameof(CurrentMetadata));
+            IsPlaying = false;
+
+            if (systemMediaTransportControls != null) systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Closed;
+
+            IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(IsPlaying));
         }
 
         private async void CurrentPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
@@ -207,23 +208,22 @@ namespace Neptunium.Media
                 case MediaPlaybackState.Opening:
                     //show play
                     IsPlaying = false;
-                    IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(false));
                     systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Changing;
                     break;
                 case MediaPlaybackState.Paused:
                 case MediaPlaybackState.None:
                     //show play
                     IsPlaying = false;
-                    IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(false));
                     systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
                     break;
                 case MediaPlaybackState.Playing:
                     //show pause
                     IsPlaying = true;
-                    IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(true));
                     systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
                     break;
             }
+
+            IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(IsPlaying));
         }
 
         public event EventHandler ConnectingBegin;
@@ -245,13 +245,12 @@ namespace Neptunium.Media
 
             UpdateMetadata(e.Metadata);
 
-            //todo get extended metadata info.
             ExtendedSongMetadata newMetadata = await MetadataFinder.FindMetadataAsync(e.Metadata);
-
             CurrentMetadataExtended = newMetadata;
-            RaisePropertyChanged(nameof(CurrentMetadataExtended));
 
-            await History.AddSongAsync(newMetadata);
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            History.AddSongAsync(newMetadata);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
             {
@@ -262,30 +261,29 @@ namespace Neptunium.Media
             }
 
             NepApp.UI.Notifier.UpdateLiveTile(newMetadata);
+
+            RaisePropertyChanged(nameof(CurrentMetadataExtended));
         }
 
         private void UpdateMetadata(SongMetadata metadata)
         {
             if (metadata == null) return;
 
-            App.Dispatcher.RunWhenIdleAsync(() =>
+            CurrentMetadata = metadata;
+
+            try
             {
-                CurrentMetadata = metadata;
+                var updater = systemMediaTransportControls.DisplayUpdater;
+                updater.Type = MediaPlaybackType.Music;
+                updater.MusicProperties.Title = metadata.Track;
+                updater.MusicProperties.Artist = metadata.Artist;
+                updater.AppMediaId = metadata.StationPlayedOn.GetHashCode().ToString();
+                updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(metadata.StationLogo);
+                updater.Update();
+            }
+            catch (COMException) { }
 
-                try
-                {
-                    var updater = systemMediaTransportControls.DisplayUpdater;
-                    updater.Type = MediaPlaybackType.Music;
-                    updater.MusicProperties.Title = metadata.Track;
-                    updater.MusicProperties.Artist = metadata.Artist;
-                    updater.AppMediaId = metadata.StationPlayedOn.GetHashCode().ToString();
-                    updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(metadata.StationLogo);
-                    updater.Update();
-                }
-                catch (COMException) { }
-
-                RaisePropertyChanged(nameof(CurrentMetadata));
-            });
+            RaisePropertyChanged(nameof(CurrentMetadata));
         }
     }
 }

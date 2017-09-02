@@ -11,7 +11,7 @@ using Crystal3.UI.Commands;
 
 namespace Neptunium.ViewModel
 {
-    public class NowPlayingPageViewModel: ViewModelBase
+    public class NowPlayingPageViewModel : ViewModelBase
     {
         public SongMetadata CurrentSong
         {
@@ -59,26 +59,33 @@ namespace Neptunium.ViewModel
 
         private void Media_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            switch(e.PropertyName)
+            switch (e.PropertyName)
             {
                 case "CurrentMetadata": //todo fix these hard coded strings
-                    UpdateMetadata();
+                    App.Dispatcher.RunWhenIdleAsync(() =>
+                    {
+                        UpdateMetadata();
+                    });
                     break;
                 case "CurrentMetadataExtended":
                     {
-                        if (NepApp.Media.CurrentMetadataExtended.Album != null)
+                        try
                         {
-                            var extendedData = NepApp.Media.CurrentMetadataExtended;
-
-                            if (!string.IsNullOrWhiteSpace(extendedData.Album?.AlbumCoverUrl))
+                            if (NepApp.Media.CurrentMetadataExtended.Album != null)
                             {
-                                App.Dispatcher.RunWhenIdleAsync(() =>
+                                var extendedData = NepApp.Media.CurrentMetadataExtended;
+
+                                if (!string.IsNullOrWhiteSpace(extendedData.Album?.AlbumCoverUrl))
                                 {
-                                    Background = new Uri(extendedData.Album?.AlbumCoverUrl);
-                                });
+                                    App.Dispatcher.RunWhenIdleAsync(() =>
+                                    {
+                                        Background = new Uri(extendedData.Album?.AlbumCoverUrl);
+                                    });
+                                }
+                                //todo else if for artist background?
                             }
-                            //todo else if for artist background?
                         }
+                        catch (Exception) { }
                     }
                     break;
             }
@@ -91,10 +98,7 @@ namespace Neptunium.ViewModel
 
             if (Background == null && !string.IsNullOrWhiteSpace(CurrentStation?.Background))
             {
-                App.Dispatcher.RunWhenIdleAsync(() =>
-                {
-                    Background = new Uri(CurrentStation?.Background);
-                });
+                Background = new Uri(CurrentStation?.Background);
             }
         }
     }
