@@ -7,7 +7,60 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <Style TargetType="TextBlock"      
+               x:Key="GroupHeaderTextBlockStyle"
+               BasedOn="{StaticResource SubtitleTextBlockStyle}">
+            <Setter Property="Margin" Value="0 0 0 15" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
+        </Style>
+        <Style TargetType="MenuFlyoutSeparator">
+            <Setter Property="Margin" Value="-10 10" />
+        </Style>
+    </Page.Resources>
 
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Pivot>
+            <PivotItem Header="General">
+                <StackPanel Margin="10 0">
+                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
+                               Text="Notifications"/>
+                    <ToggleSwitch Header="Show show change notifications"
+                                  IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    <MenuFlyoutSeparator />
+                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
+                               Text="Metadata"/>
+                    <ToggleSwitch Header="Find song metadata when song changes" 
+                                  IsOn="{Binding FindSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                </StackPanel>
+            </PivotItem>
+            <PivotItem Header="Bluetooth">
+                <StackPanel Margin="10 0">
+                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
+                               Text="Activation"/>
+
+                    <TextBlock Text="Activate Bluetooth features when connected to this device."
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                               TextWrapping="Wrap" Margin="0 0 0 5" />
+
+                    <TextBlock>
+                        <Run Text="Selected Bluetooth Device: " />
+                        <Run Text="None" />
+                    </TextBlock>
+
+                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                        <Button Content="Select Device" />
+                        <Button Content="Clear Device" Margin="5 0" />
+                    </StackPanel>
+                    <MenuFlyoutSeparator />
+
+                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
+                               Text="Options" />
+
+                    <ToggleSwitch Header="Announce song when the song playing changes." />
+                </StackPanel>
+            </PivotItem>
+        </Pivot>
     </Grid>
 </Page>

@@ -12,9 +12,19 @@ namespace Neptunium.ViewModel
     {
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.Settings.GetAllSettings();
-
             base.OnNavigatedTo(sender, e);
+        }
+
+        public bool ShowSongNotification
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications); }
+            set { NepApp.Settings.SetSetting(AppSettings.ShowSongNotifications, value); }
+        }
+
+        public bool FindSongMetadata
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.TryToFindSongMetadata); }
+            set { NepApp.Settings.SetSetting(AppSettings.TryToFindSongMetadata, value); }
         }
     }
 }
