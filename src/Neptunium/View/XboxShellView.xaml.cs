@@ -41,7 +41,7 @@ namespace Neptunium.View
 
             NepApp.UI.SetOverlayParentAndSnackBarContainer(OverlayPanel, snackBarGrid);
 
-            NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
+            App.RegisterUIDialogs();
 
             NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
             NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;

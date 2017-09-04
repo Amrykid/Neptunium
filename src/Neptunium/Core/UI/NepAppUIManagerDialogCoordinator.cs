@@ -1,5 +1,6 @@
 ﻿using Crystal3.Model;
 using Crystal3.Navigation;
+using Kimono.Controls.SnackBar;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -23,16 +24,19 @@ namespace Neptunium.Core.UI
         private NepAppUIManager parentUIManager;
         private Grid overlayGridControl;
         private Frame inlineFrame = null;
+        private SnackBarManager snackManager = null;
 
         public bool IsOverlayedDialogVisible { get; private set; }
 
         public event EventHandler OverlayedDialogShown;
         public event EventHandler OverlayedDialogHidden;
 
-        internal NepAppUIManagerDialogCoordinator(NepAppUIManager parent, Grid overlayControl)
+        internal NepAppUIManagerDialogCoordinator(NepAppUIManager parent, Grid overlayControl, Grid snackBarContainer)
         {
             parentUIManager = parent;
             overlayGridControl = overlayControl;
+
+            snackManager = new SnackBarManager(snackBarContainer);
 
             InitializeOverlayAndOverlayedDialogs();
         }
@@ -191,9 +195,13 @@ namespace Neptunium.Core.UI
             return result;
         }
 
-        public void ShowSoftDialog<T>(object parameter = null) where T : NepAppUIDialogFragment
+        public Task ShowSnackBarMessageAsync(string message)
         {
-
+            return ShowSnackBarMessageAsync(message, TimeSpan.FromSeconds(5));
+        }
+        public Task ShowSnackBarMessageAsync(string message, TimeSpan duration)
+        {
+            return snackManager.ShowMessageAsync(message, (int)duration.TotalMilliseconds);  
         }
 
         public void RegisterDialogFragment<T, V>() where T : NepAppUIDialogFragment where V : Control

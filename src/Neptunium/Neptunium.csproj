@@ -152,6 +152,7 @@
     <Compile Include="MediaExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AppShellViewModel.cs" />
+    <Compile Include="ViewModel\Dialog\SleepTimerDialogFragment.cs" />
     <Compile Include="ViewModel\Dialog\StationInfoDialogFragment.cs" />
     <Compile Include="ViewModel\NowPlayingPageViewModel.cs" />
     <Compile Include="ViewModel\SettingsPageViewModel.cs" />
@@ -159,6 +160,9 @@
     <Compile Include="ViewModel\StationsPageViewModel.cs" />
     <Compile Include="View\AppShellView.xaml.cs">
       <DependentUpon>AppShellView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dialog\SleepTimerDialog.xaml.cs">
+      <DependentUpon>SleepTimerDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Dialog\StationInfoDialog.xaml.cs">
       <DependentUpon>StationInfoDialog.xaml</DependentUpon>
@@ -309,6 +313,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\AppShellView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dialog\SleepTimerDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

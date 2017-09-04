@@ -1,4 +1,5 @@
 ﻿using Crystal3.Navigation;
+using Crystal3.UI;
 using Neptunium.Core.UI;
 using Neptunium.ViewModel;
 using Neptunium.ViewModel.Dialog;
@@ -44,7 +45,7 @@ namespace Neptunium.View
             inlineNavigationService.Navigated += InlineNavigationService_Navigated;
 
             NepApp.UI.SetOverlayParentAndSnackBarContainer(OverlayPanel, snackBarGrid);
-            NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
+            App.RegisterUIDialogs();
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
@@ -186,6 +187,9 @@ namespace Neptunium.View
                     PlayButton.Icon = new SymbolIcon(Symbol.Play);
                     PlayButton.Command = ((AppShellViewModel)this.DataContext).ResumePlaybackCommand;
                 }
+
+                //AppBarButton doesn't seem to like the ManualRelayCommand so, I have to set its IsEnabled property here.
+                sleepTimerBtn.Visibility = e.IsPlaying ? Visibility.Visible : Visibility.Collapsed;
             });
         }
 
@@ -196,7 +200,7 @@ namespace Neptunium.View
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-
+            sleepTimerBtn.Visibility = NepApp.Media.IsPlaying ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void TogglePaneButton_Checked(object sender, RoutedEventArgs e)
@@ -235,6 +239,12 @@ namespace Neptunium.View
             //dismiss the menu if its open.
             if (RootSplitView.DisplayMode == SplitViewDisplayMode.Overlay)
                 TogglePaneButton.IsChecked = false;
+        }
+
+        private void sleepTimerBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //AppBarButton doesn't seem to like the ManualRelayCommand so, I have to execute its command function here.
+            this.GetViewModel<AppShellViewModel>().ShowSleepTimerDialogCommand.Execute(null);
         }
     }
 }

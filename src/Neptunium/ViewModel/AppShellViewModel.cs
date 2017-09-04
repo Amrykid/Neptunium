@@ -8,6 +8,7 @@ using Crystal3.Navigation;
 using Neptunium.Core;
 using Crystal3.UI.Commands;
 using Microsoft.HockeyApp;
+using Neptunium.ViewModel.Dialog;
 
 namespace Neptunium.ViewModel
 {
@@ -23,12 +24,24 @@ namespace Neptunium.ViewModel
             NepApp.Media.Pause();
         });
 
+        public RelayCommand ShowSleepTimerDialogCommand => new RelayCommand(x =>
+        {
+            NepApp.UI.Overlay.ShowDialogFragmentAsync<SleepTimerDialogFragment>();
+        });
+
         public AppShellViewModel()
         {
             NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), ""); //"");
             NepApp.UI.AddNavigationRoute("Now Playing", typeof(NowPlayingPageViewModel), "");
             NepApp.UI.AddNavigationRoute("History", typeof(SongHistoryPageViewModel), "");
             NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");
+
+            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+        }
+
+        private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
+        {
+
         }
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)

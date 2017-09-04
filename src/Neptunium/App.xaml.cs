@@ -4,6 +4,7 @@ using Kimono.Controls.SnackBar;
 using Microsoft.HockeyApp;
 using Neptunium.Core;
 using Neptunium.View;
+using Neptunium.View.Dialog;
 using Neptunium.ViewModel;
 using Neptunium.ViewModel.Dialog;
 using System;
@@ -65,6 +66,12 @@ namespace Neptunium
                     return "Exception HResult: " + ex.HResult.ToString();
                 });
             }
+        }
+
+        internal static void RegisterUIDialogs()
+        {
+            NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
+            NepApp.UI.Overlay.RegisterDialogFragment<SleepTimerDialogFragment, SleepTimerDialog>();
         }
 
         private static volatile bool isInBackground = false;

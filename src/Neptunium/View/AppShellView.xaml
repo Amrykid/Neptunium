@@ -37,7 +37,8 @@
                 </Grid>
             </CommandBar.Content>
             <CommandBar.PrimaryCommands>
-                <AppBarButton Icon="Upload" Label="Cast/Handoff" LabelPosition="Collapsed" />
+                <AppBarButton Icon="Upload" ToolTipService.ToolTip="Cast/Handoff" />
+                <AppBarButton x:Name="sleepTimerBtn" Visibility="Collapsed" Click="sleepTimerBtn_Click" Icon="Clock" ToolTipService.ToolTip="Sleep Timer"/>
             </CommandBar.PrimaryCommands>
         </CommandBar>
     </Page.TopAppBar>
