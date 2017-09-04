@@ -114,6 +114,8 @@
                                    Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
 
+                    <Grid x:Name="snackBarGrid" Margin="0 0 0 20" VerticalAlignment="Bottom" HorizontalAlignment="Center" />
+
                     <Grid x:Name="TransportControlGrid" Width="330" 
                           Height="110" VerticalAlignment="Bottom"
                           Background="{ThemeResource SystemControlBackgroundAccentBrush}"

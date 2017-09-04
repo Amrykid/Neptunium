@@ -57,11 +57,12 @@ namespace Neptunium.Core.UI
             windowService.SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
         }
 
-        internal void SetOverlayParent(Grid parentControl)
+        internal void SetOverlayParentAndSnackBarContainer(Grid parentControl, Grid snackBarContainer)
         {
             if (parentControl == null) throw new ArgumentNullException(nameof(parentControl));
+            if (snackBarContainer == null) throw new ArgumentNullException(nameof(snackBarContainer));
 
-            Overlay = new NepAppUIManagerOverlayHandle(this, parentControl);
+            Overlay = new NepAppUIManagerDialogCoordinator(this, parentControl, snackBarContainer);
         }
 
         private void UpdateSelectedNavigationItems()
@@ -102,7 +103,7 @@ namespace Neptunium.Core.UI
         public string ViewTitle { get { return _viewTitle.ToUpper(); } private set { _viewTitle = value; RaisePropertyChanged(nameof(ViewTitle)); } }
         public ReadOnlyObservableCollection<NepAppUINavigationItem> NavigationItems { get; private set; }
         public NepAppUIManagerNotifier Notifier { get; private set; }
-        public NepAppUIManagerOverlayHandle Overlay { get; private set; }
+        public NepAppUIManagerDialogCoordinator Overlay { get; private set; }
         public async Task ShowErrorDialogAsync(string title, string message)
         {
             await await App.Dispatcher.RunWhenIdleAsync(() =>

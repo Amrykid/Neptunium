@@ -17,23 +17,28 @@ using static Neptunium.NepApp;
 
 namespace Neptunium.Core.UI
 {
-    public class NepAppUIManagerOverlayHandle : IDisposable
+    public class NepAppUIManagerDialogCoordinator : IDisposable
     {
         private SemaphoreSlim overlayLock;
         private NepAppUIManager parentUIManager;
         private Grid overlayGridControl;
         private Frame inlineFrame = null;
 
-        public bool IsDialogVisible { get; private set; }
+        public bool IsOverlayedDialogVisible { get; private set; }
 
-        public event EventHandler DialogShown;
-        public event EventHandler DialogHidden;
+        public event EventHandler OverlayedDialogShown;
+        public event EventHandler OverlayedDialogHidden;
 
-        internal NepAppUIManagerOverlayHandle(NepAppUIManager parent, Grid overlayControl)
+        internal NepAppUIManagerDialogCoordinator(NepAppUIManager parent, Grid overlayControl)
         {
             parentUIManager = parent;
             overlayGridControl = overlayControl;
 
+            InitializeOverlayAndOverlayedDialogs();
+        }
+
+        private void InitializeOverlayAndOverlayedDialogs()
+        {
             overlayLock = new SemaphoreSlim(1);
             inlineFrame = new Frame();
 
@@ -117,10 +122,10 @@ namespace Neptunium.Core.UI
         {
             await overlayLock.WaitAsync();
 
-            IsDialogVisible = true;
+            IsOverlayedDialogVisible = true;
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
-            DialogShown?.Invoke(this, EventArgs.Empty);
+            OverlayedDialogShown?.Invoke(this, EventArgs.Empty);
 
 
             var fragment = Activator.CreateInstance<T>() as NepAppUIDialogFragment;
@@ -179,11 +184,16 @@ namespace Neptunium.Core.UI
             inlineFrame.Content = null;
             overlayGridControl.Children.Remove(inlineFrame);
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            IsDialogVisible = false;
-            DialogHidden?.Invoke(this, EventArgs.Empty);
+            IsOverlayedDialogVisible = false;
+            OverlayedDialogHidden?.Invoke(this, EventArgs.Empty);
             overlayLock.Release();
 
             return result;
+        }
+
+        public void ShowSoftDialog<T>(object parameter = null) where T : NepAppUIDialogFragment
+        {
+
         }
 
         public void RegisterDialogFragment<T, V>() where T : NepAppUIDialogFragment where V : Control

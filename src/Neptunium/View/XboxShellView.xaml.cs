@@ -39,12 +39,12 @@ namespace Neptunium.View
             NepApp.UI.SetNavigationService(inlineNavigationService);
             inlineNavigationService.Navigated += InlineNavigationService_Navigated;
 
-            NepApp.UI.SetOverlayParent(OverlayPanel);
+            NepApp.UI.SetOverlayParentAndSnackBarContainer(OverlayPanel, snackBarGrid);
 
             NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
 
-            NepApp.UI.Overlay.DialogShown += Overlay_DialogShown;
-            NepApp.UI.Overlay.DialogHidden += Overlay_DialogHidden;
+            NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
+            NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
 
             NowPlayingTrackTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
             NowPlayingArtistTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
@@ -144,7 +144,7 @@ namespace Neptunium.View
         {
             if (e.Key == Windows.System.VirtualKey.GamepadY)
             {
-                if (NepApp.UI.Overlay.IsDialogVisible) return;
+                if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
                 if (isInNoChromeMode) return;
 
                 if (TransportControlGrid.Visibility == Visibility.Collapsed)
@@ -176,7 +176,7 @@ namespace Neptunium.View
             }
             else if (e.Key == Windows.System.VirtualKey.GamepadMenu)
             {
-                if (NepApp.UI.Overlay.IsDialogVisible) return;
+                if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
                 if (isInNoChromeMode) return;
 
                 e.Handled = true;

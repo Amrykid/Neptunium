@@ -43,7 +43,7 @@ namespace Neptunium.View
             NepApp.UI.SetNavigationService(inlineNavigationService);
             inlineNavigationService.Navigated += InlineNavigationService_Navigated;
 
-            NepApp.UI.SetOverlayParent(OverlayPanel);
+            NepApp.UI.SetOverlayParentAndSnackBarContainer(OverlayPanel, snackBarGrid);
             NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
 
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))

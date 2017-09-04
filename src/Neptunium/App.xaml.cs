@@ -1,5 +1,6 @@
 ﻿using Crystal3;
 using Crystal3.Navigation;
+using Kimono.Controls.SnackBar;
 using Microsoft.HockeyApp;
 using Neptunium.Core;
 using Neptunium.View;
@@ -19,6 +20,7 @@ using Windows.System;
 using Windows.System.RemoteSystems;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media.Animation;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
 
@@ -129,6 +131,9 @@ namespace Neptunium
 
         protected override async Task OnApplicationInitializedAsync()
         {
+            SnackBarAppearance.Opacity = 1;
+            SnackBarAppearance.Transition = new PopupThemeTransition();
+
             await NepApp.InitializeAsync();
         }
 

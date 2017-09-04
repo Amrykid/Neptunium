@@ -179,7 +179,36 @@
             </SplitView.Pane>
             <SplitView.Content>
                 <Grid>
-                    <Frame x:Name="InlineFrame" />
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Frame x:Name="InlineFrame" Grid.Row="1" Grid.RowSpan="1">
+                        <Frame.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </Frame.Transitions>
+                        <Frame.ContentTransitions>
+                            <TransitionCollection>
+                                <NavigationThemeTransition>
+                                    <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                                        <EntranceNavigationTransitionInfo />
+                                    </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                                </NavigationThemeTransition>
+                            </TransitionCollection>
+                        </Frame.ContentTransitions>
+                    </Frame>
+
+                    <!--defined second so that it has a higher z-index-->
+                    <Grid x:Name="snackBarGrid" Grid.Row="0" Grid.RowSpan="1">
+                        <Grid.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </Grid.Transitions>
+                    </Grid>
                 </Grid>
             </SplitView.Content>
         </SplitView>
@@ -204,6 +233,15 @@
                         <Setter Target="RootSplitView.IsPaneOpen" Value="True" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
                         <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
+
+
+                        <Setter Target="InlineFrame.(Grid.Row)" Value="0" />
+                        <Setter Target="InlineFrame.(Grid.RowSpan)" Value="2" />
+                        <Setter Target="snackBarGrid.(Grid.Row)" Value="0" />
+                        <Setter Target="snackBarGrid.(Grid.RowSpan)" Value="2" />
+                        <Setter Target="snackBarGrid.Margin" Value="0 20 20 0" />
+                        <Setter Target="snackBarGrid.HorizontalAlignment" Value="Right" />
+                        <Setter Target="snackBarGrid.VerticalAlignment" Value="Top" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -217,6 +255,15 @@
                         <Setter Target="RootSplitView.IsPaneOpen" Value="False" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
                         <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
+
+
+                        <Setter Target="InlineFrame.(Grid.Row)" Value="0" />
+                        <Setter Target="InlineFrame.(Grid.RowSpan)" Value="2" />
+                        <Setter Target="snackBarGrid.(Grid.Row)" Value="0" />
+                        <Setter Target="snackBarGrid.(Grid.RowSpan)" Value="2" />
+                        <Setter Target="snackBarGrid.Margin" Value="0 20 20 0" />
+                        <Setter Target="snackBarGrid.HorizontalAlignment" Value="Right" />
+                        <Setter Target="snackBarGrid.VerticalAlignment" Value="Top" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -228,6 +275,14 @@
                     <VisualState.Setters>
                         <Setter Target="RootSplitView.DisplayMode" Value="Overlay" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="240" />
+                        
+                        <Setter Target="InlineFrame.(Grid.Row)" Value="1" />
+                        <Setter Target="InlineFrame.(Grid.RowSpan)" Value="1" />
+                        <Setter Target="snackBarGrid.(Grid.Row)" Value="0" />
+                        <Setter Target="snackBarGrid.(Grid.RowSpan)" Value="1" />
+                        <Setter Target="snackBarGrid.Margin" Value="0" />
+                        <Setter Target="snackBarGrid.HorizontalAlignment" Value="Stretch" />
+                        <Setter Target="snackBarGrid.VerticalAlignment" Value="Stretch" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

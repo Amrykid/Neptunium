@@ -136,7 +136,7 @@
     <Compile Include="Core\Stations\StationStream.cs" />
     <Compile Include="Core\Stations\StationStreamServerFormat.cs" />
     <Compile Include="Core\UI\NepAppUIManagerDialogResult.cs" />
-    <Compile Include="Core\UI\NepAppUIManagerOverlayHandle.cs" />
+    <Compile Include="Core\UI\NepAppUIManagerDialogCoordinator.cs" />
     <Compile Include="Core\UI\NepAppUIManagerNotifier.cs" />
     <Compile Include="Core\UI\NepAppUINavigationItem.cs" />
     <Compile Include="Core\UI\NepAppUINoChromePageAttribute.cs" />
