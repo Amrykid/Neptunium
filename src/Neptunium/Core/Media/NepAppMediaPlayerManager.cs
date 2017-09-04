@@ -38,6 +38,7 @@ namespace Neptunium.Media
         {
             if (CurrentPlayer == null) return;
             if (CurrentPlayer.Source == null) return;
+            if (!(bool)CurrentPlayer.PlaybackSession?.CanPause) return;
             CurrentPlayer.Pause();
         }
 
@@ -99,7 +100,7 @@ namespace Neptunium.Media
             {
                 ConnectingEnd?.Invoke(this, EventArgs.Empty);
                 playLock.Release();
-                throw new NeptuniumStreamConnectionFailedException(stream, message: "Connection to server timed out.");
+                throw new NeptuniumStreamConnectionFailedException(stream, connectionTask.Exception.InnerException?.Message);
             }
 
             ShutdownPreviousPlaybackSession();
@@ -143,6 +144,8 @@ namespace Neptunium.Media
 
         private void ShutdownPreviousPlaybackSession()
         {
+            if (CurrentStreamer == null && CurrentPlayer == null) return;
+
             if (CurrentStreamer != null)
             {
                 CurrentStreamer.MetadataChanged -= Streamer_MetadataChanged;
@@ -282,6 +285,10 @@ namespace Neptunium.Media
                 updater.Update();
             }
             catch (COMException) { }
+            catch (Exception ex)
+            {
+
+            }
 
             RaisePropertyChanged(nameof(CurrentMetadata));
         }
