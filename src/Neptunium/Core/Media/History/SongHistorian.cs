@@ -64,6 +64,11 @@ namespace Neptunium.Core.Media.History
 
         public async Task AddSongAsync(ExtendedSongMetadata newMetadata)
         {
+            if (HistoryOfSongs.Count == 30)
+            {
+                HistoryOfSongs.RemoveAt(0); //remove the latest item from the beginning.
+            }
+
             HistoryOfSongs.Add(new SongHistoryItem() { Metadata = newMetadata, PlayedDate = DateTime.Now });
 
             StorageFile historyFile = null;
