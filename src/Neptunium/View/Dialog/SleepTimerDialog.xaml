@@ -21,9 +21,23 @@
                        Style="{ThemeResource TitleTextBlockStyle}" />
         </Grid>
 
-        <ComboBox Grid.Row="1" Header="Time to wait" HorizontalAlignment="Stretch">
-
+        <ComboBox Grid.Row="1" Margin="15 0" Header="Time to wait:" 
+                  HorizontalAlignment="Stretch"
+                  ItemsSource="{Binding AvailableSleepItems, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding SelectedSleepItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  DisplayMemberPath="DisplayName">
         </ComboBox>
+
+        <TextBlock Grid.Row="2" Margin="15 0"
+                   Style="{ThemeResource SubtitleTextBlockStyle}"
+                   Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}">
+                <Span>
+                    <Run Text="Estimated Sleep Time:" />
+                    
+                    <Run Text="{Binding EstimatedTime, UpdateSourceTrigger=PropertyChanged}" 
+                         Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
+                </Span>
+        </TextBlock>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <StackPanel.Resources>

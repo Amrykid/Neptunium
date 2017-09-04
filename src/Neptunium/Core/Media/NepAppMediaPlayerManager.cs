@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Media.Playback;
 using Windows.Storage.Streams;
+using Windows.UI.Xaml;
 using static Neptunium.NepApp;
 
 namespace Neptunium.Media
@@ -19,12 +20,15 @@ namespace Neptunium.Media
     {
         private SystemMediaTransportControls systemMediaTransportControls = null;
         private SemaphoreSlim playLock = null;
+        private DispatcherTimer sleepTimer = new DispatcherTimer();
 
         internal NepAppMediaPlayerManager()
         {
             playLock = new SemaphoreSlim(1);
             History = new SongHistorian();
             History.InitializeAsync();
+
+            sleepTimer.Tick += SleepTimer_Tick;
         }
 
         public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
@@ -76,6 +80,35 @@ namespace Neptunium.Media
             }
 
             return null;
+        }
+
+        internal void SetSleepTimer(TimeSpan timeToWait)
+        {
+            if (sleepTimer.IsEnabled)
+            {
+                sleepTimer.Stop();
+            }
+
+            sleepTimer.Interval = timeToWait;
+
+            sleepTimer.Start();
+        }
+
+        internal void ClearSleepTimer()
+        {
+            if (sleepTimer.IsEnabled) sleepTimer.Stop();
+        }
+
+        internal bool IsSleepTimerRunning { get { return sleepTimer.IsEnabled; } }
+
+        private void SleepTimer_Tick(object sender, object e)
+        {
+            if (IsPlaying)
+            {
+                Pause();
+            }
+
+            sleepTimer.Stop();
         }
 
         public async Task TryStreamStationAsync(StationStream stream)
