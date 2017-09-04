@@ -14,7 +14,7 @@
     mc:Ignorable="d">
 
     <Page.TopAppBar>
-        <CommandBar x:Name="topAppBar" Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+        <CommandBar x:Name="topAppBar" Background="{ThemeResource SystemControlBackgroundAccentBrush}" OverflowButtonVisibility="Collapsed">
             <CommandBar.Content>
                 <Grid>
                     <Grid.ColumnDefinitions>
