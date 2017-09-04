@@ -75,5 +75,19 @@ namespace Neptunium.Core.Settings
         {
             SetSetting(Enum.GetName(typeof(AppSettings), setting), value);
         }
+
+        public bool ContainsSetting(AppSettings setting)
+        {
+            return ContainsSetting(Enum.GetName(typeof(AppSettings), setting));
+        }
+
+        public bool ContainsSetting(string settingName)
+        {
+            if (string.IsNullOrWhiteSpace(settingName)) throw new ArgumentNullException(nameof(settingName));
+            if (!Enum.GetNames(typeof(AppSettings)).Contains(settingName))
+                throw new ArgumentOutOfRangeException(paramName: nameof(settingName), message: "Setting not found.");
+
+            return ApplicationData.Current.LocalSettings.Values.ContainsKey(settingName);
+        }
     }
 }

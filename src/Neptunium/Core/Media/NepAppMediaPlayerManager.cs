@@ -211,6 +211,11 @@ namespace Neptunium.Media
             IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(IsPlaying));
         }
 
+        public double Volume
+        {
+            get { return (double)CurrentPlayer?.Volume; }
+        }
+
         private async void CurrentPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
         {
             var stream = CurrentStream;

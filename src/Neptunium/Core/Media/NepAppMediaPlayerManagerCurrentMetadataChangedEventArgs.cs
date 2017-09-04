@@ -1,8 +1,9 @@
 ﻿using Neptunium.Core.Media.Metadata;
+using System;
 
 namespace Neptunium.Media
 {
-    public class NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs
+    public class NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs: EventArgs
     {
         public SongMetadata Metadata { get; private set; }
 

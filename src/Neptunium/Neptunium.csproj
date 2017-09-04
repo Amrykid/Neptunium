@@ -108,6 +108,8 @@
     </Compile>
     <Compile Include="ApplicationCommands.cs" />
     <Compile Include="AppSettings.cs" />
+    <Compile Include="Core\Media\Bluetooth\NepAppMediaBluetoothDeviceCoordinator.cs" />
+    <Compile Include="Core\Media\Bluetooth\NepAppMediaBluetoothDeviceCoordinatorIsBluetoothConnectedChangedEventArgs.cs" />
     <Compile Include="Core\Media\Bluetooth\NepAppMediaBluetoothManager.cs" />
     <Compile Include="Core\Media\DirectStationMediaStreamer.cs" />
     <Compile Include="Core\Media\History\SongHistorian.cs" />

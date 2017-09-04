@@ -17,5 +17,9 @@ namespace Neptunium
         PreferUsingCrossFadeWhenChangingStations,
 
         UseHapticFeedbackForNavigation,
+
+        SelectedBluetoothDevice,
+        SelectedBluetoothDeviceName,
+        SaySongNotificationsInBluetoothMode,
     }
 }

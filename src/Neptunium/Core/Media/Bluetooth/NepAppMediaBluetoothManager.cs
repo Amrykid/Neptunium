@@ -14,20 +14,47 @@ namespace Neptunium.Core.Media.Bluetooth
     {
         private SpeechSynthesizer speechSynth = new SpeechSynthesizer();
         private VoiceInformation japaneseFemaleVoice = null;
+        public NepAppMediaBluetoothDeviceCoordinator DeviceCoordinator { get; private set; }
+        public bool IsBluetoothModeActive { get; private set; }
 
         public NepAppMediaBluetoothManager(Neptunium.Media.NepAppMediaPlayerManager playerManager)
         {
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //bluetooth control is not supported on xbox.
 
-            japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x => 
+            DeviceCoordinator = new NepAppMediaBluetoothDeviceCoordinator();
+
+            japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
                 x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female && x.DisplayName.Contains("Haruka"));
 
             playerManager.CurrentMetadataChanged += Media_CurrentMetadataChanged;
+
+            DeviceCoordinator.IsBluetoothConnectedChanged += DeviceCoordinator_IsBluetoothConnectedChanged;
+            DeviceCoordinator.InitializeAsync();
         }
 
-        private void Media_CurrentMetadataChanged(object sender, Neptunium.Media.NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs e)
+        private void DeviceCoordinator_IsBluetoothConnectedChanged(object sender, NepAppMediaBluetoothDeviceCoordinatorIsBluetoothConnectedChangedEventArgs e)
         {
-            
+            IsBluetoothModeActive = e.IsConnected;
+        }
+
+        private async void Media_CurrentMetadataChanged(object sender, Neptunium.Media.NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs e)
+        {
+            if (IsBluetoothModeActive)
+            {
+                if ((bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsInBluetoothMode))
+                {
+                    //todo fix this
+                    var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, false);
+                    var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
+
+                    double initialVolume = NepApp.Media.Volume;
+                    bool shouldFade = initialVolume >= 0.1;
+
+                    if (shouldFade) await NepApp.Media.FadeVolumeDownToAsync(0.1);
+                    await PlayAnnouncementAudioStreamAsync(stream);             
+                    if (shouldFade) await NepApp.Media.FadeVolumeUpToAsync(initialVolume);
+                }
+            }
         }
 
         private async Task PlayAnnouncementAudioStreamAsync(SpeechSynthesisStream stream)
