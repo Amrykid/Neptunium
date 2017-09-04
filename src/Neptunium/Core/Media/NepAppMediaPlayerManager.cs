@@ -1,4 +1,5 @@
 ﻿using Neptunium.Core;
+using Neptunium.Core.Media.Bluetooth;
 using Neptunium.Core.Media.History;
 using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
@@ -27,6 +28,7 @@ namespace Neptunium.Media
             playLock = new SemaphoreSlim(1);
             History = new SongHistorian();
             History.InitializeAsync();
+            Bluetooth = new NepAppMediaBluetoothManager();
 
             sleepTimer.Tick += SleepTimer_Tick;
         }
@@ -37,6 +39,7 @@ namespace Neptunium.Media
         internal StationStream CurrentStream { get; private set; }
 
         public SongHistorian History { get; private set; }
+        public NepAppMediaBluetoothManager Bluetooth { get; private set; }
 
         internal void Pause()
         {
@@ -267,6 +270,7 @@ namespace Neptunium.Media
 
         public bool IsPlaying { get; private set; }
         public event EventHandler<NepAppMediaPlayerManagerIsPlayingEventArgs> IsPlayingChanged;
+        public event EventHandler<NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs> CurrentMetadataChanged;
 
         public class NepAppMediaPlayerManagerIsPlayingEventArgs : EventArgs
         {
@@ -323,7 +327,19 @@ namespace Neptunium.Media
 
             }
 
+            //todo remove this when cleaning up. use CurrentMetadataChanged instead.
             RaisePropertyChanged(nameof(CurrentMetadata));
+
+            CurrentMetadataChanged?.Invoke(this, new NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs(metadata));
+        }
+
+        public async Task FadeVolumeDownToAsync(double value)
+        {
+            await CurrentStreamer?.FadeVolumeDownToAsync(value);
+        }
+        public async Task FadeVolumeUpToAsync(double value)
+        {
+            await CurrentStreamer?.FadeVolumeUpToAsync(value);
         }
     }
 }

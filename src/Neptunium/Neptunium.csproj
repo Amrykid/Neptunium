@@ -108,6 +108,7 @@
     </Compile>
     <Compile Include="ApplicationCommands.cs" />
     <Compile Include="AppSettings.cs" />
+    <Compile Include="Core\Media\Bluetooth\NepAppMediaBluetoothManager.cs" />
     <Compile Include="Core\Media\DirectStationMediaStreamer.cs" />
     <Compile Include="Core\Media\History\SongHistorian.cs" />
     <Compile Include="Core\Media\History\SongHistoryItem.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="Core\Media\Metadata\MetadataFinder.cs" />
     <Compile Include="Core\Media\Metadata\MusicBrainzMetadataSource.cs" />
     <Compile Include="Core\Media\Metadata\SongMetadata.cs" />
+    <Compile Include="Core\Media\NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs.cs" />
     <Compile Include="Core\Media\ShoutcastStationMediaStreamer.cs" />
     <Compile Include="Core\NepAppHandoffManager.cs" />
     <Compile Include="Core\Media\NepAppMediaPlayerManager.cs" />

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System;
 using Windows.Media.Core;
 using Neptunium.Core.Media.Metadata;
+using System.Threading;
 
 namespace Neptunium.Media
 {
@@ -38,6 +39,8 @@ namespace Neptunium.Media
 
     public abstract class BasicNepAppMediaStreamer : INepAppMediaStreamer
     {
+        private SemaphoreSlim volumeLock = null;
+
         public MediaSource StreamMediaSource { get; protected set; }
         public virtual bool IsConnected { get { return (bool)StreamMediaSource?.IsOpen; } }
 
@@ -48,6 +51,11 @@ namespace Neptunium.Media
         public StationItem StationPlaying { get; protected set; }
 
         public SongMetadata SongMetadata { get; private set; }
+
+        public BasicNepAppMediaStreamer()
+        {
+            volumeLock = new SemaphoreSlim(1);
+        }
 
         public double Volume
         {
@@ -87,6 +95,8 @@ namespace Neptunium.Media
             {
                 StreamMediaSource.Dispose();
             }
+
+            volumeLock.Dispose();
         }
 
         public void Play()
@@ -101,6 +111,41 @@ namespace Neptunium.Media
             if (Player == null) throw new InvalidOperationException();
 
             Player.Pause();
+        }
+
+        public async Task FadeVolumeDownToAsync(double value)
+        {
+            if (value > Player.Volume) throw new ArgumentOutOfRangeException(nameof(value), actualValue: value, message: "Out of range.");
+
+            if (value == Player.Volume) return;
+
+            await volumeLock.WaitAsync();
+
+            var initial = Player.Volume;
+            for (double x = initial; x > value; x -= .01)
+            {
+                await Task.Delay(25);
+                Player.Volume = x;
+            }
+
+            volumeLock.Release();
+        }
+        public async Task FadeVolumeUpToAsync(double value)
+        {
+            if (value < Player.Volume) throw new ArgumentOutOfRangeException(nameof(value), actualValue: value, message: "Out of range.");
+
+            if (value == Player.Volume) return;
+
+            await volumeLock.WaitAsync();
+
+            var initial = Player.Volume;
+            for (double x = initial; x < value; x += .01)
+            {
+                await Task.Delay(25);
+                Player.Volume = x;
+            }
+
+            volumeLock.Release();
         }
     }
 }
