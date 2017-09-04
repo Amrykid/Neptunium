@@ -14,6 +14,7 @@ namespace Neptunium.Core.Media.Bluetooth
     {
         private SpeechSynthesizer speechSynth = new SpeechSynthesizer();
         private VoiceInformation japaneseFemaleVoice = null;
+        private VoiceInformation koreanFemaleVoice = null;
         public NepAppMediaBluetoothDeviceCoordinator DeviceCoordinator { get; private set; }
         public bool IsBluetoothModeActive { get; private set; }
 
@@ -25,6 +26,9 @@ namespace Neptunium.Core.Media.Bluetooth
 
             japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
                 x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female && x.DisplayName.Contains("Haruka"));
+
+            koreanFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x =>
+                x.Language.ToLower().StartsWith("kr") && x.Gender == VoiceGender.Female);
 
             playerManager.CurrentMetadataChanged += Media_CurrentMetadataChanged;
 
@@ -43,8 +47,8 @@ namespace Neptunium.Core.Media.Bluetooth
             {
                 if ((bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsInBluetoothMode))
                 {
-                    //todo fix this
-                    var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, false);
+
+                    var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, NepApp.Media.CurrentStream.ParentStation.PrimaryLocale);
                     var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
 
                     double initialVolume = NepApp.Media.Volume;
@@ -68,7 +72,7 @@ namespace Neptunium.Core.Media.Bluetooth
                 media.CommandManager.IsEnabled = false;
                 media.Volume = 1.0;
                 //media.AudioCategory = MediaPlayerAudioCategory.Speech;
-                media.AudioCategory = MediaPlayerAudioCategory.Alerts; //Speech is too low.
+                media.AudioCategory = MediaPlayerAudioCategory.Media; //Speech is too low.
                 media.Source = source;
 
                 Task mediaOpenTask = media.WaitForMediaOpenAsync();
@@ -87,7 +91,7 @@ namespace Neptunium.Core.Media.Bluetooth
             });
         }
 
-        private string GenerateSongAnnouncementSsml(string artist, string title, bool japaneseVoiceAvailable)
+        private string GenerateSongAnnouncementSsml(string artist, string title, string locale = "ja")
         {
             StringBuilder builder = new StringBuilder();
 
@@ -97,14 +101,26 @@ namespace Neptunium.Core.Media.Bluetooth
                 "Now Playing: {1} by {0}",
                 "And Now: {1} by {0}",
                 "Playing: {1} by {0}",
-                "君が{0}の{1}を聞いています"
             };
+            //                "君が{0}の{1}を聞いています"
+
             var randomizer = new Random(DateTime.Now.Millisecond);
             var index = randomizer.Next(0, phrases.Length - 1);
 
             var phrase = phrases[index];
 
-            if (index == 3 && !japaneseVoiceAvailable)
+            bool nativeVoiceAvailable = false;
+            switch(locale.ToLower().Trim())
+            {
+                case "ja":
+                    nativeVoiceAvailable = japaneseFemaleVoice != null;
+                    break;
+                case "kr":
+                    nativeVoiceAvailable = koreanFemaleVoice != null;
+                    break;
+            }
+
+            if (index == 3 && nativeVoiceAvailable)
                 index = 1;
 
             builder.AppendLine(@"<?xml version='1.0' encoding='ISO-8859-1'?>");
@@ -121,35 +137,62 @@ namespace Neptunium.Core.Media.Bluetooth
 
                 //builder.AppendLine("<voice xml:lang='" + voice.Language + "' name='" + voice.DisplayName + "'>");
                 builder.AppendLine("<s>");
-                builder.AppendLine("<voice" + (japaneseVoiceAvailable ? " name='" + japaneseFemaleVoice.DisplayName + "'" : " gender='female'") + ">");
+                builder.AppendLine("<voice" + (japaneseFemaleVoice != null ? " name='" + japaneseFemaleVoice.DisplayName + "'" : " gender='female'") + ">");
+
+                builder.AppendLine(text);
+                builder.AppendLine("</voice>");
+                builder.AppendLine("</s>");
+            };
+            Action<string> speakInKorean = (text) =>
+            {
+                builder.AppendLine("<s>");
+                builder.AppendLine("<voice" + (koreanFemaleVoice != null ? " name='" + koreanFemaleVoice.DisplayName + "'" : " gender='female'") + ">");
 
                 builder.AppendLine(text);
                 builder.AppendLine("</voice>");
                 builder.AppendLine("</s>");
             };
 
+            Action<string> speakInNativeLanguage = (text) =>
+            {
+                if (nativeVoiceAvailable)
+                {
+                    switch (locale.ToLower().Trim())
+                    {
+                        case "ja":
+                            speakInJapanese(text);
+                            break;
+                        case "kr":
+                            speakInKorean(text);
+                            break;
+                    }
+                }
+                else
+                {
+                    //fallback to english
+                    speakInEnglish(text);
+                }
+            };
+
             switch (index)
             {
                 case 0:
                     speakInEnglish("Now Playing:");
-                    speakInJapanese(title);
+                    speakInNativeLanguage(title);
                     speakInEnglish("By");
-                    speakInJapanese(artist);
+                    speakInNativeLanguage(artist);
                     break;
                 case 1:
                     speakInEnglish("And Now:");
-                    speakInJapanese(title);
+                    speakInNativeLanguage(title);
                     speakInEnglish("By");
-                    speakInJapanese(artist);
+                    speakInNativeLanguage(artist);
                     break;
                 case 2:
                     speakInEnglish("Playing:");
-                    speakInJapanese(title);
+                    speakInNativeLanguage(title);
                     speakInEnglish("By");
-                    speakInJapanese(artist);
-                    break;
-                case 3:
-                    speakInJapanese(string.Format(phrase, artist, title));
+                    speakInNativeLanguage(artist);
                     break;
             }
             builder.AppendLine("</voice>");
