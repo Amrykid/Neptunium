@@ -21,7 +21,8 @@ namespace Neptunium.Core.Media.Metadata
                     albumData = await metaSrc.TryFindAlbumAsync(originalMetadata.Track, originalMetadata.Artist);
                 }
             }
-            catch { }
+            catch (Exception)
+            { }
 
             var extendedMetadata = new ExtendedSongMetadata(originalMetadata);
 
