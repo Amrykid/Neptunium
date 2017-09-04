@@ -28,7 +28,7 @@ namespace Neptunium.Media
             playLock = new SemaphoreSlim(1);
             History = new SongHistorian();
             History.InitializeAsync();
-            Bluetooth = new NepAppMediaBluetoothManager();
+            Bluetooth = new NepAppMediaBluetoothManager(this);
 
             sleepTimer.Tick += SleepTimer_Tick;
         }

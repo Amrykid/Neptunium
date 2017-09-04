@@ -35,7 +35,7 @@
 
                 </StackPanel>
             </PivotItem>
-            <PivotItem Header="Bluetooth">
+            <PivotItem x:Name="bluetoothPivot" Header="Bluetooth" Visibility="Collapsed">
                 <StackPanel Margin="10 0">
                     <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Activation"/>

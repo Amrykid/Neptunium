@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Crystal3;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,6 +27,9 @@ namespace Neptunium.View
         public SettingsPage()
         {
             this.InitializeComponent();
+
+            if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
+                bluetoothPivot.Visibility = Visibility.Visible;
         }
     }
 }

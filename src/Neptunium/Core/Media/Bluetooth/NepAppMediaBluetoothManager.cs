@@ -15,14 +15,14 @@ namespace Neptunium.Core.Media.Bluetooth
         private SpeechSynthesizer speechSynth = new SpeechSynthesizer();
         private VoiceInformation japaneseFemaleVoice = null;
 
-        public NepAppMediaBluetoothManager()
+        public NepAppMediaBluetoothManager(Neptunium.Media.NepAppMediaPlayerManager playerManager)
         {
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //bluetooth control is not supported on xbox.
 
             japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x => 
                 x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female && x.DisplayName.Contains("Haruka"));
 
-            NepApp.Media.CurrentMetadataChanged += Media_CurrentMetadataChanged;
+            playerManager.CurrentMetadataChanged += Media_CurrentMetadataChanged;
         }
 
         private void Media_CurrentMetadataChanged(object sender, Neptunium.Media.NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs e)
