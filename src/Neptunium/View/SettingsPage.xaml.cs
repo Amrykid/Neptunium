@@ -1,4 +1,6 @@
 ﻿using Crystal3;
+using Crystal3.UI;
+using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,9 +29,29 @@ namespace Neptunium.View
         public SettingsPage()
         {
             this.InitializeComponent();
+        }
 
+        private async void SelectBluetoothButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectBluetoothButton.IsEnabled = false;
+            var device = await NepApp.Media.Bluetooth.DeviceCoordinator.SelectDeviceAsync(Window.Current.Bounds);
+            if (device != null)
+            {
+                this.GetViewModel<SettingsPageViewModel>().SelectedBluetoothDeviceName = device.Name;
+            }
+            SelectBluetoothButton.IsEnabled = true;
+        }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
             if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
-                bluetoothPivot.Visibility = Visibility.Visible;
+            {
+                if (await NepApp.Media.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync())
+                {
+                    //only show bluetooth settings on devices that have bluetooth.
+                    bluetoothPivot.Visibility = Visibility.Visible;
+                }
+            }
         }
     }
 }

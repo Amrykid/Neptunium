@@ -5,6 +5,7 @@
     xmlns:local="using:Neptunium.View"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -46,19 +47,21 @@
 
                     <TextBlock>
                         <Run Text="Selected Bluetooth Device: " />
-                        <Run Text="None" />
+                        <Run Text="{Binding SelectedBluetoothDeviceName, UpdateSourceTrigger=PropertyChanged}"
+                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
                     </TextBlock>
 
                     <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                        <Button Content="Select Device" />
-                        <Button Content="Clear Device" Margin="5 0" />
+                        <Button x:Name="SelectBluetoothButton" Click="SelectBluetoothButton_Click" Content="Select Device" />
+                        <Button Content="Clear Device" Margin="5 0" Command="{Binding ClearBluetoothDeviceCommand}" />
                     </StackPanel>
                     <MenuFlyoutSeparator />
 
                     <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Options" />
 
-                    <ToggleSwitch Header="Announce song when the song playing changes." />
+                    <ToggleSwitch Header="Announce song when the song playing changes."
+                                  IsOn="{Binding SaySongNotifications, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </StackPanel>
             </PivotItem>
         </Pivot>

@@ -98,12 +98,12 @@ namespace Neptunium.Core.Media.Bluetooth
             }
         }
 
-        private async Task<bool> HasBluetoothRadiosAsync()
+        public async Task<bool> HasBluetoothRadiosAsync()
         {
             return (await Radio.GetRadiosAsync()).Where(x => x.Kind == RadioKind.Bluetooth).Count() > 0;
         }
 
-        private async Task<bool> GetIfBluetoothIsOnAsync()
+        public async Task<bool> GetIfBluetoothIsOnAsync()
         {
             if (radioAccess == RadioAccessStatus.Allowed)
             {
