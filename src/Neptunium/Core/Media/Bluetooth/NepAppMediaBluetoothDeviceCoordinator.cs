@@ -195,6 +195,9 @@ namespace Neptunium.Core.Media.Bluetooth
                 if (selection != null)
                 {
                     NepApp.Settings.SetSetting(AppSettings.SelectedBluetoothDevice, selection.Id);
+                    NepApp.Settings.SetSetting(AppSettings.SelectedBluetoothDeviceName, selection.Name);
+
+                    SelectedBluetoothDeviceName = selection.Name;
 
                     await InitializeBluetoothDeviceFromSettingsAsync();
                 }
