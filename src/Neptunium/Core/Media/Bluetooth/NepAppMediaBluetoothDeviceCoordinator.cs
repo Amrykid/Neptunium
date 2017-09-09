@@ -1,4 +1,5 @@
 ﻿using Crystal3.Core;
+using Microsoft.HockeyApp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
