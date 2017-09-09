@@ -334,7 +334,7 @@ namespace Neptunium.Media
 
             }
 
-            //todo remove this when cleaning up. use CurrentMetadataChanged instead.
+            //this is used for the now playing bar via data binding.
             RaisePropertyChanged(nameof(CurrentMetadata));
 
             CurrentMetadataChanged?.Invoke(this, new NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs(metadata));
