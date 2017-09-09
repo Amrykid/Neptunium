@@ -34,7 +34,7 @@
         </Grid>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-            <AppBarButton Label="Website" Icon="Globe" />
+            <AppBarButton Label="Website" Icon="Globe" Command="{Binding OpenStationWebsiteCommand}" />
             <AppBarButton Label="Pin" Icon="Pin" />
         </StackPanel>
         

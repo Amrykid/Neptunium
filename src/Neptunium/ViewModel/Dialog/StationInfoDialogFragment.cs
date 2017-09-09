@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.System;
 
 namespace Neptunium.ViewModel.Dialog
 {
@@ -22,12 +23,19 @@ namespace Neptunium.ViewModel.Dialog
         public RelayCommand PlayCommand => new RelayCommand(x =>
             ResultTaskCompletionSource.SetResult(new NepAppUIManagerDialogResult() { ResultType = NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive }));
 
+        public RelayCommand OpenStationWebsiteCommand => new RelayCommand(async x =>
+        {
+            if (!string.IsNullOrWhiteSpace(Station.Site))
+            {
+                await Launcher.LaunchUriAsync(new Uri(Station.Site));
+            }
+        });
+
         public override Task<NepAppUIManagerDialogResult> InvokeAsync(object parameter)
         {
             if (parameter == null || !(parameter is StationItem)) Task.FromResult<NepAppUIManagerDialogResult>(NepAppUIManagerDialogResult.Declined);
 
             Station = parameter as StationItem;
-
             return ResultTaskCompletionSource.Task;
         }
     }
