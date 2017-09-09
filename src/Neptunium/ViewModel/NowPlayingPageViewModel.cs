@@ -43,52 +43,54 @@ namespace Neptunium.ViewModel
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.Media.PropertyChanged += Media_PropertyChanged;
+            NepApp.Media.CurrentMetadataChanged += Media_CurrentMetadataChanged;
+            NepApp.Media.CurrentMetadataExtendedInfoFound += Media_CurrentMetadataExtendedInfoFound;
 
             UpdateMetadata();
 
             base.OnNavigatedTo(sender, e);
         }
 
-        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
+        private void Media_CurrentMetadataExtendedInfoFound(object sender, Media.NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs e)
         {
-            NepApp.Media.PropertyChanged -= Media_PropertyChanged;
+            try
+            {
+                if (NepApp.Media.CurrentMetadataExtended.Album != null)
+                {
+                    var extendedData = NepApp.Media.CurrentMetadataExtended;
 
-            base.OnNavigatedFrom(sender, e);
+                    if (!string.IsNullOrWhiteSpace(extendedData.Album?.AlbumCoverUrl))
+                    {
+                        App.Dispatcher.RunWhenIdleAsync(() =>
+                        {
+                            Background = new Uri(extendedData.Album?.AlbumCoverUrl);
+                        });
+                    }
+                    else if (!string.IsNullOrWhiteSpace(extendedData.ArtistInfo?.ArtistImage))
+                    {
+                        App.Dispatcher.RunWhenIdleAsync(() =>
+                        {
+                            Background = new Uri(extendedData.ArtistInfo?.ArtistImage);
+                        });
+                    }
+                }
+            }
+            catch (Exception) { }
         }
 
-        private void Media_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Media_CurrentMetadataChanged(object sender, Media.NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs e)
         {
-            switch (e.PropertyName)
+            App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                case "CurrentMetadata": //todo fix these hard coded strings
-                    App.Dispatcher.RunWhenIdleAsync(() =>
-                    {
-                        UpdateMetadata();
-                    });
-                    break;
-                case "CurrentMetadataExtended":
-                    {
-                        try
-                        {
-                            if (NepApp.Media.CurrentMetadataExtended.Album != null)
-                            {
-                                var extendedData = NepApp.Media.CurrentMetadataExtended;
+                UpdateMetadata();
+            });
+        }
 
-                                if (!string.IsNullOrWhiteSpace(extendedData.Album?.AlbumCoverUrl))
-                                {
-                                    App.Dispatcher.RunWhenIdleAsync(() =>
-                                    {
-                                        Background = new Uri(extendedData.Album?.AlbumCoverUrl);
-                                    });
-                                }
-                                //todo else if for artist background?
-                            }
-                        }
-                        catch (Exception) { }
-                    }
-                    break;
-            }
+        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
+        {
+            NepApp.Media.CurrentMetadataChanged -= Media_CurrentMetadataChanged;
+
+            base.OnNavigatedFrom(sender, e);
         }
 
         private void UpdateMetadata()
@@ -96,7 +98,7 @@ namespace Neptunium.ViewModel
             CurrentSong = NepApp.Media.CurrentMetadata;
             CurrentStation = NepApp.Media.CurrentStream?.ParentStation;
 
-            if (Background == null && !string.IsNullOrWhiteSpace(CurrentStation?.Background))
+            if (!string.IsNullOrWhiteSpace(CurrentStation?.Background))
             {
                 Background = new Uri(CurrentStation?.Background);
             }

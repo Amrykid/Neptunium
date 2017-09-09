@@ -78,5 +78,12 @@ namespace Neptunium.Core.Stations
 
             return stationList.ToArray();
         }
+
+        internal async Task<StationItem> GetStationByNameAsync(string stationPlayedOn)
+        {
+            //ugly way to do this
+            var station = (await GetStationsAsync()).First(x => x.Name.Equals(stationPlayedOn));
+            return station;
+        }
     }
 }

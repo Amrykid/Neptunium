@@ -30,8 +30,9 @@ namespace Neptunium
         {
             CookieJar.ApplicationName = "Neptunium";
 
-            Hqub.MusicBrainz.API.MyHttpClient.UserAgent = 
-                "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Major + " ( amrykid@gmail.com )";
+            //Hqub.MusicBrainz.API.MyHttpClient.UserAgent = 
+            //    "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Minor + " ( amrykid@gmail.com )";
+            Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/1.0 ( amrykid@gmail.com )";
 
             Settings = new NepAppSettingsManager();
             Stations = new NepAppStationsManager();

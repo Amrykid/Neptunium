@@ -39,5 +39,6 @@ namespace Neptunium.Core.Media.Metadata
         }
 
         public AlbumData Album { get; internal set; }
+        public ArtistData ArtistInfo { get; internal set; }
     }
 }

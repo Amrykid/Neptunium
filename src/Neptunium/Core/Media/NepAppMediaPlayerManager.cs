@@ -204,6 +204,7 @@ namespace Neptunium.Media
             CurrentMetadataExtended = null;
 
             RaisePropertyChanged(nameof(CurrentMetadata));
+            CurrentMetadataChanged?.Invoke(this, new NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs(null));
             IsPlaying = false;
 
             if (systemMediaTransportControls != null) systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Closed;
@@ -276,6 +277,7 @@ namespace Neptunium.Media
         public bool IsPlaying { get; private set; }
         public event EventHandler<NepAppMediaPlayerManagerIsPlayingEventArgs> IsPlayingChanged;
         public event EventHandler<NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs> CurrentMetadataChanged;
+        public event EventHandler<NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs> CurrentMetadataExtendedInfoFound;
 
         public class NepAppMediaPlayerManagerIsPlayingEventArgs : EventArgs
         {
@@ -293,6 +295,8 @@ namespace Neptunium.Media
             ExtendedSongMetadata newMetadata = await MetadataFinder.FindMetadataAsync(e.Metadata);
             CurrentMetadataExtended = newMetadata;
 
+            CurrentMetadataExtendedInfoFound?.Invoke(this, new NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs(newMetadata));
+
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             History.AddSongAsync(newMetadata);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -306,8 +310,6 @@ namespace Neptunium.Media
             }
 
             NepApp.UI.Notifier.UpdateLiveTile(newMetadata);
-
-            RaisePropertyChanged(nameof(CurrentMetadataExtended));
         }
 
         private void UpdateMetadata(SongMetadata metadata)
