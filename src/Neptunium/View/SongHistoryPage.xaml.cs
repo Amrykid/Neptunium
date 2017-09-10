@@ -22,11 +22,50 @@ namespace Neptunium.View
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [Crystal3.Navigation.NavigationViewModel(typeof(SongHistoryPageViewModel))]
-    public sealed partial class SongHistoryPage : Page
+    public sealed partial class SongHistoryPage : Page, Neptunium.Glue.IXboxInputPage
     {
         public SongHistoryPage()
         {
             this.InitializeComponent();
+        }
+
+        private ListViewItem focusedItem = null;
+        public void PreserveFocus()
+        {
+            var selection = SongHistoryListView.SelectedItem;
+            if (selection != null)
+            {
+                focusedItem = (ListViewItem)SongHistoryListView.ContainerFromItem(selection);
+            }
+        }
+
+        public void RestoreFocus()
+        {
+            if (focusedItem != null)
+            {
+                focusedItem.Focus(FocusState.Keyboard);
+                focusedItem = null;
+            }
+        }
+
+        public void SetBottomFocus(UIElement elementBelow)
+        {
+            
+        }
+
+        public void SetLeftFocus(UIElement elementToTheLeft)
+        {
+            SongHistoryListView.XYFocusLeft = elementToTheLeft;
+        }
+
+        public void SetRightFocus(UIElement elementToTheRight)
+        {
+            
+        }
+
+        public void SetTopFocus(UIElement elementAbove)
+        {
+            
         }
     }
 }
