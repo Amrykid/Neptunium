@@ -35,7 +35,7 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <AppBarButton Label="Website" Icon="Globe" Command="{Binding OpenStationWebsiteCommand}" />
-            <AppBarButton Label="Pin" Icon="Pin" />
+            <AppBarButton Label="Pin" Icon="Pin" x:Name="PinStationButton" Visibility="Visible" />
         </StackPanel>
         
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">

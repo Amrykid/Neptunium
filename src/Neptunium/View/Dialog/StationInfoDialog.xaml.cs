@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Crystal3;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,6 +30,9 @@ namespace Neptunium.View
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+                PinStationButton.Visibility = Visibility.Collapsed; //pinning isn't supported on Xbox.
+
             //Focus on the cancel button.
             CancelButton.Focus(FocusState.Programmatic);
         }
