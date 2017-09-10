@@ -106,8 +106,18 @@ namespace Neptunium.Core.UI
         {
             if (width >= 720)
             {
-                inlineFrame.Width = 400;
-                inlineFrame.Height = 600;
+                var appView = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView();
+                if (appView.DesiredBoundsMode == ApplicationViewBoundsMode.UseCoreWindow)
+                {
+                    //usually this is used on Xbox
+                    inlineFrame.Width = 400;
+                    inlineFrame.Height = height - 35;
+                }
+                else
+                {
+                    inlineFrame.Width = 400;
+                    inlineFrame.Height = 600;
+                }
             }
             else
             {
