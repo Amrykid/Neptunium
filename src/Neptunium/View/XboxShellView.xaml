@@ -12,7 +12,7 @@
         <SplitView
             x:Name="RootSplitView"
             Margin="0,0,0,0"
-            DisplayMode="CompactInline">
+            DisplayMode="Overlay">
             <SplitView.Pane>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -74,10 +74,28 @@
             </SplitView.Pane>
             <SplitView.Content>
                 <Grid>
-                    <Frame x:Name="InlineFrame" Margin="0" />
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    
+                    <Grid Grid.Row="0" x:Name="HeaderGrid" Height="50" Visibility="Visible">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" Height="50" Width="50" Foreground="White"
+                              HorizontalAlignment="Center"
+                              Grid.Column="0"/>
+
+                        <TextBlock Grid.Column="1" x:Name="PageTitleTextBlock" Style="{ThemeResource BaseTextBlockStyle}" />
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Frame x:Name="InlineFrame" Margin="0" />
 
 
-                    <Grid x:Name="MediaGrid"
+                        <Grid x:Name="MediaGrid"
                           Width="Auto"
                           MaxWidth="600"
                           Height="Auto"
@@ -90,33 +108,33 @@
                           BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}"
                           BorderThickness="1"
                           Padding="15">
-                        <Grid.Transitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition />
-                                <PopupThemeTransition />
-                                <ContentThemeTransition />
-                            </TransitionCollection>
-                        </Grid.Transitions>
+                            <Grid.Transitions>
+                                <TransitionCollection>
+                                    <RepositionThemeTransition />
+                                    <PopupThemeTransition />
+                                    <ContentThemeTransition />
+                                </TransitionCollection>
+                            </Grid.Transitions>
 
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="32.5" />
-                            <RowDefinition Height="32.5" />
-                        </Grid.RowDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="32.5" />
+                                <RowDefinition Height="32.5" />
+                            </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" x:Name="NowPlayingTrackTextBlock" 
+                            <TextBlock Grid.Row="0" x:Name="NowPlayingTrackTextBlock" 
                                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                    Style="{ThemeResource TitleTextBlockStyle}"
                                    Text="{Binding Track, UpdateSourceTrigger=PropertyChanged}" />
-                        
-                        <TextBlock Grid.Row="1" x:Name="NowPlayingArtistTextBlock" 
+
+                            <TextBlock Grid.Row="1" x:Name="NowPlayingArtistTextBlock" 
                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                    Style="{ThemeResource SubtitleTextBlockStyle}"
                                    Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}" />
-                    </Grid>
+                        </Grid>
 
-                    <Grid x:Name="snackBarGrid" Margin="0 0 0 20" VerticalAlignment="Bottom" HorizontalAlignment="Center" />
+                        <Grid x:Name="snackBarGrid" Margin="0 0 0 20" VerticalAlignment="Bottom" HorizontalAlignment="Center" />
 
-                    <Grid x:Name="TransportControlGrid" Width="330" 
+                        <Grid x:Name="TransportControlGrid" Width="330" 
                           Height="110" VerticalAlignment="Bottom"
                           Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                           HorizontalAlignment="Right" Margin="0 0 20 20"
@@ -124,17 +142,18 @@
                           BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}"
                           BorderThickness="1"
                           Padding="5">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
 
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Row="0" HorizontalAlignment="Center" Foreground="White" />
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Row="0" HorizontalAlignment="Center" Foreground="White" />
 
-                        <StackPanel Orientation="Horizontal" Grid.Row="1">
-                            <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
-                        </StackPanel>
-                        <!--<MediaPlayerElement Grid.Row="2" AreTransportControlsEnabled="True" x:Name="TransportControlsGridMediaPlayerElement"  />-->
+                            <StackPanel Orientation="Horizontal" Grid.Row="1">
+                                <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <!--<MediaPlayerElement Grid.Row="2" AreTransportControlsEnabled="True" x:Name="TransportControlsGridMediaPlayerElement"  />-->
+                        </Grid>
                     </Grid>
                 </Grid>
             </SplitView.Content>

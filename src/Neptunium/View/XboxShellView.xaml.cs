@@ -49,6 +49,8 @@ namespace Neptunium.View
             NowPlayingTrackTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
             NowPlayingArtistTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
 
+            PageTitleTextBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
+
             NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
         }
 
@@ -58,7 +60,6 @@ namespace Neptunium.View
             if (inlineNavigationService.NavigationFrame.Content?.GetType().GetTypeInfo().GetCustomAttribute<NepAppUINoChromePageAttribute>() != null)
             {
                 //no chrome mode
-                RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
                 RootSplitView.IsPaneOpen = false;
                 MediaGrid.Visibility = Visibility.Collapsed;
                 isInNoChromeMode = true;
@@ -66,8 +67,6 @@ namespace Neptunium.View
             else
             {
                 //reactivate chrome
-
-                RootSplitView.DisplayMode = SplitViewDisplayMode.CompactInline;
 
                 if (NepApp.Media.IsPlaying)
                     MediaGrid.Visibility = Visibility.Visible;
@@ -174,13 +173,41 @@ namespace Neptunium.View
 
                 e.Handled = true;
             }
-            else if (e.Key == Windows.System.VirtualKey.GamepadMenu)
+            else if (e.Key == Windows.System.VirtualKey.GamepadView)
             {
                 if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
                 if (isInNoChromeMode) return;
 
                 e.Handled = true;
                 RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
+
+                if (RootSplitView.IsPaneOpen)
+                {
+                    if (InlineFrame.Content is IXboxInputPage)
+                    {
+                        ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
+                    }
+
+                    SplitViewNavigationList.Focus(FocusState.Keyboard);
+
+                    var selectedNavItem = NepApp.UI.NavigationItems.FirstOrDefault(x => x.IsSelected);
+                    if (selectedNavItem != null)
+                    {
+                        //highlight and focus on the current nav item.
+                        var selectedNavContainer = SplitViewNavigationList.ContainerFromItem(selectedNavItem) as ContentPresenter;
+                        var selectedNavButton = VisualTreeHelper.GetChild(selectedNavContainer, 0) as RadioButton;
+                        selectedNavButton.Focus(FocusState.Keyboard);
+                    }
+                }
+                else
+                {
+                    InlineFrame.Focus(FocusState.Keyboard);
+
+                    if (InlineFrame.Content is IXboxInputPage)
+                    {
+                        ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
+                    }
+                }
             }
 
         }
