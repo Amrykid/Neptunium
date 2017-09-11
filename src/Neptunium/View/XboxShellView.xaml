@@ -38,6 +38,7 @@
                                         Command="{Binding Command, Mode=OneTime}"
                                         Content="{Binding DisplayText, Mode=OneTime}"
                                         GroupName="Navigation"
+                                        Click="RadioButton_Click"
                                         IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                         Style="{StaticResource SplitViewRadioButtonStyle}">
                                         <RadioButton.Tag>

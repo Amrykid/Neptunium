@@ -235,5 +235,12 @@ namespace Neptunium.View
             RootSplitView.IsPaneOpen = true;
             HandleSplitViewPaneOpen();
         }
+
+        private void RadioButton_Click(object sender, RoutedEventArgs e)
+        {
+            //dismiss the menu if its open.
+            if (RootSplitView.DisplayMode == SplitViewDisplayMode.Overlay)
+                RootSplitView.IsPaneOpen = false;
+        }
     }
 }
