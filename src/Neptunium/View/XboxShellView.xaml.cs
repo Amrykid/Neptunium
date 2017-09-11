@@ -62,6 +62,7 @@ namespace Neptunium.View
                 //no chrome mode
                 RootSplitView.IsPaneOpen = false;
                 MediaGrid.Visibility = Visibility.Collapsed;
+                HeaderGrid.Visibility = Visibility.Collapsed;
                 isInNoChromeMode = true;
             }
             else
@@ -70,6 +71,8 @@ namespace Neptunium.View
 
                 if (NepApp.Media.IsPlaying)
                     MediaGrid.Visibility = Visibility.Visible;
+
+                HeaderGrid.Visibility = Visibility.Visible;
 
                 isInNoChromeMode = false;
 
@@ -173,7 +176,7 @@ namespace Neptunium.View
 
                 e.Handled = true;
             }
-            else if (e.Key == Windows.System.VirtualKey.GamepadView)
+            else if (e.Key == Windows.System.VirtualKey.GamepadView || e.Key == Windows.System.VirtualKey.GamepadMenu)
             {
                 if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
                 if (isInNoChromeMode) return;
@@ -183,33 +186,48 @@ namespace Neptunium.View
 
                 if (RootSplitView.IsPaneOpen)
                 {
-                    if (InlineFrame.Content is IXboxInputPage)
-                    {
-                        ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
-                    }
-
-                    SplitViewNavigationList.Focus(FocusState.Keyboard);
-
-                    var selectedNavItem = NepApp.UI.NavigationItems.FirstOrDefault(x => x.IsSelected);
-                    if (selectedNavItem != null)
-                    {
-                        //highlight and focus on the current nav item.
-                        var selectedNavContainer = SplitViewNavigationList.ContainerFromItem(selectedNavItem) as ContentPresenter;
-                        var selectedNavButton = VisualTreeHelper.GetChild(selectedNavContainer, 0) as RadioButton;
-                        selectedNavButton.Focus(FocusState.Keyboard);
-                    }
+                    HandleSplitViewPaneOpen();
                 }
                 else
                 {
-                    InlineFrame.Focus(FocusState.Keyboard);
-
-                    if (InlineFrame.Content is IXboxInputPage)
-                    {
-                        ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
-                    }
+                    HandleSplitViewPaneClose();
                 }
             }
+            else if (e.Key == Windows.System.VirtualKey.Left)
+            {
+                e.Handled = true;
+                RootSplitView.IsPaneOpen = true;
+                HandleSplitViewPaneOpen();
+            }
+        }
 
+        private void HandleSplitViewPaneClose()
+        {
+            InlineFrame.Focus(FocusState.Keyboard);
+
+            if (InlineFrame.Content is IXboxInputPage)
+            {
+                ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
+            }
+        }
+
+        private void HandleSplitViewPaneOpen()
+        {
+            if (InlineFrame.Content is IXboxInputPage)
+            {
+                ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
+            }
+
+            SplitViewNavigationList.Focus(FocusState.Keyboard);
+
+            var selectedNavItem = NepApp.UI.NavigationItems.FirstOrDefault(x => x.IsSelected);
+            if (selectedNavItem != null)
+            {
+                //highlight and focus on the current nav item.
+                var selectedNavContainer = SplitViewNavigationList.ContainerFromItem(selectedNavItem) as ContentPresenter;
+                var selectedNavButton = VisualTreeHelper.GetChild(selectedNavContainer, 0) as RadioButton;
+                selectedNavButton.Focus(FocusState.Keyboard);
+            }
         }
     }
 }

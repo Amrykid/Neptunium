@@ -81,7 +81,7 @@
                     
                     <Grid Grid.Row="0" x:Name="HeaderGrid" Height="50" Visibility="Visible">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="50" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
@@ -89,7 +89,10 @@
                               HorizontalAlignment="Center"
                               Grid.Column="0"/>
 
-                        <TextBlock Grid.Column="1" x:Name="PageTitleTextBlock" Style="{ThemeResource BaseTextBlockStyle}" />
+                        <TextBlock Grid.Column="1" x:Name="PageTitleTextBlock" Style="{ThemeResource PageTitleTextBlockStyle}" 
+                                   HorizontalAlignment="Left"
+                                   Margin="0 0 0 0"
+                                   VerticalAlignment="Center" />
                     </Grid>
                     <Grid Grid.Row="1">
                         <Frame x:Name="InlineFrame" Margin="0" />
