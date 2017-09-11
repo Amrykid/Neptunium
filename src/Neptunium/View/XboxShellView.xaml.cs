@@ -229,5 +229,11 @@ namespace Neptunium.View
                 selectedNavButton.Focus(FocusState.Keyboard);
             }
         }
+
+        private void SplitViewOpenButton_Click(object sender, RoutedEventArgs e)
+        {
+            RootSplitView.IsPaneOpen = true;
+            HandleSplitViewPaneOpen();
+        }
     }
 }

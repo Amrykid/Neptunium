@@ -85,9 +85,10 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" Height="50" Width="50" Foreground="White"
-                              HorizontalAlignment="Center"
-                              Grid.Column="0"/>
+                        <Button Grid.Column="0" Padding="0" Background="Transparent" x:Name="SplitViewOpenButton" Click="SplitViewOpenButton_Click">
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" Height="50" Width="50" Foreground="White"
+                                  HorizontalAlignment="Center" Margin="0 -2 0 0"/>
+                        </Button>
 
                         <TextBlock Grid.Column="1" x:Name="PageTitleTextBlock" Style="{ThemeResource PageTitleTextBlockStyle}" 
                                    HorizontalAlignment="Left"
