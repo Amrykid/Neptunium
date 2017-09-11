@@ -5,6 +5,8 @@
     xmlns:local="using:Neptunium.View"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wrt="using:WinRTXamlToolkit.Controls"
+    xmlns:wst="using:WindowsStateTriggers"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
@@ -21,7 +23,7 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Pivot>
+        <Pivot x:Name="RootPivot" Pivot.IsHeaderItemsCarouselEnabled="False">
             <PivotItem Header="General">
                 <StackPanel Margin="10 0">
                     <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
@@ -66,4 +68,28 @@
             </PivotItem>
         </Pivot>
     </Grid>
+
+    <VisualStateManager.VisualStateGroups>
+        <VisualStateGroup>
+            <VisualState x:Name="TabletOrHigherVisualState"> <!--this should include Xbox-->
+                <VisualState.StateTriggers>
+                    <wst:AdaptiveTrigger MinWindowWidth="720" />
+                </VisualState.StateTriggers>
+
+                <VisualState.Setters>
+                    <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
+                </VisualState.Setters>
+            </VisualState>
+
+            <VisualState x:Name="PhoneVisualState">
+                <VisualState.StateTriggers>
+                    <wst:AdaptiveTrigger MinWindowWidth="0" />
+                </VisualState.StateTriggers>
+
+                <VisualState.Setters>
+                    <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="True" />
+                </VisualState.Setters>
+            </VisualState>
+        </VisualStateGroup>
+    </VisualStateManager.VisualStateGroups>
 </Page>
