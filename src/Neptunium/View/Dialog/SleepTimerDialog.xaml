@@ -47,7 +47,7 @@
             </StackPanel.Resources>
             <Button Content="Cancel" Grid.Column="0" Command="{Binding CancelCommand}" MinWidth="75" x:Name="CancelButton" />
 
-            <Button Content="Play" Grid.Column="1" Command="{Binding PlayCommand}"
+            <Button Content="OK" Grid.Column="1" Command="{Binding OKCommand}"
                     Background="{ThemeResource AccentButtonBackground}" MinWidth="75" />
         </StackPanel>
     </Grid>

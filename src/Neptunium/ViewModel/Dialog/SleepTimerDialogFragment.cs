@@ -38,7 +38,7 @@ namespace Neptunium.ViewModel.Dialog
         }
 
         public RelayCommand CancelCommand => new RelayCommand(x => ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined));
-        public RelayCommand PlayCommand => new RelayCommand(x =>
+        public RelayCommand OKCommand => new RelayCommand(x =>
         {
             ResultTaskCompletionSource.SetResult(new NepAppUIManagerDialogResult() { ResultType = NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive });
 
