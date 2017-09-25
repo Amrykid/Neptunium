@@ -28,7 +28,7 @@
                 <StackPanel Margin="10 0">
                     <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Notifications"/>
-                    <ToggleSwitch Header="Show show change notifications"
+                    <ToggleSwitch Header="Show song change notifications"
                                   IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                     <MenuFlyoutSeparator />
                     <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
