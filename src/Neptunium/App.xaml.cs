@@ -19,6 +19,7 @@ using Windows.Gaming.Input;
 using Windows.Networking.Connectivity;
 using Windows.System;
 using Windows.System.RemoteSystems;
+using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Animation;
@@ -69,6 +70,8 @@ namespace Neptunium
         }
 
         private static volatile bool isInBackground = false;
+        private static volatile bool isAppVisible = false;
+        private static volatile bool isAppFocused = true; //assume true
 
         protected override Task OnForegroundingAsync()
         {
@@ -141,6 +144,8 @@ namespace Neptunium
                     .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
             }
 
+            Window.Current.Activated += Current_Activated;
+
             await NepApp.InitializeAsync();
         }
 
@@ -148,6 +153,23 @@ namespace Neptunium
         {
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
+
+            Window.Current.VisibilityChanged += Current_VisibilityChanged;
+            isAppVisible = Window.Current.Visible;
+        }
+
+        private void Current_Activated(object sender, WindowActivatedEventArgs e)
+        {
+            //to deal with the app losing focus on the desktop.
+            isAppFocused = e.WindowActivationState != CoreWindowActivationState.Deactivated;
+#if DEBUG
+            Debug.WriteLine("Window-Activation-State: " + Enum.GetName(typeof(CoreWindowActivationState), e.WindowActivationState));
+#endif
+        }
+
+        private void Current_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
+        {
+            isAppVisible = e.Visible; //on desktop, this means the app was minimized using the button. on mobile, this can be when the app is suspending or the phone is locked.
         }
 
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
@@ -208,7 +230,14 @@ namespace Neptunium
 
         internal static bool GetIfPrimaryWindowVisible()
         {
-            return Windows.UI.Xaml.Window.Current.Visible || !isInBackground;
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
+            {
+                return isAppVisible && !isInBackground && !isAppFocused;
+            }
+            else
+            {
+                return isAppVisible && !isInBackground;
+            }
         }
         internal static async Task<bool> GetIfPrimaryWindowVisibleAsync()
         {
