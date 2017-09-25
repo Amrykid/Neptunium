@@ -26,6 +26,9 @@ namespace Neptunium.Core.UI
         private Frame inlineFrame = null;
         private SnackBarManager snackManager = null;
 
+        private FadeInThemeAnimation fadeInAnimation = null;
+        private FadeOutThemeAnimation fadeOutAnimation = null;
+
         public bool IsOverlayedDialogVisible { get; private set; }
 
         public event EventHandler OverlayedDialogShown;
@@ -37,6 +40,9 @@ namespace Neptunium.Core.UI
             overlayGridControl = overlayControl;
 
             snackManager = new SnackBarManager(snackBarContainer);
+
+            fadeInAnimation = new FadeInThemeAnimation();
+            fadeOutAnimation = new FadeOutThemeAnimation();
 
             InitializeOverlayAndOverlayedDialogs();
         }
@@ -64,8 +70,7 @@ namespace Neptunium.Core.UI
             overlayGridControl.IsHitTestVisible = true;
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
-            overlayGridControl.ChildrenTransitions.Add(new ContentThemeTransition());
-            overlayGridControl.ChildrenTransitions.Add(new AddDeleteThemeTransition());
+            overlayGridControl.ChildrenTransitions.Add(new EntranceThemeTransition());
 
             overlayGridControl.Transitions = new TransitionCollection();
             overlayGridControl.Transitions.Add(new PaneThemeTransition());
@@ -134,10 +139,30 @@ namespace Neptunium.Core.UI
 
         public async Task<NepAppUIManagerDialogResult> ShowDialogFragmentAsync<T>(object parameter = null) where T : NepAppUIDialogFragment
         {
+            //todo use storyboard and animations so that these animations are GPU-accelerated
+            Func<Grid, Task> fadeInControlAsync = async (Grid g) =>
+            {
+                for (double i = 0; i < .95; i += .05)
+                {
+                    g.Opacity = i;
+                    await Task.Delay(15);
+                }
+            };
+            Func<Grid, Task> fadeOutControlAsync = async (Grid g) =>
+            {
+                for (double i = .95; i > 0; i -= .05)
+                {
+                    g.Opacity = i;
+                    await Task.Delay(15);
+                }
+            };
+
             await overlayLock.WaitAsync();
 
             IsOverlayedDialogVisible = true;
+            overlayGridControl.Opacity = 0;
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            await fadeInControlAsync(overlayGridControl);
 
             OverlayedDialogShown?.Invoke(this, EventArgs.Empty);
 
@@ -194,6 +219,8 @@ namespace Neptunium.Core.UI
             {
                 view.KeyDown -= escapeHandler;
             }
+
+            await fadeOutControlAsync(overlayGridControl);
 
             inlineFrame.Content = null;
             overlayGridControl.Children.Remove(inlineFrame);
