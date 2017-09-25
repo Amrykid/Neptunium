@@ -221,29 +221,15 @@ namespace Neptunium.Media
         {
             var stream = CurrentStream;
             ShutdownPreviousPlaybackSession();
-            if (!NepApp.Network.IsConnected)
+
+            await NepApp.UI.ShowErrorDialogAsync("Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
+
+            if (!await App.GetIfPrimaryWindowVisibleAsync())
             {
-                if (!await App.GetIfPrimaryWindowVisibleAsync())
-                {
-                    NepApp.UI.Notifier.ShowErrorToastNotification(stream, "Uh-Oh!", "Network connection lost!");
-                }
-                else
-                {
-                    await NepApp.UI.ShowErrorDialogAsync("Uh-Oh!", "Network connection lost!");
-                }
-            }
-            else
-            {
-                if (!await App.GetIfPrimaryWindowVisibleAsync())
-                {
-                    NepApp.UI.Notifier.ShowErrorToastNotification(stream, "Uh-Oh!", "An unknown error occurred.");
-                }
-                else
-                {
-                    await NepApp.UI.ShowErrorDialogAsync("Uh-Oh!", "An unknown error occurred.");
-                }
+                NepApp.UI.Notifier.ShowErrorToastNotification(stream, "Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
             }
         }
+
 
         private void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
         {
