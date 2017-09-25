@@ -58,10 +58,7 @@ namespace Neptunium.ViewModel.Dialog
 
                 if (value != null)
                 {
-                    if (SelectedSleepItem.TimeToWait == TimeSpan.MinValue)
-                        EstimatedTime = "None";
-                    else
-                        EstimatedTime = DateTime.Now.Add(SelectedSleepItem.TimeToWait).ToString();
+                    EstimatedTime = SelectedSleepItem.TimeToWait == TimeSpan.MinValue ? "None" : DateTime.Now.Add(SelectedSleepItem.TimeToWait).ToString("t");
                 }
             }
         }
