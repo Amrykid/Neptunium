@@ -95,7 +95,7 @@
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarToggleButton Icon="FullScreen" Label="Fullscreen" x:Name="fullScreenButton" Visibility="Collapsed" />
+                <!--<AppBarToggleButton Icon="FullScreen" Label="Fullscreen" x:Name="fullScreenButton" Visibility="Collapsed" />-->
                 <AppBarToggleButton Icon="Attach" Label="Mini Player" x:Name="compactViewButton" 
                                     Visibility="Collapsed" />
             </StackPanel>
