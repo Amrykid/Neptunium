@@ -68,6 +68,7 @@
                     <TextBlock Grid.Row="0" Text="{Binding CurrentSong.Track, UpdateSourceTrigger=PropertyChanged}"
                                x:Name="TrackTextBlock"
                                VerticalAlignment="Bottom"
+                               MaxLines="2"
                                Style="{ThemeResource TitleTextBlockStyle}"
                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
 

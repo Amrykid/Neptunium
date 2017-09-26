@@ -40,6 +40,7 @@
                         <TextBlock TextAlignment="Left"
                                        Grid.Row="1" TextWrapping="WrapWholeWords"
                                        Text="{Binding Name, Mode=OneTime}"
+                                       MaxLines="2"
                                        Style="{ThemeResource BaseTextBlockStyle}"
                                        Margin="5 0"
                                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
