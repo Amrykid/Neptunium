@@ -1,6 +1,7 @@
 ﻿using Crystal3.Model;
 using Crystal3.Navigation;
 using Kimono.Controls.SnackBar;
+using Microsoft.Toolkit.Uwp.UI.Animations;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -139,30 +140,12 @@ namespace Neptunium.Core.UI
 
         public async Task<NepAppUIManagerDialogResult> ShowDialogFragmentAsync<T>(object parameter = null) where T : NepAppUIDialogFragment
         {
-            //todo use storyboard and animations so that these animations are GPU-accelerated
-            Func<Grid, Task> fadeInControlAsync = async (Grid g) =>
-            {
-                for (double i = 0; i < .95; i += .05)
-                {
-                    g.Opacity = i;
-                    await Task.Delay(15);
-                }
-            };
-            Func<Grid, Task> fadeOutControlAsync = async (Grid g) =>
-            {
-                for (double i = .95; i > 0; i -= .05)
-                {
-                    g.Opacity = i;
-                    await Task.Delay(15);
-                }
-            };
-
             await overlayLock.WaitAsync();
 
             IsOverlayedDialogVisible = true;
             overlayGridControl.Opacity = 0;
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            await fadeInControlAsync(overlayGridControl);
+            await overlayGridControl.Fade(.95f).StartAsync();
 
             OverlayedDialogShown?.Invoke(this, EventArgs.Empty);
 
@@ -220,7 +203,7 @@ namespace Neptunium.Core.UI
                 view.KeyDown -= escapeHandler;
             }
 
-            await fadeOutControlAsync(overlayGridControl);
+            await overlayGridControl.Fade(0).StartAsync();
 
             inlineFrame.Content = null;
             overlayGridControl.Children.Remove(inlineFrame);
