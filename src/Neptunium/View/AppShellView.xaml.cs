@@ -201,6 +201,8 @@ namespace Neptunium.View
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             sleepTimerBtn.Visibility = NepApp.Media.IsPlaying ? Visibility.Visible : Visibility.Collapsed;
+
+            //FeedbackButton.Visibility = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported() ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void TogglePaneButton_Checked(object sender, RoutedEventArgs e)
