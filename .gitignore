@@ -132,7 +132,6 @@ UpgradeLog*.XML
 *.py[co]
 
 # Packages
-*.egg
 *.egg-info
 dist
 build
@@ -165,3 +164,4 @@ src/Neptunium/_scale-125.appx
 src/Neptunium/_scale-150.appx
 src/Neptunium/_scale-400.appx
 packages/
+/.vs/
