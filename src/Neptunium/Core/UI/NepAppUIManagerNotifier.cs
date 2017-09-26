@@ -103,9 +103,7 @@ namespace Neptunium.Core.UI
         {
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
 
-            TileBindingContentAdaptive bindingContent = null;
-
-            bindingContent = new TileBindingContentAdaptive()
+            TileBindingContentAdaptive largeBindingContent = new TileBindingContentAdaptive()
             {
                 PeekImage = new TilePeekImage()
                 {
@@ -130,23 +128,60 @@ namespace Neptunium.Core.UI
                     }
             };
 
-
-            TileBinding binding = new TileBinding()
+            TileBindingContentAdaptive mediumBindingContent = new TileBindingContentAdaptive()
             {
-                Branding = TileBranding.NameAndLogo,
+                BackgroundImage = new TileBackgroundImage()
+                {
+                    Source = nowPlaying.Album?.AlbumCoverUrl?.ToString() ?? nowPlaying.StationLogo.ToString(),
+                },
+                Children =
+                    {
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Track,
+                            HintStyle = AdaptiveTextStyle.Body
+                        },
 
-                DisplayName =  "Now Playing on Neptunium",
-
-                Content = bindingContent
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Artist,
+                            HintWrap = true,
+                            HintStyle = AdaptiveTextStyle.CaptionSubtle
+                        }
+                    }
             };
+
+            TileBindingContentAdaptive smallBindingContent = new TileBindingContentAdaptive()
+            {
+                BackgroundImage = new TileBackgroundImage()
+                {
+                    Source = nowPlaying.Album?.AlbumCoverUrl?.ToString() ?? nowPlaying.StationLogo.ToString(),
+                }
+            };
+
+            Func<TileBindingContentAdaptive, TileBinding> createBinding = (TileBindingContentAdaptive con) =>
+            {
+                return new TileBinding()
+                {
+                    Branding = TileBranding.NameAndLogo,
+
+                    DisplayName = "Now Playing on Neptunium",
+
+                    Content = con,
+
+                    ContentId = nowPlaying.Track.GetHashCode().ToString()
+                };
+            };
+
+            
 
             TileContent content = new TileContent()
             {
                 Visual = new TileVisual()
                 {
-                    TileMedium = binding,
-                    TileWide = binding,
-                    TileLarge = binding
+                    TileMedium = createBinding(smallBindingContent),
+                    TileWide = createBinding(mediumBindingContent),
+                    TileLarge = createBinding(largeBindingContent)
                 }
             };
 
