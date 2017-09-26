@@ -232,7 +232,7 @@
                     <VisualState.Setters>
                         <Setter Target="RootSplitView.DisplayMode" Value="CompactInline" />
                         <Setter Target="RootSplitView.IsPaneOpen" Value="True" />
-                        <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
+                        <Setter Target="RootSplitView.OpenPaneLength" Value="250" />
                         <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
 
 
@@ -254,7 +254,7 @@
                     <VisualState.Setters>
                         <Setter Target="RootSplitView.DisplayMode" Value="CompactInline" />
                         <Setter Target="RootSplitView.IsPaneOpen" Value="False" />
-                        <Setter Target="RootSplitView.OpenPaneLength" Value="200" />
+                        <Setter Target="RootSplitView.OpenPaneLength" Value="250" />
                         <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
 
 
