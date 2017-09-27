@@ -31,8 +31,12 @@ namespace Neptunium.Core.Stations
                 {
                     var stream = new StationStream(new Uri(x.Value));
                     stream.ContentType = x.Attribute("ContentType")?.Value;
-                    stream.Bitrate = int.Parse(x.Attribute("Bitrate")?.Value);
-                    stream.RelativePath = x.Attribute("RelativePath")?.Value;
+
+                    if (x.Attribute("Bitrate") != null)
+                        stream.Bitrate = int.Parse(x.Attribute("Bitrate")?.Value);
+
+                    if (x.Attribute("RelativePath") != null)
+                        stream.RelativePath = x.Attribute("RelativePath")?.Value;
 
                     if (x.Attribute("ServerType") != null)
                     {
