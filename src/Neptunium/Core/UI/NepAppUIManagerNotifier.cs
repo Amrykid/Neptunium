@@ -10,6 +10,8 @@ namespace Neptunium.Core.UI
     {
         private ToastNotifier toastNotifier = null;
         private TileUpdater tileUpdater = null;
+        public const string SongNotificationTag = "song-notif";
+
         internal NepAppUIManagerNotifier()
         {
             toastNotifier = ToastNotificationManager.CreateToastNotifier();
@@ -58,7 +60,7 @@ namespace Neptunium.Core.UI
             };
 
             var notification = new ToastNotification(content.GetXml());
-            notification.Tag = "song-notif";
+            notification.Tag = SongNotificationTag;
             notification.NotificationMirroring = NotificationMirroring.Disabled;
             toastNotifier.Show(notification);
         }

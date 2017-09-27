@@ -3,6 +3,7 @@ using Crystal3.Navigation;
 using Kimono.Controls.SnackBar;
 using Microsoft.HockeyApp;
 using Neptunium.Core;
+using Neptunium.Core.UI;
 using Neptunium.View;
 using Neptunium.View.Dialog;
 using Neptunium.ViewModel;
@@ -271,8 +272,8 @@ namespace Neptunium
         protected override Task OnSuspendingAsync()
         {
             //clears the tile if we're suspending.
-
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+            //ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
 
             return Task.CompletedTask;
         }
@@ -302,6 +303,11 @@ namespace Neptunium
                 {
                     HockeyClient.Current.TrackException(e.Exception);
                     HockeyClient.Current.Flush();
+                }
+                else
+                {
+                    e.Handled = true;
+                    System.Diagnostics.Debugger.Break();
                 }
             }
         }
