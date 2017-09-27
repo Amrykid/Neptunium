@@ -43,6 +43,16 @@ namespace Neptunium.Core.Stations
                         stream.ServerFormat = (StationStreamServerFormat)Enum.Parse(typeof(StationStreamServerFormat), x.Attribute("ServerType").Value);
                     }
 
+                    if (x.Attribute("RequestMetadata") != null)
+                    {
+                        stream.RequestMetadata = bool.Parse(x.Attribute("RequestMetadata").Value);
+                    }
+                    else
+                    {
+                        //defaults to true
+                        stream.RequestMetadata = true;
+                    }
+
                     return stream;
                 }).ToArray();
 

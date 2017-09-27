@@ -16,6 +16,7 @@ namespace Neptunium.Core.Stations
         public string ContentType { get; internal set; }
         public int Bitrate { get; internal set; }
         public string RelativePath { get; internal set; }
+        public bool RequestMetadata { get; internal set; }
 
         public override string ToString()
         {

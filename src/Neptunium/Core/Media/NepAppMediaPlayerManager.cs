@@ -137,7 +137,7 @@ namespace Neptunium.Media
                 ConnectingEnd?.Invoke(this, EventArgs.Empty);
                 streamer.Dispose();
                 playLock.Release();
-                throw new NeptuniumStreamConnectionFailedException(stream, connectionTask.Exception?.InnerException?.Message);
+                throw new NeptuniumStreamConnectionFailedException(stream, connectionTask.Exception?.InnerException?.Message ?? "Connection timed out.");
             }
 
             ShutdownPreviousPlaybackSession();
