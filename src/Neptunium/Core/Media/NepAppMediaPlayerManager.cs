@@ -135,8 +135,9 @@ namespace Neptunium.Media
             if (result == timeoutTask || connectionTask.IsFaulted)
             {
                 ConnectingEnd?.Invoke(this, EventArgs.Empty);
+                streamer.Dispose();
                 playLock.Release();
-                throw new NeptuniumStreamConnectionFailedException(stream, connectionTask.Exception.InnerException?.Message);
+                throw new NeptuniumStreamConnectionFailedException(stream, connectionTask.Exception?.InnerException?.Message);
             }
 
             ShutdownPreviousPlaybackSession();
