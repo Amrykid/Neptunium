@@ -233,7 +233,7 @@ namespace Neptunium
         {
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
             {
-                return isAppVisible && !isInBackground && !isAppFocused;
+                return isAppVisible && !isInBackground && isAppFocused;
             }
             else
             {
