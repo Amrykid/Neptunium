@@ -1,5 +1,6 @@
 ﻿using Crystal3.Navigation;
 using Crystal3.UI;
+using Microsoft.Toolkit.Uwp.UI.Animations;
 using Neptunium.Core.UI;
 using Neptunium.ViewModel;
 using Neptunium.ViewModel.Dialog;
@@ -69,14 +70,14 @@ namespace Neptunium.View
                     case Visibility.Collapsed:
                         topAppBar.IsEnabled = true;
                         bottomAppBar.IsEnabled = true;
-                        topAppBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;
-                        bottomAppBar.ClosedDisplayMode = AppBarClosedDisplayMode.Compact;
+                        topAppBar.Fade(1).StartAsync();
+                        bottomAppBar.Fade(1).StartAsync();
                         break;
                     case Visibility.Visible:
                         topAppBar.IsEnabled = false;
                         bottomAppBar.IsEnabled = false;
-                        topAppBar.ClosedDisplayMode = AppBarClosedDisplayMode.Hidden;
-                        bottomAppBar.ClosedDisplayMode = AppBarClosedDisplayMode.Hidden;
+                        topAppBar.Fade(0.5f).StartAsync();
+                        bottomAppBar.Fade(0.5f).StartAsync();
                         break;
                 }
             }));
