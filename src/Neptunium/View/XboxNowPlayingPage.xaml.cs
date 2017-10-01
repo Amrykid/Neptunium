@@ -26,6 +26,8 @@ namespace Neptunium.View
     [Neptunium.Core.UI.NepAppUINoChromePage()]
     public sealed partial class XboxNowPlayingPage : Page, IXboxInputPage
     {
+        private Button focusedButton = null;
+
         public XboxNowPlayingPage()
         {
             this.InitializeComponent();
@@ -58,12 +60,12 @@ namespace Neptunium.View
 
         public void PreserveFocus()
         {
-            
+            //focus is already preserved using the GotFocus event handlers below.
         }
 
         public void RestoreFocus()
         {
-
+            focusedButton?.Focus(FocusState.Keyboard);
         }
 
         public void SetLeftFocus(UIElement elementToTheLeft)
@@ -89,6 +91,26 @@ namespace Neptunium.View
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             UpdatePlaybackStatus(NepApp.Media.IsPlaying);
+
+            foreach(AppBarButton btn in CommandPanel.Children.Where(x => x is AppBarButton))
+            {
+                btn.GotFocus += Btn_GotFocus;
+            }
+
+            playPauseButton.Focus(FocusState.Keyboard);
+        }
+
+        private void Btn_GotFocus(object sender, RoutedEventArgs e)
+        {
+            focusedButton = (Button)sender;
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            foreach (AppBarButton btn in CommandPanel.Children.Where(x => x is AppBarButton))
+            {
+                btn.GotFocus -= Btn_GotFocus;
+            }
         }
     }
 }
