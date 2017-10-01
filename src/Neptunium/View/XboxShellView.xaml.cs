@@ -124,7 +124,10 @@ namespace Neptunium.View
                     PlayButton.Icon = new SymbolIcon(Symbol.Pause);
                     PlayButton.Command = ((AppShellViewModel)this.DataContext).PausePlaybackCommand;
 
-                    MediaGrid.Visibility = Visibility.Visible;
+                    if (!isInNoChromeMode)
+                    {
+                        MediaGrid.Visibility = Visibility.Visible;
+                    }
                 }
                 else
                 {
