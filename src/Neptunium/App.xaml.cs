@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
+using Windows.ApplicationModel.Core;
 using Windows.Gaming.Input;
 using Windows.Networking.Connectivity;
 using Windows.System;

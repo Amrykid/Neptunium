@@ -1,4 +1,5 @@
-﻿using Crystal3.Navigation;
+﻿using Crystal3;
+using Crystal3.Navigation;
 using Crystal3.UI;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 using Neptunium.Core.UI;
@@ -10,9 +11,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -39,6 +42,10 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
+            CoreApplicationView view = CoreApplication.GetCurrentView();
+            if (view != null)
+                view.TitleBar.ExtendViewIntoTitleBar = false;
+
             SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
 
             inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
@@ -47,17 +54,7 @@ namespace Neptunium.View
 
             NepApp.UI.SetOverlayParentAndSnackBarContainer(OverlayPanel, snackBarGrid);
             App.RegisterUIDialogs();
-
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                //sets the mobile status bar to match the top app bar.
-                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
-                statusBar.BackgroundOpacity = 1.0;
-            }
-
-            ApplicationView.GetForCurrentView().TitleBar.BackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
-            ApplicationView.GetForCurrentView().TitleBar.ButtonBackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
+            SetTitleBarAndMobileStatusBarToMatchAppBar();
 
             PageTitleBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
             //PageTitleBlock.SetValue(TextBlock.TextProperty, NepApp.UI.ViewTitle);
@@ -95,6 +92,36 @@ namespace Neptunium.View
             NepApp.Media.ConnectingEnd += Media_ConnectingEnd;
         }
 
+        private void SetTitleBarAndMobileStatusBarToMatchAppBar()
+        {
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                //sets the mobile status bar to match the top app bar.
+                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
+                statusBar.BackgroundOpacity = 1.0;
+            }
+
+
+            ApplicationView.GetForCurrentView().TitleBar.BackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
+            ApplicationView.GetForCurrentView().TitleBar.ButtonBackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
+        }
+
+        private void SetMobileStatusBarToTransparent()
+        {
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                //sets the mobile status bar to match the top app bar.
+                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = Colors.Transparent;
+                statusBar.BackgroundOpacity = 0.0;
+            }
+
+            ApplicationView.GetForCurrentView().TitleBar.BackgroundColor = Colors.Transparent;
+            ApplicationView.GetForCurrentView().TitleBar.ButtonBackgroundColor = Colors.Transparent;
+
+        }
+
         private void Current_SizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
         {
             if (NepApp.UI.Overlay.IsOverlayedDialogVisible)
@@ -128,13 +155,22 @@ namespace Neptunium.View
                     RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
 
                     RootSplitView.IsPaneOpen = false;
+
+                    SetMobileStatusBarToTransparent();
+
+                    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+
+                    if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                    {
+                        RootGrid.Margin = new Thickness(0, -25, 0, 0);
+                    }
                 };
 
                 noChrome();
 
                 noChromeHandler = new VisualStateChangedEventHandler((o, args) =>
                 {
-                    //this is to "fix" the splitview opening when extending the window in no chrome mode. it doesn't work very will
+                    //this is to "fix" the splitview opening when extending the window in no chrome mode. it doesn't work very well
                     RootSplitView.Visibility = Visibility.Collapsed;
                     noChrome();
                     RootSplitView.Visibility = Visibility.Visible;
@@ -162,6 +198,15 @@ namespace Neptunium.View
                     {
                         RootSplitView.DisplayMode = SplitViewDisplayMode.CompactInline;
                     }
+                }
+
+                SetTitleBarAndMobileStatusBarToMatchAppBar();
+
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+
+                if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                {
+                    RootGrid.Margin = new Thickness(0);
                 }
 
                 if (noChromeHandler != null)
