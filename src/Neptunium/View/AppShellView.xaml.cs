@@ -62,6 +62,7 @@ namespace Neptunium.View
             PageTitleBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
             //PageTitleBlock.SetValue(TextBlock.TextProperty, NepApp.UI.ViewTitle);
 
+            Window.Current.SizeChanged += Current_SizeChanged;
             OverlayPanel.RegisterPropertyChangedCallback(Grid.VisibilityProperty, new DependencyPropertyChangedCallback((grid, p) =>
             {
                 Visibility property = (Visibility)grid.GetValue(Grid.VisibilityProperty);
@@ -70,14 +71,20 @@ namespace Neptunium.View
                     case Visibility.Collapsed:
                         topAppBar.IsEnabled = true;
                         bottomAppBar.IsEnabled = true;
-                        topAppBar.Fade(1).StartAsync();
-                        bottomAppBar.Fade(1).StartAsync();
+
+                        topAppBar.Visibility = Visibility.Visible;
+                        bottomAppBar.Visibility = Visibility.Visible;
                         break;
                     case Visibility.Visible:
                         topAppBar.IsEnabled = false;
                         bottomAppBar.IsEnabled = false;
-                        topAppBar.Fade(0.5f).StartAsync();
-                        bottomAppBar.Fade(0.5f).StartAsync();
+
+                        //only collapse the app bars on smaller screens.
+                        if (Window.Current.Bounds.Width < 720)
+                        {
+                            topAppBar.Visibility = Visibility.Collapsed;
+                            bottomAppBar.Visibility = Visibility.Collapsed;
+                        }
                         break;
                 }
             }));
@@ -86,15 +93,24 @@ namespace Neptunium.View
             NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
             NepApp.Media.ConnectingBegin += Media_ConnectingBegin;
             NepApp.Media.ConnectingEnd += Media_ConnectingEnd;
+        }
 
-            //            NowPlayingButton.RegisterPropertyChangedCallback(Button.DataContextProperty, new DependencyPropertyChangedCallback((btn, dp) =>
-            //            {
-            //#if DEBUG
-            //                var x = btn.GetValue(Button.DataContextProperty);
-            //                var y = x;
-            //                System.Diagnostics.Debugger.Break();
-            //#endif
-            //            }));
+        private void Current_SizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
+        {
+            if (NepApp.UI.Overlay.IsOverlayedDialogVisible)
+            {
+                //only collapse the app bars on smaller screens.
+                if (Window.Current.Bounds.Width < 720)
+                {
+                    topAppBar.Visibility = Visibility.Collapsed;
+                    bottomAppBar.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    topAppBar.Visibility = Visibility.Visible;
+                    bottomAppBar.Visibility = Visibility.Visible;
+                }
+            }
         }
 
         private VisualStateChangedEventHandler noChromeHandler = null;
