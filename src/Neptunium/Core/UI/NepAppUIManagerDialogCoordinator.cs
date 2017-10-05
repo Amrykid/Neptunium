@@ -140,15 +140,7 @@ namespace Neptunium.Core.UI
 
         public async Task<NepAppUIManagerDialogResult> ShowDialogFragmentAsync<T>(object parameter = null) where T : NepAppUIDialogFragment
         {
-            await overlayLock.WaitAsync();
-
-            IsOverlayedDialogVisible = true;
-            overlayGridControl.Opacity = 0;
-            overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            await overlayGridControl.Fade(.95f).StartAsync();
-
-            OverlayedDialogShown?.Invoke(this, EventArgs.Empty);
-
+            await BeginShowingDialogAsync();
 
             var fragment = Activator.CreateInstance<T>() as NepAppUIDialogFragment;
 
@@ -157,12 +149,7 @@ namespace Neptunium.Core.UI
 
             view.DataContext = fragment;
 
-            overlayGridControl.Children.Add(inlineFrame);
-
             inlineFrame.Content = view;
-            inlineFrame.BorderBrush = new SolidColorBrush((Color)view.Resources["SystemAccentColor"]);
-            inlineFrame.BorderThickness = new Thickness(1.5);
-            inlineFrame.Focus(Windows.UI.Xaml.FocusState.Pointer);
 
             KeyEventHandler escapeHandler = null;
             bool escapeHandlerReleased = false;
@@ -203,6 +190,13 @@ namespace Neptunium.Core.UI
                 view.KeyDown -= escapeHandler;
             }
 
+            await EndShowingDialogAsync();
+
+            return result;
+        }
+
+        private async Task EndShowingDialogAsync()
+        {
             await overlayGridControl.Fade(0).StartAsync();
 
             inlineFrame.Content = null;
@@ -211,8 +205,72 @@ namespace Neptunium.Core.UI
             IsOverlayedDialogVisible = false;
             OverlayedDialogHidden?.Invoke(this, EventArgs.Empty);
             overlayLock.Release();
+        }
 
-            return result;
+        private async Task BeginShowingDialogAsync()
+        {
+            await overlayLock.WaitAsync();
+
+            IsOverlayedDialogVisible = true;
+            overlayGridControl.Opacity = 0;
+            overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            await overlayGridControl.Fade(.95f).StartAsync();
+
+            OverlayedDialogShown?.Invoke(this, EventArgs.Empty);
+
+            inlineFrame.BorderBrush = new SolidColorBrush((Color)Application.Current.Resources["SystemAccentColor"]);
+            inlineFrame.BorderThickness = new Thickness(1.5);
+
+            overlayGridControl.Children.Add(inlineFrame);
+            inlineFrame.Focus(Windows.UI.Xaml.FocusState.Pointer);
+
+        }
+
+        public async Task<NepAppUIManagerDialogController> ShowProgressDialogAsync()
+        {
+            await BeginShowingDialogAsync();
+
+            return new NepAppUIManagerDialogController(async () =>
+            {
+                if (NepApp.UI.Overlay.IsOverlayedDialogVisible)
+                {
+                    await EndShowingDialogAsync();
+                }
+            });
+        }
+
+        public class NepAppUIManagerDialogController
+        {
+            private Func<Task> endingCallback = null;
+            private bool closed = false;
+            internal  NepAppUIManagerDialogController(Action callback)
+            {
+                if (!NepApp.UI.Overlay.IsOverlayedDialogVisible) throw new InvalidOperationException();
+            }
+
+            public bool IsIndeterminate { get; private set; }
+
+            public void SetIndeterminate()
+            {
+                IsIndeterminate = true;
+            }
+
+            public void SetDeterminateProgress(double value)
+            {
+                IsIndeterminate = false;
+                //set value
+            }
+
+            public async Task CloseAsync()
+            {
+                if (closed) return;
+
+                if (NepApp.UI.Overlay.IsOverlayedDialogVisible)
+                {
+                    await endingCallback?.Invoke();
+                    closed = true;
+                }
+            }
         }
 
         public Task ShowSnackBarMessageAsync(string message)
