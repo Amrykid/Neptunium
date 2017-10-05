@@ -2,6 +2,7 @@
 using Crystal3.Navigation;
 using Kimono.Controls.SnackBar;
 using Microsoft.Toolkit.Uwp.UI.Animations;
+using Neptunium.View.Dialog;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -57,24 +58,22 @@ namespace Neptunium.Core.UI
             inlineFrame.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
 
             inlineFrame.ContentTransitions = new TransitionCollection();
-            inlineFrame.ContentTransitions.Add(new AddDeleteThemeTransition());
-            inlineFrame.ContentTransitions.Add(new ContentThemeTransition());
+            //inlineFrame.ContentTransitions.Add(new AddDeleteThemeTransition());
+            //inlineFrame.ContentTransitions.Add(new ContentThemeTransition());
 
             //todo handle orientation, etc
-            ApplicationView.GetForCurrentView().VisibleBoundsChanged += NepAppUIManagerOverlayHandle_VisibleBoundsChanged;
-            Window.Current.SizeChanged += Current_SizeChanged;
-            Rect bounds = GetScreenBounds();
-            ResizeInlineFrameDialog(bounds.Height, bounds.Width);
+            //ApplicationView.GetForCurrentView().VisibleBoundsChanged += NepAppUIManagerOverlayHandle_VisibleBoundsChanged;
+            //Window.Current.SizeChanged += Current_SizeChanged;
 
             overlayGridControl.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Stretch;
             overlayGridControl.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Stretch;
             overlayGridControl.IsHitTestVisible = true;
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
-            overlayGridControl.ChildrenTransitions.Add(new EntranceThemeTransition());
+            //overlayGridControl.ChildrenTransitions.Add(new EntranceThemeTransition());
 
             overlayGridControl.Transitions = new TransitionCollection();
-            overlayGridControl.Transitions.Add(new PaneThemeTransition());
+            //overlayGridControl.Transitions.Add(new PaneThemeTransition());
         }
 
         private void NepAppUIManagerOverlayHandle_VisibleBoundsChanged(ApplicationView sender, object args)
@@ -142,6 +141,14 @@ namespace Neptunium.Core.UI
         {
             await BeginShowingDialogAsync();
 
+            //used to handle resizing the dialog
+            ApplicationView appView = ApplicationView.GetForCurrentView();
+            appView.VisibleBoundsChanged += NepAppUIManagerOverlayHandle_VisibleBoundsChanged;
+            Window.Current.SizeChanged += Current_SizeChanged;
+
+            Rect bounds = GetScreenBounds();
+            ResizeInlineFrameDialog(bounds.Height, bounds.Width);
+
             var fragment = Activator.CreateInstance<T>() as NepAppUIDialogFragment;
 
             var viewType = FragmentManager.ResolveFragmentView<T>();
@@ -190,6 +197,9 @@ namespace Neptunium.Core.UI
                 view.KeyDown -= escapeHandler;
             }
 
+            appView.VisibleBoundsChanged -= NepAppUIManagerOverlayHandle_VisibleBoundsChanged;
+            Window.Current.SizeChanged -= Current_SizeChanged;
+
             await EndShowingDialogAsync();
 
             return result;
@@ -226,11 +236,20 @@ namespace Neptunium.Core.UI
 
         }
 
-        public async Task<NepAppUIManagerDialogController> ShowProgressDialogAsync()
+        public async Task<NepAppUIManagerDialogController> ShowProgressDialogAsync(string title, string message)
         {
             await BeginShowingDialogAsync();
 
-            return new NepAppUIManagerDialogController(async () =>
+            inlineFrame.Width = double.NaN;
+            inlineFrame.Height = double.NaN;
+            inlineFrame.BorderThickness = new Thickness(0);
+
+            //no-mvvm
+            var dialog = new ProgressIndicatorDialog();
+            dialog.SetTitleAndMessage(title, message);
+            inlineFrame.Content = dialog;
+
+            return new NepAppUIManagerDialogController(dialog, async () =>
             {
                 if (NepApp.UI.Overlay.IsOverlayedDialogVisible)
                 {
@@ -243,9 +262,13 @@ namespace Neptunium.Core.UI
         {
             private Func<Task> endingCallback = null;
             private bool closed = false;
-            internal  NepAppUIManagerDialogController(Action callback)
+            private ProgressIndicatorDialog dialog = null;
+            internal  NepAppUIManagerDialogController(ProgressIndicatorDialog openedDialog, Func<Task> callback)
             {
                 if (!NepApp.UI.Overlay.IsOverlayedDialogVisible) throw new InvalidOperationException();
+
+                dialog = openedDialog;
+                endingCallback = callback;
             }
 
             public bool IsIndeterminate { get; private set; }
@@ -253,12 +276,15 @@ namespace Neptunium.Core.UI
             public void SetIndeterminate()
             {
                 IsIndeterminate = true;
+                dialog.SetIndeterminate();
             }
 
             public void SetDeterminateProgress(double value)
             {
+                if (value > 1.0 || value < 0.0) throw new ArgumentOutOfRangeException(nameof(value));
+
                 IsIndeterminate = false;
-                //set value
+                dialog.SetDeterminateProgress(value);
             }
 
             public async Task CloseAsync()

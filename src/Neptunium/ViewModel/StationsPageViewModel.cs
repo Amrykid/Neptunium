@@ -12,7 +12,7 @@ using Neptunium.ViewModel.Dialog;
 
 namespace Neptunium.ViewModel
 {
-    public class StationsPageViewModel: ViewModelBase
+    public class StationsPageViewModel : ViewModelBase
     {
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
@@ -43,12 +43,17 @@ namespace Neptunium.ViewModel
 
             if ((await NepApp.UI.Overlay.ShowDialogFragmentAsync<StationInfoDialogFragment>(stationItem)).ResultType == Core.UI.NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive)
             {
+                var controller = await NepApp.UI.Overlay.ShowProgressDialogAsync(string.Format("Connecting to {0}...", stationItem.Name), "Please wait...");
+                controller.SetIndeterminate();
+
                 try
                 {
                     await NepApp.Media.TryStreamStationAsync(stationItem.Streams[0]);
+                    await controller.CloseAsync();
                 }
                 catch (Neptunium.Core.NeptuniumException ex)
                 {
+                    await controller.CloseAsync();
                     await NepApp.UI.ShowErrorDialogAsync("Uh-oh! Couldn't do that!", ex.Message);
                 }
             }
