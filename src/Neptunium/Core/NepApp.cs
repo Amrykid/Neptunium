@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Media.Playback;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
@@ -26,9 +27,15 @@ namespace Neptunium
         public static NepAppSettingsManager Settings { get; private set; }
         public static NepAppStationsManager Stations { get; private set; }
         public static NepAppUIManager UI { get; private set; }
-        public static Task InitializeAsync()
+
+
+        public static StorageFolder ImageCacheFolder { get; private set; }
+
+        public static async Task InitializeAsync()
         {
             CookieJar.ApplicationName = "Neptunium";
+
+            ImageCacheFolder = await ApplicationData.Current.LocalCacheFolder.CreateFolderAsync("ImageCache", CreationCollisionOption.OpenIfExists);
 
             //Hqub.MusicBrainz.API.MyHttpClient.UserAgent = 
             //    "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Minor + " ( amrykid@gmail.com )";
@@ -41,7 +48,7 @@ namespace Neptunium
             Handoff = new NepAppHandoffManager();
             UI = new NepAppUIManager();
 
-            return Task.CompletedTask;
+            //return Task.CompletedTask;
         }
 
         public static Binding CreateBinding(INepAppFunctionManager source, string propertyPath)
