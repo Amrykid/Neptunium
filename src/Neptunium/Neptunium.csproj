@@ -165,7 +165,7 @@
     <Compile Include="View\AppShellView.xaml.cs">
       <DependentUpon>AppShellView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Dialog\ProgressIndicatorDialog.xaml.cs">
+    <Compile Include="Core\UI\ProgressIndicatorDialog.xaml.cs">
       <DependentUpon>ProgressIndicatorDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Dialog\SleepTimerDialog.xaml.cs">
@@ -323,7 +323,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\Dialog\ProgressIndicatorDialog.xaml">
+    <Page Include="Core\UI\ProgressIndicatorDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
