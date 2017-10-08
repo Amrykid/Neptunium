@@ -41,7 +41,16 @@
                     <AppBarButton.Flyout>
                         <Flyout>
                             <Grid x:Name="HandoffFlyoutRootGrid" DataContext="{Binding HandoffFragment, UpdateSourceTrigger=PropertyChanged}">
-                                <ListBox ItemsSource="{Binding AvailableSystems, UpdateSourceTrigger=PropertyChanged}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}" Width="250"
+                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                           Text="Select a station to transfer playback to.&#10;&#10;Note: You must be streaming/listening to a station before hand." />
+
+                                <ListBox Grid.Row="1" ItemsSource="{Binding AvailableSystems, UpdateSourceTrigger=PropertyChanged}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <tk:ListItemButton Name="HandoffListButton" Click="HandoffListButton_Click">
