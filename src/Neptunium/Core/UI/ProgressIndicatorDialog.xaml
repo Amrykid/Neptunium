@@ -8,17 +8,12 @@
     mc:Ignorable="d">
 
     <Grid Background="Transparent" Height="Auto">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width=".3*" />
-            <ColumnDefinition Width=".3*" />
-            <ColumnDefinition Width=".3*" />
-        </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="1" Padding="5">
+        <Grid HorizontalAlignment="Center" Padding="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="10" />
+                <RowDefinition Height="12" />
             </Grid.RowDefinitions>
 
             <TextBlock x:Name="PART_TitleBlock" Text="Title" Grid.Row="0" VerticalAlignment="Bottom"
@@ -26,7 +21,7 @@
             <TextBlock x:Name="PART_MessageBlock" Text="Message" Grid.Row="1"
                        Style="{ThemeResource BodyTextBlockStyle}" />
 
-            <ProgressBar x:Name="PART_ProgressIndicator" Grid.Row="2" />
+            <ProgressBar x:Name="PART_ProgressIndicator" Grid.Row="2" Height="12" />
         </Grid>
     </Grid>
 </Page>
