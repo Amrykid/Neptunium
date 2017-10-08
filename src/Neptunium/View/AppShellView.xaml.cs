@@ -24,6 +24,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using WinRTXamlToolkit.Controls;
 using static Crystal3.UI.StatusManager.StatusManager;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -303,6 +304,18 @@ namespace Neptunium.View
             //dismiss the menu if its open.
             if (RootSplitView.DisplayMode == SplitViewDisplayMode.Overlay)
                 TogglePaneButton.IsChecked = false;
+        }
+
+        private void HandoffListButton_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as ListItemButton;
+
+            if (btn.DataContext == null) return;
+
+            this.GetViewModel<AppShellViewModel>()
+                .HandoffFragment
+                .HandOffCommand
+                .Execute(btn.DataContext);
         }
     }
 }

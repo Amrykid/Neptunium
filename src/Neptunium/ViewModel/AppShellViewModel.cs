@@ -26,6 +26,7 @@ namespace Neptunium.ViewModel
         });
 
         public SleepTimerContextFragment SleepTimerFragment => new SleepTimerContextFragment();
+        public HandoffContextFragment HandoffFragment => new HandoffContextFragment();
 
         public AppShellViewModel()
         {

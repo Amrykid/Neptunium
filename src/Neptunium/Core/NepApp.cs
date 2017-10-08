@@ -48,6 +48,8 @@ namespace Neptunium
             Handoff = new NepAppHandoffManager();
             UI = new NepAppUIManager();
 
+            Handoff.InitializeAsync();
+
             //return Task.CompletedTask;
         }
 

@@ -37,7 +37,31 @@
                 </Grid>
             </CommandBar.Content>
             <CommandBar.PrimaryCommands>
-                <AppBarButton Icon="Upload" ToolTipService.ToolTip="Cast/Handoff" />
+                <AppBarButton Icon="Go" ToolTipService.ToolTip="Handoff">
+                    <AppBarButton.Flyout>
+                        <Flyout>
+                            <Grid x:Name="HandoffFlyoutRootGrid" DataContext="{Binding HandoffFragment, UpdateSourceTrigger=PropertyChanged}">
+                                <ListBox ItemsSource="{Binding AvailableSystems, UpdateSourceTrigger=PropertyChanged}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <tk:ListItemButton Name="HandoffListButton" Click="HandoffListButton_Click">
+                                                <TextBlock Text="{Binding DisplayName}" />
+                                            </tk:ListItemButton>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                        </Flyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarButton Icon="OpenWith" ToolTipService.ToolTip="Cast">
+                    <AppBarButton.Flyout>
+                        <Flyout>
+                            <Grid>
+                            </Grid>
+                        </Flyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
                 <AppBarButton x:Name="sleepTimerBtn" Visibility="Collapsed" Icon="Clock" ToolTipService.ToolTip="Sleep Timer">
                     <AppBarButton.Flyout>
                         <Flyout>
