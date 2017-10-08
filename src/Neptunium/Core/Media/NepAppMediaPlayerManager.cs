@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media;
+using Windows.Media.Casting;
 using Windows.Media.Playback;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
@@ -262,7 +263,9 @@ namespace Neptunium.Media
         public event EventHandler ConnectingEnd;
 
         public bool IsPlaying { get; private set; }
+        public bool IsCasting { get; private set; }
         public event EventHandler<NepAppMediaPlayerManagerIsPlayingEventArgs> IsPlayingChanged;
+        public event EventHandler<EventArgs> IsCastingChanged;
         public event EventHandler<NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs> CurrentMetadataChanged;
         public event EventHandler<NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs> CurrentMetadataExtendedInfoFound;
 
@@ -357,6 +360,72 @@ namespace Neptunium.Media
         public async Task FadeVolumeUpToAsync(double value)
         {
             await CurrentStreamer?.FadeVolumeUpToAsync(value);
+        }
+
+        private void SetIsCasting(bool value)
+        {
+            if (IsCasting != value)
+            {
+                IsCasting = value;
+
+                IsCastingChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public void ShowCastingPicker()
+        {
+            if (CurrentPlayer == null) return;
+
+            CastingDevicePicker picker = new CastingDevicePicker();
+            picker.CastingDeviceSelected += Picker_CastingDeviceSelected;
+            picker.CastingDevicePickerDismissed += Picker_CastingDevicePickerDismissed;
+            picker.Show(Window.Current.Bounds);
+        }
+
+        private void Picker_CastingDevicePickerDismissed(CastingDevicePicker sender, object args)
+        {
+            sender.CastingDevicePickerDismissed -= Picker_CastingDevicePickerDismissed;
+            sender.CastingDeviceSelected -= Picker_CastingDeviceSelected;
+        }
+
+        private void Picker_CastingDeviceSelected(CastingDevicePicker sender, CastingDeviceSelectedEventArgs args)
+        {
+            sender.CastingDevicePickerDismissed -= Picker_CastingDevicePickerDismissed;
+            sender.CastingDeviceSelected -= Picker_CastingDeviceSelected;
+
+            App.Dispatcher.RunWhenIdleAsync(async () =>
+            {
+                CastingConnection connection = args.SelectedCastingDevice.CreateCastingConnection();
+
+                connection.StateChanged += Connection_StateChanged;
+                connection.ErrorOccurred += Connection_ErrorOccurred;
+
+                await connection.RequestStartCastingAsync(CurrentPlayer.GetAsCastingSource());
+            });
+        }
+
+        private void Connection_ErrorOccurred(CastingConnection sender, CastingConnectionErrorOccurredEventArgs args)
+        {
+           if (args.ErrorStatus != CastingConnectionErrorStatus.Succeeded)
+            {
+                sender.StateChanged -= Connection_StateChanged;
+                sender.ErrorOccurred -= Connection_ErrorOccurred;
+            }
+        }
+
+        private void Connection_StateChanged(CastingConnection sender, object args)
+        {
+            switch(sender.State)
+            {
+                case CastingConnectionState.Connected:
+                case CastingConnectionState.Connecting:
+                case CastingConnectionState.Rendering:
+                    SetIsCasting(true);
+                    break;
+                default:
+                    SetIsCasting(false);
+                    break;
+            }
         }
     }
 }

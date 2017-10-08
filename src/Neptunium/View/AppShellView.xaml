@@ -54,14 +54,7 @@
                         </Flyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>
-                <AppBarButton Icon="OpenWith" ToolTipService.ToolTip="Cast">
-                    <AppBarButton.Flyout>
-                        <Flyout>
-                            <Grid>
-                            </Grid>
-                        </Flyout>
-                    </AppBarButton.Flyout>
-                </AppBarButton>
+                <AppBarButton Icon="OpenWith" ToolTipService.ToolTip="Cast" Command="{Binding MediaCastingCommand}" />
                 <AppBarButton x:Name="sleepTimerBtn" Visibility="Collapsed" Icon="Clock" ToolTipService.ToolTip="Sleep Timer">
                     <AppBarButton.Flyout>
                         <Flyout>

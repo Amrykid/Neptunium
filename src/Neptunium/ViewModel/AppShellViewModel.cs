@@ -28,6 +28,11 @@ namespace Neptunium.ViewModel
         public SleepTimerContextFragment SleepTimerFragment => new SleepTimerContextFragment();
         public HandoffContextFragment HandoffFragment => new HandoffContextFragment();
 
+        public RelayCommand MediaCastingCommand => new RelayCommand(x =>
+        {
+            NepApp.Media.ShowCastingPicker();
+        });
+
         public AppShellViewModel()
         {
             NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), ""); //"");
@@ -40,7 +45,7 @@ namespace Neptunium.ViewModel
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
         {
-
+            
         }
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
