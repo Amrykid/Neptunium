@@ -15,7 +15,7 @@
 
         <Grid.Resources>
             <CollectionViewSource x:Key="GroupedSongItems" IsSourceGrouped="True" Source="{Binding History, UpdateSourceTrigger=PropertyChanged}" />
-            <cconv:RelativeTimeConverter TimeMode="Past" x:Key="TimeConv" />
+            <cconv:RelativeTimeConverter TimeMode="Past" x:Key="TimeConv" HourFormatString="Today" MinuteFormatString="Today" SecondFormatString="Today" />
 
             <DataTemplate x:Key="MobileSongHistoryItemTemplate">
                 <Grid Height="90">
