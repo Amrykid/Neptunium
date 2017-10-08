@@ -33,7 +33,20 @@ namespace Neptunium.Core.Media.Metadata
 
                 //pull up our pre-cached list of artists and search there.
                 var builtInList = await GetBuiltinArtistEntriesAsync();
-                var builtInMatch = builtInList.FirstOrDefault(x => x.Name.ToLower().FuzzyEquals(artistName.ToLower()));
+                var builtInMatch = builtInList.FirstOrDefault(x =>
+                {
+                    if (x.Name.ToLower().FuzzyEquals(artistName.ToLower())) return true;
+
+                    if (artistName.Contains(" ")) //e.g. "Ayumi Hamasaki" vs. "Hamasaki Ayumi"
+                    {
+                        string lastNameFirstNameSwappedName = string.Join(" ", artistName.Split(' ').Reverse()); //splices, reverses and joins: "Ayumi Hamasaki" -> ["Ayumi","Hamasaki"] -> ["Hamasaki", "Ayumi"] -> "Hamasaki Ayumi"
+
+                        return x.Name.ToLower().FuzzyEquals(lastNameFirstNameSwappedName.ToLower());
+                    }
+
+                    return false;
+                });
+
                 if (builtInMatch != null)
                 {
                     httpResponse = await http.GetAsync(directUri);
