@@ -190,5 +190,48 @@ namespace Neptunium.Core.UI
             var tile = new TileNotification(content.GetXml());
             tiler.Update(tile);
         }
+
+        internal void ShowStationProgrammingToastNotification(StationProgram program, SongMetadata metadata)
+        {
+            ToastContent content = new ToastContent()
+            {
+                Launch = "now-playing",
+                Audio = new ToastAudio()
+                {
+                    Silent = true,
+                },
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = "Turning into " + metadata.Track,
+                                HintStyle = AdaptiveTextStyle.Title
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = "Hosted by " + program.Host,
+                                HintStyle = AdaptiveTextStyle.Subtitle
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = metadata.StationPlayedOn,
+                                HintStyle = AdaptiveTextStyle.Caption
+                            },
+                        },
+                    }
+                }
+            };
+
+            var notification = new ToastNotification(content.GetXml());
+            notification.Tag = SongNotificationTag;
+            notification.NotificationMirroring = NotificationMirroring.Disabled;
+            toastNotifier.Show(notification);
+        }
     }
 }

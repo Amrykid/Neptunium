@@ -67,6 +67,18 @@ namespace Neptunium.Core.Stations
                     stationLogo: stationLogoUri,
                     streams: streams);
 
+                if (stationElement.Element("Programs") != null)
+                {
+                    station.Programs = stationElement.Element("Programs").Elements("Program").Select<XElement, StationProgram>(x =>
+                    {
+                        return new StationProgram() { Host = x.Attribute("Host").Value };
+                    }).ToArray();
+                }
+                else
+                {
+                    station.Programs = null;
+                }
+
                 if (stationElement.Element("Background") != null)
                 {
                     var backgroundElement = stationElement.Element("Background");

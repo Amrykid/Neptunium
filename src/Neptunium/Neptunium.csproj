@@ -133,6 +133,7 @@
     <Compile Include="Controls\GlassPanel.xaml.cs">
       <DependentUpon>GlassPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\Stations\StationProgram.cs" />
     <Compile Include="Core\UI\NepAppUIDialogFragment.cs" />
     <Compile Include="Core\UI\NepAppUIManager.cs" />
     <Compile Include="Core\NeptuniumException.cs" />
