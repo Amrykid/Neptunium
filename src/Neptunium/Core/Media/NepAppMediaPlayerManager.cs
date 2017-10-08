@@ -274,49 +274,52 @@ namespace Neptunium.Media
 
         private async void Streamer_MetadataChanged(object sender, MediaStreamerMetadataChangedEventArgs e)
         {
-            if ((bool)CurrentStream.ParentStation.Programs?.Any(x => x.Host.ToLower().Equals(e.Metadata.Artist.Trim().ToLower())))
+            if (CurrentStream.ParentStation.Programs != null)
             {
-                //we're tuning into a special radio program. this may be a DJ playing remixes, for exmaple.
-                var program = CurrentStream.ParentStation.Programs?.First(x => x.Host.ToLower().Equals(e.Metadata.Artist.Trim().ToLower()));
-                UpdateMetadata(e.Metadata);
-
-                if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+                if (CurrentStream.ParentStation.Programs.Any(x => x.Host.ToLower().Equals(e.Metadata.Artist.Trim().ToLower())))
                 {
+                    //we're tuning into a special radio program. this may be a DJ playing remixes, for exmaple.
+                    var program = CurrentStream.ParentStation.Programs?.First(x => x.Host.ToLower().Equals(e.Metadata.Artist.Trim().ToLower()));
+                    UpdateMetadata(e.Metadata);
 
-                    if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
-                        NepApp.UI.Notifier.ShowStationProgrammingToastNotification(program, e.Metadata);
-                }
+                    if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+                    {
 
-                NepApp.UI.Notifier.UpdateLiveTile(new ExtendedSongMetadata(e.Metadata));
-            }
-            else
-            {
-                //we're tuned into regular programming/music
+                        if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
+                            NepApp.UI.Notifier.ShowStationProgrammingToastNotification(program, e.Metadata);
+                    }
 
-                if (CurrentStream.ParentStation.StationMessages.Contains(e.Metadata.Track) || CurrentStream.ParentStation.StationMessages.Contains(e.Metadata.Artist))
+                    NepApp.UI.Notifier.UpdateLiveTile(new ExtendedSongMetadata(e.Metadata));
+
                     return;
+                }
+            }
 
-                UpdateMetadata(e.Metadata);
+            //we're tuned into regular programming/music
 
-                ExtendedSongMetadata newMetadata = await MetadataFinder.FindMetadataAsync(e.Metadata);
-                CurrentMetadataExtended = newMetadata;
+            if (CurrentStream.ParentStation.StationMessages.Contains(e.Metadata.Track) || CurrentStream.ParentStation.StationMessages.Contains(e.Metadata.Artist))
+                return;
 
-                CurrentMetadataExtendedInfoFound?.Invoke(this, new NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs(newMetadata));
+            UpdateMetadata(e.Metadata);
+
+            ExtendedSongMetadata newMetadata = await MetadataFinder.FindMetadataAsync(e.Metadata);
+            CurrentMetadataExtended = newMetadata;
+
+            CurrentMetadataExtendedInfoFound?.Invoke(this, new NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs(newMetadata));
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                History.AddSongAsync(newMetadata);
+            History.AddSongAsync(newMetadata);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
-                if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
-                {
-                    if (CurrentMetadata.Track != newMetadata.Track) return; //the song has changed since we started.
+            if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+            {
+                if (CurrentMetadata.Track != newMetadata.Track) return; //the song has changed since we started.
 
-                    if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
-                        NepApp.UI.Notifier.ShowSongToastNotification(newMetadata);
-                }
-
-                NepApp.UI.Notifier.UpdateLiveTile(newMetadata);
+                if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
+                    NepApp.UI.Notifier.ShowSongToastNotification(newMetadata);
             }
+
+            NepApp.UI.Notifier.UpdateLiveTile(newMetadata);
         }
 
         private void UpdateMetadata(SongMetadata metadata)
