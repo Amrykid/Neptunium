@@ -39,6 +39,7 @@ namespace Neptunium.Core.Stations
         public string[] Genres { get; internal set; }
         public string PrimaryLocale { get; internal set; }
         public string[] StationMessages { get; internal set; }
+        public string Group { get; internal set; }
 
         public override int GetHashCode()
         {

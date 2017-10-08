@@ -11,6 +11,10 @@
     x:Name="thisPage"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <!--<CollectionViewSource x:Key="GroupedStationItems" IsSourceGrouped="True" Source="{Binding GroupedStations, UpdateSourceTrigger=PropertyChanged}" />-->
+    </Page.Resources>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView ItemsSource="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}"
                   SelectionMode="Single"
@@ -57,6 +61,15 @@
                   x:Name="stationsGridView"
                   Visibility="Collapsed"
                   IsItemClickEnabled="True">
+            <!--<GridView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Key}"/>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </GridView.GroupStyle>-->
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <wrt:ListItemButton Command="{Binding ElementName=thisPage, Path=DataContext.ShowStationInfoCommand}"

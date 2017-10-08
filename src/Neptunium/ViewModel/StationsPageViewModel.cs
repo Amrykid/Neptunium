@@ -19,6 +19,7 @@ namespace Neptunium.ViewModel
             if (AvailableStations == null || AvailableStations?.Count == 0)
             {
                 AvailableStations = new ObservableCollection<StationItem>((await NepApp.Stations.GetStationsAsync())?.OrderBy(x => x.Name));
+                //GroupedStations = AvailableStations.GroupBy(x => x.Group ?? "Ungrouped Stations").OrderBy(x => x.Key).Select(x => x);
             }
 
             base.OnNavigatedTo(sender, e);
@@ -28,6 +29,12 @@ namespace Neptunium.ViewModel
         {
             get { return GetPropertyValue<ObservableCollection<StationItem>>(); }
             private set { SetPropertyValue<ObservableCollection<StationItem>>(value: value); }
+        }
+
+        public IEnumerable<IGrouping<string, StationItem>> GroupedStations
+        {
+            get { return GetPropertyValue<IEnumerable<IGrouping<string, StationItem>>>(); }
+            private set { SetPropertyValue<IEnumerable<IGrouping<string, StationItem>>>(value: value); }
         }
 
         public StationItem SelectedStation

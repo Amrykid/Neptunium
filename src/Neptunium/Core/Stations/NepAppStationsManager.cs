@@ -101,6 +101,8 @@ namespace Neptunium.Core.Stations
                     station.StationMessages = messages;
                 }
 
+                station.Group = stationElement.Element("StationGroup")?.Value;
+
                 stationList.Add(station);
 
             }
