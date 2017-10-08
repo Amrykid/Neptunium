@@ -15,6 +15,7 @@ namespace Neptunium.Core.Media.Metadata
             AlbumData albumData = null;
             ArtistData artistData = null;
             var station = await NepApp.Stations.GetStationByNameAsync(originalMetadata.StationPlayedOn);
+            var extendedMetadata = new ExtendedSongMetadata(originalMetadata);
 
             if ((bool)NepApp.Settings.GetSetting(AppSettings.TryToFindSongMetadata))
             {
@@ -33,9 +34,13 @@ namespace Neptunium.Core.Media.Metadata
                 }
                 catch (Exception)
                 { }
-            }
 
-            var extendedMetadata = new ExtendedSongMetadata(originalMetadata);
+                try
+                {
+                    extendedMetadata.JPopAsiaArtistInfo = await JPopAsiaFetcher.FindArtistDataAsync(originalMetadata.Artist.Trim());
+                }
+                catch (Exception) { }
+            }
 
             //todo cache
             extendedMetadata.Album = albumData;

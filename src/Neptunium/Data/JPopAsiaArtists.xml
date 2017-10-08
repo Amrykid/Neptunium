@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Pre-configured artist links for JPopAsia. These are unlikely to change. This list is for some artists that (I've discovered while testing that) have harder to guess urls on JPopAsia.com along with some of my personal favorites.-->
+<Artists>
+  <Artist Name="Superfly" Url="http://www.jpopasia.com/superfly/" />
+  <Artist Name="Girls' Generation" Url="http://www.jpopasia.com/girlsgeneration/" />
+  <Artist Name="Kis-My-Ft2" Url="http://www.jpopasia.com/kismyft2/" />
+  <Artist Name="FLOW" Url="http://www.jpopasia.com/flow/" />
+  <Artist Name="Perfume" Url="http://www.jpopasia.com/perfume/" />
+  <Artist Name="Ayumi Hamasaki" Url="http://www.jpopasia.com/ayumihamasaki/" AltName="浜崎 あゆみ" />
+  <Artist Name="Megumi Hayashibara" Url="http://www.jpopasia.com/megumihayashibara/" AltName="林原 めぐみ" />
+  <Artist Name="B.A.P" Url="http://www.jpopasia.com/bap/" />
+  <Artist Name="Ailee" Url="http://www.jpopasia.com/ailee/" AltName="에일리" />
+  <Artist Name="f(x)" Url="http://www.jpopasia.com/fx/" AltName="에프엑스" />
+  <Artist Name="A9" Url="http://www.jpopasia.com/alicenine/" AltName="アリス九號" AltName2="Alice Nine" />
+</Artists>

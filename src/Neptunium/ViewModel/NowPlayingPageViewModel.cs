@@ -47,18 +47,24 @@ namespace Neptunium.ViewModel
             NepApp.Media.CurrentMetadataExtendedInfoFound += Media_CurrentMetadataExtendedInfoFound;
 
             UpdateMetadata();
+            UpdateBackground();
 
             base.OnNavigatedTo(sender, e);
         }
 
         private void Media_CurrentMetadataExtendedInfoFound(object sender, Media.NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs e)
         {
+            UpdateBackground();
+        }
+
+        private void UpdateBackground()
+        {
             try
             {
-                if (NepApp.Media.CurrentMetadataExtended.Album != null)
-                {
-                    var extendedData = NepApp.Media.CurrentMetadataExtended;
 
+                var extendedData = NepApp.Media.CurrentMetadataExtended;
+                if (extendedData?.Album != null)
+                {
                     if (!string.IsNullOrWhiteSpace(extendedData.Album?.AlbumCoverUrl))
                     {
                         App.Dispatcher.RunWhenIdleAsync(() =>
@@ -66,11 +72,22 @@ namespace Neptunium.ViewModel
                             Background = new Uri(extendedData.Album?.AlbumCoverUrl);
                         });
                     }
-                    else if (!string.IsNullOrWhiteSpace(extendedData.ArtistInfo?.ArtistImage))
+                }
+                else if (!string.IsNullOrWhiteSpace(extendedData.ArtistInfo?.ArtistImage))
+                {
+                    App.Dispatcher.RunWhenIdleAsync(() =>
+                    {
+                        Background = new Uri(extendedData.ArtistInfo?.ArtistImage);
+                    });
+                }
+                else if (extendedData.JPopAsiaArtistInfo != null)
+                {
+                    //from JPopAsia
+                    if (extendedData.JPopAsiaArtistInfo.ArtistImageUrl != null)
                     {
                         App.Dispatcher.RunWhenIdleAsync(() =>
                         {
-                            Background = new Uri(extendedData.ArtistInfo?.ArtistImage);
+                            Background = extendedData.JPopAsiaArtistInfo.ArtistImageUrl;
                         });
                     }
                 }
