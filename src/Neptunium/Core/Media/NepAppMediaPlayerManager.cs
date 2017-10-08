@@ -404,12 +404,23 @@ namespace Neptunium.Media
             });
         }
 
-        private void Connection_ErrorOccurred(CastingConnection sender, CastingConnectionErrorOccurredEventArgs args)
+        private async void Connection_ErrorOccurred(CastingConnection sender, CastingConnectionErrorOccurredEventArgs args)
         {
            if (args.ErrorStatus != CastingConnectionErrorStatus.Succeeded)
             {
                 sender.StateChanged -= Connection_StateChanged;
                 sender.ErrorOccurred -= Connection_ErrorOccurred;
+
+                IsPlaying = false;
+
+                ShutdownPreviousPlaybackSession();
+
+                await NepApp.UI.ShowInfoDialogAsync("Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
+
+                if (!await App.GetIfPrimaryWindowVisibleAsync())
+                {
+                    NepApp.UI.Notifier.ShowErrorToastNotification(CurrentStream, "Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
+                }
             }
         }
 
