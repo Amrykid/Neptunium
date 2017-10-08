@@ -25,11 +25,15 @@ namespace Neptunium.ViewModel.Fragments
            RaisePropertyChanged(nameof(AvailableSystems));
         }
 
-        public RelayCommand HandOffCommand => new RelayCommand(system =>
+        public RelayCommand HandOffCommand => new RelayCommand(async system =>
         {
             if (system is RemoteSystem)
             {
-
+                if (NepApp.Media.IsPlaying)
+                {
+                    var station = NepApp.Media.CurrentStream.ParentStation;
+                    await NepApp.Handoff.HandoffStationToRemoteDeviceAsync((RemoteSystem)system, station);
+                }
             }
         });
 

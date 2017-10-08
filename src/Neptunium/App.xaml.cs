@@ -205,7 +205,7 @@ namespace Neptunium
             }
         }
 
-        private static Task ExecuteQueryCommandsAsync(Uri uri)
+        private static async Task ExecuteQueryCommandsAsync(Uri uri)
         {
             switch (uri.LocalPath.ToLower())
             {
@@ -222,11 +222,19 @@ namespace Neptunium
                         var stationName = query.First(x => x.Key.ToLower() == "station").Value;
                         stationName = stationName.Replace("%20", " ");
 
-                        throw new NotImplementedException();
+                        try
+                        {
+                            var station = await NepApp.Stations.GetStationByNameAsync(stationName);
+                            await NepApp.Media.TryStreamStationAsync(station.Streams[0]);
+                        }
+                        catch (Exception ex)
+                        {
+                            //todo show error message.
+                            await NepApp.UI.ShowErrorDialogAsync("Unable to handoff station.", "The following error occurred: " + ex.ToString());
+                        }
+                        break;
                     }
             }
-
-            return Task.CompletedTask;
         }
 
         internal static bool GetIfPrimaryWindowVisible()
@@ -285,6 +293,27 @@ namespace Neptunium
 
         public override Task OnBackgroundActivatedAsync(BackgroundActivatedEventArgs args)
         {
+            switch (args.TaskInstance.Task.Name)
+            {
+                default:
+
+                    if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails)
+                    {
+
+                        var asTD = args.TaskInstance.TriggerDetails as AppServiceTriggerDetails;
+
+                        switch (asTD.Name)
+                        {
+                            case NepAppHandoffManager.ContinuedAppExperienceAppServiceName:
+                                NepApp.Handoff.HandleBackgroundActivation(asTD); //handles any messages aimed at the handoff manager from a remote devices
+                                break;
+                        }
+
+                    }
+
+                    break;
+            }
+
             return Task.CompletedTask;
         }
 

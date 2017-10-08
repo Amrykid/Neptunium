@@ -52,6 +52,39 @@ namespace Neptunium.ViewModel
             NepApp.UI.NavigateToItem(stationsPage);
 
             RaisePropertyChanged(nameof(ResumePlaybackCommand));
+
+            //CheckForReverseHandoffOpportunitiesIfSupported();
         }
+
+        //private async void CheckForReverseHandoffOpportunitiesIfSupported()
+        //{
+        //    if (NepApp.Handoff.IsInitialized)
+        //    {
+        //        var streamingDevices = await NepApp.Handoff.DetectStreamingDevicesAsync();
+
+        //        if (streamingDevices == null) return; //nothing to see here.
+
+        //        if (streamingDevices.Count > 0)
+        //        {
+        //            if (streamingDevices.Count == 1)
+        //            {
+        //                var streamingDevice = streamingDevices.First();
+        //                await IoC.Current.Resolve<ISnackBarService>().ShowActionableSnackAsync(
+        //                    "You're streaming on \'" + streamingDevice.Item1.DisplayName + "\'.",
+        //                    "Transfer playback",
+        //                    async x =>
+        //                    {
+        //                        //do reverse handoff
+        //                        await DoReverseHandoff(streamingDevice);
+        //                    },
+        //                    10000);
+        //            }
+        //            else
+        //            {
+        //                await IoC.Current.ResolveDefault<ISnackBarService>()?.ShowSnackAsync("You have multiple devices streaming.", 3000);
+        //            }
+        //        }
+        //    }
+        //}
     }
 }
