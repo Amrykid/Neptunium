@@ -172,6 +172,8 @@ namespace Neptunium.Media
 
             ConnectingEnd?.Invoke(this, EventArgs.Empty);
 
+            NepApp.Stations.SetLastPlayedStationName(stream.ParentStation.Name);
+
             UpdateMetadata(streamer.SongMetadata);
 
             CurrentStreamer = streamer;

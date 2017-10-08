@@ -17,8 +17,23 @@ namespace Neptunium.Core.Stations
         private const string StationsFilePath = @"Data\Stations\Data\Stations.xml";
         internal NepAppStationsManager()
         {
-
+            if (!ApplicationData.Current.RoamingSettings.Values.ContainsKey(nameof(LastPlayedStationName)))
+            {
+                ApplicationData.Current.RoamingSettings.Values.Add(new KeyValuePair<string, object>(nameof(LastPlayedStationName), null));
+            }
+            else
+            {
+                LastPlayedStationName = (string)ApplicationData.Current.RoamingSettings.Values[nameof(LastPlayedStationName)];
+            }
         }
+
+        internal void SetLastPlayedStationName(string value)
+        {
+            LastPlayedStationName = value;
+            ApplicationData.Current.RoamingSettings.Values[nameof(LastPlayedStationName)] = value;
+        }
+
+        public string LastPlayedStationName { get; private set; }
 
         internal async Task<StationItem[]> GetStationsAsync()
         {
