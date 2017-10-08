@@ -33,6 +33,7 @@ namespace Neptunium.ViewModel.Fragments
             });
 
             SelectedSleepItem = AvailableSleepItems.First(x => x.TimeToWait == TimeSpan.MinValue);
+            EstimatedTime = "None";
 
             this.PropertyChanged += SleepTimerContextFragment_PropertyChanged;
 
