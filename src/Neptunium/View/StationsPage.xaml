@@ -109,6 +109,9 @@
             </GridView.ItemTemplate>
         </GridView>
 
+        <ProgressRing Height="60" Width="60" VerticalAlignment="Center" HorizontalAlignment="Center"
+                      IsActive="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged}" />
+
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="DesktopVisualState">

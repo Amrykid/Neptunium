@@ -12,14 +12,16 @@ using Neptunium.ViewModel.Dialog;
 
 namespace Neptunium.ViewModel
 {
-    public class StationsPageViewModel : ViewModelBase
+    public class StationsPageViewModel : UIViewModelBase
     {
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             if (AvailableStations == null || AvailableStations?.Count == 0)
             {
+                IsBusy = true;
                 AvailableStations = new ObservableCollection<StationItem>((await NepApp.Stations.GetStationsAsync())?.OrderBy(x => x.Name));
                 //GroupedStations = AvailableStations.GroupBy(x => x.Group ?? "Ungrouped Stations").OrderBy(x => x.Key).Select(x => x);
+                IsBusy = false;
             }
 
             base.OnNavigatedTo(sender, e);
