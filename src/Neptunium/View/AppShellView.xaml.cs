@@ -91,6 +91,26 @@ namespace Neptunium.View
             NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
             NepApp.Media.ConnectingBegin += Media_ConnectingBegin;
             NepApp.Media.ConnectingEnd += Media_ConnectingEnd;
+            NepApp.Media.IsCastingChanged += Media_IsCastingChanged;
+        }
+
+        private void Media_IsCastingChanged(object sender, EventArgs e)
+        {
+            App.Dispatcher.RunAsync(() =>
+            {
+                if (NepApp.Media.IsCasting)
+                {
+                    var uiSettings = new Windows.UI.ViewManagement.UISettings();
+                    topAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.AccentDark3));
+                    bottomAppBar.Background = topAppBar.Background;
+                }
+                else
+                {
+                    var uiSettings = new Windows.UI.ViewManagement.UISettings();
+                    topAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
+                    bottomAppBar.Background = topAppBar.Background;
+                }
+            });
         }
 
         private void SetTitleBarAndMobileStatusBarToMatchAppBar()
