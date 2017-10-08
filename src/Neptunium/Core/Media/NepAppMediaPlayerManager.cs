@@ -223,7 +223,7 @@ namespace Neptunium.Media
             var stream = CurrentStream;
             ShutdownPreviousPlaybackSession();
 
-            await NepApp.UI.ShowErrorDialogAsync("Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
+            await NepApp.UI.ShowInfoDialogAsync("Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
 
             if (!await App.GetIfPrimaryWindowVisibleAsync())
             {

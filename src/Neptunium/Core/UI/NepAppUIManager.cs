@@ -104,7 +104,7 @@ namespace Neptunium.Core.UI
         public ReadOnlyObservableCollection<NepAppUINavigationItem> NavigationItems { get; private set; }
         public NepAppUIManagerNotifier Notifier { get; private set; }
         public NepAppUIManagerDialogCoordinator Overlay { get; private set; }
-        public async Task ShowErrorDialogAsync(string title, string message)
+        public async Task ShowInfoDialogAsync(string title, string message)
         {
             await await App.Dispatcher.RunWhenIdleAsync(() =>
             {

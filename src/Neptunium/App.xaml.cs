@@ -230,7 +230,7 @@ namespace Neptunium
                         catch (Exception ex)
                         {
                             //todo show error message.
-                            await NepApp.UI.ShowErrorDialogAsync("Unable to handoff station.", "The following error occurred: " + ex.ToString());
+                            await NepApp.UI.ShowInfoDialogAsync("Unable to handoff station.", "The following error occurred: " + ex.ToString());
                         }
                         break;
                     }
@@ -324,7 +324,7 @@ namespace Neptunium
             {
                 e.Handled = true;
 
-                await NepApp.UI.ShowErrorDialogAsync("Uh-oh! Something went wrong!", e.Exception.Message);
+                await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Something went wrong!", e.Exception.Message);
             }
             else
             {

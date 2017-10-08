@@ -61,7 +61,7 @@ namespace Neptunium.ViewModel
                 catch (Neptunium.Core.NeptuniumException ex)
                 {
                     await controller.CloseAsync();
-                    await NepApp.UI.ShowErrorDialogAsync("Uh-oh! Couldn't do that!", ex.Message);
+                    await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Couldn't do that!", ex.Message);
                 }
             }
         });
