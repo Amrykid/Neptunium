@@ -9,6 +9,7 @@ using Neptunium.Core;
 using Crystal3.UI.Commands;
 using Microsoft.HockeyApp;
 using Neptunium.ViewModel.Dialog;
+using Neptunium.ViewModel.Fragments;
 
 namespace Neptunium.ViewModel
 {
@@ -24,10 +25,7 @@ namespace Neptunium.ViewModel
             NepApp.Media.Pause();
         });
 
-        public RelayCommand ShowSleepTimerDialogCommand => new RelayCommand(x =>
-        {
-            NepApp.UI.Overlay.ShowDialogFragmentAsync<SleepTimerDialogFragment>();
-        });
+        public SleepTimerContextFragment SleepTimerFragment => new SleepTimerContextFragment();
 
         public AppShellViewModel()
         {

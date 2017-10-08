@@ -38,7 +38,49 @@
             </CommandBar.Content>
             <CommandBar.PrimaryCommands>
                 <AppBarButton Icon="Upload" ToolTipService.ToolTip="Cast/Handoff" />
-                <AppBarButton x:Name="sleepTimerBtn" Visibility="Collapsed" Click="sleepTimerBtn_Click" Icon="Clock" ToolTipService.ToolTip="Sleep Timer"/>
+                <AppBarButton x:Name="sleepTimerBtn" Visibility="Collapsed" Icon="Clock" ToolTipService.ToolTip="Sleep Timer">
+                    <AppBarButton.Flyout>
+                        <Flyout>
+                            <Grid x:Name="SleepTimerRootGrid" 
+                                  DataContext="{Binding SleepTimerFragment, UpdateSourceTrigger=PropertyChanged}"
+                                  Width="300">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="45" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0" Margin="5,5,5,5">
+                                    <TextBlock Margin="10 0" Text="Sleep Timer"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                       Style="{ThemeResource TitleTextBlockStyle}" />
+                                </Grid>
+
+                                <TextBlock Grid.Row="1" Margin="15 0"
+                                       Style="{ThemeResource BodyTextBlockStyle}"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}">
+                                    <Span>
+                                        <Run Text="Scheduled Time:" />
+                                        <Run Text="{Binding EstimatedTime, UpdateSourceTrigger=PropertyChanged}" 
+                                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
+                                    </Span>
+                                </TextBlock>
+
+                                <ListView Grid.Row="2" Margin="15 0" Header="Time to wait:" 
+                                          x:Name="SleepTimerTimeSelectionBox"
+                                          ItemsSource="{Binding AvailableSleepItems, UpdateSourceTrigger=PropertyChanged}"
+                                          SelectedItem="{Binding SelectedSleepItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Stretch">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding DisplayName}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+                        </Flyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
             </CommandBar.PrimaryCommands>
         </CommandBar>
     </Page.TopAppBar>
@@ -276,7 +318,7 @@
                     <VisualState.Setters>
                         <Setter Target="RootSplitView.DisplayMode" Value="Overlay" />
                         <Setter Target="RootSplitView.OpenPaneLength" Value="240" />
-                        
+
                         <Setter Target="InlineFrame.(Grid.Row)" Value="1" />
                         <Setter Target="InlineFrame.(Grid.RowSpan)" Value="1" />
                         <Setter Target="snackBarGrid.(Grid.Row)" Value="0" />

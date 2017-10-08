@@ -304,11 +304,5 @@ namespace Neptunium.View
             if (RootSplitView.DisplayMode == SplitViewDisplayMode.Overlay)
                 TogglePaneButton.IsChecked = false;
         }
-
-        private void sleepTimerBtn_Click(object sender, RoutedEventArgs e)
-        {
-            //AppBarButton doesn't seem to like the ManualRelayCommand so, I have to execute its command function here.
-            this.GetViewModel<AppShellViewModel>().ShowSleepTimerDialogCommand.Execute(null);
-        }
     }
 }

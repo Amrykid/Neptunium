@@ -1,4 +1,5 @@
-﻿using Crystal3.UI.Commands;
+﻿using Crystal3.Model;
+using Crystal3.UI.Commands;
 using Neptunium.Core.UI;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 
-namespace Neptunium.ViewModel.Dialog
+namespace Neptunium.ViewModel.Fragments
 {
-    public class SleepTimerDialogFragment : NepAppUIDialogFragment
+    public class SleepTimerContextFragment : ViewModelFragment
     {
         public class SleepTimerFlyoutViewFragmentSleepItem
         {
@@ -18,10 +19,8 @@ namespace Neptunium.ViewModel.Dialog
             public TimeSpan TimeToWait { get; set; }
         }
 
-        public SleepTimerDialogFragment()
+        public SleepTimerContextFragment()
         {
-            ResultTaskCompletionSource = new TaskCompletionSource<NepAppUIManagerDialogResult>();
-
             AvailableSleepItems = new ObservableCollection<SleepTimerFlyoutViewFragmentSleepItem>(
                 new SleepTimerFlyoutViewFragmentSleepItem[] {
                     new SleepTimerFlyoutViewFragmentSleepItem() {DisplayName = "Disabled/Cancel Timer", TimeToWait=TimeSpan.MinValue },
@@ -35,43 +34,37 @@ namespace Neptunium.ViewModel.Dialog
 
             SelectedSleepItem = AvailableSleepItems.First(x => x.TimeToWait == TimeSpan.MinValue);
 
+            this.PropertyChanged += SleepTimerContextFragment_PropertyChanged;
+
         }
 
-        public RelayCommand CancelCommand => new RelayCommand(x => ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined));
-        public RelayCommand OKCommand => new RelayCommand(x =>
+        private void SleepTimerContextFragment_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            ResultTaskCompletionSource.SetResult(new NepAppUIManagerDialogResult() { ResultType = NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive });
+            if (e.PropertyName == nameof(SelectedSleepItem))
+            {
+                if (SelectedSleepItem != null)
+                {
+                    if (SelectedSleepItem.TimeToWait == TimeSpan.MinValue)
+                        NepApp.Media.ClearSleepTimer();
+                    else
+                        NepApp.Media.SetSleepTimer(SelectedSleepItem.TimeToWait);
 
-            if (SelectedSleepItem.TimeToWait == TimeSpan.MinValue)
-                NepApp.Media.ClearSleepTimer();
-            else
-                NepApp.Media.SetSleepTimer(SelectedSleepItem.TimeToWait);
-        });
+                    EstimatedTime = SelectedSleepItem.TimeToWait == TimeSpan.MinValue ? "None" : DateTime.Now.Add(SelectedSleepItem.TimeToWait).ToString("t");
+                }
+            }
+        }
 
         public ObservableCollection<SleepTimerFlyoutViewFragmentSleepItem> AvailableSleepItems { get; set; }
         public SleepTimerFlyoutViewFragmentSleepItem SelectedSleepItem
         {
             get { return GetPropertyValue<SleepTimerFlyoutViewFragmentSleepItem>(); }
-            set
-            {
-                SetPropertyValue<SleepTimerFlyoutViewFragmentSleepItem>(value: value);
-
-                if (value != null)
-                {
-                    EstimatedTime = SelectedSleepItem.TimeToWait == TimeSpan.MinValue ? "None" : DateTime.Now.Add(SelectedSleepItem.TimeToWait).ToString("t");
-                }
-            }
+            set { SetPropertyValue<SleepTimerFlyoutViewFragmentSleepItem>(value: value); }
         }
 
         public string EstimatedTime
         {
             get { return GetPropertyValue<string>(); }
             private set { SetPropertyValue<string>(value: value); }
-        }
-
-        public override Task<NepAppUIManagerDialogResult> InvokeAsync(object parameter)
-        {
-            return ResultTaskCompletionSource.Task;
         }
     }
 }
