@@ -78,7 +78,7 @@ namespace Neptunium.Core.Media.History
                 HistoryOfSongs.RemoveAt(0); //remove the latest item from the beginning.
             }
 
-            HistoryOfSongs.Add(new SongHistoryItem() { Metadata = newMetadata, PlayedDate = DateTime.Now });
+            HistoryOfSongs.Insert(0, new SongHistoryItem() { Metadata = newMetadata, PlayedDate = DateTime.Now });
 
             StorageFile historyFile = null;
             if ((historyFile = await dataFolder.CreateFileAsync("History.json", CreationCollisionOption.OpenIfExists)) != null)
