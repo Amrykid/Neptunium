@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
@@ -57,10 +58,25 @@ namespace Neptunium
             {
                 Microsoft.HockeyApp.HockeyClient.Current.Configure("2f0ab4c93b2341a0a4bbbd5ec98917f9", new TelemetryConfiguration()
                 {
-                    EnableDiagnostics = true
+                    EnableDiagnostics = true,
                 }).SetExceptionDescriptionLoader((Exception ex) =>
                 {
-                    return "Exception HResult: " + ex.HResult.ToString();
+                    StringBuilder reportBuilder = new StringBuilder();
+                    reportBuilder.AppendLine("Exception HResult: " + ex.HResult.ToString());
+                    if (ex.InnerException != null) reportBuilder.AppendLine("Inner-Exception: " + ex.InnerException.ToString());
+                    reportBuilder.AppendLine();
+
+                    reportBuilder.AppendLine("Platform: " + Enum.GetName(typeof(Crystal3.Core.Platform), CrystalApplication.GetDevicePlatform()));
+                    reportBuilder.AppendLine("Is Playing?: " + NepApp.Media.IsPlaying);
+                    reportBuilder.AppendLine("Current Station: " + NepApp.Media.CurrentStream != null ? NepApp.Media.CurrentStream.ParentStation.Name : "None");
+
+                    if (NepApp.Media.CurrentStream != null) reportBuilder.AppendLine("Station Stream: " + NepApp.Media.CurrentStream.ToString());
+
+                    reportBuilder.AppendLine("Is Casting?: " + NepApp.Media.IsCasting);
+                    reportBuilder.AppendLine("Is Sleep Timer Running?: " + NepApp.Media.IsSleepTimerRunning);
+
+
+                    return reportBuilder.ToString();
                 });
             }
         }
