@@ -51,6 +51,8 @@ namespace Neptunium.View
                     //only show bluetooth settings on devices that have bluetooth.
                     bluetoothPivot.Visibility = Visibility.Visible;
                 }
+
+                UpdateLockScreenSwitch.Visibility = Visibility.Visible;
             }
         }
     }

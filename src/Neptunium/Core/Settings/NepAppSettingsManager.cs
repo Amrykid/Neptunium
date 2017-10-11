@@ -28,6 +28,8 @@ namespace Neptunium.Core.Settings
                 ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.PreferUsingCrossFadeWhenChangingStations), true);
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.UseHapticFeedbackForNavigation)))
                 ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.UseHapticFeedbackForNavigation), true);
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.UpdateLockScreenWithSongArt)))
+                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.UpdateLockScreenWithSongArt), false);
 
             //bluetooth mode stuff
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.SaySongNotificationsInBluetoothMode)))

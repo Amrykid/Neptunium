@@ -53,6 +53,12 @@ namespace Neptunium.ViewModel
             set { NepApp.Settings.SetSetting(AppSettings.SaySongNotificationsInBluetoothMode, value); }
         }
 
+        public bool UpdateLockScreenWithSongArt
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt); }
+            set { NepApp.Settings.SetSetting(AppSettings.UpdateLockScreenWithSongArt, value); }
+        }
+
         public string SelectedBluetoothDeviceName
         {
             get { return GetPropertyValue<string>(); }
