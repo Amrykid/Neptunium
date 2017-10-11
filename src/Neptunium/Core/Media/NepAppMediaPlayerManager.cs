@@ -105,11 +105,16 @@ namespace Neptunium.Media
 
         internal bool IsSleepTimerRunning { get { return sleepTimer.IsEnabled; } }
 
-        private void SleepTimer_Tick(object sender, object e)
+        private async void SleepTimer_Tick(object sender, object e)
         {
             if (IsPlaying)
             {
                 Pause();
+
+                if (!await App.GetIfPrimaryWindowVisibleAsync())
+                {
+                    NepApp.UI.Notifier.ShowGenericToastNotification("Sleep Timer", "Media paused.", "sleep-timer");
+                }
             }
 
             sleepTimer.Stop();

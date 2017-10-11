@@ -18,6 +18,38 @@ namespace Neptunium.Core.UI
             tileUpdater = TileUpdateManager.CreateTileUpdaterForApplication();
         }
 
+        public void ShowGenericToastNotification(string title, string message, string tag)
+        {
+            ToastContent content = new ToastContent()
+            {
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = title,
+                                HintStyle = AdaptiveTextStyle.Title
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = message,
+                                HintStyle = AdaptiveTextStyle.Subtitle
+                            },
+                        }
+                    }
+                }
+            };
+
+            var notification = new ToastNotification(content.GetXml());
+            notification.Tag = tag;
+            notification.NotificationMirroring = NotificationMirroring.Disabled;
+            toastNotifier.Show(notification);
+        }
+
         public void ShowSongToastNotification(ExtendedSongMetadata metaData)
         {
             ToastContent content = new ToastContent()
