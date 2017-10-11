@@ -20,7 +20,11 @@ namespace Neptunium.Core.Media.Metadata
             HttpClient http = new HttpClient();
             HttpResponseMessage httpResponse = null;
 
-            Uri directUri = new Uri(string.Format("http://www.jpopasia.com/{0}/", Uri.EscapeUriString(artistName))); //try and use a direct url. this works for artists like "Superfly" or "Perfume"
+            Uri directUri = new Uri(
+                string.Format("http://www.jpopasia.com/{0}/", 
+                    Uri.EscapeUriString(
+                        artistName.Replace(" ","")
+                        .Replace("!","")))); //try and use a direct url. this works for artists like "Superfly" or "Perfume"
 
             httpResponse = await http.GetAsync(directUri);
             if (httpResponse.IsSuccessStatusCode)
