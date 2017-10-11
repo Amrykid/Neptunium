@@ -127,7 +127,7 @@ namespace Neptunium.Core.Stations
             return stationList.ToArray();
         }
 
-        private async Task<Uri> CacheStationLogoUriAsync(Uri uri)
+        public async Task<Uri> CacheStationLogoUriAsync(Uri uri)
         {
             //this method takes the online station uri and redirects it to a local copy (and caches it locally if it hasn't already).
 

@@ -46,6 +46,15 @@ namespace Neptunium.Core.Media.History
                     }
                 }
             }
+
+            foreach (SongHistoryItem item in HistoryOfSongs)
+            {
+                if (item.Metadata.StationLogo != null)
+                {
+                    if (item.Metadata.StationLogo.Scheme.ToLower().StartsWith("http"))
+                        item.Metadata.StationLogo = await NepApp.Stations.CacheStationLogoUriAsync(item.Metadata.StationLogo);
+                }
+            }
         }
 
         private async Task<StorageFolder> CreateAndReturnDataDirectoryAsync()
