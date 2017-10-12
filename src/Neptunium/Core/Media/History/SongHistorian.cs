@@ -75,7 +75,7 @@ namespace Neptunium.Core.Media.History
         {
             if (HistoryOfSongs.Count == 30)
             {
-                HistoryOfSongs.RemoveAt(0); //remove the latest item from the beginning.
+                HistoryOfSongs.RemoveAt(HistoryOfSongs.Count - 1); //remove the latest item from the end since we're inserting at the beginning.
             }
 
             HistoryOfSongs.Insert(0, new SongHistoryItem() { Metadata = newMetadata, PlayedDate = DateTime.Now });
