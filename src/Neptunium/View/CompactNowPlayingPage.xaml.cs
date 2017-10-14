@@ -63,13 +63,13 @@ namespace Neptunium.View
             {
                 playPauseButton.Label = "Pause";
                 playPauseButton.Icon = new SymbolIcon(Symbol.Pause);
-                playPauseButton.Command = ((NowPlayingPageViewModel)this.DataContext).PausePlaybackCommand;
+                playPauseButton.Command = ((CompactNowPlayingPageViewModel)this.DataContext).PausePlaybackCommand;
             }
             else
             {
                 playPauseButton.Label = "Play";
                 playPauseButton.Icon = new SymbolIcon(Symbol.Play);
-                playPauseButton.Command = ((NowPlayingPageViewModel)this.DataContext).ResumePlaybackCommand;
+                playPauseButton.Command = ((CompactNowPlayingPageViewModel)this.DataContext).ResumePlaybackCommand;
             }
         }
 
