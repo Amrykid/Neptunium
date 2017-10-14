@@ -97,8 +97,8 @@
                     </AppBarButton.Icon>
                 </AppBarButton>
                 <!--<AppBarToggleButton Icon="FullScreen" Label="Fullscreen" x:Name="fullScreenButton" Visibility="Collapsed" />-->
-                <AppBarToggleButton Icon="Attach" Label="Mini Player" x:Name="compactViewButton" 
-                                    Visibility="Collapsed" />
+                <AppBarButton Icon="Attach" Label="Mini Player" x:Name="compactViewButton" 
+                                    Visibility="Collapsed" Click="compactViewButton_Click" />
             </StackPanel>
         </Grid>
 
@@ -109,7 +109,7 @@
         </Grid>
 
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="ShellVisualStateGroup" CurrentStateChanging="ShellVisualStateGroup_CurrentStateChanging">
+            <VisualStateGroup x:Name="ShellVisualStateGroup">
                 <VisualState x:Name="DesktopVisualState">
                     <VisualState.StateTriggers>
                         <wst:AdaptiveTrigger MinWindowWidth="1080" />
@@ -155,16 +155,6 @@
                         <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
                         <Setter Target="CommandPanel.Margin" Value="20 0" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
-                    </VisualState.Setters>
-                </VisualState>
-
-                <VisualState x:Name="CompactVisualState">
-                    <VisualState.Setters>
-                        <Setter Target="SmallStationImageColumn.Width" Value="135" />
-                        <Setter Target="SmallStationImage.Visibility" Value="Visible" />
-                        <Setter Target="LargeStationImage.Visibility" Value="Collapsed" />
-                        <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
-                        <Setter Target="CommandPanel.Margin" Value="20 0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

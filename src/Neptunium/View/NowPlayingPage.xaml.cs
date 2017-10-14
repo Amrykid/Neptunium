@@ -1,4 +1,5 @@
-﻿using Neptunium.ViewModel;
+﻿using Crystal3.Navigation;
+using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,17 +32,12 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
-            ShellVisualStateGroup.CurrentStateChanged += ShellVisualStateGroup_CurrentStateChanged;
             NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
 
             if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
             {
                 //https://blogs.msdn.microsoft.com/universal-windows-app-model/2017/02/11/compactoverlay-mode-aka-picture-in-picture/
                 compactViewButton.Visibility = Visibility.Visible;
-
-                compactViewButton.IsChecked = ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay;
-                compactViewButton.Checked += compactViewButton_Checked;
-                compactViewButton.Unchecked += compactViewButton_Unchecked;
             }
 
             //if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
@@ -84,97 +80,27 @@ namespace Neptunium.View
                     e.Cancel = true;
                     return;
                 }
-
-                compactViewButton.Checked -= compactViewButton_Checked;
-                compactViewButton.Unchecked -= compactViewButton_Unchecked;
             }
 
             NepApp.Media.IsPlayingChanged -= Media_IsPlayingChanged;
-            ShellVisualStateGroup.CurrentStateChanged -= ShellVisualStateGroup_CurrentStateChanged;
 
             base.OnNavigatingFrom(e);
-        }
-
-        private VisualState lastVisualState = null;
-        private bool isInCompactMode = false;
-
-        private async void compactViewButton_Checked(object sender, RoutedEventArgs e)
-        {
-            //switch to compact overlay mode
-            ViewModePreferences compactOptions = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
-            compactOptions.CustomSize = new Windows.Foundation.Size(320, 280);
-
-            bool modeSwitched = await ApplicationView.GetForCurrentView()
-                .TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, compactOptions);
-
-            if (modeSwitched)
-            {
-                if (ShellVisualStateGroup.States.Contains(TabletVisualState))
-                {
-                    ShellVisualStateGroup.States.Remove(TabletVisualState);
-                    ShellVisualStateGroup.States.Remove(DesktopVisualState);
-                    ShellVisualStateGroup.States.Remove(PhoneVisualState);
-                }
-
-                isInCompactMode = true;
-                ShellVisualStateGroup.CurrentStateChanged -= ShellVisualStateGroup_CurrentStateChanged;
-                VisualStateManager.GoToState(this, CompactVisualState.Name, true);
-
-                //hide the full screen button while in compact mode.
-                //fullScreenButton.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private async void compactViewButton_Unchecked(object sender, RoutedEventArgs e)
-        {
-            //switch back to regular mode
-            bool modeSwitched = await ApplicationView.GetForCurrentView()
-                .TryEnterViewModeAsync(ApplicationViewMode.Default,
-                    ViewModePreferences.CreateDefault(ApplicationViewMode.Default));
-
-            if (modeSwitched)
-            {
-                if (!ShellVisualStateGroup.States.Contains(TabletVisualState))
-                {
-                    ShellVisualStateGroup.States.Add(TabletVisualState);
-                    ShellVisualStateGroup.States.Add(DesktopVisualState);
-                    ShellVisualStateGroup.States.Add(PhoneVisualState);
-                }
-
-                isInCompactMode = false;
-
-                if (lastVisualState != null)
-                    VisualStateManager.GoToState(this, lastVisualState.Name, true);
-
-                ShellVisualStateGroup.CurrentStateChanged += ShellVisualStateGroup_CurrentStateChanged;
-
-                //if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
-                //{
-                //    //only show the full screen button again if we're on the desktop.
-                //    fullScreenButton.Visibility = Visibility.Visible;
-                //}
-            }
-        }
-
-        private void ShellVisualStateGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
-        {
-            if (e.NewState != CompactVisualState)
-            {
-                lastVisualState = e.NewState;
-            }
-        }
-
-        private void ShellVisualStateGroup_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
-        {
-            if (isInCompactMode)
-            {
-                e.NewState = CompactVisualState;
-            }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             UpdatePlaybackStatus(NepApp.Media.IsPlaying);
+        }
+
+        private async void compactViewButton_Click(object sender, RoutedEventArgs e)
+        {
+            var windowService = await WindowManager.CreateNewWindowAsync<CompactNowPlayingPageViewModel>();
+
+            //switch to compact overlay mode
+            ViewModePreferences compactOptions = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+            compactOptions.CustomSize = new Windows.Foundation.Size(320, 280);
+
+            bool modeSwitched = await ApplicationViewSwitcher.TryShowAsViewModeAsync(windowService.WindowViewId, ApplicationViewMode.CompactOverlay, compactOptions);
         }
     }
 }

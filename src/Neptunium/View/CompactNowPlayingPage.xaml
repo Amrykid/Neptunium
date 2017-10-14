@@ -1,0 +1,52 @@
+﻿<Page
+    x:Class="Neptunium.View.CompactNowPlayingPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Neptunium.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+
+            <Image Source="{Binding CurrentSong.StationLogo, UpdateSourceTrigger=PropertyChanged}" 
+                       x:Name="SmallStationImage"
+                       Grid.Row="0" Width="100" Height="100" />
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" MaxHeight="125" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="{Binding CurrentSong.Track, UpdateSourceTrigger=PropertyChanged}"
+                               x:Name="TrackTextBlock"
+                               VerticalAlignment="Bottom"
+                               MaxLines="2"
+                               Style="{ThemeResource TitleTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+
+                <TextBlock Grid.Row="1" Text="{Binding CurrentSong.Artist, UpdateSourceTrigger=PropertyChanged}"
+                               x:Name="ArtistTrackBlock"
+                               Style="{ThemeResource SubtitleTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
+
+                <TextBlock Grid.Row="2" Text="{Binding CurrentSong.StationPlayedOn, UpdateSourceTrigger=PropertyChanged}"
+                               Style="{ThemeResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
+            </Grid>
+        </Grid>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="3" Margin="0" x:Name="CommandPanel">
+            <!--todo add a play button, a full screen button and some casting buttons -->
+                    <AppBarButton Icon="Play" Label="Play" x:Name="playPauseButton" />
+                    <AppBarButton Icon="Attach" Label="Mini Player" x:Name="compactViewButton" Click="compactViewButton_Click" />
+        </StackPanel>
+    </Grid>
+</Page>
