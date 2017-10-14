@@ -297,7 +297,11 @@ namespace Neptunium
         {
             //clears the tile if we're suspending.
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-            //ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
+            if (!NepApp.Media.IsPlaying)
+            {
+                //removes the now playing notification from the action center.
+                ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
+            }
 
             return Task.CompletedTask;
         }
