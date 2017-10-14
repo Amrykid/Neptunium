@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using Neptunium.Core.Stations;
 using Crystal3.UI.Commands;
 using Neptunium.ViewModel.Dialog;
+using Windows.System;
 
 namespace Neptunium.ViewModel
 {
@@ -44,6 +45,12 @@ namespace Neptunium.ViewModel
             get { return GetPropertyValue<StationItem>(); }
             private set { SetPropertyValue<StationItem>(value: value); }
         }
+
+        public RelayCommand OpenStationWebsiteCommand => new RelayCommand(async station =>
+        {
+            StationItem stationItem = (StationItem)station;
+            await Launcher.LaunchUriAsync(new Uri(stationItem.Site));
+        });
 
         public RelayCommand ShowStationInfoCommand => new RelayCommand(async station =>
         {

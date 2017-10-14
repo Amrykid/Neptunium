@@ -22,6 +22,11 @@
                   x:Name="stationsListView"
                   Visibility="Visible"
                   IsItemClickEnabled="True">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <wrt:ListItemButton Command="{Binding ElementName=thisPage, Path=DataContext.ShowStationInfoCommand}"
@@ -51,6 +56,16 @@
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
                         </Grid>
+
+                        <wrt:ListItemButton.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="Pin" />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem Text="Website"
+                                                Command="{Binding ElementName=thisPage, Path=DataContext.OpenStationWebsiteCommand}"
+                                                CommandParameter="{Binding}" />
+                            </MenuFlyout>
+                        </wrt:ListItemButton.ContextFlyout>
                     </wrt:ListItemButton>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -104,6 +119,15 @@
                                 <TextBlock Text="{Binding Description, Mode=OneTime}" />
                             </ToolTipService.ToolTip>
                         </Grid>
+                        <wrt:ListItemButton.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="Pin" />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem Text="Website"
+                                                Command="{Binding ElementName=thisPage, Path=DataContext.OpenStationWebsiteCommand}"
+                                                CommandParameter="{Binding}" />
+                            </MenuFlyout>
+                        </wrt:ListItemButton.ContextFlyout>
                     </wrt:ListItemButton>
                 </DataTemplate>
             </GridView.ItemTemplate>
