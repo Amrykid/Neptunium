@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media;
@@ -285,14 +286,26 @@ namespace Neptunium.Media
 
         private async void Streamer_MetadataChanged(object sender, MediaStreamerMetadataChangedEventArgs e)
         {
+            Func<StationProgram, bool> getStationProgram = x =>
+            {
+                if (x.Host.ToLower().Equals(e.Metadata.Artist.Trim().ToLower())) return true;
+                if (!string.IsNullOrWhiteSpace(x.HostRegexExpression))
+                {
+                    if (Regex.IsMatch(e.Metadata.Artist, x.HostRegexExpression))
+                        return true;
+                }
+
+                return false;
+            };
+
             try
             {
                 if (CurrentStream.ParentStation.Programs != null)
                 {
-                    if (CurrentStream.ParentStation.Programs.Any(x => x.Host.ToLower().Equals(e.Metadata.Artist.Trim().ToLower())))
+                    if (CurrentStream.ParentStation.Programs.Any(getStationProgram))
                     {
                         //we're tuning into a special radio program. this may be a DJ playing remixes, for exmaple.
-                        var program = CurrentStream.ParentStation.Programs?.First(x => x.Host.ToLower().Equals(e.Metadata.Artist.Trim().ToLower()));
+                        var program = CurrentStream.ParentStation.Programs?.First(getStationProgram);
                         UpdateMetadata(e.Metadata);
 
                         if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
