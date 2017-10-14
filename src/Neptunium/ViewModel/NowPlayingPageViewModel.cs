@@ -25,6 +25,11 @@ namespace Neptunium.ViewModel
             set { SetPropertyValue<StationItem>(value: value); }
         }
 
+        public RelayCommand MediaCastingCommand => new RelayCommand(x =>
+        {
+            NepApp.Media.ShowCastingPicker();
+        });
+
         public RelayCommand ResumePlaybackCommand => new RelayCommand(x =>
         {
             NepApp.Media.Resume();

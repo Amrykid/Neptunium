@@ -61,7 +61,7 @@
             <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0 0 0 30" x:Name="CommandPanel">
                 <!--todo add a play button, a full screen button and some casting buttons -->
                 <AppBarButton Icon="Play" Label="Play" x:Name="playPauseButton" />
-                <AppBarButton Label="Cast">
+                <AppBarButton Label="Cast" Command="{Binding MediaCastingCommand}">
                     <AppBarButton.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE952;" />
                     </AppBarButton.Icon>
