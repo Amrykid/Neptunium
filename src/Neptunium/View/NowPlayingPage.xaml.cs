@@ -1,4 +1,5 @@
-﻿using Crystal3.Navigation;
+﻿using Crystal3.Model;
+using Crystal3.Navigation;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -28,11 +29,14 @@ namespace Neptunium.View
     [Neptunium.Core.UI.NepAppUINoChromePage()]
     public sealed partial class NowPlayingPage : Page
     {
+        private FrameNavigationService inlineNavigationService = null;
         public NowPlayingPage()
         {
             this.InitializeComponent();
 
             NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+
+            inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two) as FrameNavigationService;
 
             if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
             {
@@ -72,16 +76,6 @@ namespace Neptunium.View
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
-            {
-                if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
-                {
-                    //prevent navigation until we're switched out of compact overlay mode.
-                    e.Cancel = true;
-                    return;
-                }
-            }
-
             NepApp.Media.IsPlayingChanged -= Media_IsPlayingChanged;
 
             base.OnNavigatingFrom(e);
@@ -94,13 +88,17 @@ namespace Neptunium.View
 
         private async void compactViewButton_Click(object sender, RoutedEventArgs e)
         {
-            var windowService = await WindowManager.CreateNewWindowAsync<CompactNowPlayingPageViewModel>();
-
             //switch to compact overlay mode
             ViewModePreferences compactOptions = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
             compactOptions.CustomSize = new Windows.Foundation.Size(320, 280);
 
-            bool modeSwitched = await ApplicationViewSwitcher.TryShowAsViewModeAsync(windowService.WindowViewId, ApplicationViewMode.CompactOverlay, compactOptions);
+            bool modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, compactOptions);
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(compactOptions.CustomSize);
+
+            if (modeSwitched)
+            {
+                inlineNavigationService.SafeNavigateTo<CompactNowPlayingPageViewModel>();
+            }
         }
     }
 }

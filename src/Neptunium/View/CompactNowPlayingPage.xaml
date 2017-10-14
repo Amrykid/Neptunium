@@ -9,44 +9,45 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="110" />
+            <RowDefinition Height="100" />
+            <RowDefinition Height="80" />
         </Grid.RowDefinitions>
 
 
-            <Image Source="{Binding CurrentSong.StationLogo, UpdateSourceTrigger=PropertyChanged}" 
+        <Image Source="{Binding CurrentSong.StationLogo, UpdateSourceTrigger=PropertyChanged}" 
                        x:Name="SmallStationImage"
-                       Grid.Row="0" Width="100" Height="100" />
-            <Grid Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" MaxHeight="125" />
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="20" />
-                </Grid.RowDefinitions>
+                       Grid.Row="0" Width="100" Height="100" Margin="0 10 0 0" />
+        <Grid Grid.Row="1" Margin="20 15 0 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" MaxHeight="50" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="20" />
+            </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="{Binding CurrentSong.Track, UpdateSourceTrigger=PropertyChanged}"
+            <TextBlock Grid.Row="0" Text="{Binding CurrentSong.Track, UpdateSourceTrigger=PropertyChanged}"
                                x:Name="TrackTextBlock"
                                VerticalAlignment="Bottom"
                                MaxLines="2"
-                               Style="{ThemeResource TitleTextBlockStyle}"
+                               Style="{ThemeResource BaseTextBlockStyle}"
                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
 
-                <TextBlock Grid.Row="1" Text="{Binding CurrentSong.Artist, UpdateSourceTrigger=PropertyChanged}"
+            <TextBlock Grid.Row="1" Text="{Binding CurrentSong.Artist, UpdateSourceTrigger=PropertyChanged}"
                                x:Name="ArtistTrackBlock"
-                               Style="{ThemeResource SubtitleTextBlockStyle}"
+                               Style="{ThemeResource BodyTextBlockStyle}"
                                Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
 
-                <TextBlock Grid.Row="2" Text="{Binding CurrentSong.StationPlayedOn, UpdateSourceTrigger=PropertyChanged}"
+            <TextBlock Grid.Row="2" Text="{Binding CurrentSong.StationPlayedOn, UpdateSourceTrigger=PropertyChanged}"
                                Style="{ThemeResource CaptionTextBlockStyle}"
                                Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
-            </Grid>
         </Grid>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="3" Margin="0" x:Name="CommandPanel">
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="3" Margin="0 0 0 10" x:Name="CommandPanel">
             <!--todo add a play button, a full screen button and some casting buttons -->
-                    <AppBarButton Icon="Play" Label="Play" x:Name="playPauseButton" />
-                    <AppBarButton Icon="Attach" Label="Mini Player" x:Name="compactViewButton" Click="compactViewButton_Click" />
+            <AppBarButton Icon="Play" Label="Play" x:Name="playPauseButton" />
+            <AppBarToggleButton Icon="Attach" Label="Mini Player" 
+                                IsChecked="True"
+                                x:Name="compactViewButton" Click="compactViewButton_Click" />
         </StackPanel>
     </Grid>
 </Page>
