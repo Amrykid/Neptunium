@@ -63,32 +63,35 @@ namespace Neptunium.ViewModel
             {
 
                 var extendedData = NepApp.Media.CurrentMetadataExtended;
-                if (extendedData?.Album != null)
+                if (extendedData != null)
                 {
-                    if (!string.IsNullOrWhiteSpace(extendedData.Album?.AlbumCoverUrl))
+                    if (extendedData?.Album != null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(extendedData.Album?.AlbumCoverUrl))
+                        {
+                            App.Dispatcher.RunWhenIdleAsync(() =>
+                            {
+                                Background = new Uri(extendedData.Album?.AlbumCoverUrl);
+                            });
+                        }
+                    }
+                    else if (!string.IsNullOrWhiteSpace(extendedData.ArtistInfo?.ArtistImage))
                     {
                         App.Dispatcher.RunWhenIdleAsync(() =>
                         {
-                            Background = new Uri(extendedData.Album?.AlbumCoverUrl);
+                            Background = new Uri(extendedData.ArtistInfo?.ArtistImage);
                         });
                     }
-                }
-                else if (!string.IsNullOrWhiteSpace(extendedData.ArtistInfo?.ArtistImage))
-                {
-                    App.Dispatcher.RunWhenIdleAsync(() =>
+                    else if (extendedData.JPopAsiaArtistInfo != null)
                     {
-                        Background = new Uri(extendedData.ArtistInfo?.ArtistImage);
-                    });
-                }
-                else if (extendedData.JPopAsiaArtistInfo != null)
-                {
-                    //from JPopAsia
-                    if (extendedData.JPopAsiaArtistInfo.ArtistImageUrl != null)
-                    {
-                        App.Dispatcher.RunWhenIdleAsync(() =>
+                        //from JPopAsia
+                        if (extendedData.JPopAsiaArtistInfo.ArtistImageUrl != null)
                         {
-                            Background = extendedData.JPopAsiaArtistInfo.ArtistImageUrl;
-                        });
+                            App.Dispatcher.RunWhenIdleAsync(() =>
+                            {
+                                Background = extendedData.JPopAsiaArtistInfo.ArtistImageUrl;
+                            });
+                        }
                     }
                 }
             }
