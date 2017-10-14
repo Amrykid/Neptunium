@@ -106,6 +106,7 @@ namespace Neptunium.ViewModel
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
             NepApp.Media.CurrentMetadataChanged -= Media_CurrentMetadataChanged;
+            NepApp.Media.CurrentMetadataExtendedInfoFound -= Media_CurrentMetadataExtendedInfoFound;
 
             base.OnNavigatedFrom(sender, e);
         }
