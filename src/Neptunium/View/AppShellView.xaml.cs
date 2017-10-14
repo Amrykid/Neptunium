@@ -110,6 +110,8 @@ namespace Neptunium.View
                     topAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
                     bottomAppBar.Background = topAppBar.Background;
                 }
+
+                SetTitleBarAndMobileStatusBarToMatchAppBar();
             });
         }
 
