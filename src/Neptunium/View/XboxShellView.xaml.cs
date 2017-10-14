@@ -164,12 +164,16 @@ namespace Neptunium.View
                     TransportControlGrid.Visibility = Visibility.Visible;
 
                     PlayButton.Focus(FocusState.Keyboard);
+
+                    ElementSoundPlayer.Play(ElementSoundKind.Show);
                 }
                 else
                 {
                     TransportControlGrid.Visibility = Visibility.Collapsed;
                     InlineFrame.IsEnabled = true;
                     InlineFrame.Focus(FocusState.Keyboard);
+
+                    ElementSoundPlayer.Play(ElementSoundKind.Hide);
 
                     if (InlineFrame.Content is IXboxInputPage)
                     {
