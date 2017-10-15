@@ -70,7 +70,7 @@ namespace Neptunium.View
 
         public void SetLeftFocus(UIElement elementToTheLeft)
         {
-
+            this.XYFocusLeft = elementToTheLeft;
         }
 
         public void SetRightFocus(UIElement elementToTheRight)

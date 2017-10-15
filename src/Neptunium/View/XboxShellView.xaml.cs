@@ -186,7 +186,7 @@ namespace Neptunium.View
             else if (e.Key == Windows.System.VirtualKey.GamepadView || e.Key == Windows.System.VirtualKey.GamepadMenu)
             {
                 if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
-                if (isInNoChromeMode) return;
+                //if (isInNoChromeMode) return;
 
                 e.Handled = true;
                 RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
@@ -202,6 +202,8 @@ namespace Neptunium.View
             }
             else if (e.Key == Windows.System.VirtualKey.Left)
             {
+                if (isInNoChromeMode) return;
+
                 e.Handled = true;
                 RootSplitView.IsPaneOpen = true;
                 HandleSplitViewPaneOpen();
