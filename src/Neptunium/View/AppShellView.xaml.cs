@@ -39,6 +39,7 @@ namespace Neptunium.View
     public sealed partial class AppShellView : Page
     {
         private FrameNavigationService inlineNavigationService = null;
+        private volatile bool isInNoChromeMode = false;
         public AppShellView()
         {
             this.InitializeComponent();
@@ -98,21 +99,27 @@ namespace Neptunium.View
         {
             App.Dispatcher.RunAsync(() =>
             {
-                if (NepApp.Media.IsCasting)
-                {
-                    var uiSettings = new Windows.UI.ViewManagement.UISettings();
-                    topAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.AccentDark3));
-                    bottomAppBar.Background = topAppBar.Background;
-                }
-                else
-                {
-                    var uiSettings = new Windows.UI.ViewManagement.UISettings();
-                    topAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
-                    bottomAppBar.Background = topAppBar.Background;
-                }
+                UpdateCastingUI();
 
-                SetTitleBarAndMobileStatusBarToMatchAppBar();
+                if (!isInNoChromeMode)
+                    SetTitleBarAndMobileStatusBarToMatchAppBar();
             });
+        }
+
+        private void UpdateCastingUI()
+        {
+            if (NepApp.Media.IsCasting)
+            {
+                var uiSettings = new Windows.UI.ViewManagement.UISettings();
+                topAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.AccentDark3));
+                bottomAppBar.Background = topAppBar.Background;
+            }
+            else
+            {
+                var uiSettings = new Windows.UI.ViewManagement.UISettings();
+                topAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
+                bottomAppBar.Background = topAppBar.Background;
+            }
         }
 
         private void SetTitleBarAndMobileStatusBarToMatchAppBar()
@@ -201,6 +208,8 @@ namespace Neptunium.View
 
                 ShellVisualStateGroup.CurrentStateChanged += noChromeHandler;
                 ShellVisualStateGroup.CurrentStateChanging += noChromeHandler;
+
+                isInNoChromeMode = true;
             }
             else
             {
@@ -223,6 +232,8 @@ namespace Neptunium.View
                     }
                 }
 
+                UpdateCastingUI();
+
                 SetTitleBarAndMobileStatusBarToMatchAppBar();
 
                 CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
@@ -238,6 +249,8 @@ namespace Neptunium.View
                     ShellVisualStateGroup.CurrentStateChanging -= noChromeHandler;
                     noChromeHandler = null;
                 }
+
+                isInNoChromeMode = false;
             }
         }
 
