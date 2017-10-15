@@ -145,7 +145,49 @@ namespace Neptunium.View
 
         }
 
-        private void Page_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void HandleSplitViewPaneClose()
+        {
+            InlineFrame.Focus(FocusState.Keyboard);
+
+            if (InlineFrame.Content is IXboxInputPage)
+            {
+                ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
+            }
+        }
+
+        private void HandleSplitViewPaneOpen()
+        {
+            if (InlineFrame.Content is IXboxInputPage)
+            {
+                ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
+            }
+
+            SplitViewNavigationList.Focus(FocusState.Keyboard);
+
+            var selectedNavItem = NepApp.UI.NavigationItems.FirstOrDefault(x => x.IsSelected);
+            if (selectedNavItem != null)
+            {
+                //highlight and focus on the current nav item.
+                var selectedNavContainer = SplitViewNavigationList.ContainerFromItem(selectedNavItem) as ContentPresenter;
+                var selectedNavButton = VisualTreeHelper.GetChild(selectedNavContainer, 0) as RadioButton;
+                selectedNavButton.Focus(FocusState.Keyboard);
+            }
+        }
+
+        private void SplitViewOpenButton_Click(object sender, RoutedEventArgs e)
+        {
+            RootSplitView.IsPaneOpen = true;
+            HandleSplitViewPaneOpen();
+        }
+
+        private void RadioButton_Click(object sender, RoutedEventArgs e)
+        {
+            //dismiss the menu if its open.
+            if (RootSplitView.DisplayMode == SplitViewDisplayMode.Overlay)
+                RootSplitView.IsPaneOpen = false;
+        }
+
+        private void Page_KeyUp(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.GamepadY)
             {
@@ -208,48 +250,6 @@ namespace Neptunium.View
                 RootSplitView.IsPaneOpen = true;
                 HandleSplitViewPaneOpen();
             }
-        }
-
-        private void HandleSplitViewPaneClose()
-        {
-            InlineFrame.Focus(FocusState.Keyboard);
-
-            if (InlineFrame.Content is IXboxInputPage)
-            {
-                ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
-            }
-        }
-
-        private void HandleSplitViewPaneOpen()
-        {
-            if (InlineFrame.Content is IXboxInputPage)
-            {
-                ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
-            }
-
-            SplitViewNavigationList.Focus(FocusState.Keyboard);
-
-            var selectedNavItem = NepApp.UI.NavigationItems.FirstOrDefault(x => x.IsSelected);
-            if (selectedNavItem != null)
-            {
-                //highlight and focus on the current nav item.
-                var selectedNavContainer = SplitViewNavigationList.ContainerFromItem(selectedNavItem) as ContentPresenter;
-                var selectedNavButton = VisualTreeHelper.GetChild(selectedNavContainer, 0) as RadioButton;
-                selectedNavButton.Focus(FocusState.Keyboard);
-            }
-        }
-
-        private void SplitViewOpenButton_Click(object sender, RoutedEventArgs e)
-        {
-            RootSplitView.IsPaneOpen = true;
-            HandleSplitViewPaneOpen();
-        }
-
-        private void RadioButton_Click(object sender, RoutedEventArgs e)
-        {
-            //dismiss the menu if its open.
-            if (RootSplitView.DisplayMode == SplitViewDisplayMode.Overlay)
-                RootSplitView.IsPaneOpen = false;
         }
     }
 }
