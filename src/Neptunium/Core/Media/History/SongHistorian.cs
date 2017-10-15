@@ -27,7 +27,7 @@ namespace Neptunium.Core.Media.History
             dataFolder = await CreateAndReturnDataDirectoryAsync();
 
             StorageFile historyFile = null;
-            if ((historyFile = await dataFolder.GetFileAsync("History.json")) != null)
+            if ((historyFile = await dataFolder.CreateFileAsync("History.json", CreationCollisionOption.OpenIfExists)) != null)
             {
                 var accessStream = await historyFile.OpenReadAsync();
                 byte[] data = null;
@@ -75,7 +75,7 @@ namespace Neptunium.Core.Media.History
         {
             if (newMetadata.IsUnknownMetadata) return;
 
-            if (HistoryOfSongs.Count == 30)
+            if (HistoryOfSongs.Count == 100)
             {
                 HistoryOfSongs.RemoveAt(HistoryOfSongs.Count - 1); //remove the latest item from the end since we're inserting at the beginning.
             }
