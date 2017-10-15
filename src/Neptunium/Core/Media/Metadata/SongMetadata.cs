@@ -20,6 +20,9 @@ namespace Neptunium.Core.Media.Metadata
         public string StationPlayedOn { get; set; }
         [DataMember]
         public Uri StationLogo { get; set; }
+
+        [IgnoreDataMember]
+        public bool IsUnknownMetadata { get; internal set; } = false;
     }
 
     public class ExtendedSongMetadata: SongMetadata
@@ -36,6 +39,7 @@ namespace Neptunium.Core.Media.Metadata
             Artist = original.Artist;
             StationPlayedOn = original.StationPlayedOn;
             StationLogo = original.StationLogo;
+            IsUnknownMetadata = original.IsUnknownMetadata;
         }
 
         public AlbumData Album { get; internal set; }

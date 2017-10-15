@@ -16,4 +16,8 @@
   <Artist Name="school food punishment" Url="http://www.jpopasia.com/schoolfoodpunishment/" />
   <Artist Name="GARNiDELiA" Url="http://www.jpopasia.com/garnidelia/" />
   <Artist Name="LiSA" Url="http://www.jpopasia.com/lisa/" AltName="織部里沙" />
+  <!--Fun Fact: These two entries below are the same person (in case it wasn't obvious from the name).-->
+  <Artist Name="Tommy heavenly6" Url="http://www.jpopasia.com/tommyheavenly6/" AltName="川瀬 智子" />
+  <Artist Name="Tommy february6" Url="www.jpopasia.com/tommyfebruary6/" AltName="川瀬 智子" />
+  <!--End fun fact-->
 </Artists>

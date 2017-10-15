@@ -182,7 +182,14 @@ namespace Neptunium.Media
 
             NepApp.Stations.SetLastPlayedStationName(stream.ParentStation.Name);
 
-            UpdateMetadata(streamer.SongMetadata);
+            if (streamer.SongMetadata == null)
+            {
+                SetCurrentMetadataToUnknown();
+            }
+            else
+            {
+                UpdateMetadata(streamer.SongMetadata);
+            }
 
             ConnectingEnd?.Invoke(this, EventArgs.Empty);
 
@@ -289,6 +296,12 @@ namespace Neptunium.Media
         {
             if (CurrentStream == null) return;
 
+            if (e.Metadata == null)
+            {
+                SetCurrentMetadataToUnknown();
+                return;
+            }
+
             Func<StationProgram, bool> getStationProgram = x =>
             {
                 if (x.Host.ToLower().Equals(e.Metadata.Artist.Trim().ToLower())) return true;
@@ -303,6 +316,7 @@ namespace Neptunium.Media
 
             try
             {
+
                 if (CurrentStream.ParentStation?.Programs != null)
                 {
                     if (CurrentStream.ParentStation.Programs.Any(getStationProgram))
@@ -338,6 +352,7 @@ namespace Neptunium.Media
 
                 UpdateMetadata(e.Metadata);
 
+
                 ExtendedSongMetadata newMetadata = await MetadataFinder.FindMetadataAsync(e.Metadata);
                 CurrentMetadataExtended = newMetadata;
 
@@ -368,9 +383,6 @@ namespace Neptunium.Media
 
         private void UpdateMetadata(SongMetadata metadata)
         {
-            if (metadata == null)
-                return;
-
             CurrentMetadata = metadata;
 
             try
@@ -393,6 +405,26 @@ namespace Neptunium.Media
             RaisePropertyChanged(nameof(CurrentMetadata));
 
             CurrentMetadataChanged?.Invoke(this, new NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs(metadata));
+        }
+
+        private void SetCurrentMetadataToUnknown()
+        {
+            //todo make a readonly field
+            SongMetadata unknown = new SongMetadata()
+            {
+                Track = "Unknown Song",
+                Artist = "Unknown Artist",
+                StationPlayedOn = CurrentStream?.ParentStation?.Name,
+                StationLogo = CurrentStream?.ParentStation?.StationLogoUrl,
+                IsUnknownMetadata = true
+            };
+
+
+            CurrentMetadata = unknown;
+            //this is used for the now playing bar via data binding.
+            RaisePropertyChanged(nameof(CurrentMetadata));
+
+            CurrentMetadataChanged?.Invoke(this, new NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs(unknown));
         }
 
         public async Task FadeVolumeDownToAsync(double value)
