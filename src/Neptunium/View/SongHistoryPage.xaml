@@ -9,6 +9,7 @@
     xmlns:wrt="using:WinRTXamlToolkit.Controls"
     xmlns:wst="using:WindowsStateTriggers"
     xmlns:cconv="using:Crystal3.UI.Converters"
+    x:Name="thisPage"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -18,27 +19,28 @@
             <cconv:RelativeTimeConverter TimeMode="Past" x:Key="TimeConv" HourFormatString="Today" MinuteFormatString="Today" SecondFormatString="Today" />
 
             <DataTemplate x:Key="MobileSongHistoryItemTemplate">
-                <Grid Height="90">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="45" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                <wrt:ListItemButton>
+                    <Grid Height="90">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="45" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                    <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationLogo}" Grid.Column="0"
+                        <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationLogo}" Grid.Column="0"
                                      Width="45" Height="45" Stretch="UniformToFill" />
 
-                    <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
+                        <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
 
-                        <TextBlock Text="{Binding Metadata.Track}" Grid.Row="0" 
+                            <TextBlock Text="{Binding Metadata.Track}" Grid.Row="0" 
                                        Style="{ThemeResource BaseTextBlockStyle}"
                                        x:Name="TrackTextBlock"
                                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                        VerticalAlignment="Bottom"/>
-                        <TextBlock Grid.Row="1"
+                            <TextBlock Grid.Row="1"
                                        VerticalAlignment="Top"
                                        x:Name="ArtistTextBlock"
                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
@@ -48,34 +50,42 @@
                                 <Run Text="·" FontWeight="ExtraBold" />
                                 <Run Text="{Binding Metadata.StationPlayedOn}" />
                             </Span>
-                        </TextBlock>
+                            </TextBlock>
+                        </Grid>
                     </Grid>
-                </Grid>
-
+                    <wrt:ListItemButton.ContextFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Text="Copy" 
+                                            Command="{Binding ElementName=thisPage, Path=DataContext.CopyMetadataCommand}"
+                                            CommandParameter="{Binding}" />
+                        </MenuFlyout>
+                    </wrt:ListItemButton.ContextFlyout>
+                </wrt:ListItemButton>
             </DataTemplate>
 
             <DataTemplate x:Key="TabletOrHigherSongHistoryItemTemplate">
-                <Grid Height="100" Margin="0 0 0 5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                <wrt:ListItemButton>
+                    <Grid Height="100" Margin="0 0 0 5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                    <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationLogo}" Grid.Column="0"
+                        <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationLogo}" Grid.Column="0"
                                      Width="85" Height="85" Stretch="UniformToFill" />
 
-                    <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="3*" />
-                            <RowDefinition Height="1*" />
-                        </Grid.RowDefinitions>
+                        <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="3*" />
+                                <RowDefinition Height="1*" />
+                            </Grid.RowDefinitions>
 
-                        <TextBlock Text="{Binding Metadata.Track}" Grid.Row="0" 
+                            <TextBlock Text="{Binding Metadata.Track}" Grid.Row="0" 
                                        Style="{ThemeResource TitleTextBlockStyle}"
                                        x:Name="TrackTextBlock"
                                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                        VerticalAlignment="Bottom"/>
-                        <TextBlock Grid.Row="1"
+                            <TextBlock Grid.Row="1"
                                     VerticalAlignment="Top"
                                     x:Name="ArtistTextBlock"
                                     Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
@@ -85,10 +95,17 @@
                                 <Run Text="·" FontWeight="ExtraBold" />
                                 <Run Text="{Binding Metadata.StationPlayedOn}" />
                             </Span>
-                        </TextBlock>
+                            </TextBlock>
+                        </Grid>
                     </Grid>
-                </Grid>
-
+                    <wrt:ListItemButton.ContextFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Text="Copy" 
+                                            Command="{Binding ElementName=thisPage, Path=DataContext.CopyMetadataCommand}"
+                                            CommandParameter="{Binding}" />
+                        </MenuFlyout>
+                    </wrt:ListItemButton.ContextFlyout>
+                </wrt:ListItemButton>
             </DataTemplate>
         </Grid.Resources>
 

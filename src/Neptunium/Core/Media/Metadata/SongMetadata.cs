@@ -23,6 +23,11 @@ namespace Neptunium.Core.Media.Metadata
 
         [IgnoreDataMember]
         public bool IsUnknownMetadata { get; internal set; } = false;
+
+        public override string ToString()
+        {
+            return string.Format("{0} - {1}", Artist ?? "Unknown Artist", Track ?? "Unknown Track");
+        }
     }
 
     public class ExtendedSongMetadata: SongMetadata
