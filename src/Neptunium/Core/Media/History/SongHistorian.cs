@@ -42,7 +42,10 @@ namespace Neptunium.Core.Media.History
                     {
                         var coll = serializer.Deserialize<ObservableCollection<SongHistoryItem>>(jtr);
 
-                        HistoryOfSongs.AddRange(coll);
+                        if (coll != null)
+                        {
+                            HistoryOfSongs.AddRange(coll);
+                        }
                     }
                 }
             }
