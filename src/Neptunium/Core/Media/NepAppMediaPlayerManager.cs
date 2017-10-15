@@ -175,16 +175,17 @@ namespace Neptunium.Media
 
             streamer.MetadataChanged += Streamer_MetadataChanged;
 
-            streamer.Play();
+            CurrentStreamer = streamer;
+            CurrentStream = stream;
 
-            ConnectingEnd?.Invoke(this, EventArgs.Empty);
+            streamer.Play();
 
             NepApp.Stations.SetLastPlayedStationName(stream.ParentStation.Name);
 
             UpdateMetadata(streamer.SongMetadata);
 
-            CurrentStreamer = streamer;
-            CurrentStream = stream;
+            ConnectingEnd?.Invoke(this, EventArgs.Empty);
+
 
             playLock.Release();
         }
@@ -248,8 +249,8 @@ namespace Neptunium.Media
             {
                 case MediaPlaybackState.Buffering:
                 case MediaPlaybackState.Opening:
-                    //show play
-                    IsPlaying = false;
+                    //show pause
+                    IsPlaying = true;
                     systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Changing;
                     break;
                 case MediaPlaybackState.Paused:
@@ -286,6 +287,8 @@ namespace Neptunium.Media
 
         private async void Streamer_MetadataChanged(object sender, MediaStreamerMetadataChangedEventArgs e)
         {
+            if (CurrentStream == null) return;
+
             Func<StationProgram, bool> getStationProgram = x =>
             {
                 if (x.Host.ToLower().Equals(e.Metadata.Artist.Trim().ToLower())) return true;
@@ -300,7 +303,7 @@ namespace Neptunium.Media
 
             try
             {
-                if (CurrentStream.ParentStation.Programs != null)
+                if (CurrentStream.ParentStation?.Programs != null)
                 {
                     if (CurrentStream.ParentStation.Programs.Any(getStationProgram))
                     {
@@ -323,8 +326,15 @@ namespace Neptunium.Media
 
                 //we're tuned into regular programming/music
 
-                if (CurrentStream.ParentStation.StationMessages.Contains(e.Metadata.Track) || CurrentStream.ParentStation.StationMessages.Contains(e.Metadata.Artist))
-                    return;
+                if (CurrentStream.ParentStation != null)
+                {
+                    if (CurrentStream.ParentStation.StationMessages != null)
+                    {
+                        if (CurrentStream.ParentStation.StationMessages.Contains(e.Metadata.Track) ||
+                            CurrentStream.ParentStation.StationMessages.Contains(e.Metadata.Artist))
+                            return;
+                    }
+                }
 
                 UpdateMetadata(e.Metadata);
 
@@ -358,7 +368,8 @@ namespace Neptunium.Media
 
         private void UpdateMetadata(SongMetadata metadata)
         {
-            if (metadata == null) return;
+            if (metadata == null)
+                return;
 
             CurrentMetadata = metadata;
 
