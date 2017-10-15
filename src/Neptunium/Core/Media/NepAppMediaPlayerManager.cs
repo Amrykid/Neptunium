@@ -205,7 +205,8 @@ namespace Neptunium.Media
             {
                 CurrentStreamer.MetadataChanged -= Streamer_MetadataChanged;
 
-                CurrentStreamer.Pause();
+                if (IsPlaying)
+                    CurrentStreamer.Pause();
                 CurrentStreamer.Dispose();
                 CurrentStreamer = null;
             }
