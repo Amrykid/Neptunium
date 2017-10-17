@@ -49,12 +49,28 @@
                                 </uwp:ImageEx.Source>
                             </uwp:ImageEx>
 
-                            <TextBlock Grid.Column="1" VerticalAlignment="Center"
-                                       Margin="10 0 0 0"
-                                       Text="{Binding Name, Mode=OneTime}"
-                                       Style="{ThemeResource BaseTextBlockStyle}"
-                                       FontWeight="SemiBold"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                            <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="{Binding Name, Mode=OneTime}" Grid.Row="0" 
+                                        Style="{ThemeResource BaseTextBlockStyle}"
+                                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                        VerticalAlignment="Bottom"/>
+                                <TextBlock Grid.Row="1"
+                                        VerticalAlignment="Top"
+                                        x:Name="ArtistTextBlock"
+                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                        Style="{ThemeResource BodyTextBlockStyle}">
+                                    <Span>
+                                        <Run Text="{Binding Genres[0], Mode=OneTime}" />
+                                        <Run Text="·" FontWeight="ExtraBold" />
+                                        <Run Text="{Binding Group, TargetNullValue="", Mode=OneTime}" />
+                                    </Span>
+                                </TextBlock>
+                            </Grid>
                         </Grid>
 
                         <wrt:ListItemButton.ContextFlyout>
