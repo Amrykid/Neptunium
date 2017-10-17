@@ -61,7 +61,6 @@
                                         VerticalAlignment="Bottom"/>
                                 <TextBlock Grid.Row="1"
                                         VerticalAlignment="Top"
-                                        x:Name="ArtistTextBlock"
                                         Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                         Style="{ThemeResource BodyTextBlockStyle}">
                                     <Span>
