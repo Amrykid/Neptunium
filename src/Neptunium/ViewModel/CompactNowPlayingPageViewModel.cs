@@ -15,33 +15,33 @@ namespace Neptunium.ViewModel
     {
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.MediaPlayer.CurrentMetadataChanged += Media_CurrentMetadataChanged;
+            NepApp.SongManager.SongChanged += SongManager_SongChanged;
 
             UpdateMetadata();
 
             base.OnNavigatedTo(sender, e);
         }
 
-        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
-        {
-            NepApp.MediaPlayer.CurrentMetadataChanged -= Media_CurrentMetadataChanged;
-
-            base.OnNavigatedFrom(sender, e);
-        }
-
-        private void UpdateMetadata()
-        {
-            CurrentSong = NepApp.MediaPlayer.CurrentMetadata;
-            CurrentStation = NepApp.MediaPlayer.CurrentStream?.ParentStation;
-        }
-
-        private void Media_CurrentMetadataChanged(object sender, Media.NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs e)
+        private void SongManager_SongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
                 UpdateMetadata();
             });
         }
+
+        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
+        {
+            NepApp.SongManager.SongChanged -= SongManager_SongChanged;
+            base.OnNavigatedFrom(sender, e);
+        }
+
+        private void UpdateMetadata()
+        {
+            CurrentSong = NepApp.SongManager.CurrentSongWithAdditionalMetadata;
+            CurrentStation = NepApp.MediaPlayer.CurrentStream?.ParentStation;
+        }
+
 
         public SongMetadata CurrentSong
         {

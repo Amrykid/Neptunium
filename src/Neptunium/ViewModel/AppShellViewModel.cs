@@ -10,6 +10,7 @@ using Crystal3.UI.Commands;
 using Microsoft.HockeyApp;
 using Neptunium.ViewModel.Dialog;
 using Neptunium.ViewModel.Fragments;
+using Neptunium.Core.Media.Metadata;
 
 namespace Neptunium.ViewModel
 {
@@ -41,6 +42,37 @@ namespace Neptunium.ViewModel
             NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");
 
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
+            NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
+            NepApp.SongManager.SongChanged += SongManager_SongChanged;
+            NepApp.SongManager.StationRadioProgramStarted += SongManager_StationRadioProgramStarted;
+        }
+
+        private async void SongManager_StationRadioProgramStarted(object sender, Media.Songs.NepAppStationProgramStartedEventArgs e)
+        {
+            if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+            {
+
+                if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
+                    NepApp.UI.Notifier.ShowStationProgrammingToastNotification(e.RadioProgram, e.Metadata);
+            }
+
+            NepApp.UI.Notifier.UpdateLiveTile(new ExtendedSongMetadata(e.Metadata));
+        }
+
+        private async void SongManager_SongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
+        {
+            if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+            {
+                if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
+                    NepApp.UI.Notifier.ShowSongToastNotification((ExtendedSongMetadata)e.Metadata);
+            }
+
+            NepApp.UI.Notifier.UpdateLiveTile((ExtendedSongMetadata)e.Metadata);
+        }
+
+        private void SongManager_PreSongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
+        {
+            
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)

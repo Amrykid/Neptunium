@@ -23,6 +23,8 @@ namespace Neptunium.Core.Media.Metadata
 
         [IgnoreDataMember]
         public bool IsUnknownMetadata { get; internal set; } = false;
+        [IgnoreDataMember]
+        public string RadioProgram { get; internal set; }
 
         public override string ToString()
         {
@@ -45,6 +47,7 @@ namespace Neptunium.Core.Media.Metadata
             StationPlayedOn = original.StationPlayedOn;
             StationLogo = original.StationLogo;
             IsUnknownMetadata = original.IsUnknownMetadata;
+            RadioProgram = original.RadioProgram;
         }
 
         public AlbumData Album { get; internal set; }

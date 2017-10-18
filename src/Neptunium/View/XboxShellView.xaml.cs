@@ -46,8 +46,8 @@ namespace Neptunium.View
             NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
             NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
 
-            NowPlayingTrackTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.MediaPlayer, nameof(NepApp.MediaPlayer.CurrentMetadata)));
-            NowPlayingArtistTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.MediaPlayer, nameof(NepApp.MediaPlayer.CurrentMetadata)));
+            NowPlayingTrackTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
+            NowPlayingArtistTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
 
             PageTitleTextBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
 

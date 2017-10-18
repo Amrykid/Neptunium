@@ -16,15 +16,15 @@ namespace Neptunium.ViewModel
     {
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.MediaPlayer.History.HistoryOfSongs.CollectionChanged += HistoryOfSongs_CollectionChanged;
-            UpdateHistory(NepApp.MediaPlayer.History.HistoryOfSongs);
+            NepApp.SongManager.History.HistoryOfSongs.CollectionChanged += HistoryOfSongs_CollectionChanged;
+            UpdateHistory(NepApp.SongManager.History.HistoryOfSongs);
 
             base.OnNavigatedTo(sender, e);
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.MediaPlayer.History.HistoryOfSongs.CollectionChanged -= HistoryOfSongs_CollectionChanged;
+            NepApp.SongManager.History.HistoryOfSongs.CollectionChanged -= HistoryOfSongs_CollectionChanged;
 
             base.OnNavigatedFrom(sender, e);
         }

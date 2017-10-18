@@ -87,7 +87,8 @@ namespace Neptunium.Core.Stations
                     station.Programs = stationElement.Element("Programs").Elements("Program").Select<XElement, StationProgram>(x =>
                     {
                         var hostExpression = x.Attribute("HostExp")?.Value;
-                        return new StationProgram() { Host = x.Attribute("Host").Value, HostRegexExpression = hostExpression  };
+                        var programName = x.Attribute("Name")?.Value;
+                        return new StationProgram() { Host = x.Attribute("Host").Value, HostRegexExpression = hostExpression, Name = programName };
                     }).ToArray();
                 }
                 else

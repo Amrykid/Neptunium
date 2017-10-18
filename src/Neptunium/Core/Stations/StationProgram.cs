@@ -4,5 +4,6 @@
     {
         public string Host { get; set; }
         public string HostRegexExpression { get; set; }
+        public string Name { get; set; }
     }
 }

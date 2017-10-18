@@ -88,7 +88,7 @@ namespace Neptunium.View
                 }
             }));
 
-            NowPlayingButton.SetBinding(Button.DataContextProperty, NepApp.CreateBinding(NepApp.MediaPlayer, nameof(NepApp.MediaPlayer.CurrentMetadata)));
+            NowPlayingButton.SetBinding(Button.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
             NepApp.MediaPlayer.ConnectingBegin += Media_ConnectingBegin;
             NepApp.MediaPlayer.ConnectingEnd += Media_ConnectingEnd;

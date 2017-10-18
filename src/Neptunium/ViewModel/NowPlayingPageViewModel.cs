@@ -48,8 +48,8 @@ namespace Neptunium.ViewModel
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.MediaPlayer.CurrentMetadataChanged += Media_CurrentMetadataChanged;
-            NepApp.MediaPlayer.CurrentMetadataExtendedInfoFound += Media_CurrentMetadataExtendedInfoFound;
+            NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
+            NepApp.SongManager.SongChanged += SongManager_SongChanged;
 
             UpdateMetadata();
             UpdateBackground();
@@ -57,9 +57,17 @@ namespace Neptunium.ViewModel
             base.OnNavigatedTo(sender, e);
         }
 
-        private void Media_CurrentMetadataExtendedInfoFound(object sender, Media.NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs e)
+        private void SongManager_SongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
         {
             UpdateBackground();
+        }
+
+        private void SongManager_PreSongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                UpdateMetadata();
+            });
         }
 
         private void UpdateBackground()
@@ -67,7 +75,7 @@ namespace Neptunium.ViewModel
             try
             {
 
-                var extendedData = NepApp.MediaPlayer.CurrentMetadataExtended;
+                var extendedData = NepApp.SongManager.CurrentSongWithAdditionalMetadata;
                 if (extendedData != null)
                 {
                     if (extendedData?.Album != null)
@@ -103,25 +111,17 @@ namespace Neptunium.ViewModel
             catch (Exception) { }
         }
 
-        private void Media_CurrentMetadataChanged(object sender, Media.NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs e)
-        {
-            App.Dispatcher.RunWhenIdleAsync(() =>
-            {
-                UpdateMetadata();
-            });
-        }
-
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.MediaPlayer.CurrentMetadataChanged -= Media_CurrentMetadataChanged;
-            NepApp.MediaPlayer.CurrentMetadataExtendedInfoFound -= Media_CurrentMetadataExtendedInfoFound;
+            NepApp.SongManager.PreSongChanged -= SongManager_PreSongChanged;
+            NepApp.SongManager.SongChanged -= SongManager_SongChanged;
 
             base.OnNavigatedFrom(sender, e);
         }
 
         private void UpdateMetadata()
         {
-            CurrentSong = NepApp.MediaPlayer.CurrentMetadata;
+            CurrentSong = NepApp.SongManager.CurrentSong;
             CurrentStation = NepApp.MediaPlayer.CurrentStream?.ParentStation;
 
             if (!string.IsNullOrWhiteSpace(CurrentStation?.Background))

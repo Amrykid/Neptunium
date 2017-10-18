@@ -1,10 +1,10 @@
 ﻿using Kukkii;
 using Neptunium.Core;
-using Neptunium.Core.Media.Songs;
 using Neptunium.Core.Settings;
 using Neptunium.Core.Stations;
 using Neptunium.Core.UI;
 using Neptunium.Media;
+using Neptunium.Media.Songs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,8 +45,8 @@ namespace Neptunium
 
             Settings = new NepAppSettingsManager();
             Stations = new NepAppStationsManager();
-            MediaPlayer = new NepAppMediaPlayerManager();
             SongManager = new NepAppSongManager();
+            MediaPlayer = new NepAppMediaPlayerManager();
             Network = new NepAppNetworkManager();
             Handoff = new NepAppHandoffManager();
             UI = new NepAppUIManager();
