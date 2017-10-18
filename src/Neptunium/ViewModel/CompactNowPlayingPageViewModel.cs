@@ -15,14 +15,14 @@ namespace Neptunium.ViewModel
     {
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.SongManager.SongChanged += SongManager_SongChanged;
+            NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
 
             UpdateMetadata();
 
             base.OnNavigatedTo(sender, e);
         }
 
-        private void SongManager_SongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
+        private void SongManager_PreSongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
@@ -32,7 +32,7 @@ namespace Neptunium.ViewModel
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.SongManager.SongChanged -= SongManager_SongChanged;
+            NepApp.SongManager.PreSongChanged -= SongManager_PreSongChanged;
             base.OnNavigatedFrom(sender, e);
         }
 
