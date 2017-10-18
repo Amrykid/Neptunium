@@ -89,5 +89,13 @@ namespace Neptunium.View
 
             base.OnNavigatingFrom(e);
         }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                UpdatePlaybackStatus(NepApp.MediaPlayer.IsPlaying);
+            });
+        }
     }
 }
