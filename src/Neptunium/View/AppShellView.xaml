@@ -139,7 +139,8 @@
                         <Grid Grid.Column="1" Margin="10 -5 10 0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="20" />
-                                <RowDefinition Height="25" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="20" />
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="0" Text="{Binding Track, UpdateSourceTrigger=PropertyChanged}"
@@ -148,6 +149,9 @@
                             <TextBlock Grid.Row="1" Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}"
                                        Style="{ThemeResource BodyTextBlockStyle}"
                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
+                            <TextBlock Grid.Row="2" Text="{Binding StationPlayedOn, UpdateSourceTrigger=PropertyChanged}"
+                                       Style="{ThemeResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"/>
                         </Grid>
 
                     </Grid>
