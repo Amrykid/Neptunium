@@ -17,12 +17,12 @@ namespace Neptunium.ViewModel
     {
         public RelayCommand ResumePlaybackCommand => new RelayCommand(x =>
         {
-            NepApp.Media.Resume();
+            NepApp.MediaPlayer.Resume();
         });
 
         public RelayCommand PausePlaybackCommand => new RelayCommand(x =>
         {
-            NepApp.Media.Pause();
+            NepApp.MediaPlayer.Pause();
         });
 
         public SleepTimerContextFragment SleepTimerFragment => new SleepTimerContextFragment();
@@ -30,7 +30,7 @@ namespace Neptunium.ViewModel
 
         public RelayCommand MediaCastingCommand => new RelayCommand(x =>
         {
-            NepApp.Media.ShowCastingPicker();
+            NepApp.MediaPlayer.ShowCastingPicker();
         });
 
         public AppShellViewModel()
@@ -40,7 +40,7 @@ namespace Neptunium.ViewModel
             NepApp.UI.AddNavigationRoute("History", typeof(SongHistoryPageViewModel), "");
             NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");
 
-            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+            NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)

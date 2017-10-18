@@ -46,9 +46,9 @@ namespace Neptunium.ViewModel.Fragments
                 if (SelectedSleepItem != null)
                 {
                     if (SelectedSleepItem.TimeToWait == TimeSpan.MinValue)
-                        NepApp.Media.ClearSleepTimer();
+                        NepApp.MediaPlayer.ClearSleepTimer();
                     else
-                        NepApp.Media.SetSleepTimer(SelectedSleepItem.TimeToWait);
+                        NepApp.MediaPlayer.SetSleepTimer(SelectedSleepItem.TimeToWait);
 
                     EstimatedTime = SelectedSleepItem.TimeToWait == TimeSpan.MinValue ? "None" : DateTime.Now.Add(SelectedSleepItem.TimeToWait).ToString("t");
                 }

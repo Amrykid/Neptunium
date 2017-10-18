@@ -88,11 +88,11 @@ namespace Neptunium.View
                 }
             }));
 
-            NowPlayingButton.SetBinding(Button.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
-            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
-            NepApp.Media.ConnectingBegin += Media_ConnectingBegin;
-            NepApp.Media.ConnectingEnd += Media_ConnectingEnd;
-            NepApp.Media.IsCastingChanged += Media_IsCastingChanged;
+            NowPlayingButton.SetBinding(Button.DataContextProperty, NepApp.CreateBinding(NepApp.MediaPlayer, nameof(NepApp.MediaPlayer.CurrentMetadata)));
+            NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
+            NepApp.MediaPlayer.ConnectingBegin += Media_ConnectingBegin;
+            NepApp.MediaPlayer.ConnectingEnd += Media_ConnectingEnd;
+            NepApp.MediaPlayer.IsCastingChanged += Media_IsCastingChanged;
         }
 
         private void Media_IsCastingChanged(object sender, EventArgs e)
@@ -108,7 +108,7 @@ namespace Neptunium.View
 
         private void UpdateCastingUI()
         {
-            if (NepApp.Media.IsCasting)
+            if (NepApp.MediaPlayer.IsCasting)
             {
                 var uiSettings = new Windows.UI.ViewManagement.UISettings();
                 topAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.AccentDark3));
@@ -298,7 +298,7 @@ namespace Neptunium.View
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            sleepTimerBtn.Visibility = NepApp.Media.IsPlaying ? Visibility.Visible : Visibility.Collapsed;
+            sleepTimerBtn.Visibility = NepApp.MediaPlayer.IsPlaying ? Visibility.Visible : Visibility.Collapsed;
 
             //FeedbackButton.Visibility = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported() ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -315,7 +315,7 @@ namespace Neptunium.View
 
         private void bottomAppBar_Opened(object sender, object e)
         {
-            if (NepApp.Media.CurrentStreamer != null) //only show the image if we're actually streaming something
+            if (NepApp.MediaPlayer.CurrentStreamer != null) //only show the image if we're actually streaming something
             {
                 NowPlayingButton.Height = double.NaN;
                 NowPlayingImage.Visibility = Visibility.Visible;

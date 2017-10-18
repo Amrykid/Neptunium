@@ -34,7 +34,7 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
-            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+            NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
 
             inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two) as FrameNavigationService;
         }
@@ -85,7 +85,7 @@ namespace Neptunium.View
                 }
             }
 
-            NepApp.Media.IsPlayingChanged -= Media_IsPlayingChanged;
+            NepApp.MediaPlayer.IsPlayingChanged -= Media_IsPlayingChanged;
 
             base.OnNavigatingFrom(e);
         }

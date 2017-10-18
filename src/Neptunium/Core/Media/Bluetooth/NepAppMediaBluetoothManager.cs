@@ -48,15 +48,15 @@ namespace Neptunium.Core.Media.Bluetooth
                 if ((bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsInBluetoothMode))
                 {
 
-                    var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, NepApp.Media.CurrentStream.ParentStation.PrimaryLocale);
+                    var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, NepApp.MediaPlayer.CurrentStream.ParentStation.PrimaryLocale);
                     var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
 
-                    double initialVolume = NepApp.Media.Volume;
+                    double initialVolume = NepApp.MediaPlayer.Volume;
                     bool shouldFade = initialVolume >= 0.1;
 
-                    if (shouldFade) await NepApp.Media.FadeVolumeDownToAsync(0.1);
+                    if (shouldFade) await NepApp.MediaPlayer.FadeVolumeDownToAsync(0.1);
                     await PlayAnnouncementAudioStreamAsync(stream);             
-                    if (shouldFade) await NepApp.Media.FadeVolumeUpToAsync(initialVolume);
+                    if (shouldFade) await NepApp.MediaPlayer.FadeVolumeUpToAsync(initialVolume);
                 }
             }
         }

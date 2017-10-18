@@ -29,11 +29,11 @@ namespace Neptunium.ViewModel.Fragments
         {
             if (system is RemoteSystem)
             {
-                if (NepApp.Media.IsPlaying)
+                if (NepApp.MediaPlayer.IsPlaying)
                 {
                     var device = (RemoteSystem)system;
 
-                    var station = NepApp.Media.CurrentStream.ParentStation;
+                    var station = NepApp.MediaPlayer.CurrentStream.ParentStation;
                     if (await NepApp.Handoff.HandoffStationToRemoteDeviceAsync(device, station))
                     {
                         await NepApp.UI.ShowInfoDialogAsync("Handoff to " + device.DisplayName + " was successful.", "We were able to start playback on the device.");

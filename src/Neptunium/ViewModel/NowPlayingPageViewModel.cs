@@ -27,17 +27,17 @@ namespace Neptunium.ViewModel
 
         public RelayCommand MediaCastingCommand => new RelayCommand(x =>
         {
-            NepApp.Media.ShowCastingPicker();
+            NepApp.MediaPlayer.ShowCastingPicker();
         });
 
         public RelayCommand ResumePlaybackCommand => new RelayCommand(x =>
         {
-            NepApp.Media.Resume();
+            NepApp.MediaPlayer.Resume();
         });
 
         public RelayCommand PausePlaybackCommand => new RelayCommand(x =>
         {
-            NepApp.Media.Pause();
+            NepApp.MediaPlayer.Pause();
         });
 
         public Uri Background
@@ -48,8 +48,8 @@ namespace Neptunium.ViewModel
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.Media.CurrentMetadataChanged += Media_CurrentMetadataChanged;
-            NepApp.Media.CurrentMetadataExtendedInfoFound += Media_CurrentMetadataExtendedInfoFound;
+            NepApp.MediaPlayer.CurrentMetadataChanged += Media_CurrentMetadataChanged;
+            NepApp.MediaPlayer.CurrentMetadataExtendedInfoFound += Media_CurrentMetadataExtendedInfoFound;
 
             UpdateMetadata();
             UpdateBackground();
@@ -67,7 +67,7 @@ namespace Neptunium.ViewModel
             try
             {
 
-                var extendedData = NepApp.Media.CurrentMetadataExtended;
+                var extendedData = NepApp.MediaPlayer.CurrentMetadataExtended;
                 if (extendedData != null)
                 {
                     if (extendedData?.Album != null)
@@ -113,16 +113,16 @@ namespace Neptunium.ViewModel
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.Media.CurrentMetadataChanged -= Media_CurrentMetadataChanged;
-            NepApp.Media.CurrentMetadataExtendedInfoFound -= Media_CurrentMetadataExtendedInfoFound;
+            NepApp.MediaPlayer.CurrentMetadataChanged -= Media_CurrentMetadataChanged;
+            NepApp.MediaPlayer.CurrentMetadataExtendedInfoFound -= Media_CurrentMetadataExtendedInfoFound;
 
             base.OnNavigatedFrom(sender, e);
         }
 
         private void UpdateMetadata()
         {
-            CurrentSong = NepApp.Media.CurrentMetadata;
-            CurrentStation = NepApp.Media.CurrentStream?.ParentStation;
+            CurrentSong = NepApp.MediaPlayer.CurrentMetadata;
+            CurrentStation = NepApp.MediaPlayer.CurrentStream?.ParentStation;
 
             if (!string.IsNullOrWhiteSpace(CurrentStation?.Background))
             {

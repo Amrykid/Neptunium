@@ -67,13 +67,13 @@ namespace Neptunium
                     reportBuilder.AppendLine();
 
                     reportBuilder.AppendLine("Platform: " + Enum.GetName(typeof(Crystal3.Core.Platform), CrystalApplication.GetDevicePlatform()));
-                    reportBuilder.AppendLine("Is Playing?: " + NepApp.Media.IsPlaying);
-                    reportBuilder.AppendLine("Current Station: " + NepApp.Media.CurrentStream != null ? NepApp.Media.CurrentStream.ParentStation.Name : "None");
+                    reportBuilder.AppendLine("Is Playing?: " + NepApp.MediaPlayer.IsPlaying);
+                    reportBuilder.AppendLine("Current Station: " + NepApp.MediaPlayer.CurrentStream != null ? NepApp.MediaPlayer.CurrentStream.ParentStation.Name : "None");
 
-                    if (NepApp.Media.CurrentStream != null) reportBuilder.AppendLine("Station Stream: " + NepApp.Media.CurrentStream.ToString());
+                    if (NepApp.MediaPlayer.CurrentStream != null) reportBuilder.AppendLine("Station Stream: " + NepApp.MediaPlayer.CurrentStream.ToString());
 
-                    reportBuilder.AppendLine("Is Casting?: " + NepApp.Media.IsCasting);
-                    reportBuilder.AppendLine("Is Sleep Timer Running?: " + NepApp.Media.IsSleepTimerRunning);
+                    reportBuilder.AppendLine("Is Casting?: " + NepApp.MediaPlayer.IsCasting);
+                    reportBuilder.AppendLine("Is Sleep Timer Running?: " + NepApp.MediaPlayer.IsSleepTimerRunning);
 
 
                     return reportBuilder.ToString();
@@ -241,7 +241,7 @@ namespace Neptunium
                         try
                         {
                             var station = await NepApp.Stations.GetStationByNameAsync(stationName);
-                            await NepApp.Media.TryStreamStationAsync(station.Streams[0]);
+                            await NepApp.MediaPlayer.TryStreamStationAsync(station.Streams[0]);
                         }
                         catch (Exception ex)
                         {
@@ -297,7 +297,7 @@ namespace Neptunium
         {
             //clears the tile if we're suspending.
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-            if (!NepApp.Media.IsPlaying)
+            if (!NepApp.MediaPlayer.IsPlaying)
             {
                 //removes the now playing notification from the action center.
                 ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);

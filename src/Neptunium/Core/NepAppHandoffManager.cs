@@ -212,7 +212,7 @@ namespace Neptunium
 
             if (status == RemoteLaunchUriStatus.Success)
             {
-                NepApp.Media.Pause();
+                NepApp.MediaPlayer.Pause();
 
                 return true;
             }
@@ -226,7 +226,7 @@ namespace Neptunium
             cmd.Add("Message", "CAE:StopPlayback");
             var stopMsgTask = SendDataToDeviceOverExistingConnectionAsync(streamingDevice.Item3, cmd, keepAlive: false);
 
-            var playStationTask = NepApp.Media.TryStreamStationAsync(streamingDevice.Item2.Streams.First());
+            var playStationTask = NepApp.MediaPlayer.TryStreamStationAsync(streamingDevice.Item2.Streams.First());
 
             await Task.WhenAny(stopMsgTask, playStationTask);
         }
@@ -313,17 +313,17 @@ namespace Neptunium
                 case "Status":
                     {
                         response.Add("Status", "OK");
-                        response.Add("IsPlaying", NepApp.Media.IsPlaying);
+                        response.Add("IsPlaying", NepApp.MediaPlayer.IsPlaying);
 
-                        if (NepApp.Media.IsPlaying && NepApp.Media.CurrentStream != null)
-                            response.Add("CurrentStation", NepApp.Media.CurrentStream.ParentStation.Name);
+                        if (NepApp.MediaPlayer.IsPlaying && NepApp.MediaPlayer.CurrentStream != null)
+                            response.Add("CurrentStation", NepApp.MediaPlayer.CurrentStream.ParentStation.Name);
 
                         break;
                     }
                 case "CAE:StopPlayback":
                     {
-                        if (NepApp.Media.IsPlaying)
-                            NepApp.Media.Pause();
+                        if (NepApp.MediaPlayer.IsPlaying)
+                            NepApp.MediaPlayer.Pause();
                         response.Add("Status", "OK");
                         break;
                     }

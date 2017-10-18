@@ -15,7 +15,7 @@ namespace Neptunium.ViewModel
     {
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.Media.CurrentMetadataChanged += Media_CurrentMetadataChanged;
+            NepApp.MediaPlayer.CurrentMetadataChanged += Media_CurrentMetadataChanged;
 
             UpdateMetadata();
 
@@ -24,15 +24,15 @@ namespace Neptunium.ViewModel
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.Media.CurrentMetadataChanged -= Media_CurrentMetadataChanged;
+            NepApp.MediaPlayer.CurrentMetadataChanged -= Media_CurrentMetadataChanged;
 
             base.OnNavigatedFrom(sender, e);
         }
 
         private void UpdateMetadata()
         {
-            CurrentSong = NepApp.Media.CurrentMetadata;
-            CurrentStation = NepApp.Media.CurrentStream?.ParentStation;
+            CurrentSong = NepApp.MediaPlayer.CurrentMetadata;
+            CurrentStation = NepApp.MediaPlayer.CurrentStream?.ParentStation;
         }
 
         private void Media_CurrentMetadataChanged(object sender, Media.NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs e)
@@ -57,12 +57,12 @@ namespace Neptunium.ViewModel
 
         public RelayCommand ResumePlaybackCommand => new RelayCommand(x =>
         {
-            NepApp.Media.Resume();
+            NepApp.MediaPlayer.Resume();
         });
 
         public RelayCommand PausePlaybackCommand => new RelayCommand(x =>
         {
-            NepApp.Media.Pause();
+            NepApp.MediaPlayer.Pause();
         });
     }
 }

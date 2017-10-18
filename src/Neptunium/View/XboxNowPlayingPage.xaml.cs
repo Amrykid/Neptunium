@@ -31,7 +31,7 @@ namespace Neptunium.View
         public XboxNowPlayingPage()
         {
             this.InitializeComponent();
-            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+            NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
@@ -90,7 +90,7 @@ namespace Neptunium.View
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            UpdatePlaybackStatus(NepApp.Media.IsPlaying);
+            UpdatePlaybackStatus(NepApp.MediaPlayer.IsPlaying);
 
             foreach(AppBarButton btn in CommandPanel.Children.Where(x => x is AppBarButton))
             {

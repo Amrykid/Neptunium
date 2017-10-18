@@ -14,9 +14,9 @@ namespace Neptunium.ViewModel
     {
         public RelayCommand ClearBluetoothDeviceCommand => new RelayCommand(x =>
         {
-            if (NepApp.Media.Bluetooth.DeviceCoordinator.IsInitialized)
+            if (NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.IsInitialized)
             {
-                NepApp.Media.Bluetooth.DeviceCoordinator.ClearDevice();
+                NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.ClearDevice();
 
                 SelectedBluetoothDeviceName = "None";
             }
@@ -26,9 +26,9 @@ namespace Neptunium.ViewModel
         {
             if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
             {
-                if (await NepApp.Media.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync())
+                if (await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync())
                 {
-                    SelectedBluetoothDeviceName = NepApp.Media.Bluetooth.DeviceCoordinator.SelectedBluetoothDeviceName ?? "None";
+                    SelectedBluetoothDeviceName = NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.SelectedBluetoothDeviceName ?? "None";
                 }
             }
 

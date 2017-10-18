@@ -34,7 +34,7 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
-            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+            NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
 
             inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two) as FrameNavigationService;
 
@@ -76,14 +76,14 @@ namespace Neptunium.View
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            NepApp.Media.IsPlayingChanged -= Media_IsPlayingChanged;
+            NepApp.MediaPlayer.IsPlayingChanged -= Media_IsPlayingChanged;
 
             base.OnNavigatingFrom(e);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            UpdatePlaybackStatus(NepApp.Media.IsPlaying);
+            UpdatePlaybackStatus(NepApp.MediaPlayer.IsPlaying);
         }
 
         private async void compactViewButton_Click(object sender, RoutedEventArgs e)

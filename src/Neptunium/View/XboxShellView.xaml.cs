@@ -46,12 +46,12 @@ namespace Neptunium.View
             NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
             NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
 
-            NowPlayingTrackTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
-            NowPlayingArtistTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
+            NowPlayingTrackTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.MediaPlayer, nameof(NepApp.MediaPlayer.CurrentMetadata)));
+            NowPlayingArtistTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.MediaPlayer, nameof(NepApp.MediaPlayer.CurrentMetadata)));
 
             PageTitleTextBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
 
-            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+            NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
         }
 
         private bool isInNoChromeMode = false;
@@ -69,7 +69,7 @@ namespace Neptunium.View
             {
                 //reactivate chrome
 
-                if (NepApp.Media.IsPlaying)
+                if (NepApp.MediaPlayer.IsPlaying)
                     MediaGrid.Visibility = Visibility.Visible;
 
                 HeaderGrid.Visibility = Visibility.Visible;

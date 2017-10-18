@@ -34,7 +34,7 @@ namespace Neptunium.View
         private async void SelectBluetoothButton_Click(object sender, RoutedEventArgs e)
         {
             SelectBluetoothButton.IsEnabled = false;
-            var device = await NepApp.Media.Bluetooth.DeviceCoordinator.SelectDeviceAsync(Window.Current.Bounds);
+            var device = await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.SelectDeviceAsync(Window.Current.Bounds);
             if (device != null)
             {
                 this.GetViewModel<SettingsPageViewModel>().SelectedBluetoothDeviceName = device.Name;
@@ -46,7 +46,7 @@ namespace Neptunium.View
         {
             if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
             {
-                if (await NepApp.Media.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync())
+                if (await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync())
                 {
                     //only show bluetooth settings on devices that have bluetooth.
                     bluetoothPivot.Visibility = Visibility.Visible;
