@@ -89,6 +89,8 @@ namespace Neptunium.Media.Songs
 
                     UpdateTransportControls(songMetadata);
 
+                    //todo strip out "Feat." artists
+
                     ExtendedSongMetadata newMetadata = await MetadataFinder.FindMetadataAsync(songMetadata); //todo: cache
                     CurrentSongWithAdditionalMetadata = newMetadata;
 

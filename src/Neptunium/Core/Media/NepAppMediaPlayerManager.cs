@@ -31,6 +31,7 @@ namespace Neptunium.Media
         private MediaPlayer CurrentPlayer { get; set; }
         public SystemMediaTransportControls MediaTransportControls { get; private set; }
         private MediaPlaybackSession CurrentPlayerSession { get; set; }
+        public CastingConnection MediaCastingConnection { get; private set; }
         internal bool IsSleepTimerRunning { get { return sleepTimer.IsEnabled; } }
         public event PropertyChangedEventHandler PropertyChanged;
         public double Volume
@@ -333,12 +334,12 @@ namespace Neptunium.Media
 
             App.Dispatcher.RunWhenIdleAsync(async () =>
             {
-                CastingConnection connection = args.SelectedCastingDevice.CreateCastingConnection();
+                MediaCastingConnection = args.SelectedCastingDevice.CreateCastingConnection();
 
-                connection.StateChanged += Connection_StateChanged;
-                connection.ErrorOccurred += Connection_ErrorOccurred;
+                MediaCastingConnection.StateChanged += Connection_StateChanged;
+                MediaCastingConnection.ErrorOccurred += Connection_ErrorOccurred;
 
-                await connection.RequestStartCastingAsync(CurrentPlayer.GetAsCastingSource());
+                await MediaCastingConnection.RequestStartCastingAsync(CurrentPlayer.GetAsCastingSource());
             });
         }
 
@@ -349,15 +350,19 @@ namespace Neptunium.Media
                 sender.StateChanged -= Connection_StateChanged;
                 sender.ErrorOccurred -= Connection_ErrorOccurred;
 
-                IsPlaying = false;
+                await sender.DisconnectAsync();
+                sender.Dispose();
+                MediaCastingConnection = null;
 
-                ShutdownPreviousPlaybackSession();
+                //IsPlaying = false;
 
-                await NepApp.UI.ShowInfoDialogAsync("Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
+                //ShutdownPreviousPlaybackSession();
+
+                await NepApp.UI.ShowInfoDialogAsync("Uh-Oh!", "An error occurred while casting: " + args.Message);
 
                 if (!await App.GetIfPrimaryWindowVisibleAsync())
                 {
-                    NepApp.UI.Notifier.ShowErrorToastNotification(CurrentStream, "Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
+                    NepApp.UI.Notifier.ShowErrorToastNotification(CurrentStream, "Uh-Oh!", "An error occurred while casting: " + args.Message);
                 }
             }
         }
