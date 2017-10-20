@@ -48,7 +48,7 @@
 
                                 <TextBlock Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}" Width="250"
                                            Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                           Text="Select a station to transfer playback to.&#10;&#10;Note: You must be streaming/listening to a station before hand." />
+                                           Text="Select a device to transfer playback to.&#10;&#10;Note: You must be streaming/listening to a station before hand." />
 
                                 <ListBox Grid.Row="1" ItemsSource="{Binding AvailableSystems, UpdateSourceTrigger=PropertyChanged}">
                                     <ListBox.ItemTemplate>
