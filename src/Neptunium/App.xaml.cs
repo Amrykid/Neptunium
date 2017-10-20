@@ -45,6 +45,8 @@ namespace Neptunium
         /// </summary>
         public App()
         {
+            App.Current.UnhandledException += Current_UnhandledException;
+
             //For Xbox One
             this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
             ElementSoundPlayer.State = ElementSoundPlayerState.Auto;
@@ -79,6 +81,33 @@ namespace Neptunium
 
                     return reportBuilder.ToString();
                 });
+            }
+        }
+
+        private async void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+
+            var exception = e.Exception;
+            if (!System.Diagnostics.Debugger.IsAttached)
+            {
+                if (exception is NeptuniumException)
+                {
+                    await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Something went wrong!", e.Message);
+                }
+                else
+                {
+                    Dictionary<string, string> dictionary = new Dictionary<string, string>();
+                    dictionary.Add("Original-Message", e.Message);
+                    HockeyClient.Current.TrackException(exception, dictionary);
+                    HockeyClient.Current.Flush();
+
+                    await NepApp.UI.ShowInfoDialogAsync("Uh-oh! That's not supposed to happen.", e.Message);
+                }
+            }
+            else
+            {
+                System.Diagnostics.Debugger.Break();
             }
         }
 
