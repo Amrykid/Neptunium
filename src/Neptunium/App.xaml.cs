@@ -45,8 +45,6 @@ namespace Neptunium
         /// </summary>
         public App()
         {
-            App.Current.UnhandledException += Current_UnhandledException;
-
             //For Xbox One
             this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
             ElementSoundPlayer.State = ElementSoundPlayerState.Auto;
@@ -59,25 +57,26 @@ namespace Neptunium
                 Microsoft.HockeyApp.HockeyClient.Current.Configure("2f0ab4c93b2341a0a4bbbd5ec98917f9", new TelemetryConfiguration()
                 {
                     EnableDiagnostics = true,
-                }).SetExceptionDescriptionLoader((Exception ex) =>
-                {
-                    StringBuilder reportBuilder = new StringBuilder();
-                    reportBuilder.AppendLine("Exception HResult: " + ex.HResult.ToString());
-                    if (ex.InnerException != null) reportBuilder.AppendLine("Inner-Exception: " + ex.InnerException.ToString());
-                    reportBuilder.AppendLine();
+                    ExceptionDescriptionLoader = (Exception ex) =>
+                    {
+                        StringBuilder reportBuilder = new StringBuilder();
+                        reportBuilder.AppendLine("Exception HResult: " + ex.HResult.ToString());
+                        if (ex.InnerException != null) reportBuilder.AppendLine("Inner-Exception: " + ex.InnerException.ToString());
+                        reportBuilder.AppendLine();
 
-                    reportBuilder.AppendLine("Platform: " + Enum.GetName(typeof(Crystal3.Core.Platform), CrystalApplication.GetDevicePlatform()));
-                    reportBuilder.AppendLine("Is Playing?: " + NepApp.MediaPlayer.IsPlaying);
-                    reportBuilder.AppendLine("Current Station: " + NepApp.MediaPlayer.CurrentStream != null ? NepApp.MediaPlayer.CurrentStream.ParentStation.Name : "None");
+                        reportBuilder.AppendLine("Platform: " + Enum.GetName(typeof(Crystal3.Core.Platform), CrystalApplication.GetDevicePlatform()));
+                        reportBuilder.AppendLine("Is Playing?: " + NepApp.MediaPlayer.IsPlaying);
+                        reportBuilder.AppendLine("Current Station: " + NepApp.MediaPlayer.CurrentStream != null ? NepApp.MediaPlayer.CurrentStream.ParentStation.Name : "None");
 
-                    if (NepApp.MediaPlayer.CurrentStream != null) reportBuilder.AppendLine("Station Stream: " + NepApp.MediaPlayer.CurrentStream.ToString());
+                        if (NepApp.MediaPlayer.CurrentStream != null) reportBuilder.AppendLine("Station Stream: " + NepApp.MediaPlayer.CurrentStream.ToString());
 
-                    reportBuilder.AppendLine("Is Casting?: " + NepApp.MediaPlayer.IsCasting);
-                    reportBuilder.AppendLine("Is Sleep Timer Running?: " + NepApp.MediaPlayer.IsSleepTimerRunning);
+                        reportBuilder.AppendLine("Is Casting?: " + NepApp.MediaPlayer.IsCasting);
+                        reportBuilder.AppendLine("Is Sleep Timer Running?: " + NepApp.MediaPlayer.IsSleepTimerRunning);
 
 
-                    return reportBuilder.ToString();
-                });
+                        return reportBuilder.ToString();
+                    }
+                 });
             }
         }
 
@@ -335,30 +334,6 @@ namespace Neptunium
             }
 
             return Task.CompletedTask;
-        }
-
-
-        private async void Current_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
-        {
-            if (e.Exception is NeptuniumException)
-            {
-                e.Handled = true;
-
-                await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Something went wrong!", e.Exception.Message);
-            }
-            else
-            {
-                if (!System.Diagnostics.Debugger.IsAttached)
-                {
-                    HockeyClient.Current.TrackException(e.Exception);
-                    HockeyClient.Current.Flush();
-                }
-                else
-                {
-                    e.Handled = true;
-                    System.Diagnostics.Debugger.Break();
-                }
-            }
         }
     }
 }
