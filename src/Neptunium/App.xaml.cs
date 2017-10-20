@@ -56,27 +56,29 @@ namespace Neptunium
             {
                 Microsoft.HockeyApp.HockeyClient.Current.Configure("2f0ab4c93b2341a0a4bbbd5ec98917f9", new TelemetryConfiguration()
                 {
-                    EnableDiagnostics = true,
-                    ExceptionDescriptionLoader = (Exception ex) =>
+                    EnableDiagnostics = true
+                }).SetExceptionDescriptionLoader((Exception ex) =>
+                {
+                    StringBuilder reportBuilder = new StringBuilder();
+                    if (ex != null)
                     {
-                        StringBuilder reportBuilder = new StringBuilder();
                         reportBuilder.AppendLine("Exception HResult: " + ex.HResult.ToString());
                         if (ex.InnerException != null) reportBuilder.AppendLine("Inner-Exception: " + ex.InnerException.ToString());
                         reportBuilder.AppendLine();
-
-                        reportBuilder.AppendLine("Platform: " + Enum.GetName(typeof(Crystal3.Core.Platform), CrystalApplication.GetDevicePlatform()));
-                        reportBuilder.AppendLine("Is Playing?: " + NepApp.MediaPlayer.IsPlaying);
-                        reportBuilder.AppendLine("Current Station: " + NepApp.MediaPlayer.CurrentStream != null ? NepApp.MediaPlayer.CurrentStream.ParentStation.Name : "None");
-
-                        if (NepApp.MediaPlayer.CurrentStream != null) reportBuilder.AppendLine("Station Stream: " + NepApp.MediaPlayer.CurrentStream.ToString());
-
-                        reportBuilder.AppendLine("Is Casting?: " + NepApp.MediaPlayer.IsCasting);
-                        reportBuilder.AppendLine("Is Sleep Timer Running?: " + NepApp.MediaPlayer.IsSleepTimerRunning);
-
-
-                        return reportBuilder.ToString();
                     }
-                 });
+
+                    reportBuilder.AppendLine("Platform: " + Enum.GetName(typeof(Crystal3.Core.Platform), CrystalApplication.GetDevicePlatform()));
+                    reportBuilder.AppendLine("Is Playing?: " + NepApp.MediaPlayer.IsPlaying);
+                    reportBuilder.AppendLine("Current Station: " + NepApp.MediaPlayer.CurrentStream != null ? NepApp.MediaPlayer.CurrentStream.ParentStation.Name : "None");
+
+                    if (NepApp.MediaPlayer.CurrentStream != null) reportBuilder.AppendLine("Station Stream: " + NepApp.MediaPlayer.CurrentStream.ToString());
+
+                    reportBuilder.AppendLine("Is Casting?: " + NepApp.MediaPlayer.IsCasting);
+                    reportBuilder.AppendLine("Is Sleep Timer Running?: " + NepApp.MediaPlayer.IsSleepTimerRunning);
+
+
+                    return reportBuilder.ToString();
+                });
             }
         }
 
