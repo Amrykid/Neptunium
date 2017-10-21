@@ -52,6 +52,24 @@ namespace Neptunium.Core.UI
 
         public void ShowSongToastNotification(ExtendedSongMetadata metaData)
         {
+            //try and find a nice image to set for the toast
+            string toastLogo = null;
+            if (!string.IsNullOrWhiteSpace(metaData.Album?.AlbumCoverUrl))
+            {
+                toastLogo = metaData.Album?.AlbumCoverUrl;
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(metaData.ArtistInfo?.ArtistImage))
+                {
+                    toastLogo = metaData.ArtistInfo?.ArtistImage;
+                }
+                else
+                {
+                    toastLogo = metaData.StationLogo.ToString();
+                }
+            }
+
             ToastContent content = new ToastContent()
             {
                 Launch = "now-playing",
@@ -85,7 +103,7 @@ namespace Neptunium.Core.UI
                         },
                         AppLogoOverride = new ToastGenericAppLogo()
                         {
-                            Source = !string.IsNullOrWhiteSpace(metaData.Album?.AlbumCoverUrl) ? metaData.Album?.AlbumCoverUrl : metaData.StationLogo.ToString(),
+                            Source = toastLogo
                         }
                     }
                 }
@@ -207,7 +225,7 @@ namespace Neptunium.Core.UI
                 };
             };
 
-            
+
 
             TileContent content = new TileContent()
             {
