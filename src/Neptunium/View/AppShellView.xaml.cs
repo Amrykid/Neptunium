@@ -62,31 +62,6 @@ namespace Neptunium.View
             //PageTitleBlock.SetValue(TextBlock.TextProperty, NepApp.UI.ViewTitle);
 
             Window.Current.SizeChanged += Current_SizeChanged;
-            OverlayPanel.RegisterPropertyChangedCallback(Grid.VisibilityProperty, new DependencyPropertyChangedCallback((grid, p) =>
-            {
-                Visibility property = (Visibility)grid.GetValue(Grid.VisibilityProperty);
-                switch (property)
-                {
-                    case Visibility.Collapsed:
-                        topAppBar.IsEnabled = true;
-                        bottomAppBar.IsEnabled = true;
-
-                        topAppBar.Visibility = Visibility.Visible;
-                        bottomAppBar.Visibility = Visibility.Visible;
-                        break;
-                    case Visibility.Visible:
-                        topAppBar.IsEnabled = false;
-                        bottomAppBar.IsEnabled = false;
-
-                        //only collapse the app bars on smaller screens.
-                        if (Window.Current.Bounds.Width < 720)
-                        {
-                            topAppBar.Visibility = Visibility.Collapsed;
-                            bottomAppBar.Visibility = Visibility.Collapsed;
-                        }
-                        break;
-                }
-            }));
 
             NowPlayingButton.SetBinding(Button.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
@@ -257,15 +232,11 @@ namespace Neptunium.View
         IndefiniteWorkStatusManagerControl statusControl = null;
         private void Media_ConnectingEnd(object sender, EventArgs e)
         {
-            bottomAppBar.IsEnabled = true;
-
             statusControl?.Dispose();
         }
 
         private void Media_ConnectingBegin(object sender, EventArgs e)
         {
-            bottomAppBar.IsEnabled = false;
-
             statusControl = WindowManager.GetStatusManagerForCurrentWindow().DoIndefiniteWork(null, "Connecting...");
         }
 
@@ -278,12 +249,16 @@ namespace Neptunium.View
                     PlayButton.Label = "Pause";
                     PlayButton.Icon = new SymbolIcon(Symbol.Pause);
                     PlayButton.Command = ((AppShellViewModel)this.DataContext).PausePlaybackCommand;
+
+                    NowPlayingImage.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     PlayButton.Label = "Play";
                     PlayButton.Icon = new SymbolIcon(Symbol.Play);
                     PlayButton.Command = ((AppShellViewModel)this.DataContext).ResumePlaybackCommand;
+
+                    NowPlayingImage.Visibility = Visibility.Collapsed;
                 }
 
                 //AppBarButton doesn't seem to like the ManualRelayCommand so, I have to set its IsEnabled property here.
@@ -311,21 +286,6 @@ namespace Neptunium.View
         private void TogglePaneButton_Unchecked(object sender, RoutedEventArgs e)
         {
             RootSplitView.IsPaneOpen = false;
-        }
-
-        private void bottomAppBar_Opened(object sender, object e)
-        {
-            if (NepApp.MediaPlayer.CurrentStreamer != null) //only show the image if we're actually streaming something
-            {
-                NowPlayingButton.Height = double.NaN;
-                NowPlayingImage.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void bottomAppBar_Closed(object sender, object e)
-        {
-            NowPlayingButton.Height = 45;
-            NowPlayingImage.Visibility = Visibility.Collapsed;
         }
 
         private void NowPlayingButton_Click(object sender, RoutedEventArgs e)

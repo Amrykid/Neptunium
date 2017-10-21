@@ -13,16 +13,31 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
-    <Page.TopAppBar>
-        <CommandBar x:Name="topAppBar" Background="{ThemeResource SystemControlBackgroundAccentBrush}" OverflowButtonVisibility="Collapsed">
-            <CommandBar.Content>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+    <Grid x:Name="RootGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition MaxHeight="50" Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition MaxHeight="65" Height="Auto" />
+        </Grid.RowDefinitions>
 
-                    <ToggleButton
+        <Grid x:Name="topAppBar"
+              Grid.Row="0"
+              Height="50"
+              Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+
+            <Grid Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <ToggleButton
                         Grid.Column="0"
                         x:Name="TogglePaneButton"
                         AutomationProperties.Name="Menu"
@@ -33,10 +48,10 @@
                         ToolTipService.ToolTip="Menu"
                         Unchecked="TogglePaneButton_Unchecked" />
 
-                    <TextBlock Name="PageTitleBlock" Grid.Column="1" VerticalAlignment="Center" Style="{ThemeResource BaseTextBlockStyle}" />
-                </Grid>
-            </CommandBar.Content>
-            <CommandBar.PrimaryCommands>
+                <TextBlock Name="PageTitleBlock" Grid.Column="1" VerticalAlignment="Center" Style="{ThemeResource BaseTextBlockStyle}" />
+            </Grid>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="2">
                 <AppBarButton Icon="Go" ToolTipService.ToolTip="Handoff">
                     <AppBarButton.Flyout>
                         <Flyout>
@@ -107,67 +122,13 @@
                         </Flyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>
-            </CommandBar.PrimaryCommands>
-        </CommandBar>
-    </Page.TopAppBar>
+            </StackPanel>
+        </Grid>
 
-    <Page.BottomAppBar>
-        <CommandBar x:Name="bottomAppBar" Opened="bottomAppBar_Opened" IsDynamicOverflowEnabled="False"
-                    Closed="bottomAppBar_Closed" OverflowButtonVisibility="Visible" Background="{ThemeResource SystemControlBackgroundAccentBrush}">
-            <CommandBar.Content>
-                <Button Style="{x:Null}" Background="Transparent" x:Name="NowPlayingButton" Height="45"
-                        Click="NowPlayingButton_Click">
-                    <Grid Width="400" Height="100">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition MaxWidth="100" Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <Grid.ChildrenTransitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition />
-                            </TransitionCollection>
-                        </Grid.ChildrenTransitions>
-
-                        <uwp:ImageEx
-                            x:Name="NowPlayingImage"
-                            Grid.Column="0"
-                            Visibility="Collapsed"
-                            Source="{Binding StationLogo, UpdateSourceTrigger=PropertyChanged}"
-                            IsCacheEnabled="True" />
-
-                        <Grid Grid.Column="1" Margin="10 -5 10 0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20" />
-                                <RowDefinition Height="20" />
-                                <RowDefinition Height="20" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Grid.Row="0" Text="{Binding Track, UpdateSourceTrigger=PropertyChanged}"
-                                       Style="{ThemeResource BaseTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-                            <TextBlock Grid.Row="1" Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}"
-                                       Style="{ThemeResource BodyTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
-                            <TextBlock Grid.Row="2" Text="{Binding StationPlayedOn, UpdateSourceTrigger=PropertyChanged}"
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"/>
-                        </Grid>
-
-                    </Grid>
-                </Button>
-            </CommandBar.Content>
-            <CommandBar.PrimaryCommands>
-                <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
-            </CommandBar.PrimaryCommands>
-        </CommandBar>
-    </Page.BottomAppBar>
-
-    <Grid x:Name="RootGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <SplitView
-            x:Name="RootSplitView"
-            Margin="0,0,0,0"
-            DisplayMode="CompactInline">
+        <SplitView Grid.Row="1"
+                   x:Name="RootSplitView"
+                   Margin="0,0,0,0"
+                   DisplayMode="CompactInline">
             <SplitView.Pane>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -211,25 +172,6 @@
                                 <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
                             </RadioButton.Tag>
                         </RadioButton>-->
-                        <!--<RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Now Playing"
-                                 Command="{Binding GoToNowPlayingViewCommand}" x:Name="nowPlayingNavButton">
-                            <RadioButton.Tag>
-                                <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
-                            </RadioButton.Tag>
-                        </RadioButton>
-                        <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Song History"
-                                 Command="{Binding GoToSongHistoryViewCommand}" x:Name="songHistoryNavButton">
-                            <RadioButton.Tag>
-                                <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
-                            </RadioButton.Tag>
-                        </RadioButton>
-                        <RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Settings"
-                                 Command="{Binding GoToSettingsViewCommand}" x:Name="settingsNavButton">
-                            <RadioButton.Tag>
-                                <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
-                            </RadioButton.Tag>
-                        </RadioButton>
-                    </StackPanel>-->
 
                         <StackPanel Grid.Row="1">
                             <StackPanel.Resources>
@@ -286,7 +228,74 @@
             </SplitView.Content>
         </SplitView>
 
-        <Grid x:Name="OverlayPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity=".95">
+        <Grid x:Name="bottomAppBar" 
+              Grid.Row="2" 
+              Height="65"
+              Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+
+            <Grid Grid.Column="0" Padding="0">
+                <Button Style="{x:Null}" 
+                        Background="Transparent" 
+                        x:Name="NowPlayingButton" 
+                        Height="65"
+                        Margin="0 0 0 0"
+                        Click="NowPlayingButton_Click">
+                    <Grid Width="400" Height="100">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="80" Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.ChildrenTransitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </Grid.ChildrenTransitions>
+
+                        <uwp:ImageEx
+                            x:Name="NowPlayingImage"
+                            Grid.Column="0"
+                            Visibility="Collapsed"
+                            Height="60"
+                            VerticalAlignment="Top"
+                            Source="{Binding StationLogo, UpdateSourceTrigger=PropertyChanged}"
+                            IsCacheEnabled="True" />
+
+                        <Grid Grid.Column="1" Margin="10 -5 10 0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="20" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Text="{Binding Track, UpdateSourceTrigger=PropertyChanged}"
+                                       Style="{ThemeResource BaseTextBlockStyle}"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                            <TextBlock Grid.Row="1" Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}"
+                                       Style="{ThemeResource BodyTextBlockStyle}"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
+                            <TextBlock Grid.Row="2" Text="{Binding StationPlayedOn, UpdateSourceTrigger=PropertyChanged}"
+                                       Style="{ThemeResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"/>
+                        </Grid>
+
+                    </Grid>
+                </Button>
+            </Grid>
+            <StackPanel Orientation="Horizontal" Grid.Column="2">
+                <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+        </Grid>
+
+        <Grid x:Name="OverlayPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Grid.RowSpan="3"
+              Opacity=".95">
             <Grid.ChildrenTransitions>
                 <TransitionCollection>
                     <RepositionThemeTransition />
