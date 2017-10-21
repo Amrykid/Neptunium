@@ -1,6 +1,5 @@
 ﻿using Neptunium.Core.Media.History;
 using Neptunium.Core.Media.Metadata;
-using Neptunium.Core.Media.Songs;
 using Neptunium.Core.Stations;
 using System;
 using System.Collections.Generic;
@@ -50,6 +49,28 @@ namespace Neptunium.Media.Songs
         public Uri GetSongArtworkUri(NepAppSongMetadataBackground nepAppSongMetadataBackground)
         {
             return artworkUriDictionary[nepAppSongMetadataBackground];
+        }
+
+        public bool IsSongArtworkAvailable()
+        {
+            NepAppSongMetadataBackground type;
+            return IsSongArtworkAvailable(out type);
+        }
+        public bool IsSongArtworkAvailable(out NepAppSongMetadataBackground nepAppSongMetadataBackgroundType)
+        {
+            if (artworkUriDictionary[NepAppSongMetadataBackground.Album] != null)
+            {
+                nepAppSongMetadataBackgroundType = NepAppSongMetadataBackground.Album;
+                return true;
+            }
+            else if (artworkUriDictionary[NepAppSongMetadataBackground.Artist] != null)
+            {
+                nepAppSongMetadataBackgroundType = NepAppSongMetadataBackground.Artist;
+                return true;
+            }
+
+            nepAppSongMetadataBackgroundType = NepAppSongMetadataBackground.None;
+            return false;
         }
 
         internal async void HandleMetadata(SongMetadata songMetadata, StationStream currentStream)

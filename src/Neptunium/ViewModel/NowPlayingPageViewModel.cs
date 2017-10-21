@@ -50,6 +50,8 @@ namespace Neptunium.ViewModel
         {
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged += SongManager_SongChanged;
+            NepApp.SongManager.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
+            NepApp.SongManager.SongArtworkAvailable += SongManager_SongArtworkAvailable;
 
             UpdateMetadata();
             UpdateBackground();
@@ -57,9 +59,56 @@ namespace Neptunium.ViewModel
             base.OnNavigatedTo(sender, e);
         }
 
+        private void UpdateBackground()
+        {
+            Neptunium.Media.Songs.NepAppSongMetadataBackground backgroundType;
+            if (NepApp.SongManager.IsSongArtworkAvailable(out backgroundType))
+            {
+                Background = NepApp.SongManager.GetSongArtworkUri(backgroundType);
+            }
+            else
+            {
+                if (NepApp.MediaPlayer.IsPlaying && NepApp.MediaPlayer.CurrentStream != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(NepApp.MediaPlayer.CurrentStream.ParentStation.Background))
+                    {
+                        Background = new Uri(NepApp.MediaPlayer.CurrentStream.ParentStation.Background);
+                    }
+                }
+            }
+        }
+
+        private void SongManager_SongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
+        {
+            if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Album)
+            {
+                App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    Background = e.ArtworkUri;
+                });
+            }
+        }
+
+        private void SongManager_NoSongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
+        {
+            if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Album)
+            {
+                if (NepApp.MediaPlayer.IsPlaying && NepApp.MediaPlayer.CurrentStream != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(NepApp.MediaPlayer.CurrentStream.ParentStation.Background))
+                    {
+                        App.Dispatcher.RunWhenIdleAsync(() =>
+                        {
+                            Background = new Uri(NepApp.MediaPlayer.CurrentStream.ParentStation.Background);
+                        });
+                    }
+                }
+            }
+        }
+
         private void SongManager_SongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
         {
-            UpdateBackground();
+
         }
 
         private void SongManager_PreSongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
@@ -70,51 +119,12 @@ namespace Neptunium.ViewModel
             });
         }
 
-        private void UpdateBackground()
-        {
-            try
-            {
-
-                var extendedData = NepApp.SongManager.CurrentSongWithAdditionalMetadata;
-                if (extendedData != null)
-                {
-                    if (extendedData?.Album != null)
-                    {
-                        if (!string.IsNullOrWhiteSpace(extendedData.Album?.AlbumCoverUrl))
-                        {
-                            App.Dispatcher.RunWhenIdleAsync(() =>
-                            {
-                                Background = new Uri(extendedData.Album?.AlbumCoverUrl);
-                            });
-                        }
-                    }
-                    else if (!string.IsNullOrWhiteSpace(extendedData.ArtistInfo?.ArtistImage))
-                    {
-                        App.Dispatcher.RunWhenIdleAsync(() =>
-                        {
-                            Background = new Uri(extendedData.ArtistInfo?.ArtistImage);
-                        });
-                    }
-                    else if (extendedData.JPopAsiaArtistInfo != null)
-                    {
-                        //from JPopAsia
-                        if (extendedData.JPopAsiaArtistInfo.ArtistImageUrl != null)
-                        {
-                            App.Dispatcher.RunWhenIdleAsync(() =>
-                            {
-                                Background = extendedData.JPopAsiaArtistInfo.ArtistImageUrl;
-                            });
-                        }
-                    }
-                }
-            }
-            catch (Exception) { }
-        }
-
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
             NepApp.SongManager.PreSongChanged -= SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged -= SongManager_SongChanged;
+            NepApp.SongManager.NoSongArtworkAvailable -= SongManager_NoSongArtworkAvailable;
+            NepApp.SongManager.SongArtworkAvailable -= SongManager_SongArtworkAvailable;
 
             base.OnNavigatedFrom(sender, e);
         }
@@ -124,10 +134,7 @@ namespace Neptunium.ViewModel
             CurrentSong = NepApp.SongManager.CurrentSong;
             CurrentStation = NepApp.MediaPlayer.CurrentStream?.ParentStation;
 
-            if (!string.IsNullOrWhiteSpace(CurrentStation?.Background))
-            {
-                Background = new Uri(CurrentStation?.Background);
-            }
+            UpdateBackground();
         }
     }
 }

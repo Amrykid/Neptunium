@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Neptunium.Core.Media.Songs
+namespace Neptunium.Media.Songs
 {
     public class NepAppSongMetadataArtworkEventArgs: EventArgs
     {
