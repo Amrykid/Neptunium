@@ -32,6 +32,7 @@ namespace Neptunium.Media.Songs
 
         public event EventHandler<NepAppSongMetadataArtworkEventArgs> SongArtworkAvailable;
         public event EventHandler<NepAppSongMetadataArtworkEventArgs> NoSongArtworkAvailable;
+        public event EventHandler SongArtworkProcessingComplete;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -134,7 +135,7 @@ namespace Neptunium.Media.Songs
 
                     SongChanged.Invoke(this, new NepAppSongChangedEventArgs(CurrentSongWithAdditionalMetadata));
 
-                    UpdateAdditionalMetadata();
+                    UpdateArtworkMetadata();
                 }
             }
             catch (Exception ex)
@@ -172,7 +173,7 @@ namespace Neptunium.Media.Songs
 
             UpdateTransportControls(unknown);
 
-            UpdateAdditionalMetadata();
+            UpdateArtworkMetadata();
         }
 
 
@@ -185,10 +186,9 @@ namespace Neptunium.Media.Songs
             PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(null));
         }
 
-        private void UpdateAdditionalMetadata()
+        private void UpdateArtworkMetadata()
         {
             //Handle backgrounds
-
             if (CurrentSongWithAdditionalMetadata != null)
             {
                 //album artwork
@@ -244,6 +244,8 @@ namespace Neptunium.Media.Songs
                 NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, null));
                 NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, null));
             }
+
+            SongArtworkProcessingComplete?.Invoke(this, EventArgs.Empty);
         }
 
 

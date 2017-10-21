@@ -50,13 +50,20 @@ namespace Neptunium.ViewModel
         {
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged += SongManager_SongChanged;
-            NepApp.SongManager.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
-            NepApp.SongManager.SongArtworkAvailable += SongManager_SongArtworkAvailable;
+            NepApp.SongManager.SongArtworkProcessingComplete += SongManager_SongArtworkProcessingComplete;
 
             UpdateMetadata();
             UpdateBackground();
 
             base.OnNavigatedTo(sender, e);
+        }
+
+        private void SongManager_SongArtworkProcessingComplete(object sender, EventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                UpdateBackground();
+            });
         }
 
         private void UpdateBackground()
@@ -73,34 +80,6 @@ namespace Neptunium.ViewModel
                     if (!string.IsNullOrWhiteSpace(NepApp.MediaPlayer.CurrentStream.ParentStation.Background))
                     {
                         Background = new Uri(NepApp.MediaPlayer.CurrentStream.ParentStation.Background);
-                    }
-                }
-            }
-        }
-
-        private void SongManager_SongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
-        {
-            if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Album)
-            {
-                App.Dispatcher.RunWhenIdleAsync(() =>
-                {
-                    Background = e.ArtworkUri;
-                });
-            }
-        }
-
-        private void SongManager_NoSongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
-        {
-            if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Album)
-            {
-                if (NepApp.MediaPlayer.IsPlaying && NepApp.MediaPlayer.CurrentStream != null)
-                {
-                    if (!string.IsNullOrWhiteSpace(NepApp.MediaPlayer.CurrentStream.ParentStation.Background))
-                    {
-                        App.Dispatcher.RunWhenIdleAsync(() =>
-                        {
-                            Background = new Uri(NepApp.MediaPlayer.CurrentStream.ParentStation.Background);
-                        });
                     }
                 }
             }
@@ -123,8 +102,6 @@ namespace Neptunium.ViewModel
         {
             NepApp.SongManager.PreSongChanged -= SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged -= SongManager_SongChanged;
-            NepApp.SongManager.NoSongArtworkAvailable -= SongManager_NoSongArtworkAvailable;
-            NepApp.SongManager.SongArtworkAvailable -= SongManager_SongArtworkAvailable;
 
             base.OnNavigatedFrom(sender, e);
         }
