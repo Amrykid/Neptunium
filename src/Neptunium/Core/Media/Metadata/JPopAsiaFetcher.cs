@@ -21,11 +21,11 @@ namespace Neptunium.Core.Media.Metadata
             HttpResponseMessage httpResponse = null;
 
             Uri directUri = new Uri(
-                string.Format("http://www.jpopasia.com/{0}/", 
+                string.Format("http://www.jpopasia.com/{0}/",
                     Uri.EscapeUriString(
-                        artistName.Replace(" ","")
-                        .Replace("!","")
-                        .Replace("*","")))); //try and use a direct url. this works for artists like "Superfly" or "Perfume"
+                        artistName.Replace(" ", "")
+                        .Replace("!", "")
+                        .Replace("*", "")))); //try and use a direct url. this works for artists like "Superfly" or "Perfume"
 
             httpResponse = await http.GetAsync(directUri);
             if (httpResponse.IsSuccessStatusCode)
@@ -38,19 +38,24 @@ namespace Neptunium.Core.Media.Metadata
 
                 //pull up our pre-cached list of artists and search there.
                 var builtInList = await GetBuiltinArtistEntriesAsync();
-                var builtInMatch = builtInList.FirstOrDefault(x =>
+                JPopAsiaArtistEntry builtInMatch = builtInList.FirstOrDefault(x => x.Name.ToLower().Equals(artistName.ToLower()));
+
+                if (builtInMatch == null)
                 {
-                    if (x.Name.ToLower().FuzzyEquals(artistName.ToLower())) return true;
-
-                    if (artistName.Contains(" ")) //e.g. "Ayumi Hamasaki" vs. "Hamasaki Ayumi"
+                    builtInMatch = builtInList.FirstOrDefault(x =>
                     {
-                        string lastNameFirstNameSwappedName = string.Join(" ", artistName.Split(' ').Reverse()); //splices, reverses and joins: "Ayumi Hamasaki" -> ["Ayumi","Hamasaki"] -> ["Hamasaki", "Ayumi"] -> "Hamasaki Ayumi"
+                        if (x.Name.ToLower().FuzzyEquals(artistName.ToLower(), .9)) return true;
 
-                        return x.Name.ToLower().FuzzyEquals(lastNameFirstNameSwappedName.ToLower());
-                    }
+                        if (artistName.Contains(" ")) //e.g. "Ayumi Hamasaki" vs. "Hamasaki Ayumi"
+                        {
+                            string lastNameFirstNameSwappedName = string.Join(" ", artistName.Split(' ').Reverse()); //splices, reverses and joins: "Ayumi Hamasaki" -> ["Ayumi","Hamasaki"] -> ["Hamasaki", "Ayumi"] -> "Hamasaki Ayumi"
 
-                    return false;
-                });
+                            return x.Name.ToLower().FuzzyEquals(lastNameFirstNameSwappedName.ToLower());
+                        }
+
+                        return false;
+                    });
+                }
 
                 if (builtInMatch != null)
                 {

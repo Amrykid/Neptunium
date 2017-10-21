@@ -102,6 +102,7 @@ namespace Neptunium.ViewModel
         {
             NepApp.SongManager.PreSongChanged -= SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged -= SongManager_SongChanged;
+            NepApp.SongManager.SongArtworkProcessingComplete -= SongManager_SongArtworkProcessingComplete;
 
             base.OnNavigatedFrom(sender, e);
         }

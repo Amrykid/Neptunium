@@ -39,6 +39,8 @@ namespace Neptunium.Core.UI
                             httpResponse.Dispose();
                         }
                     }
+
+                    fileObject = await imageCacheFolder.TryGetItemAsync(originalFileName) as StorageFile;
                 }
                 else
                 {
