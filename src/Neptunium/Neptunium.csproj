@@ -139,6 +139,7 @@
     </Compile>
     <Compile Include="Core\Stations\StationProgram.cs" />
     <Compile Include="Core\UI\NepAppUIDialogFragment.cs" />
+    <Compile Include="Core\UI\NepAppUILockScreenManager.cs" />
     <Compile Include="Core\UI\NepAppUIManager.cs" />
     <Compile Include="Core\NeptuniumException.cs" />
     <Compile Include="Core\Stations\NepAppStationsManager.cs" />

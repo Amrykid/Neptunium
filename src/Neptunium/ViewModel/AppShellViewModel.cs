@@ -11,10 +11,11 @@ using Microsoft.HockeyApp;
 using Neptunium.ViewModel.Dialog;
 using Neptunium.ViewModel.Fragments;
 using Neptunium.Core.Media.Metadata;
+using Windows.System.UserProfile;
 
 namespace Neptunium.ViewModel
 {
-    public class AppShellViewModel: ViewModelBase
+    public class AppShellViewModel : ViewModelBase
     {
         public RelayCommand ResumePlaybackCommand => new RelayCommand(x =>
         {
@@ -45,13 +46,26 @@ namespace Neptunium.ViewModel
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged += SongManager_SongChanged;
             NepApp.SongManager.StationRadioProgramStarted += SongManager_StationRadioProgramStarted;
+
+            if (UserProfilePersonalizationSettings.IsSupported())
+                NepApp.SongManager.SongArtworkAvailable += SongManager_SongArtworkAvailable;
+        }
+
+        private async void SongManager_SongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
+        {
+            if ((bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt))
+            {
+                if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Artist)
+                {
+                    await NepApp.UI.LockScreen.TrySetLockScreenImageFromUri(e.ArtworkUri);
+                }
+            }
         }
 
         private async void SongManager_StationRadioProgramStarted(object sender, Media.Songs.NepAppStationProgramStartedEventArgs e)
         {
             if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
             {
-
                 if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
                     NepApp.UI.Notifier.ShowStationProgrammingToastNotification(e.RadioProgram, e.Metadata);
             }
@@ -72,12 +86,12 @@ namespace Neptunium.ViewModel
 
         private void SongManager_PreSongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
         {
-            
+
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
         {
-            
+
         }
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)

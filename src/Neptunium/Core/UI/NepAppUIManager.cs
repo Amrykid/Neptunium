@@ -28,11 +28,20 @@ namespace Neptunium.Core.UI
         private string _viewTitle = "PAGE TITLE";
         private ObservableCollection<NepAppUINavigationItem> navigationItems = null;
         private WindowService windowService = null;
+
+
+        public string ViewTitle { get { return _viewTitle.ToUpper(); } private set { _viewTitle = value; RaisePropertyChanged(nameof(ViewTitle)); } }
+        public ReadOnlyObservableCollection<NepAppUINavigationItem> NavigationItems { get; private set; }
+        public NepAppUIManagerNotifier Notifier { get; private set; }
+        public NepAppUIManagerDialogCoordinator Overlay { get; private set; }
+        public NepAppUILockScreenManager LockScreen { get; private set; }
+
         internal NepAppUIManager()
         {
             navigationItems = new ObservableCollection<NepAppUINavigationItem>();
             NavigationItems = new ReadOnlyObservableCollection<NepAppUINavigationItem>(navigationItems);
             Notifier = new NepAppUIManagerNotifier();
+            LockScreen = new NepAppUILockScreenManager();
             windowService = WindowManager.GetWindowServiceForCurrentWindow();
         }
 
@@ -100,10 +109,6 @@ namespace Neptunium.Core.UI
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public string ViewTitle { get { return _viewTitle.ToUpper(); } private set { _viewTitle = value; RaisePropertyChanged(nameof(ViewTitle)); } }
-        public ReadOnlyObservableCollection<NepAppUINavigationItem> NavigationItems { get; private set; }
-        public NepAppUIManagerNotifier Notifier { get; private set; }
-        public NepAppUIManagerDialogCoordinator Overlay { get; private set; }
         public async Task ShowInfoDialogAsync(string title, string message)
         {
             await await App.Dispatcher.RunWhenIdleAsync(() =>
