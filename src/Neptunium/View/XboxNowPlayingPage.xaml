@@ -5,6 +5,7 @@
     xmlns:local="using:Neptunium.View"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uwp="using:Microsoft.Toolkit.Uwp.UI.Controls"
     Loaded="Page_Loaded"
     Unloaded="Page_Unloaded"
     mc:Ignorable="d">
@@ -18,7 +19,7 @@
                 <RowDefinition Height="100" />
             </Grid.RowDefinitions>
             <Grid Grid.RowSpan="3">
-                <Image HorizontalAlignment="Stretch"
+                <uwp:ImageEx HorizontalAlignment="Stretch"
                        Source="{Binding Background, UpdateSourceTrigger=PropertyChanged}"
                        Stretch="UniformToFill"
                        Opacity=".4"
