@@ -62,7 +62,7 @@ namespace Neptunium.ViewModel
                 package.SetText(item.Metadata.ToString());
                 Clipboard.SetContent(package);
 
-                //todo show a snackbar that says "Copied"
+                NepApp.UI.Overlay.ShowSnackBarMessageAsync("Copied");
             }
         });
     }
