@@ -244,11 +244,13 @@
                         Background="Transparent" 
                         x:Name="NowPlayingButton" 
                         Height="65"
+                        Width="280"
                         Margin="0 0 0 0"
-                        Click="NowPlayingButton_Click">
-                    <Grid Width="400" Height="100">
+                        Click="NowPlayingButton_Click"
+                        HorizontalContentAlignment="Stretch">
+                    <Grid HorizontalAlignment="Stretch" Height="100">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition MaxWidth="80" Width="Auto" />
+                            <ColumnDefinition MaxWidth="60" Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
@@ -324,6 +326,8 @@
                         <Setter Target="snackBarGrid.Margin" Value="0 20 20 0" />
                         <Setter Target="snackBarGrid.HorizontalAlignment" Value="Right" />
                         <Setter Target="snackBarGrid.VerticalAlignment" Value="Top" />
+
+                        <Setter Target="NowPlayingImage.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -346,6 +350,8 @@
                         <Setter Target="snackBarGrid.Margin" Value="0 20 20 0" />
                         <Setter Target="snackBarGrid.HorizontalAlignment" Value="Right" />
                         <Setter Target="snackBarGrid.VerticalAlignment" Value="Top" />
+
+                        <Setter Target="NowPlayingImage.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -365,6 +371,8 @@
                         <Setter Target="snackBarGrid.Margin" Value="0" />
                         <Setter Target="snackBarGrid.HorizontalAlignment" Value="Stretch" />
                         <Setter Target="snackBarGrid.VerticalAlignment" Value="Stretch" />
+
+                        <Setter Target="NowPlayingImage.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

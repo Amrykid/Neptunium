@@ -249,16 +249,12 @@ namespace Neptunium.View
                     PlayButton.Label = "Pause";
                     PlayButton.Icon = new SymbolIcon(Symbol.Pause);
                     PlayButton.Command = ((AppShellViewModel)this.DataContext).PausePlaybackCommand;
-
-                    NowPlayingImage.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     PlayButton.Label = "Play";
                     PlayButton.Icon = new SymbolIcon(Symbol.Play);
                     PlayButton.Command = ((AppShellViewModel)this.DataContext).ResumePlaybackCommand;
-
-                    NowPlayingImage.Visibility = Visibility.Collapsed;
                 }
 
                 //AppBarButton doesn't seem to like the ManualRelayCommand so, I have to set its IsEnabled property here.
