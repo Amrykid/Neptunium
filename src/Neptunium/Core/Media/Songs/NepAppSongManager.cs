@@ -1,5 +1,6 @@
 ﻿using Neptunium.Core.Media.History;
 using Neptunium.Core.Media.Metadata;
+using Neptunium.Core.Media.Songs;
 using Neptunium.Core.Stations;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace Neptunium.Media.Songs
     public class NepAppSongManager : INepAppFunctionManager, INotifyPropertyChanged
     {
         private SemaphoreSlim metadataLock = null;
+        private Dictionary<NepAppSongMetadataBackground, Uri> artworkUriDictionary = null;
 
         public SongMetadata CurrentSong { get; private set; }
         public ExtendedSongMetadata CurrentSongWithAdditionalMetadata { get; private set; }
@@ -29,14 +31,25 @@ namespace Neptunium.Media.Songs
         public event EventHandler<NepAppSongChangedEventArgs> SongChanged;
         public event EventHandler<NepAppStationProgramStartedEventArgs> StationRadioProgramStarted;
 
+        public event EventHandler<NepAppSongMetadataArtworkEventArgs> SongArtworkAvailable;
+        public event EventHandler<NepAppSongMetadataArtworkEventArgs> NoSongArtworkAvailable;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         internal NepAppSongManager()
         {
             metadataLock = new SemaphoreSlim(1);
+            artworkUriDictionary = new Dictionary<NepAppSongMetadataBackground, Uri>();
+            artworkUriDictionary.Add(NepAppSongMetadataBackground.Album, null);
+            artworkUriDictionary.Add(NepAppSongMetadataBackground.Artist, null);
 
             History = new SongHistorian();
             History.InitializeAsync();
+        }
+
+        public Uri GetSongArtworkUri(NepAppSongMetadataBackground nepAppSongMetadataBackground)
+        {
+            return artworkUriDictionary[nepAppSongMetadataBackground];
         }
 
         internal async void HandleMetadata(SongMetadata songMetadata, StationStream currentStream)
@@ -100,6 +113,7 @@ namespace Neptunium.Media.Songs
 
                     SongChanged.Invoke(this, new NepAppSongChangedEventArgs(CurrentSongWithAdditionalMetadata));
 
+                    UpdateAdditionalMetadata();
                 }
             }
             catch (Exception ex)
@@ -136,6 +150,8 @@ namespace Neptunium.Media.Songs
             //SongChanged?.Invoke(this, new NepAppSongChangedEventArgs(unknown));
 
             UpdateTransportControls(unknown);
+
+            UpdateAdditionalMetadata();
         }
 
 
@@ -146,6 +162,67 @@ namespace Neptunium.Media.Songs
 
             RaisePropertyChanged(nameof(CurrentSong));
             PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(null));
+        }
+
+        private void UpdateAdditionalMetadata()
+        {
+            //Handle backgrounds
+
+            if (CurrentSongWithAdditionalMetadata != null)
+            {
+                //album artwork
+                Uri albumArtUri = null;
+                if (CurrentSongWithAdditionalMetadata.Album != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(CurrentSongWithAdditionalMetadata.Album?.AlbumCoverUrl))
+                    {
+                        albumArtUri = new Uri(CurrentSongWithAdditionalMetadata.Album?.AlbumCoverUrl);
+                    }
+                }
+                artworkUriDictionary[NepAppSongMetadataBackground.Album] = albumArtUri;
+                if (albumArtUri != null)
+                {
+                    SongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, albumArtUri));
+                }
+                else
+                {
+                    NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, null));
+                }
+
+
+                //artist artwork
+                Uri artistArtUri = null;
+                if (!string.IsNullOrWhiteSpace(CurrentSongWithAdditionalMetadata.ArtistInfo?.ArtistImage))
+                {
+                    artistArtUri = new Uri(CurrentSongWithAdditionalMetadata.ArtistInfo?.ArtistImage);
+                }
+                else if (CurrentSongWithAdditionalMetadata.JPopAsiaArtistInfo != null)
+                {
+                    //from JPopAsia
+                    if (CurrentSongWithAdditionalMetadata.JPopAsiaArtistInfo.ArtistImageUrl != null)
+                    {
+                        artistArtUri = CurrentSongWithAdditionalMetadata.JPopAsiaArtistInfo.ArtistImageUrl;
+                    }
+                }
+                artworkUriDictionary[NepAppSongMetadataBackground.Artist] = artistArtUri;
+                if (artistArtUri != null)
+                {
+                    SongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, artistArtUri));
+                }
+                else
+                {
+                    NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, null));
+                }
+            }
+            else
+            {
+                //reset all artwork
+                artworkUriDictionary[NepAppSongMetadataBackground.Album] = null;
+                artworkUriDictionary[NepAppSongMetadataBackground.Artist] = null;
+
+                NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, null));
+                NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, null));
+            }
         }
 
 

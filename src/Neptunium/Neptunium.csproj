@@ -123,6 +123,8 @@
     <Compile Include="Core\Media\Songs\NepAppSongChangedEventArgs.cs" />
     <Compile Include="Core\Media\Songs\NepAppSongManager.cs" />
     <Compile Include="Core\Media\ShoutcastStationMediaStreamer.cs" />
+    <Compile Include="Core\Media\Songs\NepAppSongMetadataArtworkEventArgs.cs" />
+    <Compile Include="Core\Media\Songs\NepAppSongMetadataBackground.cs" />
     <Compile Include="Core\Media\Songs\NepAppStationProgramStartedEventArgs.cs" />
     <Compile Include="Core\NepAppHandoffManager.cs" />
     <Compile Include="Core\Media\NepAppMediaPlayerManager.cs" />
