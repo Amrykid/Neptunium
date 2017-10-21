@@ -57,7 +57,12 @@ namespace Neptunium.ViewModel
             {
                 if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Artist)
                 {
-                    await NepApp.UI.LockScreen.TrySetLockScreenImageFromUri(e.ArtworkUri);
+                    bool result = await NepApp.UI.LockScreen.TrySetLockScreenImageFromUri(e.ArtworkUri);
+
+                    if (!result)
+                    {
+
+                    }
                 }
             }
         }
