@@ -347,8 +347,14 @@ namespace Neptunium.Media
         {
             if (args.ErrorStatus != CastingConnectionErrorStatus.Succeeded)
             {
-                sender.StateChanged -= Connection_StateChanged;
-                sender.ErrorOccurred -= Connection_ErrorOccurred;
+                try
+                {
+                    sender.StateChanged -= Connection_StateChanged;
+                    sender.ErrorOccurred -= Connection_ErrorOccurred;
+                }
+                catch (Exception) { 
+                    //We already unhooked.
+                }
 
                 await sender.DisconnectAsync();
                 sender.Dispose();
@@ -378,6 +384,16 @@ namespace Neptunium.Media
                     break;
                 default:
                     SetIsCasting(false);
+
+                    try
+                    {
+                        sender.StateChanged -= Connection_StateChanged;
+                        sender.ErrorOccurred -= Connection_ErrorOccurred;
+                    }
+                    catch (Exception)
+                    {
+                        //We already unhooked.
+                    }
                     break;
             }
         }
