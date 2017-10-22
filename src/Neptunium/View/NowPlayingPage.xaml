@@ -31,7 +31,8 @@
                 <ColumnDefinition Width=".33*" />
             </Grid.ColumnDefinitions>
             <Grid Grid.RowSpan="3" Grid.ColumnSpan="3">
-                <uwp:ImageEx HorizontalAlignment="Stretch"
+                <uwp:ImageEx HorizontalAlignment="Center"
+                       x:Name="BackgroundImage"
                        Source="{Binding Background, UpdateSourceTrigger=PropertyChanged}"
                        Stretch="UniformToFill"
                        Visibility="{Binding Background, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
@@ -123,6 +124,7 @@
                         <Setter Target="SongInfoRowDef.Height" Value="200" />
                         <Setter Target="TrackArtistPanel.Margin" Value="0" />
                         <Setter Target="CommandPanel.Margin" Value="0" />
+                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
@@ -139,6 +141,7 @@
                         <Setter Target="SongInfoRowDef.Height" Value="200" />
                         <Setter Target="TrackArtistPanel.Margin" Value="0" />
                         <Setter Target="CommandPanel.Margin" Value="0" />
+                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
@@ -155,6 +158,7 @@
                         <Setter Target="SongInfoRowDef.Height" Value="150" />
                         <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
                         <Setter Target="CommandPanel.Margin" Value="20 0" />
+                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
