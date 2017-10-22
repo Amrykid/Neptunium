@@ -34,6 +34,7 @@
                 <uwp:ImageEx HorizontalAlignment="Stretch"
                        Source="{Binding Background, UpdateSourceTrigger=PropertyChanged}"
                        Stretch="UniformToFill"
+                       Visibility="{Binding Background, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
                        Opacity=".4"
                        VerticalAlignment="Stretch" />
             </Grid>
