@@ -31,7 +31,7 @@
             </Grid.ColumnDefinitions>
 
 
-            <Grid Grid.Column="0">
+            <Grid Grid.Column="0" RequestedTheme="Dark">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="*" />
@@ -48,11 +48,13 @@
                         ToolTipService.ToolTip="Menu"
                         Unchecked="TogglePaneButton_Unchecked" />
 
-                <TextBlock Name="PageTitleBlock" Grid.Column="1" VerticalAlignment="Center" Style="{ThemeResource BaseTextBlockStyle}" />
+                <TextBlock Name="PageTitleBlock" Grid.Column="1" VerticalAlignment="Center"
+                           Style="{ThemeResource BaseTextBlockStyle}" />
             </Grid>
 
             <StackPanel Orientation="Horizontal" Grid.Column="2">
-                <AppBarButton Icon="Go" ToolTipService.ToolTip="Handoff">
+                <AppBarButton Icon="Go" ToolTipService.ToolTip="Handoff"
+                              Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}">
                     <AppBarButton.Flyout>
                         <Flyout>
                             <Grid x:Name="HandoffFlyoutRootGrid" DataContext="{Binding HandoffFragment, UpdateSourceTrigger=PropertyChanged}">
@@ -78,8 +80,12 @@
                         </Flyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>
-                <AppBarButton Icon="OpenWith" ToolTipService.ToolTip="Cast" Command="{Binding MediaCastingCommand}" />
-                <AppBarButton x:Name="sleepTimerBtn" Visibility="Collapsed" Icon="Clock" ToolTipService.ToolTip="Sleep Timer">
+                <AppBarButton Icon="OpenWith" ToolTipService.ToolTip="Cast"
+                              Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                              Command="{Binding MediaCastingCommand}" />
+                <AppBarButton x:Name="sleepTimerBtn" Visibility="Collapsed" Icon="Clock"
+                              Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                              ToolTipService.ToolTip="Sleep Timer">
                     <AppBarButton.Flyout>
                         <Flyout>
                             <Grid x:Name="SleepTimerRootGrid" 
@@ -231,6 +237,7 @@
         <Grid x:Name="bottomAppBar" 
               Grid.Row="2" 
               Height="65"
+              RequestedTheme="Dark"
               Background="{ThemeResource SystemControlBackgroundAccentBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -269,7 +276,7 @@
                             Source="{Binding StationLogo, UpdateSourceTrigger=PropertyChanged}"
                             IsCacheEnabled="True" />
 
-                        <Grid Grid.Column="1" Margin="10 -5 10 0">
+                        <Grid Grid.Column="1" Margin="10 -5 10 0" RequestedTheme="Dark">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="20" />
                                 <RowDefinition Height="20" />
