@@ -81,6 +81,17 @@ namespace Neptunium
 
                     return reportBuilder.ToString();
                 });
+
+                TaskScheduler.UnobservedTaskException += (sender, args) =>
+                {
+                    //https://stackoverflow.com/a/15804433
+
+                    foreach (var ex in args.Exception.InnerExceptions)
+                    {
+                        Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex);
+                    }
+                    args.SetObserved();
+                };
             }
         }
 
