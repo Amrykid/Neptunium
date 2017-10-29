@@ -46,11 +46,8 @@ namespace Neptunium.View
         {
             if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
             {
-                if (await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync())
-                {
-                    //only show bluetooth settings on devices that have bluetooth.
-                    bluetoothPivot.Visibility = Visibility.Visible;
-                }
+                //only show bluetooth settings on devices that have bluetooth.
+                bluetoothPivot.IsEnabled = await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync();
 
                 UpdateLockScreenSwitch.Visibility = Visibility.Visible;
             }
