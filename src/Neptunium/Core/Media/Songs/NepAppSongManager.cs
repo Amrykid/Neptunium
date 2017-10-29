@@ -246,6 +246,11 @@ namespace Neptunium.Media.Songs
             }
 
             SongArtworkProcessingComplete?.Invoke(this, EventArgs.Empty);
+
+            if (artworkUriDictionary[NepAppSongMetadataBackground.Album] != null)
+            {
+                UpdateTransportControls(CurrentSongWithAdditionalMetadata);
+            }
         }
 
 
@@ -288,6 +293,8 @@ namespace Neptunium.Media.Songs
 
         private void UpdateTransportControls(SongMetadata songMetadata)
         {
+            if (songMetadata == null) return;
+
             try
             {
                 var updater = NepApp.MediaPlayer.MediaTransportControls.DisplayUpdater;
@@ -295,7 +302,26 @@ namespace Neptunium.Media.Songs
                 updater.MusicProperties.Title = songMetadata.Track;
                 updater.MusicProperties.Artist = songMetadata.Artist;
                 updater.AppMediaId = songMetadata.StationPlayedOn.GetHashCode().ToString();
-                updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(songMetadata.StationLogo);
+
+
+                if (songMetadata is ExtendedSongMetadata)
+                {
+                    var extended = (ExtendedSongMetadata)songMetadata;
+                    updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(artworkUriDictionary[NepAppSongMetadataBackground.Album] ?? songMetadata.StationLogo);
+
+                    if (extended.Album != null)
+                    {
+                        updater.MusicProperties.AlbumTitle = extended.Album?.Album ?? "";
+                        updater.MusicProperties.AlbumArtist = extended.Album?.Artist ?? "";
+                    }
+                }
+                else
+                {
+                    updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(songMetadata.StationLogo);
+                    updater.MusicProperties.AlbumTitle = "";
+                    updater.MusicProperties.AlbumArtist = "";
+                }
+
                 updater.Update();
             }
             catch (COMException) { }
