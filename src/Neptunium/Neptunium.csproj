@@ -17,8 +17,8 @@
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>Neptunium_StoreKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>5ECB59FD13E16E2FF1BF3EA345CF1351AD6B333A</PackageCertificateThumbprint>
+    <PackageCertificateKeyFile>Neptunium_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>1BC4ED70C64018274577986D182D8822DF75817A</PackageCertificateThumbprint>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppxBundle>Always</AppxBundle>
