@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <!--Pre-configured artist links for JPopAsia. These are unlikely to change. This list is for some artists that (I've discovered while testing that) have harder to guess urls on JPopAsia.com along with some of my personal favorites.-->
 <Artists>
-  <Artist Name="Superfly" Url="http://www.jpopasia.com/superfly/" />
+  <Artist Name="Superfly" Url="http://www.jpopasia.com/superfly/" FanArtTVUrl="https://fanart.tv/artist/8b55db74-4717-44e1-b799-35f6e1b8fa10/superfly/" />
   <Artist Name="Girls' Generation" Url="http://www.jpopasia.com/girlsgeneration/" />
   <Artist Name="Kis-My-Ft2" Url="http://www.jpopasia.com/kismyft2/" />
-  <Artist Name="FLOW" Url="http://www.jpopasia.com/flow/" />
+  <Artist Name="FLOW" Url="http://www.jpopasia.com/flow/" FanArtTVUrl="https://fanart.tv/artist/a0387b9b-236d-475f-8846-b2dea4af1112/flow/" />
   <Artist Name="Perfume" Url="http://www.jpopasia.com/perfume/" />
-  <Artist Name="Ayumi Hamasaki" Url="http://www.jpopasia.com/ayumihamasaki/" AltName="浜崎 あゆみ" />
+  <Artist Name="Ayumi Hamasaki" Url="http://www.jpopasia.com/ayumihamasaki/" AltName="浜崎 あゆみ" FanArtTVUrl="https://fanart.tv/artist/2b615bcf-baa0-4657-b9a5-1a5f34c386c4/hamasaki-ayumi/" />
   <Artist Name="Megumi Hayashibara" Url="http://www.jpopasia.com/megumihayashibara/" AltName="林原 めぐみ" />
   <Artist Name="B.A.P" Url="http://www.jpopasia.com/bap/" />
   <Artist Name="Ailee" Url="http://www.jpopasia.com/ailee/" AltName="에일리" />
