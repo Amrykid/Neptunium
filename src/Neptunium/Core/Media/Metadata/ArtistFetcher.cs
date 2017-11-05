@@ -11,11 +11,11 @@ using Windows.Web.Http;
 namespace Neptunium.Core.Media.Metadata
 {
     /// <summary>
-    /// Small utility class to grab artist data from JPopAsia.com - This use to be a feature in the original version of Neptunium (when it was called Hanasu)
+    /// Formerlly: Small utility class to grab artist data from JPopAsia.com - This use to be a feature in the original version of Neptunium (when it was called Hanasu)
     /// </summary>
-    public static class JPopAsiaFetcher
+    public static class ArtistFetcher
     {
-        public static async Task<JPopAsiaArtistData> FindArtistDataAsync(string artistName)
+        public static async Task<JPopAsiaArtistData> FindArtistDataOnJPopAsiaAsync(string artistName)
         {
             HttpClient http = new HttpClient();
             HttpResponseMessage httpResponse = null;
@@ -38,7 +38,7 @@ namespace Neptunium.Core.Media.Metadata
 
                 //pull up our pre-cached list of artists and search there.
                 var builtInList = await GetBuiltinArtistEntriesAsync();
-                JPopAsiaArtistEntry builtInMatch = builtInList.FirstOrDefault(x => x.Name.ToLower().Equals(artistName.ToLower()));
+                BuiltinArtistEntry builtInMatch = builtInList.FirstOrDefault(x => x.Name.ToLower().Equals(artistName.ToLower()));
 
                 if (builtInMatch == null)
                 {
@@ -75,23 +75,26 @@ namespace Neptunium.Core.Media.Metadata
             return null;
         }
 
-        private static async Task<IEnumerable<JPopAsiaArtistEntry>> GetBuiltinArtistEntriesAsync()
+        public static async Task<IEnumerable<BuiltinArtistEntry>> GetBuiltinArtistEntriesAsync()
         {
             var file = MetadataFinder.BuiltInArtistsFile;
             var reader = await file.OpenReadAsync();
             XDocument xmlDoc = XDocument.Load(reader.AsStream());
 
-            List<JPopAsiaArtistEntry> artists = new List<JPopAsiaArtistEntry>();
+            List<BuiltinArtistEntry> artists = new List<BuiltinArtistEntry>();
 
             foreach (var artistElement in xmlDoc.Element("Artists").Elements("Artist"))
             {
-                var artistEntry = new JPopAsiaArtistEntry();
+                var artistEntry = new BuiltinArtistEntry();
 
                 artistEntry.Name = artistElement.Attribute("Name").Value;
-                artistEntry.Url = new Uri(artistElement.Attribute("JPopAsiaUrl").Value);
+                artistEntry.JPopAsiaUrl = new Uri(artistElement.Attribute("JPopAsiaUrl").Value);
 
                 if (artistElement.Attribute("AltName") != null)
                     artistEntry.AltName = artistElement.Attribute("AltName").Value;
+
+                if (artistElement.Attribute("FanArtTVUrl") != null)
+                    artistEntry.FanArtTVUrl = new Uri(artistElement.Attribute("FanArtTVUrl").Value);
 
                 artists.Add(artistEntry);
             }
@@ -139,11 +142,12 @@ namespace Neptunium.Core.Media.Metadata
         }
     }
 
-    internal class JPopAsiaArtistEntry
+    public class BuiltinArtistEntry
     {
         public string Name { get; set; }
-        public Uri Url { get; set; }
+        public Uri JPopAsiaUrl { get; set; }
         public string AltName { get; set; }
+        public Uri FanArtTVUrl { get; set; }
     }
 
     public class JPopAsiaArtistData

@@ -39,7 +39,8 @@ namespace Neptunium.Core.Media.Metadata
 
                 try
                 {
-                    extendedMetadata.JPopAsiaArtistInfo = await JPopAsiaFetcher.FindArtistDataAsync(originalMetadata.Artist.Trim());
+                    extendedMetadata.JPopAsiaArtistInfo = await ArtistFetcher.FindArtistDataOnJPopAsiaAsync(originalMetadata.Artist.Trim());
+                    extendedMetadata.FanArtTVInfo = await FanArtTVFetcher.FetchArtistBackgroundAsync(originalMetadata.Artist.Trim());
                 }
                 catch (Exception) { }
             }
