@@ -265,10 +265,12 @@
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\WideLogo.scale-100.png" />
     <None Include="Package.StoreAssociation.xml" />
-    <Content Include="Data\JPopAsiaArtists.xml">
+    <Content Include="Data\BuiltinArtists.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Data\Stations\Data\Stations.xml" />
+    <Content Include="Data\Stations\Data\Stations.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\Old\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\Old\SplashScreen.scale-200.png" />

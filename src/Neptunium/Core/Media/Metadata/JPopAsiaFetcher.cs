@@ -77,7 +77,7 @@ namespace Neptunium.Core.Media.Metadata
 
         private static async Task<IEnumerable<JPopAsiaArtistEntry>> GetBuiltinArtistEntriesAsync()
         {
-            var file = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(@"Data\JPopAsiaArtists.xml");
+            var file = MetadataFinder.BuiltInArtistsFile;
             var reader = await file.OpenReadAsync();
             XDocument xmlDoc = XDocument.Load(reader.AsStream());
 
@@ -88,7 +88,7 @@ namespace Neptunium.Core.Media.Metadata
                 var artistEntry = new JPopAsiaArtistEntry();
 
                 artistEntry.Name = artistElement.Attribute("Name").Value;
-                artistEntry.Url = new Uri(artistElement.Attribute("Url").Value);
+                artistEntry.Url = new Uri(artistElement.Attribute("JPopAsiaUrl").Value);
 
                 if (artistElement.Attribute("AltName") != null)
                     artistEntry.AltName = artistElement.Attribute("AltName").Value;

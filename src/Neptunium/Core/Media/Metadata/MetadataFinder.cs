@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace Neptunium.Core.Media.Metadata
 {
     public static class MetadataFinder
     {
+        public static StorageFile BuiltInArtistsFile = null;
         public static async Task<ExtendedSongMetadata> FindMetadataAsync(SongMetadata originalMetadata)
         {
             var metaSrc = new MusicBrainzMetadataSource();

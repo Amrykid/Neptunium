@@ -1,5 +1,6 @@
 ﻿using Kukkii;
 using Neptunium.Core;
+using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Settings;
 using Neptunium.Core.Stations;
 using Neptunium.Core.UI;
@@ -38,6 +39,7 @@ namespace Neptunium
             CookieJar.ApplicationName = "Neptunium";
 
             ImageCacheFolder = await ApplicationData.Current.LocalCacheFolder.CreateFolderAsync("ImageCache", CreationCollisionOption.OpenIfExists);
+            MetadataFinder.BuiltInArtistsFile = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(@"Data\BuiltinArtists.xml");
 
             //Hqub.MusicBrainz.API.MyHttpClient.UserAgent = 
             //    "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Minor + " ( amrykid@gmail.com )";
