@@ -11,23 +11,26 @@ namespace Neptunium.Core.UI
 {
     public class NepAppUILockScreenManager
     {
+        private object originalLockScreen; //currently, there is no universal way to get the original lock screen. this api ( https://docs.microsoft.com/en-us/uwp/api/Windows.System.UserProfile.LockScreen ) only exists on the desktop sku.
         internal NepAppUILockScreenManager()
         {
+            
         }
 
         public async Task<bool> TrySetLockScreenImageFromUri(Uri uri)
         {
-            var imageCacheFolder = await NepApp.ImageCacheFolder.CreateFolderAsync("LockScreen", CreationCollisionOption.OpenIfExists);
+            //var picturesLibrary = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
+            var lockScreenFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("LockScreen Images", CreationCollisionOption.OpenIfExists);
 
             var originalFileName = uri.Segments.Last().Trim();
 
-            StorageFile fileObject = await imageCacheFolder.TryGetItemAsync(originalFileName) as StorageFile;
+            StorageFile fileObject = await lockScreenFolder.TryGetItemAsync(originalFileName) as StorageFile;
 
             if (fileObject == null)
             {
                 if (NepApp.Network.IsConnected)
                 {
-                    fileObject = await imageCacheFolder.CreateFileAsync(originalFileName);
+                    fileObject = await lockScreenFolder.CreateFileAsync(originalFileName);
                     Stream fileStream = await fileObject.OpenStreamForWriteAsync(); //auto disposed by the using statement on the next line
                     using (IOutputStream outputFileStream = fileStream.AsOutputStream())
                     {
@@ -40,7 +43,7 @@ namespace Neptunium.Core.UI
                         }
                     }
 
-                    fileObject = await imageCacheFolder.TryGetItemAsync(originalFileName) as StorageFile;
+                    fileObject = await lockScreenFolder.TryGetItemAsync(originalFileName) as StorageFile;
                 }
                 else
                 {
