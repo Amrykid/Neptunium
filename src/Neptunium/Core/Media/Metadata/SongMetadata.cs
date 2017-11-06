@@ -53,5 +53,6 @@ namespace Neptunium.Core.Media.Metadata
         public AlbumData Album { get; internal set; }
         public ArtistData ArtistInfo { get; internal set; }
         public JPopAsiaArtistData JPopAsiaArtistInfo { get; internal set; }
+        public Uri FanArtTVBackgroundUrl { get; internal set; }
     }
 }

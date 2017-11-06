@@ -193,13 +193,19 @@ namespace Neptunium.Media.Songs
             {
                 //album artwork
                 Uri albumArtUri = null;
-                if (CurrentSongWithAdditionalMetadata.Album != null)
+
+                if (CurrentSongWithAdditionalMetadata.FanArtTVBackgroundUrl != null)
+                {
+                    albumArtUri = CurrentSongWithAdditionalMetadata.FanArtTVBackgroundUrl;
+                }
+                if (CurrentSongWithAdditionalMetadata.Album != null && albumArtUri == null)
                 {
                     if (!string.IsNullOrWhiteSpace(CurrentSongWithAdditionalMetadata.Album?.AlbumCoverUrl))
                     {
                         albumArtUri = new Uri(CurrentSongWithAdditionalMetadata.Album?.AlbumCoverUrl);
                     }
                 }
+                
                 artworkUriDictionary[NepAppSongMetadataBackground.Album] = albumArtUri;
                 if (albumArtUri != null)
                 {
