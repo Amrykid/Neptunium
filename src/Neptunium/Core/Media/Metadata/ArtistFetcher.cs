@@ -25,6 +25,7 @@ namespace Neptunium.Core.Media.Metadata
                     Uri.EscapeUriString(
                         artistName.Replace(" ", "")
                         .Replace("!", "")
+                        .Replace("-", "")
                         .Replace("*", "")))); //try and use a direct url. this works for artists like "Superfly" or "Perfume"
 
             httpResponse = await http.GetAsync(directUri);
