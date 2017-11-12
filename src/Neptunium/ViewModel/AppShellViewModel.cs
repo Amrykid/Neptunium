@@ -48,7 +48,22 @@ namespace Neptunium.ViewModel
             NepApp.SongManager.StationRadioProgramStarted += SongManager_StationRadioProgramStarted;
 
             if (UserProfilePersonalizationSettings.IsSupported())
+            {
                 NepApp.SongManager.SongArtworkAvailable += SongManager_SongArtworkAvailable;
+                NepApp.SongManager.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
+            }
+        }
+
+        private async void SongManager_NoSongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
+        {
+            if ((bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt))
+            {
+                //sets the fallback lockscreen image when we don't have any artwork available.
+                if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Artist)
+                {
+                    await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
+                }
+            }
         }
 
         private async void SongManager_SongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
@@ -59,7 +74,7 @@ namespace Neptunium.ViewModel
                 {
                     try
                     {
-                        bool result = await NepApp.UI.LockScreen.TrySetLockScreenImageFromUri(e.ArtworkUri);
+                        bool result = await NepApp.UI.LockScreen.TrySetLockScreenImageFromUriAsync(e.ArtworkUri);
 
                         if (!result)
                         {
@@ -68,7 +83,10 @@ namespace Neptunium.ViewModel
                     }
                     catch (Exception)
                     {
+                        //todo make and set an image that represents the lack of artwork. maybe a dark image with the app logo?
+                        //maybe allow the user to set an image to use in this case.
 
+                        await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
                     }
                 }
             }

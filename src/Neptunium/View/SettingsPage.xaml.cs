@@ -52,5 +52,29 @@ namespace Neptunium.View
                 UpdateLockScreenSwitch.Visibility = Visibility.Visible;
             }
         }
+
+        private async void SetFallBackLockScreenBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+            picker.FileTypeFilter.Add(".png");
+
+            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                // Application now has read/write access to the picked file
+
+                //todo check if less or equal to 2MB on mobile before proceeding.
+
+                this.GetViewModel<SettingsPageViewModel>().FallBackLockScreenArtwork = file.Path;
+            }
+            else
+            {
+                //cancelled
+            }
+        }
     }
 }

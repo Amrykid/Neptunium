@@ -59,6 +59,28 @@ namespace Neptunium.ViewModel
             set { NepApp.Settings.SetSetting(AppSettings.UpdateLockScreenWithSongArt, value); }
         }
 
+        public string FallBackLockScreenArtwork
+        {
+            get { return (string)NepApp.Settings.GetSetting(AppSettings.FallBackLockScreenImageUri); }
+            set
+            {
+                NepApp.Settings.SetSetting(AppSettings.FallBackLockScreenImageUri, value);
+                RaisePropertyChanged(nameof(FallBackLockScreenArtworkUri));
+            }
+        }
+
+        public Uri FallBackLockScreenArtworkUri
+        {
+            get
+            {
+                var str = NepApp.Settings.GetSetting(AppSettings.FallBackLockScreenImageUri) as string;
+
+                if (string.IsNullOrWhiteSpace(str)) return null;
+
+                return new Uri(str);
+            }
+        }
+
         public string SelectedBluetoothDeviceName
         {
             get { return GetPropertyValue<string>(); }

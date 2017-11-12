@@ -25,22 +25,32 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Pivot x:Name="RootPivot" Pivot.IsHeaderItemsCarouselEnabled="False">
             <PivotItem Header="General">
-                <StackPanel Margin="10 0">
-                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
+                <ScrollViewer>
+                    <StackPanel Margin="10 0">
+                        <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Notifications"/>
-                    <ToggleSwitch Header="Show song change notifications"
+                        <ToggleSwitch Header="Show song change notifications"
                                   IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                    <MenuFlyoutSeparator />
-                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
+                        <MenuFlyoutSeparator />
+                        <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Metadata"/>
-                    <ToggleSwitch Header="Find song metadata when song changes" 
+                        <ToggleSwitch Header="Find song metadata when song changes" 
                                   IsOn="{Binding FindSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                    <ToggleSwitch Header="Update LockScreen with artwork when available"
+                        <ToggleSwitch Header="Update LockScreen with artwork when available"
                                   x:Name="UpdateLockScreenSwitch"
                                   Visibility="Collapsed"
                                   IsOn="{Binding UpdateLockScreenWithSongArt, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        <StackPanel Height="150" Visibility="{Binding ElementName=UpdateLockScreenSwitch, Path=Visibility, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
+                                   Margin="0 0 0 10"
+                                   Text="Set a lock screen image that we'll use when we cannot find artwork for the current song. We recommend selecting your lockscreen image."/>
 
-                </StackPanel>
+                            <Image MaxHeight="70" Source="{Binding FallBackLockScreenArtworkUri, UpdateSourceTrigger=PropertyChanged}" Margin="0 10" />
+
+                            <Button Content="Set Fallback Lockscreen" x:Name="SetFallBackLockScreenBtn" Click="SetFallBackLockScreenBtn_Click" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
             </PivotItem>
             <PivotItem x:Name="bluetoothPivot" Header="Bluetooth" IsEnabled="False">
                 <StackPanel Margin="10 0">
@@ -75,7 +85,8 @@
 
     <VisualStateManager.VisualStateGroups>
         <VisualStateGroup>
-            <VisualState x:Name="TabletOrHigherVisualState"> <!--this should include Xbox-->
+            <VisualState x:Name="TabletOrHigherVisualState">
+                <!--this should include Xbox-->
                 <VisualState.StateTriggers>
                     <wst:AdaptiveTrigger MinWindowWidth="720" />
                 </VisualState.StateTriggers>

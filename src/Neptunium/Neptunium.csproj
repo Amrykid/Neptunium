@@ -152,6 +152,8 @@
     <Compile Include="Core\UI\NepAppUIManagerNotifier.cs" />
     <Compile Include="Core\UI\NepAppUINavigationItem.cs" />
     <Compile Include="Core\UI\NepAppUINoChromePageAttribute.cs" />
+    <Compile Include="External\CropBitmap.cs" />
+    <Compile Include="External\WriteableBitmapExtensions.cs" />
     <Compile Include="Glue\IXboxInputPage.cs" />
     <Compile Include="JapaneseTextUtilities.cs" />
     <Compile Include="Core\NepApp.cs" />
@@ -384,7 +386,10 @@
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
       <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
     </SDKReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.16299.0">
+    <SDKReference Include="WindowsDesktop, Version=10.0.16232.0">
+      <Name>Windows Desktop Extensions for the UWP</Name>
+    </SDKReference>
+    <SDKReference Include="WindowsMobile, Version=10.0.16232.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
