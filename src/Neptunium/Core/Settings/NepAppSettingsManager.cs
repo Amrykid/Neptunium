@@ -9,8 +9,10 @@ using static Neptunium.NepApp;
 
 namespace Neptunium.Core.Settings
 {
-    public class NepAppSettingsManager: INepAppFunctionManager
+    public class NepAppSettingsManager : INepAppFunctionManager
     {
+        public event EventHandler<NepAppSettingChangedEventArgs> SettingChanged;
+
         internal NepAppSettingsManager()
         {
             //initialize app settings
@@ -79,6 +81,12 @@ namespace Neptunium.Core.Settings
                 ApplicationData.Current.LocalSettings.Values.Add(settingName, value);
             else
                 ApplicationData.Current.LocalSettings.Values[settingName] = value;
+
+            SettingChanged?.Invoke(this, new NepAppSettingChangedEventArgs()
+            {
+                ChangedSetting = (AppSettings)Enum.Parse(typeof(AppSettings), settingName),
+                NewValue = value
+            });
         }
 
         public void SetSetting(AppSettings setting, object value)

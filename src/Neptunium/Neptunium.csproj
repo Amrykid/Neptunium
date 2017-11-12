@@ -130,6 +130,7 @@
     <Compile Include="Core\NepAppHandoffManager.cs" />
     <Compile Include="Core\Media\NepAppMediaPlayerManager.cs" />
     <Compile Include="Core\NepAppNetworkManager.cs" />
+    <Compile Include="Core\Settings\NepAppSettingChangedEventArgs.cs" />
     <Compile Include="Core\Settings\NepAppSettingsManager.cs" />
     <Compile Include="ColorUtilities.cs" />
     <Compile Include="Controls\TransitioningColorGlassPanel.xaml.cs">
