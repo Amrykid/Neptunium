@@ -61,7 +61,14 @@ namespace Neptunium.ViewModel
                 //sets the fallback lockscreen image when we don't have any artwork available.
                 if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Artist)
                 {
-                    await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
+                    try
+                    {
+                        await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
+                    }
+                    catch (Exception)
+                    {
+
+                    }
                 }
             }
         }
