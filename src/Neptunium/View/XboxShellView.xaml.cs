@@ -242,14 +242,16 @@ namespace Neptunium.View
                     HandleSplitViewPaneClose();
                 }
             }
-            else if (e.Key == Windows.System.VirtualKey.Left)
-            {
-                if (isInNoChromeMode) return;
+            //else if (e.Key == Windows.System.VirtualKey.Left)
+            //{
+            //    if (isInNoChromeMode) return;
 
-                e.Handled = true;
-                RootSplitView.IsPaneOpen = true;
-                HandleSplitViewPaneOpen();
-            }
+            //    if (e.Handled) return;
+
+            //    e.Handled = true;
+            //    RootSplitView.IsPaneOpen = true;
+            //    HandleSplitViewPaneOpen();
+            //}
         }
     }
 }
