@@ -78,7 +78,7 @@ namespace Neptunium.ViewModel
 
                         if (!result)
                         {
-
+                            await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
                         }
                     }
                     catch (Exception)

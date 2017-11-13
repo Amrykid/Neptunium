@@ -40,12 +40,12 @@
                                   x:Name="UpdateLockScreenSwitch"
                                   Visibility="Collapsed"
                                   IsOn="{Binding UpdateLockScreenWithSongArt, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                        <StackPanel Height="150" Visibility="{Binding ElementName=UpdateLockScreenSwitch, Path=Visibility, UpdateSourceTrigger=PropertyChanged}">
+                        <StackPanel Height="450" Visibility="{Binding ElementName=UpdateLockScreenSwitch, Path=Visibility, UpdateSourceTrigger=PropertyChanged}">
                             <TextBlock Style="{StaticResource CaptionTextBlockStyle}"
                                    Margin="0 0 0 10"
                                    Text="Set a lock screen image that we'll use when we cannot find artwork for the current song. We recommend selecting your lockscreen image."/>
 
-                            <Image MaxHeight="70" Source="{Binding FallBackLockScreenArtworkUri, UpdateSourceTrigger=PropertyChanged}" Margin="0 10" />
+                            <Image MaxHeight="300" Source="{Binding FallBackLockScreenArtworkUri, UpdateSourceTrigger=PropertyChanged}" Margin="0 10" />
 
                             <Button Content="Set Fallback Lockscreen" x:Name="SetFallBackLockScreenBtn" Click="SetFallBackLockScreenBtn_Click" />
                         </StackPanel>

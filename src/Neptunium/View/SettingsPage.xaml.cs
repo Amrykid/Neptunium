@@ -69,7 +69,7 @@ namespace Neptunium.View
 
                 //todo check if less or equal to 2MB on mobile before proceeding.
 
-                this.GetViewModel<SettingsPageViewModel>().FallBackLockScreenArtwork = file.Path;
+                await NepApp.UI.LockScreen.SetFallbackImageAsync(file);
             }
             else
             {

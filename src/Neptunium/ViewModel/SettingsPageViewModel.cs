@@ -24,6 +24,8 @@ namespace Neptunium.ViewModel
 
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
+            NepApp.Settings.SettingChanged += Settings_SettingChanged;
+
             if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
             {
                 if (await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync())
@@ -33,6 +35,23 @@ namespace Neptunium.ViewModel
             }
 
             base.OnNavigatedTo(sender, e);
+        }
+
+        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
+        {
+            NepApp.Settings.SettingChanged -= Settings_SettingChanged;
+
+            base.OnNavigatedFrom(sender, e);
+        }
+
+        private void Settings_SettingChanged(object sender, Core.Settings.NepAppSettingChangedEventArgs e)
+        {
+            switch(e.ChangedSetting)
+            {
+                case AppSettings.FallBackLockScreenImageUri:
+                    RaisePropertyChanged(nameof(FallBackLockScreenArtworkUri));
+                    break;
+            }
         }
 
         public bool ShowSongNotification
@@ -73,11 +92,7 @@ namespace Neptunium.ViewModel
         {
             get
             {
-                var str = NepApp.Settings.GetSetting(AppSettings.FallBackLockScreenImageUri) as string;
-
-                if (string.IsNullOrWhiteSpace(str)) return null;
-
-                return new Uri(str);
+                return NepApp.UI.LockScreen.FallbackLockScreenImage;
             }
         }
 

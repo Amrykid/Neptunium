@@ -10,8 +10,6 @@ using Windows.Storage.Streams;
 using Windows.System.UserProfile;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Web.Http;
-using XamlBrewer.Uwp.Controls;
-using XamlBrewer.Uwp.Controls.Helpers;
 
 namespace Neptunium.Core.UI
 {
@@ -20,20 +18,30 @@ namespace Neptunium.Core.UI
         private Rect screenBounds = default(Rect);
         private object originalLockScreen; //currently, there is no universal way to get the original lock screen. this api ( https://docs.microsoft.com/en-us/uwp/api/Windows.System.UserProfile.LockScreen ) only exists on the desktop sku.
         private Uri fallBackLockScreenImage = null;
+        private StorageFolder lockScreenFolder = null;
         internal NepAppUILockScreenManager()
+        {
+            InitializeAsync();
+        }
+
+        private async void InitializeAsync()
         {
             screenBounds = Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().VisibleBounds;
 
-            var fallBackPath = NepApp.Settings.GetSetting(AppSettings.FallBackLockScreenImageUri) as string;
+            var fallBackFileName = NepApp.Settings.GetSetting(AppSettings.FallBackLockScreenImageUri) as string;
 
-            if (!string.IsNullOrWhiteSpace(fallBackPath))
-                fallBackLockScreenImage = new Uri(fallBackPath);
+            lockScreenFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("LockScreen Images", CreationCollisionOption.OpenIfExists);
+
+            if (!string.IsNullOrWhiteSpace(fallBackFileName))
+            {
+                var file = await lockScreenFolder.GetFileAsync(fallBackFileName);
+                fallBackLockScreenImage = new Uri(file.Path);
+            }
         }
 
         public async Task<bool> TrySetLockScreenImageFromUriAsync(Uri uri)
         {
             //var picturesLibrary = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
-            var lockScreenFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("LockScreen Images", CreationCollisionOption.OpenIfExists);
 
             var originalFileName = uri.Segments.Last().Trim().Replace(":", "-").Replace(",", "-");
 
@@ -62,20 +70,13 @@ namespace Neptunium.Core.UI
                     {
                         //crop it on mobile.
 
-                        var imgProperties = await fileObject.Properties.GetImagePropertiesAsync();
+                        /*var imgProperties = await fileObject.Properties.GetImagePropertiesAsync();
 
                         double imgHeight = imgProperties.Height;
-                        double imgWidth = imgProperties.Width;
+                        double imgWidth = imgProperties.Width;*/
 
-                        Point startingPoint = new Point(
-                            (imgWidth / 2) - (screenBounds.Width / 2), 0);
 
-                        var croppedBitmap = await await App.Dispatcher.RunAsync(() => CropBitmap.GetCroppedBitmapAsync(fileObject,
-                                startingPoint,
-                                new Size(screenBounds.Width,
-                                    screenBounds.Height), 1));
-
-                        await croppedBitmap.SaveAsync(fileObject);
+                        await CropImageAsync(fileObject, uri).ConfigureAwait(false);
 
                         fileObject = await lockScreenFolder.TryGetItemAsync(originalFileName) as StorageFile;
                     }
@@ -98,11 +99,65 @@ namespace Neptunium.Core.UI
             return await UserProfilePersonalizationSettings.Current.TrySetLockScreenImageAsync(fileObject);
         }
 
+        private async Task CropImageAsync(StorageFile fileObject, Uri originalUri)
+        {
+            using (var stream = await fileObject.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                try
+                {
+                    stream.Seek(0);
+
+                    BitmapDecoder bitmapDecoder = await BitmapDecoder.CreateAsync(stream);
+
+                    uint height = (uint)Math.Min(bitmapDecoder.OrientedPixelHeight, screenBounds.Height);
+                    uint width = (uint)Math.Min(bitmapDecoder.OrientedPixelWidth, screenBounds.Width);
+
+                    Point startingPoint = new Point(
+                        Math.Round((width / 2) - (screenBounds.Width / 2)), 0);
+
+                    var softwareBitmap = bitmapDecoder.GetSoftwareBitmapAsync();
+
+                    BitmapEncoder bitmapEncoder = await BitmapEncoder.CreateForTranscodingAsync(stream, bitmapDecoder);
+
+                    //set the cropped area
+                    bitmapEncoder.BitmapTransform.Bounds = new BitmapBounds()
+                    {
+                        X = (uint)startingPoint.X,
+                        Y = (uint)startingPoint.Y,
+                        Width = width,
+                        Height = height
+                    };
+
+                    await bitmapEncoder.FlushAsync();
+                }
+                catch (Exception ex)
+                {
+                    Dictionary<string, string> properties = new Dictionary<string, string>();
+                    properties.Add("Original-URL", originalUri.ToString());
+                    properties.Add("Screen-Bounds", screenBounds.ToString());
+                    Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, properties);
+                }
+            }
+        }
+
+        internal async Task SetFallbackImageAsync(StorageFile file)
+        {
+            if (file == null) return;
+
+            var newFile = await file.CopyAsync(lockScreenFolder);
+
+            fallBackLockScreenImage = new Uri(newFile.Path);
+            NepApp.Settings.SetSetting(AppSettings.FallBackLockScreenImageUri, newFile.Name);
+        }
+
+        public Uri FallbackLockScreenImage { get { return fallBackLockScreenImage; } }
+
         public async Task<bool> TrySetFallbackLockScreenImageAsync()
         {
             if (fallBackLockScreenImage == null) return false;
 
-            StorageFile fileObject = await StorageFile.GetFileFromPathAsync(fallBackLockScreenImage.ToString());
+            var name = fallBackLockScreenImage.Segments.Last();
+            StorageFile fileObject = await lockScreenFolder.GetFileAsync(name);
 
             if (fileObject != null)
             {
