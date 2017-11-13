@@ -24,13 +24,14 @@
                 <RowDefinition Height="*" />
                 <RowDefinition x:Name="SongInfoRowDef" Height="200" />
                 <RowDefinition Height="75" />
+                <RowDefinition Height="50" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width=".33*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width=".33*" />
             </Grid.ColumnDefinitions>
-            <Grid Grid.RowSpan="3" Grid.ColumnSpan="3">
+            <Grid Grid.RowSpan="4" Grid.ColumnSpan="3">
                 <uwp:ImageEx HorizontalAlignment="Center"
                        x:Name="BackgroundImage"
                        Source="{Binding Background, UpdateSourceTrigger=PropertyChanged}"
@@ -85,22 +86,31 @@
                 </Grid>
             </Grid>
 
-            <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="3" Margin="0" x:Name="CommandPanel">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" 
+                        Grid.Row="2" Grid.ColumnSpan="3" Margin="0" x:Name="CommandPanel">
+                <StackPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Margin" Value="5 0" />
+                        <Setter Property="Height" Value="75" />
+                        <Setter Property="Width" Value="75" />
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                </StackPanel.Resources>
                 <!--todo add a play button, a full screen button and some casting buttons -->
-                <AppBarButton Icon="Play" Label="Play" x:Name="playPauseButton" />
-                <AppBarButton Label="Cast" Command="{Binding MediaCastingCommand}">
-                    <AppBarButton.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE952;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarButton Label="Handoff">
-                    <AppBarButton.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
+                <Button x:Name="playPauseButton" ToolTipService.ToolTip="Play/Pause">
+                    <SymbolIcon Symbol="Play" />
+                </Button>
+                <Button ToolTipService.ToolTip="Cast" Command="{Binding MediaCastingCommand}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE952;" />
+                </Button>
+                <Button ToolTipService.ToolTip="Handoff">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
+                </Button>
                 <!--<AppBarToggleButton Icon="FullScreen" Label="Fullscreen" x:Name="fullScreenButton" Visibility="Collapsed" />-->
-                <AppBarButton Icon="Attach" Label="Mini Player" x:Name="compactViewButton" 
-                                    Visibility="Collapsed" Click="compactViewButton_Click" />
+                <Button  ToolTipService.ToolTip="Mini Player" x:Name="compactViewButton" 
+                                    Visibility="Collapsed" Click="compactViewButton_Click">
+                    <SymbolIcon Symbol="Attach" />
+                </Button>
             </StackPanel>
         </Grid>
 
@@ -124,6 +134,7 @@
                         <Setter Target="SongInfoRowDef.Height" Value="200" />
                         <Setter Target="TrackArtistPanel.Margin" Value="0" />
                         <Setter Target="CommandPanel.Margin" Value="0" />
+                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Left" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
@@ -141,6 +152,7 @@
                         <Setter Target="SongInfoRowDef.Height" Value="200" />
                         <Setter Target="TrackArtistPanel.Margin" Value="0" />
                         <Setter Target="CommandPanel.Margin" Value="0" />
+                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Left" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
@@ -158,6 +170,7 @@
                         <Setter Target="SongInfoRowDef.Height" Value="150" />
                         <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
                         <Setter Target="CommandPanel.Margin" Value="20 0" />
+                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Center" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
                     </VisualState.Setters>
