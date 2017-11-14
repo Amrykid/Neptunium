@@ -46,6 +46,12 @@ namespace Neptunium.ViewModel
             private set { SetPropertyValue<Uri>(value: value); }
         }
 
+        public bool IsUIGlassEnabled
+        {
+            get { return GetPropertyValue<bool>(); }
+            private set { SetPropertyValue<bool>(value: value); }
+        }
+
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
@@ -72,6 +78,16 @@ namespace Neptunium.ViewModel
             if (NepApp.SongManager.IsSongArtworkAvailable(out backgroundType))
             {
                 Background = NepApp.SongManager.GetSongArtworkUri(backgroundType);
+
+                if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                {
+                    //artwork will almost never fit on mobile. turn on the glass.
+                    IsUIGlassEnabled = true;
+                }
+                else
+                {
+                    IsUIGlassEnabled = backgroundType != Media.Songs.NepAppSongMetadataBackground.Artist;
+                }
             }
             else
             {
@@ -82,6 +98,8 @@ namespace Neptunium.ViewModel
                         Background = new Uri(NepApp.MediaPlayer.CurrentStream.ParentStation.Background);
                     }
                 }
+
+                IsUIGlassEnabled = false;
             }
         }
 

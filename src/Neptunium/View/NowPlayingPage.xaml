@@ -8,6 +8,7 @@
     xmlns:cconv="using:Crystal3.UI.Converters"
     xmlns:uwp="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:wst="using:WindowsStateTriggers"
+    xmlns:controls="using:Neptunium.Controls"
     RequestedTheme="Dark"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
@@ -39,6 +40,8 @@
                        Visibility="{Binding Background, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
                        Opacity=".4"
                        VerticalAlignment="Stretch" />
+
+                <controls:GlassPanel x:Name="GlassPanel" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
             </Grid>
 
             <Image x:Name="LargeStationImage"
@@ -160,39 +163,15 @@
                     </VisualState.Setters>
                 </VisualState>
 
-                <VisualState x:Name="PhonePortraitVisualState">
+                <VisualState x:Name="PhoneVisualState">
                     <VisualState.StateTriggers>
-                        <wst:CompositeStateTrigger Operator="And">
-                            <wst:OrientationStateTrigger Orientation="Portrait" />
-                            <wst:AdaptiveTrigger MinWindowWidth="320" />
-                        </wst:CompositeStateTrigger>
+                        <wst:AdaptiveTrigger MinWindowWidth="320" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
                         <Setter Target="SmallStationImageColumn.Width" Value="0" />
                         <Setter Target="SmallStationImage.Visibility" Value="Collapsed" />
                         <Setter Target="LargeStationImage.Visibility" Value="Visible" />
-                        <Setter Target="SongInfoRowDef.Height" Value="150" />
-                        <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
-                        <Setter Target="CommandPanel.Margin" Value="20 0" />
-                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Center" />
-                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
-                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Center" />
-                        <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="PhoneLandscapeVisualState">
-                    <VisualState.StateTriggers>
-                        <wst:CompositeStateTrigger Operator="And">
-                            <wst:OrientationStateTrigger Orientation="Landscape" />
-                            <wst:AdaptiveTrigger MinWindowWidth="240" />
-                        </wst:CompositeStateTrigger>
-                    </VisualState.StateTriggers>
-
-                    <VisualState.Setters>
-                        <Setter Target="SmallStationImageColumn.Width" Value="0" />
-                        <Setter Target="SmallStationImage.Visibility" Value="Visible" />
-                        <Setter Target="LargeStationImage.Visibility" Value="Collapsed" />
                         <Setter Target="SongInfoRowDef.Height" Value="150" />
                         <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
                         <Setter Target="CommandPanel.Margin" Value="20 0" />
