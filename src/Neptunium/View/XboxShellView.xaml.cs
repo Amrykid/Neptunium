@@ -52,6 +52,17 @@ namespace Neptunium.View
             PageTitleTextBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
 
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
+
+            //handler to allow the metadata to animate onto the screen for the first time.
+            EventHandler<Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs> firstTimeMediaSetHandler = null;
+            firstTimeMediaSetHandler = new EventHandler<Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs>((o, e) =>
+            {
+                App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    CurrentMediaMetadataPanel.Visibility = Visibility.Visible;
+                });
+            });
+            NepApp.MediaPlayer.IsPlayingChanged += firstTimeMediaSetHandler;
         }
 
         private bool isInNoChromeMode = false;
@@ -61,16 +72,12 @@ namespace Neptunium.View
             {
                 //no chrome mode
                 RootSplitView.IsPaneOpen = false;
-                MediaGrid.Visibility = Visibility.Collapsed;
                 HeaderGrid.Visibility = Visibility.Collapsed;
                 isInNoChromeMode = true;
             }
             else
             {
                 //reactivate chrome
-
-                if (NepApp.MediaPlayer.IsPlaying)
-                    MediaGrid.Visibility = Visibility.Visible;
 
                 HeaderGrid.Visibility = Visibility.Visible;
 
@@ -124,18 +131,13 @@ namespace Neptunium.View
                     PlayButton.Icon = new SymbolIcon(Symbol.Pause);
                     PlayButton.Command = ((AppShellViewModel)this.DataContext).PausePlaybackCommand;
 
-                    if (!isInNoChromeMode)
-                    {
-                        MediaGrid.Visibility = Visibility.Visible;
-                    }
+                    HeaderControlHintIcon.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     PlayButton.Label = "Play";
                     PlayButton.Icon = new SymbolIcon(Symbol.Play);
                     PlayButton.Command = ((AppShellViewModel)this.DataContext).ResumePlaybackCommand;
-
-                    MediaGrid.Visibility = Visibility.Collapsed;
                 }
             });
         }
