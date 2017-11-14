@@ -52,7 +52,7 @@
                    Source="{Binding CurrentSong.StationLogo, UpdateSourceTrigger=PropertyChanged}"
                    Visibility="Collapsed" />
 
-            <Grid Grid.Row="1" Grid.ColumnSpan="3">
+            <Grid Grid.Row="1" Grid.ColumnSpan="3" x:Name="MetadataPanel" HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="SmallStationImageColumn" Width="135" />
                     <ColumnDefinition Width="*" />
@@ -136,6 +136,7 @@
                         <Setter Target="CommandPanel.Margin" Value="0" />
                         <Setter Target="CommandPanel.HorizontalAlignment" Value="Left" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
+                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Left" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
@@ -154,13 +155,17 @@
                         <Setter Target="CommandPanel.Margin" Value="0" />
                         <Setter Target="CommandPanel.HorizontalAlignment" Value="Left" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
+                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Left" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
 
-                <VisualState x:Name="PhoneVisualState">
+                <VisualState x:Name="PhonePortraitVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="320" />
+                        <wst:CompositeStateTrigger>
+                            <wst:OrientationStateTrigger Orientation="Portrait" />
+                            <wst:AdaptiveTrigger MinWindowWidth="320" />
+                        </wst:CompositeStateTrigger>
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
@@ -172,6 +177,28 @@
                         <Setter Target="CommandPanel.Margin" Value="20 0" />
                         <Setter Target="CommandPanel.HorizontalAlignment" Value="Center" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
+                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Center" />
+                        <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="PhoneLandscapeVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:CompositeStateTrigger>
+                            <wst:OrientationStateTrigger Orientation="Landscape" />
+                            <wst:AdaptiveTrigger MinWindowWidth="240" />
+                        </wst:CompositeStateTrigger>
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="SmallStationImageColumn.Width" Value="0" />
+                        <Setter Target="SmallStationImage.Visibility" Value="Visible" />
+                        <Setter Target="LargeStationImage.Visibility" Value="Collapsed" />
+                        <Setter Target="SongInfoRowDef.Height" Value="150" />
+                        <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
+                        <Setter Target="CommandPanel.Margin" Value="20 0" />
+                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Center" />
+                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
+                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Center" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
