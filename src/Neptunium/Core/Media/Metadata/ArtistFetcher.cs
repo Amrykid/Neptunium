@@ -49,9 +49,9 @@ namespace Neptunium.Core.Media.Metadata
 
                         if (artistName.Contains(" ")) //e.g. "Ayumi Hamasaki" vs. "Hamasaki Ayumi"
                         {
-                            string lastNameFirstNameSwappedName = string.Join(" ", artistName.Split(' ').Reverse()); //splices, reverses and joins: "Ayumi Hamasaki" -> ["Ayumi","Hamasaki"] -> ["Hamasaki", "Ayumi"] -> "Hamasaki Ayumi"
+                            //string lastNameFirstNameSwappedName = string.Join(" ", artistName.Split(' ').Reverse()); //splices, reverses and joins: "Ayumi Hamasaki" -> ["Ayumi","Hamasaki"] -> ["Hamasaki", "Ayumi"] -> "Hamasaki Ayumi"
 
-                            return x.Name.ToLower().FuzzyEquals(lastNameFirstNameSwappedName.ToLower());
+                            return x.AltNames.Any(str => str.FuzzyEquals(artistName.ToLower(), .9));
                         }
 
                         return false;
@@ -91,8 +91,10 @@ namespace Neptunium.Core.Media.Metadata
                 artistEntry.Name = artistElement.Attribute("Name").Value;
                 artistEntry.JPopAsiaUrl = new Uri(artistElement.Attribute("JPopAsiaUrl").Value);
 
-                if (artistElement.Attribute("AltName") != null)
-                    artistEntry.AltName = artistElement.Attribute("AltName").Value;
+                if (artistElement.Elements("AltName") != null)
+                {
+                    artistEntry.AltNames = artistElement.Elements("AltName").Select(x => x.Value).ToArray();
+                }
 
                 if (artistElement.Attribute("FanArtTVUrl") != null)
                     artistEntry.FanArtTVUrl = new Uri(artistElement.Attribute("FanArtTVUrl").Value);
@@ -147,7 +149,7 @@ namespace Neptunium.Core.Media.Metadata
     {
         public string Name { get; set; }
         public Uri JPopAsiaUrl { get; set; }
-        public string AltName { get; set; }
+        public string[] AltNames { get; set; }
         public Uri FanArtTVUrl { get; set; }
     }
 
