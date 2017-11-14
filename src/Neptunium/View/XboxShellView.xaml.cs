@@ -2,22 +2,15 @@
 using Neptunium.Core.UI;
 using Neptunium.Glue;
 using Neptunium.ViewModel;
-using Neptunium.ViewModel.Dialog;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -38,6 +31,8 @@ namespace Neptunium.View
             inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
             NepApp.UI.SetNavigationService(inlineNavigationService);
             inlineNavigationService.Navigated += InlineNavigationService_Navigated;
+
+            inlineNavigationService.PreBackRequested += InlineNavigationService_PreBackRequested;
 
             NepApp.UI.SetOverlayParentAndSnackBarContainer(OverlayPanel, snackBarGrid);
 
@@ -63,6 +58,15 @@ namespace Neptunium.View
                 });
             });
             NepApp.MediaPlayer.IsPlayingChanged += firstTimeMediaSetHandler;
+        }
+
+        private void InlineNavigationService_PreBackRequested(object sender, NavigationManagerPreBackRequestedEventArgs e)
+        {
+            if (TransportControlGrid.Visibility == Visibility.Visible)
+            {
+                e.Handled = true;
+                HideTransportGrid();
+            }
         }
 
         private bool isInNoChromeMode = false;
@@ -198,31 +202,11 @@ namespace Neptunium.View
 
                 if (TransportControlGrid.Visibility == Visibility.Collapsed)
                 {
-                    InlineFrame.IsEnabled = false;
-
-                    if (InlineFrame.Content is IXboxInputPage)
-                    {
-                        ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
-                    }
-
-                    TransportControlGrid.Visibility = Visibility.Visible;
-
-                    PlayButton.Focus(FocusState.Keyboard);
-
-                    ElementSoundPlayer.Play(ElementSoundKind.Show);
+                    ShowTransportGrid();
                 }
                 else
                 {
-                    TransportControlGrid.Visibility = Visibility.Collapsed;
-                    InlineFrame.IsEnabled = true;
-                    InlineFrame.Focus(FocusState.Keyboard);
-
-                    ElementSoundPlayer.Play(ElementSoundKind.Hide);
-
-                    if (InlineFrame.Content is IXboxInputPage)
-                    {
-                        ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
-                    }
+                    HideTransportGrid();
                 }
 
                 e.Handled = true;
@@ -254,6 +238,36 @@ namespace Neptunium.View
             //    RootSplitView.IsPaneOpen = true;
             //    HandleSplitViewPaneOpen();
             //}
+        }
+
+        private void ShowTransportGrid()
+        {
+            InlineFrame.IsEnabled = false;
+
+            if (InlineFrame.Content is IXboxInputPage)
+            {
+                ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
+            }
+
+            TransportControlGrid.Visibility = Visibility.Visible;
+
+            PlayButton.Focus(FocusState.Keyboard);
+
+            ElementSoundPlayer.Play(ElementSoundKind.Show);
+        }
+
+        private void HideTransportGrid()
+        {
+            TransportControlGrid.Visibility = Visibility.Collapsed;
+            InlineFrame.IsEnabled = true;
+            InlineFrame.Focus(FocusState.Keyboard);
+
+            ElementSoundPlayer.Play(ElementSoundKind.Hide);
+
+            if (InlineFrame.Content is IXboxInputPage)
+            {
+                ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
+            }
         }
     }
 }
