@@ -172,24 +172,24 @@ namespace Neptunium.Core.UI
             });
             view.KeyDown += escapeHandler;
 
-            var navManager = SystemNavigationManager.GetForCurrentView();
-            EventHandler<BackRequestedEventArgs> backHandler = null;
+            var navManager = WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two);
+            EventHandler<NavigationManagerPreBackRequestedEventArgs> backHandler = null;
             bool backHandlerReleased = false;
-            backHandler = new EventHandler<BackRequestedEventArgs>((o, e) =>
+            backHandler = new EventHandler<NavigationManagerPreBackRequestedEventArgs>((o, e) =>
             {
                 //hack to handle the back button.
                 e.Handled = true;
-                navManager.BackRequested -= backHandler;
+                navManager.PreBackRequested -= backHandler;
                 backHandlerReleased = true;
                 fragment.ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined);
             });
-            navManager.BackRequested += backHandler;
+            navManager.PreBackRequested += backHandler;
 
             var result = await fragment.InvokeAsync(parameter);
 
             if (!backHandlerReleased)
             {
-                navManager.BackRequested -= backHandler;
+                navManager.PreBackRequested -= backHandler;
             }
 
             if (!escapeHandlerReleased)
