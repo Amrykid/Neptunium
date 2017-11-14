@@ -3,7 +3,10 @@
 <Artists>
   <Artist Name="Superfly" JPopAsiaUrl="http://www.jpopasia.com/superfly/" FanArtTVUrl="https://fanart.tv/artist/8b55db74-4717-44e1-b799-35f6e1b8fa10/superfly/" />
   <Artist Name="BoA" JPopAsiaUrl="http://www.jpopasia.com/boa/" FanArtTVUrl="https://fanart.tv/artist/a16d1433-ba89-4f72-a47b-a370add0bb55/boa/" />
-  <Artist Name="Girls' Generation" JPopAsiaUrl="http://www.jpopasia.com/girlsgeneration/" FanArtTVUrl="https://fanart.tv/artist/b7442f18-d9be-4185-8b51-482510046156/girls-generation/" />
+  <Artist Name="Girls' Generation" JPopAsiaUrl="http://www.jpopasia.com/girlsgeneration/" FanArtTVUrl="https://fanart.tv/artist/b7442f18-d9be-4185-8b51-482510046156/girls-generation/">
+    <AltName>소녀시대</AltName>
+    <AltName>少女時代</AltName>
+  </Artist>
   <Artist Name="May J" JPopAsiaUrl="http://www.jpopasia.com/mayj/">
     <AltName>May J.</AltName>
   </Artist>
@@ -56,5 +59,19 @@
   </Artist>
   <Artist Name="ONE OK ROCK" JPopAsiaUrl="http://www.jpopasia.com/oneokrock/" FanArtTVUrl="https://fanart.tv/artist/6ef00829-fa94-4fee-a5a6-b28e1208e96a/one-ok-rock/">
     <AltName>ワンオクロック</AltName>
+  </Artist>
+  <Artist Name="May'n" JPopAsiaUrl="http://www.jpopasia.com/mayn/">
+    <AltName>中林 芽依</AltName>
+    <AltName>May Nakabayashi</AltName>
+    <AltName>Nakabayashi Mei</AltName>
+  </Artist>
+  <Artist Name="Ikimonogakari" JPopAsiaUrl="http://www.jpopasia.com/ikimonogakari/" FanArtTVUrl="https://fanart.tv/artist/18191eea-369f-42e8-96ab-c1c24e4d0011/ikimono-gakari/">
+    <AltName>Ikimono-gakari</AltName>
+    <AltName>いきものがかり</AltName>
+  </Artist>
+  <Artist Name="Namie Amuro" JPopAsiaUrl="http://www.jpopasia.com/namieamuro/" FanArtTVUrl="https://fanart.tv/artist/888994e5-6f53-4f53-bced-b20482aea42a/amuro-namie/">
+    <AltName>Amura</AltName>
+    <AltName>Amuro Namie</AltName>
+    <AltName>安室奈美恵</AltName>
   </Artist>
 </Artists>
