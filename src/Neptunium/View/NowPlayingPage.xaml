@@ -162,7 +162,7 @@
 
                 <VisualState x:Name="PhonePortraitVisualState">
                     <VisualState.StateTriggers>
-                        <wst:CompositeStateTrigger>
+                        <wst:CompositeStateTrigger Operator="And">
                             <wst:OrientationStateTrigger Orientation="Portrait" />
                             <wst:AdaptiveTrigger MinWindowWidth="320" />
                         </wst:CompositeStateTrigger>
@@ -183,7 +183,7 @@
                 </VisualState>
                 <VisualState x:Name="PhoneLandscapeVisualState">
                     <VisualState.StateTriggers>
-                        <wst:CompositeStateTrigger>
+                        <wst:CompositeStateTrigger Operator="And">
                             <wst:OrientationStateTrigger Orientation="Landscape" />
                             <wst:AdaptiveTrigger MinWindowWidth="240" />
                         </wst:CompositeStateTrigger>
