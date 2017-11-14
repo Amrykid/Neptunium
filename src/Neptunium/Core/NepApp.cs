@@ -58,12 +58,13 @@ namespace Neptunium
             //return Task.CompletedTask;
         }
 
-        public static Binding CreateBinding(INepAppFunctionManager source, string propertyPath)
+        public static Binding CreateBinding(INepAppFunctionManager source, string propertyPath, Action<Binding> customizerFunction = null)
         {
             Binding binding = new Windows.UI.Xaml.Data.Binding();
             binding.Source = source;
             binding.Path = new PropertyPath(propertyPath);
             binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
+            customizerFunction?.Invoke(binding);
             return binding;
         }
     }

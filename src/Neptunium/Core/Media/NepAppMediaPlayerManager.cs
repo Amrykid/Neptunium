@@ -40,6 +40,7 @@ namespace Neptunium.Media
         }
         public bool IsPlaying { get; private set; }
         public bool IsCasting { get; private set; }
+        public bool IsMediaEngaged { get; private set; }
 
         public event EventHandler ConnectingBegin;
         public event EventHandler ConnectingEnd;
@@ -83,6 +84,14 @@ namespace Neptunium.Media
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             });
+        }
+
+        private void SetMediaEngagement(bool isEngaged)
+        {
+            bool raise = IsMediaEngaged != isEngaged;
+            IsMediaEngaged = isEngaged;
+            if (raise) PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaEngaged)));
+            //todo make an event for this;
         }
 
         private BasicNepAppMediaStreamer CreateStreamerForServerFormat(StationStreamServerFormat format)
@@ -190,6 +199,8 @@ namespace Neptunium.Media
 
             streamer.Play();
 
+            SetMediaEngagement(true);
+
             NepApp.Stations.SetLastPlayedStationName(stream.ParentStation.Name);
 
             if (streamer.SongMetadata == null)
@@ -231,6 +242,7 @@ namespace Neptunium.Media
 
             CurrentStream = null;
             NepApp.SongManager.ResetMetadata();
+            SetMediaEngagement(false);
             IsPlaying = false;
 
             if (MediaTransportControls != null) MediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Closed;
