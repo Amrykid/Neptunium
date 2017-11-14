@@ -68,9 +68,23 @@ namespace Neptunium.View
             NepApp.MediaPlayer.ConnectingBegin += Media_ConnectingBegin;
             NepApp.MediaPlayer.ConnectingEnd += Media_ConnectingEnd;
             NepApp.MediaPlayer.IsCastingChanged += Media_IsCastingChanged;
+            NepApp.MediaPlayer.MediaEngagementChanged += MediaPlayer_MediaEngagementChanged;
 
             NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
             NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
+        }
+
+        private void MediaPlayer_MediaEngagementChanged(object sender, EventArgs e)
+        {
+            switch(NepApp.MediaPlayer.IsMediaEngaged)
+            {
+                case true:
+                    bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+                    break;
+                case false:
+                    bottomAppBar.Visibility = Visibility.Collapsed;
+                    break;
+            }
         }
 
         private void Overlay_DialogShown(object sender, EventArgs e)
@@ -81,6 +95,8 @@ namespace Neptunium.View
         private void Overlay_DialogHidden(object sender, EventArgs e)
         {
             WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
+
+            bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void Media_IsCastingChanged(object sender, EventArgs e)
@@ -142,6 +158,11 @@ namespace Neptunium.View
 
         private void Current_SizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
         {
+            CollapseBottomAppBarBasedOnSize();
+        }
+
+        private void CollapseBottomAppBarBasedOnSize()
+        {
             if (NepApp.UI.Overlay.IsOverlayedDialogVisible)
             {
                 //only collapse the app bars on smaller screens.
@@ -153,7 +174,7 @@ namespace Neptunium.View
                 else
                 {
                     topAppBar.Visibility = Visibility.Visible;
-                    bottomAppBar.Visibility = Visibility.Visible;
+                    bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
                 }
             }
         }
@@ -204,7 +225,7 @@ namespace Neptunium.View
                 //reactivate chrome
 
                 topAppBar.Visibility = Visibility.Visible;
-                bottomAppBar.Visibility = Visibility.Visible;
+                bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
 
                 //todo remember splitview state instead of trying to guess below.
                 if (Window.Current.Bounds.Width >= 720)

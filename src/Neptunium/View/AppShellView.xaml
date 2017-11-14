@@ -238,6 +238,7 @@
               Grid.Row="2" 
               Height="65"
               RequestedTheme="Dark"
+              Visibility="Collapsed"
               Background="{ThemeResource SystemControlBackgroundAccentBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />

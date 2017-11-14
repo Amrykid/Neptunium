@@ -46,6 +46,7 @@ namespace Neptunium.Media
         public event EventHandler ConnectingEnd;
         public event EventHandler<NepAppMediaPlayerManagerIsPlayingEventArgs> IsPlayingChanged;
         public event EventHandler<EventArgs> IsCastingChanged;
+        public event EventHandler MediaEngagementChanged;
 
         public class NepAppMediaPlayerManagerIsPlayingEventArgs : EventArgs
         {
@@ -90,8 +91,12 @@ namespace Neptunium.Media
         {
             bool raise = IsMediaEngaged != isEngaged;
             IsMediaEngaged = isEngaged;
-            if (raise) PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaEngaged)));
-            //todo make an event for this;
+            if (raise)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaEngaged)));
+                MediaEngagementChanged?.Invoke(this, EventArgs.Empty);
+            }
+            
         }
 
         private BasicNepAppMediaStreamer CreateStreamerForServerFormat(StationStreamServerFormat format)
