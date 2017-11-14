@@ -68,6 +68,19 @@ namespace Neptunium.View
             NepApp.MediaPlayer.ConnectingBegin += Media_ConnectingBegin;
             NepApp.MediaPlayer.ConnectingEnd += Media_ConnectingEnd;
             NepApp.MediaPlayer.IsCastingChanged += Media_IsCastingChanged;
+
+            NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
+            NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
+        }
+
+        private void Overlay_DialogShown(object sender, EventArgs e)
+        {
+            WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(true);
+        }
+
+        private void Overlay_DialogHidden(object sender, EventArgs e)
+        {
+            WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
         }
 
         private void Media_IsCastingChanged(object sender, EventArgs e)
