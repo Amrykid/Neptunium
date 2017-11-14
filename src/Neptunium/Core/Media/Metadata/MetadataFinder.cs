@@ -19,6 +19,8 @@ namespace Neptunium.Core.Media.Metadata
             var station = await NepApp.Stations.GetStationByNameAsync(originalMetadata.StationPlayedOn);
             var extendedMetadata = new ExtendedSongMetadata(originalMetadata);
 
+            //todo strip out "feat." artists
+
             if ((bool)NepApp.Settings.GetSetting(AppSettings.TryToFindSongMetadata))
             {
                 try
