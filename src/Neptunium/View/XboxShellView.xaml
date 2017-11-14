@@ -100,26 +100,33 @@
                                    VerticalAlignment="Center" />
 
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Column="2" FontSize="25" 
-                                  HorizontalAlignment="Center" Foreground="White" x:Name="HeaderControlHintIcon" />
+                                  HorizontalAlignment="Center" Foreground="White" x:Name="HeaderControlHintIcon">
+                            <FontIcon.Transitions>
+                                <TransitionCollection>
+                                    <RepositionThemeTransition IsStaggeringEnabled="True" />
+                                </TransitionCollection>
+                            </FontIcon.Transitions>
+                        </FontIcon>
 
                         <StackPanel Grid.Column="3" Padding="10 0" VerticalAlignment="Center" Width="350" 
                                     x:Name="CurrentMediaMetadataPanel"
                                     Visibility="Collapsed">
                             <StackPanel.Transitions>
                                 <TransitionCollection>
-                                    <RepositionThemeTransition />
-                                    <AddDeleteThemeTransition />
+                                    <RepositionThemeTransition IsStaggeringEnabled="True" />
                                 </TransitionCollection>
                             </StackPanel.Transitions>
                             <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                    Style="{ThemeResource BaseTextBlockStyle}"
                                    Text="{Binding Track, UpdateSourceTrigger=PropertyChanged}"
-                                   x:Name="NowPlayingTrackTextBlock"/>
+                                   x:Name="NowPlayingTrackTextBlock">
+                            </TextBlock>
 
                             <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                    Style="{ThemeResource BodyTextBlockStyle}"
                                    Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}"
-                                   x:Name="NowPlayingArtistTextBlock" />
+                                   x:Name="NowPlayingArtistTextBlock">
+                            </TextBlock>
                         </StackPanel>
                     </Grid>
                     <Grid Grid.Row="1">

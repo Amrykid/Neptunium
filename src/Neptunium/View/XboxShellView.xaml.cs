@@ -49,15 +49,10 @@ namespace Neptunium.View
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
 
             //handler to allow the metadata to animate onto the screen for the first time.
-            EventHandler<Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs> firstTimeMediaSetHandler = null;
-            firstTimeMediaSetHandler = new EventHandler<Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs>((o, e) =>
+            CurrentMediaMetadataPanel.SetBinding(Control.VisibilityProperty, NepApp.CreateBinding(NepApp.MediaPlayer, nameof(NepApp.MediaPlayer.IsMediaEngaged), binding =>
             {
-                App.Dispatcher.RunWhenIdleAsync(() =>
-                {
-                    CurrentMediaMetadataPanel.Visibility = Visibility.Visible;
-                });
-            });
-            NepApp.MediaPlayer.IsPlayingChanged += firstTimeMediaSetHandler;
+                binding.Converter = new Crystal3.UI.Converters.BooleanToVisibilityConverter();
+            }));
         }
 
         private void InlineNavigationService_PreBackRequested(object sender, NavigationManagerPreBackRequestedEventArgs e)
