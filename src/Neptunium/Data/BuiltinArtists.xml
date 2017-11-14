@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <!--Pre-configured artist links for JPopAsia. These are unlikely to change. This list is for some artists that (I've discovered while testing that) have harder to guess urls on JPopAsia.com along with some of my personal favorites.-->
 <Artists>
+  <Artist Name="BONNIE PINK" JPopAsiaUrl="http://www.jpopasia.com/bonniepink/">
+    <AltName>浅田 香織 </AltName>
+  </Artist>
   <Artist Name="Superfly" JPopAsiaUrl="http://www.jpopasia.com/superfly/" FanArtTVUrl="https://fanart.tv/artist/8b55db74-4717-44e1-b799-35f6e1b8fa10/superfly/" />
   <Artist Name="BoA" JPopAsiaUrl="http://www.jpopasia.com/boa/" FanArtTVUrl="https://fanart.tv/artist/a16d1433-ba89-4f72-a47b-a370add0bb55/boa/" />
   <Artist Name="Girls' Generation" JPopAsiaUrl="http://www.jpopasia.com/girlsgeneration/" FanArtTVUrl="https://fanart.tv/artist/b7442f18-d9be-4185-8b51-482510046156/girls-generation/">
@@ -9,6 +12,10 @@
   </Artist>
   <Artist Name="May J" JPopAsiaUrl="http://www.jpopasia.com/mayj/">
     <AltName>May J.</AltName>
+  </Artist>
+  <Artist Name="Utada Hikaru" JPopAsiaUrl="http://www.jpopasia.com/hikaruutada/" FanArtTVUrl="https://fanart.tv/artist/b539e453-c4fe-47e3-8a07-8517eac74429/utada-hikaru/">
+    <AltName>Hikaru Utada</AltName>
+    <AltName>宇多田 ヒカル </AltName>
   </Artist>
   <Artist Name="Kis-My-Ft2" JPopAsiaUrl="http://www.jpopasia.com/kismyft2/" />
   <Artist Name="AKB48" JPopAsiaUrl="http://www.jpopasia.com/akb48/" FanArtTVUrl="https://fanart.tv/artist/be547bca-8718-4762-bf1b-34a3bdb4938f/akb48/" />
