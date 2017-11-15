@@ -15,7 +15,11 @@
   </Artist>
   <Artist Name="Utada Hikaru" JPopAsiaUrl="http://www.jpopasia.com/hikaruutada/" FanArtTVUrl="https://fanart.tv/artist/b539e453-c4fe-47e3-8a07-8517eac74429/utada-hikaru/">
     <AltName>Hikaru Utada</AltName>
-    <AltName>宇多田 ヒカル </AltName>
+    <AltName>宇多田 ヒカル</AltName>
+  </Artist>
+  <Artist Name="PUFFY" JPopAsiaUrl="http://www.jpopasia.com/puffy/" FanArtTVUrl="https://fanart.tv/artist/ed8e205b-2b03-48f8-b068-37b7a553fdad/puffy/">
+    <AltName>パフィー</AltName>
+    <AltName>Puffy AmiYumi</AltName>
   </Artist>
   <Artist Name="Kis-My-Ft2" JPopAsiaUrl="http://www.jpopasia.com/kismyft2/" />
   <Artist Name="AKB48" JPopAsiaUrl="http://www.jpopasia.com/akb48/" FanArtTVUrl="https://fanart.tv/artist/be547bca-8718-4762-bf1b-34a3bdb4938f/akb48/" />
