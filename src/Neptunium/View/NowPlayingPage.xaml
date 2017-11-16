@@ -195,6 +195,7 @@
                         <wst:CompositeStateTrigger Operator="And">
                             <wst:OrientationStateTrigger Orientation="Landscape" />
                             <wst:AdaptiveTrigger MinWindowWidth="240" />
+                            <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
                         </wst:CompositeStateTrigger>
                     </VisualState.StateTriggers>
 
