@@ -104,7 +104,8 @@ namespace Neptunium
             {
                 if (exception is NeptuniumException)
                 {
-                    await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Something went wrong!", e.Message);
+                    if (await GetIfPrimaryWindowVisibleAsync())
+                        await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Something went wrong!", e.Message);
                 }
                 else
                 {
@@ -115,7 +116,8 @@ namespace Neptunium
 
                     try
                     {
-                        await NepApp.UI.ShowInfoDialogAsync("Uh-oh! That's not supposed to happen.", e.Message);
+                        if (await GetIfPrimaryWindowVisibleAsync())
+                            await NepApp.UI.ShowInfoDialogAsync("Uh-oh! That's not supposed to happen.", e.Message);
                     }
                     catch (Exception ex)
                     {
