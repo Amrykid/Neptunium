@@ -113,7 +113,15 @@ namespace Neptunium
                     HockeyClient.Current.TrackException(exception, dictionary);
                     HockeyClient.Current.Flush();
 
-                    await NepApp.UI.ShowInfoDialogAsync("Uh-oh! That's not supposed to happen.", e.Message);
+                    try
+                    {
+                        await NepApp.UI.ShowInfoDialogAsync("Uh-oh! That's not supposed to happen.", e.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        HockeyClient.Current.TrackException(ex);
+                        HockeyClient.Current.Flush();
+                    }
                 }
             }
             else

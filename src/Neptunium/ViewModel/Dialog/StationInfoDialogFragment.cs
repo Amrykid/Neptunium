@@ -10,8 +10,10 @@ using Windows.System;
 
 namespace Neptunium.ViewModel.Dialog
 {
-    public class StationInfoDialogFragment: NepAppUIDialogFragment
+    public class StationInfoDialogFragment : NepAppUIDialogFragment
     {
+        private volatile bool dialogAnswered = false;
+
         public StationInfoDialogFragment()
         {
             ResultTaskCompletionSource = new TaskCompletionSource<NepAppUIManagerDialogResult>();
@@ -19,9 +21,18 @@ namespace Neptunium.ViewModel.Dialog
 
         public StationItem Station { get { return GetPropertyValue<StationItem>(); } private set { SetPropertyValue<StationItem>(value: value); } }
 
-        public RelayCommand CancelCommand => new RelayCommand(x => ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined));
+        public RelayCommand CancelCommand => new RelayCommand(x =>
+        {
+            if (dialogAnswered) return;
+            ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined);
+            dialogAnswered = true;
+        });
         public RelayCommand PlayCommand => new RelayCommand(x =>
-            ResultTaskCompletionSource.SetResult(new NepAppUIManagerDialogResult() { ResultType = NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive }));
+        {
+            if (dialogAnswered) return;
+            ResultTaskCompletionSource.SetResult(new NepAppUIManagerDialogResult() { ResultType = NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive });
+            dialogAnswered = true;
+        });
 
         public RelayCommand OpenStationWebsiteCommand => new RelayCommand(async x =>
         {
@@ -33,7 +44,12 @@ namespace Neptunium.ViewModel.Dialog
 
         public override Task<NepAppUIManagerDialogResult> InvokeAsync(object parameter)
         {
-            if (parameter == null || !(parameter is StationItem)) Task.FromResult<NepAppUIManagerDialogResult>(NepAppUIManagerDialogResult.Declined);
+            if (parameter == null || !(parameter is StationItem))
+            {
+                dialogAnswered = true;
+                ResultTaskCompletionSource.SetCanceled();
+                return Task.FromResult<NepAppUIManagerDialogResult>(NepAppUIManagerDialogResult.Declined);
+            }
 
             Station = parameter as StationItem;
             return ResultTaskCompletionSource.Task;
