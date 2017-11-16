@@ -54,6 +54,7 @@
 
             <StackPanel Orientation="Horizontal" Grid.Column="2">
                 <AppBarButton Icon="Go" ToolTipService.ToolTip="Handoff"
+                              x:Name="HandoffButton"
                               Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}">
                     <AppBarButton.Flyout>
                         <Flyout>

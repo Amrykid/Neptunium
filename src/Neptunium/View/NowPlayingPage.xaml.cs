@@ -1,4 +1,5 @@
-﻿using Crystal3.Model;
+﻿using Crystal3.Messaging;
+using Crystal3.Model;
 using Crystal3.Navigation;
 using Crystal3.UI;
 using Neptunium.ViewModel;
@@ -100,6 +101,11 @@ namespace Neptunium.View
             {
                 inlineNavigationService.SafeNavigateTo<CompactNowPlayingPageViewModel>();
             }
+        }
+
+        private void HandoffButton_Click(object sender, RoutedEventArgs e)
+        {
+            Messenger.SendMessageAsync("ShowHandoffFlyout", "");
         }
     }
 }

@@ -11,6 +11,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Crystal3.Messaging;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -20,7 +21,7 @@ namespace Neptunium.View
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [Crystal3.Navigation.NavigationViewModel(typeof(AppShellViewModel), NavigationViewSupportedPlatform.Xbox)]
-    public sealed partial class XboxShellView : Page
+    public sealed partial class XboxShellView : Page, Crystal3.Messaging.IMessagingTarget
     {
         private FrameNavigationService inlineNavigationService = null;
         public XboxShellView()
@@ -53,6 +54,8 @@ namespace Neptunium.View
             {
                 binding.Converter = new Crystal3.UI.Converters.BooleanToVisibilityConverter();
             }));
+
+            Messenger.AddTarget(this);
         }
 
         private void InlineNavigationService_PreBackRequested(object sender, NavigationManagerPreBackRequestedEventArgs e)
@@ -263,6 +266,27 @@ namespace Neptunium.View
             {
                 ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
             }
+        }
+
+        public void OnReceivedMessage(Message message, Action<object> resultCallback)
+        {
+            switch (message.Name)
+            {
+                case "ShowHandoffFlyout":
+                    //todo implement handoff flyout.
+
+                    //App.Dispatcher.RunAsync(() =>
+                    //{
+                    //    Handoff.Flyout.ShowAt(HandoffButton);
+                    //});
+
+                    break;
+            }
+        }
+
+        public IEnumerable<string> GetSubscriptions()
+        {
+            return new string[] { "ShowHandoffFlyout" };
         }
     }
 }

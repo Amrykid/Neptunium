@@ -73,7 +73,7 @@
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE952;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton Label="Handoff">
+                <AppBarButton Label="Handoff" x:Name="HandoffButton" Click="HandoffButton_Click">
                     <AppBarButton.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
                     </AppBarButton.Icon>

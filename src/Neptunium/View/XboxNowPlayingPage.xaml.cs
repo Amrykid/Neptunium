@@ -1,4 +1,5 @@
-﻿using Neptunium.Glue;
+﻿using Crystal3.Messaging;
+using Neptunium.Glue;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -111,6 +112,11 @@ namespace Neptunium.View
             {
                 btn.GotFocus -= Btn_GotFocus;
             }
+        }
+
+        private void HandoffButton_Click(object sender, RoutedEventArgs e)
+        {
+            Messenger.SendMessageAsync("ShowHandoffFlyout", "");
         }
     }
 }

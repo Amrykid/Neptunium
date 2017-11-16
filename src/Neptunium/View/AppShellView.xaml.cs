@@ -26,6 +26,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using WinRTXamlToolkit.Controls;
 using static Crystal3.UI.StatusManager.StatusManager;
+using Crystal3.Messaging;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -36,7 +37,7 @@ namespace Neptunium.View
     /// </summary>
     [Crystal3.Navigation.NavigationViewModel(typeof(AppShellViewModel),
         NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile)]
-    public sealed partial class AppShellView : Page
+    public sealed partial class AppShellView : Page, Crystal3.Messaging.IMessagingTarget
     {
         private FrameNavigationService inlineNavigationService = null;
         private volatile bool isInNoChromeMode = false;
@@ -72,11 +73,13 @@ namespace Neptunium.View
 
             NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
             NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
+
+            Messenger.AddTarget(this);
         }
 
         private void MediaPlayer_MediaEngagementChanged(object sender, EventArgs e)
         {
-            switch(NepApp.MediaPlayer.IsMediaEngaged)
+            switch (NepApp.MediaPlayer.IsMediaEngaged)
             {
                 case true:
                     bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
@@ -341,6 +344,25 @@ namespace Neptunium.View
                 .HandoffFragment
                 .HandOffCommand
                 .Execute(btn.DataContext);
+        }
+
+        public void OnReceivedMessage(Message message, Action<object> resultCallback)
+        {
+            switch (message.Name)
+            {
+                case "ShowHandoffFlyout":
+                    App.Dispatcher.RunAsync(() =>
+                    {
+                        HandoffButton.Flyout.ShowAt(HandoffButton);
+                    });
+
+                    break;
+            }
+        }
+
+        public IEnumerable<string> GetSubscriptions()
+        {
+            return new string[] { "ShowHandoffFlyout" };
         }
     }
 }
