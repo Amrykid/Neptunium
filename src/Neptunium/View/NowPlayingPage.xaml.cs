@@ -107,5 +107,12 @@ namespace Neptunium.View
         {
             Messenger.SendMessageAsync("ShowHandoffFlyout", "");
         }
+
+        private void ShellVisualStateGroup_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
+        {
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("NowPlayingPage: " + e.OldState?.Name + " -> " + e.NewState?.Name);
+#endif
+        }
     }
 }

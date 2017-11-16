@@ -25,7 +25,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition x:Name="SongInfoRowDef" Height="200" />
                 <RowDefinition Height="75" />
-                <RowDefinition Height="50" />
+                <RowDefinition x:Name="BottomRowDef" Height="50" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width=".33*" />
@@ -51,8 +51,7 @@
                    MaxHeight="300"
                    MaxWidth="300"
                    MinHeight="100"
-                   MinWidth="100"
-                   Stretch="UniformToFill"                   
+                   MinWidth="100"                   
                    Source="{Binding CoverImage, UpdateSourceTrigger=PropertyChanged}"
                    Visibility="Collapsed" />
 
@@ -125,7 +124,7 @@
         </Grid>
 
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="ShellVisualStateGroup">
+            <VisualStateGroup x:Name="ShellVisualStateGroup" CurrentStateChanging="ShellVisualStateGroup_CurrentStateChanging">
                 <VisualState x:Name="DesktopVisualState">
                     <VisualState.StateTriggers>
                         <wst:AdaptiveTrigger MinWindowWidth="1080" />
@@ -142,6 +141,7 @@
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
                         <Setter Target="MetadataPanel.HorizontalAlignment" Value="Left" />
                         <Setter Target="GlassPanel.IsGlassOn" Value="False" />
+                        <Setter Target="BottomRowDef.Height" Value="50" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
@@ -162,13 +162,17 @@
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
                         <Setter Target="MetadataPanel.HorizontalAlignment" Value="Left" />
                         <Setter Target="GlassPanel.IsGlassOn" Value="False" />
+                        <Setter Target="BottomRowDef.Height" Value="50" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
 
-                <VisualState x:Name="PhoneVisualState">
+                <VisualState x:Name="PhonePortraitVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="320" />
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:OrientationStateTrigger Orientation="Portrait" />
+                            <wst:AdaptiveTrigger MinWindowWidth="320" />
+                        </wst:CompositeStateTrigger>
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
@@ -182,6 +186,30 @@
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
                         <Setter Target="MetadataPanel.HorizontalAlignment" Value="Center" />
                         <Setter Target="GlassPanel.IsGlassOn" Value="True" />
+                        <Setter Target="BottomRowDef.Height" Value="50" />
+                        <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="PhoneLandscapeVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:OrientationStateTrigger Orientation="Landscape" />
+                            <wst:AdaptiveTrigger MinWindowWidth="240" />
+                        </wst:CompositeStateTrigger>
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="SmallStationImageColumn.Width" Value="135" />
+                        <Setter Target="SmallStationImage.Visibility" Value="Visible" />
+                        <Setter Target="LargeStationImage.Visibility" Value="Collapsed" />
+                        <Setter Target="SongInfoRowDef.Height" Value="150" />
+                        <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
+                        <Setter Target="CommandPanel.Margin" Value="20 0" />
+                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Center" />
+                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
+                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Center" />
+                        <Setter Target="GlassPanel.IsGlassOn" Value="True" />
+                        <Setter Target="BottomRowDef.Height" Value="0" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
