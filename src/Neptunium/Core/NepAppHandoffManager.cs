@@ -120,6 +120,7 @@ namespace Neptunium
             var realStream = winrtStream.AsStreamForRead();
             XDocument document = XDocument.Load(realStream);
             XNamespace packageNamespace = "http://schemas.microsoft.com/appx/manifest/foundation/windows10";
+            XNamespace uap3PackageNamespace = "http://schemas.microsoft.com/appx/manifest/uap/windows10/3";
             var packageElement = document.Element(packageNamespace + "Package");
             var applicationsElement = packageElement.Element(packageNamespace + "Applications");
             var applicationElement = applicationsElement.Element(packageNamespace + "Application");
@@ -229,6 +230,14 @@ namespace Neptunium
             var playStationTask = NepApp.MediaPlayer.TryStreamStationAsync(streamingDevice.Item2.Streams.First());
 
             await Task.WhenAny(stopMsgTask, playStationTask);
+        }
+
+        public void Refresh()
+        {
+            if (!IsSupported) return;
+            if (RemoteSystemAccess != RemoteSystemAccessStatus.Allowed) return;
+
+            remoteSystemWatcher.Start();
         }
 
         public async Task<List<Tuple<RemoteSystem, StationItem, AppServiceConnection>>> DetectStreamingDevicesAsync()

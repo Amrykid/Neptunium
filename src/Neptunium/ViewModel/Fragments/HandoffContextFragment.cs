@@ -17,6 +17,8 @@ namespace Neptunium.ViewModel.Fragments
             if (NepApp.Handoff.IsSupported)
             {
                 NepApp.Handoff.RemoteSystemsListUpdated += Handoff_RemoteSystemsListUpdated;
+
+                RefreshCommand.SetCanExecute(true);
             }
         }
 
@@ -47,5 +49,15 @@ namespace Neptunium.ViewModel.Fragments
         });
 
         public ReadOnlyObservableCollection<RemoteSystem> AvailableSystems => NepApp.Handoff.RemoteSystemsList;
+
+        public ManualRelayCommand RefreshCommand => new ManualRelayCommand(async x =>
+        {
+            RefreshCommand.SetCanExecute(false);
+            IsBusy = true;
+            NepApp.Handoff.Refresh();
+            await Task.Delay(30000); //30 seconds
+            IsBusy = false;
+            RefreshCommand.SetCanExecute(true);
+        });
     }
 }

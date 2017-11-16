@@ -61,6 +61,7 @@
                             <Grid x:Name="HandoffFlyoutRootGrid" DataContext="{Binding HandoffFragment, UpdateSourceTrigger=PropertyChanged}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="50" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
@@ -68,7 +69,11 @@
                                            Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                            Text="Select a device to transfer playback to.&#10;&#10;Note: You must be streaming/listening to a station before hand." />
 
-                                <ListBox Grid.Row="1" ItemsSource="{Binding AvailableSystems, UpdateSourceTrigger=PropertyChanged}">
+                                <Button Command="{Binding RefreshCommand, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1">
+                                    <SymbolIcon Symbol="Refresh" />
+                                </Button>
+
+                                <ListBox Grid.Row="2" ItemsSource="{Binding AvailableSystems, UpdateSourceTrigger=PropertyChanged}">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <tk:ListItemButton Name="HandoffListButton" Click="HandoffListButton_Click">
