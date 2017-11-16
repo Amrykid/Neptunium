@@ -78,37 +78,13 @@ namespace Neptunium.View
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             NepApp.MediaPlayer.IsPlayingChanged -= Media_IsPlayingChanged;
-            viewModel.PropertyChanged -= NowPlayingPage_PropertyChanged;
 
             base.OnNavigatingFrom(e);
         }
 
-        private NowPlayingPageViewModel viewModel = null;
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             UpdatePlaybackStatus(NepApp.MediaPlayer.IsPlaying);
-
-            viewModel = this.GetViewModel<NowPlayingPageViewModel>();
-            viewModel.PropertyChanged += NowPlayingPage_PropertyChanged;
-        }
-
-        private void NowPlayingPage_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch(e.PropertyName)
-            {
-                case "IsUIGlassEnabled":
-                    {
-                        if (viewModel.IsUIGlassEnabled)
-                        {
-                            GlassPanel.TurnOnGlass();
-                        }
-                        else
-                        {
-                            GlassPanel.TurnOffGlass();
-                        }
-                    }
-                    break;
-            }
         }
 
         private async void compactViewButton_Click(object sender, RoutedEventArgs e)

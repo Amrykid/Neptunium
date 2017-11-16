@@ -46,10 +46,10 @@ namespace Neptunium.ViewModel
             private set { SetPropertyValue<Uri>(value: value); }
         }
 
-        public bool IsUIGlassEnabled
+        public Uri CoverImage
         {
-            get { return GetPropertyValue<bool>(); }
-            private set { SetPropertyValue<bool>(value: value); }
+            get { return GetPropertyValue<Uri>(); }
+            private set { SetPropertyValue<Uri>(value: value); }
         }
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
@@ -59,7 +59,7 @@ namespace Neptunium.ViewModel
             NepApp.SongManager.SongArtworkProcessingComplete += SongManager_SongArtworkProcessingComplete;
 
             UpdateMetadata();
-            UpdateBackground();
+            UpdateArtwork();
 
             base.OnNavigatedTo(sender, e);
         }
@@ -68,26 +68,27 @@ namespace Neptunium.ViewModel
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                UpdateBackground();
+                UpdateArtwork();
             });
         }
 
-        private void UpdateBackground()
+        private void UpdateArtwork()
         {
+            var albumArt = NepApp.SongManager.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Album);
+            if (albumArt != null)
+            {
+                CoverImage = albumArt;
+            }
+            else
+            {
+                CoverImage = NepApp.MediaPlayer.CurrentStream?.ParentStation?.StationLogoUrl;
+            }
+
             Neptunium.Media.Songs.NepAppSongMetadataBackground backgroundType;
             if (NepApp.SongManager.IsSongArtworkAvailable(out backgroundType))
             {
+                //update the background
                 Background = NepApp.SongManager.GetSongArtworkUri(backgroundType);
-
-                if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-                {
-                    //artwork will almost never fit on mobile. turn on the glass.
-                    IsUIGlassEnabled = true;
-                }
-                else
-                {
-                    IsUIGlassEnabled = backgroundType != Media.Songs.NepAppSongMetadataBackground.Artist;
-                }
             }
             else
             {
@@ -95,11 +96,10 @@ namespace Neptunium.ViewModel
                 {
                     if (!string.IsNullOrWhiteSpace(NepApp.MediaPlayer.CurrentStream.ParentStation.Background))
                     {
+                        //update the background
                         Background = new Uri(NepApp.MediaPlayer.CurrentStream.ParentStation.Background);
                     }
                 }
-
-                IsUIGlassEnabled = false;
             }
         }
 
@@ -130,7 +130,7 @@ namespace Neptunium.ViewModel
             CurrentSong = NepApp.SongManager.CurrentSong;
             CurrentStation = NepApp.MediaPlayer.CurrentStream?.ParentStation;
 
-            UpdateBackground();
+            UpdateArtwork();
         }
     }
 }

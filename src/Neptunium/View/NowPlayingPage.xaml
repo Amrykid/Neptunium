@@ -52,7 +52,8 @@
                    MaxWidth="300"
                    MinHeight="100"
                    MinWidth="100"
-                   Source="{Binding CurrentSong.StationLogo, UpdateSourceTrigger=PropertyChanged}"
+                   Stretch="UniformToFill"                   
+                   Source="{Binding CoverImage, UpdateSourceTrigger=PropertyChanged}"
                    Visibility="Collapsed" />
 
             <Grid Grid.Row="1" Grid.ColumnSpan="3" x:Name="MetadataPanel" HorizontalAlignment="Center">
@@ -140,6 +141,7 @@
                         <Setter Target="CommandPanel.HorizontalAlignment" Value="Left" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
                         <Setter Target="MetadataPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="GlassPanel.IsGlassOn" Value="False" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
@@ -159,6 +161,7 @@
                         <Setter Target="CommandPanel.HorizontalAlignment" Value="Left" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
                         <Setter Target="MetadataPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="GlassPanel.IsGlassOn" Value="False" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
@@ -178,6 +181,7 @@
                         <Setter Target="CommandPanel.HorizontalAlignment" Value="Center" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
                         <Setter Target="MetadataPanel.HorizontalAlignment" Value="Center" />
+                        <Setter Target="GlassPanel.IsGlassOn" Value="True" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
