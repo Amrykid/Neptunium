@@ -82,7 +82,7 @@
         </Grid>
 
         <Grid x:Name="NoSongInfoPanel" Visibility="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}">
-            <TextBlock Text="There isn't anything playing."
+            <TextBlock Text="Nothing is playing. Go pick a station to stream!"
                        Style="{ThemeResource CaptionTextBlockStyle}" 
                        VerticalAlignment="Center" HorizontalAlignment="Center" />
         </Grid>
