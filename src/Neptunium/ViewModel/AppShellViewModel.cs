@@ -30,9 +30,16 @@ namespace Neptunium.ViewModel
         public SleepTimerContextFragment SleepTimerFragment => new SleepTimerContextFragment();
         public HandoffContextFragment HandoffFragment => new HandoffContextFragment();
 
-        public RelayCommand MediaCastingCommand => new RelayCommand(x =>
+        public RelayCommand MediaCastingCommand => new RelayCommand(async x =>
         {
-            NepApp.MediaPlayer.ShowCastingPicker();
+            if (NepApp.MediaPlayer.IsMediaEngaged)
+            {
+                NepApp.MediaPlayer.ShowCastingPicker();
+            }
+            else
+            {
+                await NepApp.UI.ShowInfoDialogAsync("Can't do that!", "You must be listening to sonething before you can cast it!");
+            }
         });
 
         public AppShellViewModel()
