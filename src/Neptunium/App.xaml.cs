@@ -270,6 +270,12 @@ namespace Neptunium
                     await ExecuteQueryCommandsAsync(new Uri("nep:" + largs.Arguments));
                 }
             }
+            else if (args.Kind == ActivationKind.ToastNotification && args.PreviousExecutionState == ApplicationExecutionState.Running)
+            {
+                WindowManager.GetNavigationManagerForCurrentWindow()
+                    .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
+                    .SafeNavigateTo<NowPlayingPageViewModel>();
+            }
         }
 
         private static async Task ExecuteQueryCommandsAsync(Uri uri)

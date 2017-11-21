@@ -19,7 +19,7 @@ namespace Neptunium.Media.Songs
     public class NepAppSongManager : INepAppFunctionManager, INotifyPropertyChanged
     {
         private SemaphoreSlim metadataLock = null;
-        private Regex featuredArtistRegex = new Regex(@"(?:f(?:ea)*t(?:uring)*\.?\s*(.+)(?:\n|$))");
+        private Regex featuredArtistRegex = new Regex(@"(?:(?:f|F)(?:ea)*t(?:uring)*\.?\s*(.+)(?:\n|$))");
         private Dictionary<NepAppSongMetadataBackground, Uri> artworkUriDictionary = null;
 
         public SongMetadata CurrentSong { get; private set; }
@@ -134,12 +134,20 @@ namespace Neptunium.Media.Songs
 
                     ExtendedSongMetadata newMetadata = await MetadataFinder.FindMetadataAsync(songMetadata); //todo: cache
 
-                    if (featuredArtistRegex.IsMatch(songMetadata.Artist))
+                    if (featuredArtistRegex.IsMatch(originalArtistString))
                     {
-                        var artistsMatch = featuredArtistRegex.Match(originalArtistString);
-                        var artists = artistsMatch.Groups[0];
-                        newMetadata.FeaturedArtists = new string[0];
+                        try
+                        {
+                            var artistsMatch = featuredArtistRegex.Match(originalArtistString);
+                            var artists = artistsMatch.Groups[1].Value.Split(',').Select(x => x.Trim());
+                            newMetadata.FeaturedArtists = artists.ToArray();
+                        }
+                        catch (Exception)
+                        {
+
+                        }
                     }
+
                     CurrentSongWithAdditionalMetadata = newMetadata;
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
