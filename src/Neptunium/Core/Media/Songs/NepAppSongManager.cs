@@ -19,6 +19,7 @@ namespace Neptunium.Media.Songs
     public class NepAppSongManager : INepAppFunctionManager, INotifyPropertyChanged
     {
         private SemaphoreSlim metadataLock = null;
+        private Regex featuredArtistRegex = new Regex(@"(?:f(?:ea)*t(?:uring)*\.?\s*(.+)(?:\n|$))");
         private Dictionary<NepAppSongMetadataBackground, Uri> artworkUriDictionary = null;
 
         public SongMetadata CurrentSong { get; private set; }
@@ -114,6 +115,11 @@ namespace Neptunium.Media.Songs
                         }
                     }
 
+
+                    string originalArtistString = songMetadata.Artist;
+                    if (featuredArtistRegex.IsMatch(songMetadata.Artist))
+                        songMetadata.Artist = featuredArtistRegex.Replace(songMetadata.Artist, "").Trim();
+
                     CurrentSong = songMetadata;
                     //this is used for the now playing bar via data binding.
                     RaisePropertyChanged(nameof(CurrentSong));
@@ -127,6 +133,13 @@ namespace Neptunium.Media.Songs
                     //todo strip out "Feat." artists
 
                     ExtendedSongMetadata newMetadata = await MetadataFinder.FindMetadataAsync(songMetadata); //todo: cache
+
+                    if (featuredArtistRegex.IsMatch(songMetadata.Artist))
+                    {
+                        var artistsMatch = featuredArtistRegex.Match(originalArtistString);
+                        var artists = artistsMatch.Groups[0];
+                        newMetadata.FeaturedArtists = new string[0];
+                    }
                     CurrentSongWithAdditionalMetadata = newMetadata;
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -205,7 +218,7 @@ namespace Neptunium.Media.Songs
                         albumArtUri = new Uri(CurrentSongWithAdditionalMetadata.Album?.AlbumCoverUrl);
                     }
                 }
-                
+
                 artworkUriDictionary[NepAppSongMetadataBackground.Album] = albumArtUri;
                 if (albumArtUri != null)
                 {

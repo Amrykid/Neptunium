@@ -84,6 +84,12 @@
     <AltName>Ikimono-gakari</AltName>
     <AltName>いきものがかり</AltName>
   </Artist>
+  <Artist Name="Miku Hatsune" JPopAsiaUrl="http://www.jpopasia.com/mikuhatsune/">
+    <AltName>Hatsune Miku</AltName>
+    <AltName>初音ミク</AltName>
+  </Artist>
+  <Artist Name="BABYMETAL" JPopAsiaUrl="http://www.jpopasia.com/babymetal/" FanArtTVUrl="https://fanart.tv/artist/27e2997f-f7a1-4353-bcc4-57b9274fa9a4/babymetal/">
+  </Artist>
   <Artist Name="Namie Amuro" JPopAsiaUrl="http://www.jpopasia.com/namieamuro/" FanArtTVUrl="https://fanart.tv/artist/888994e5-6f53-4f53-bced-b20482aea42a/amuro-namie/">
     <AltName>Amura</AltName>
     <AltName>Amuro Namie</AltName>
