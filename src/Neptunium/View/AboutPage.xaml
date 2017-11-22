@@ -13,7 +13,7 @@
                 <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Text="Neptunium" />
 
                 <StackPanel Orientation="Horizontal">
-                    <AppBarButton Icon="GlobalNavigationButton" Label="GitHub" Click="AppBarButton_Click" />
+                    <AppBarButton Icon="Globe" Label="GitHub" Click="AppBarButton_Click" />
                     <AppBarButton Icon="Shop" Label="Windows Store" Click="AppBarButton_Click_1" />
                 </StackPanel>
                 
