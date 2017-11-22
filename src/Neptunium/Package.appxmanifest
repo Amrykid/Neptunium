@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" IgnorableNamespaces="uap mp uap3">
-  <Identity Name="61121Amrykid.Neptunium" Publisher="CN=CA7B3C80-E81B-48E1-BF79-9F01D08E6588" Version="0.6.19.0" />
+  <Identity Name="61121Amrykid.Neptunium" Publisher="CN=CA7B3C80-E81B-48E1-BF79-9F01D08E6588" Version="0.6.20.0" />
   <mp:PhoneIdentity PhoneProductId="3e703e44-20da-4846-ab80-ae3d970466d1" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Neptunium</DisplayName>
