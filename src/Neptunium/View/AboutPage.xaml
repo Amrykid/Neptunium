@@ -1,0 +1,61 @@
+﻿<Page
+    x:Class="Neptunium.View.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Neptunium.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ScrollViewer>
+            <StackPanel Padding="10">
+                <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Text="Neptunium" />
+                
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" Text="Introduction" Margin="0 5 0 0" />
+                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" Padding="5">
+                    Neptunium (or Nep for short) is a reimagining of Hanasu, a streaming radio player catered to Japanese and Korean music. Hanasu began as a proof of concept and a hobby project. 
+                    Neptunium began as an attend to build Hanasu as a Windows 10 Universal application. Neptunium runs on Windows 10 PC, Windows 10 Mobile phones and Xbox One (via Windows 10).
+                </TextBlock>
+
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" Text="Libraries Used" />
+                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" Padding="5">
+                    dotMorten's <Hyperlink NavigateUri="https://github.com/dotMorten/WindowsStateTriggers/">WindowsStateTriggers</Hyperlink>
+                    <LineBreak />
+                    danesparza's <Hyperlink NavigateUri="https://github.com/danesparza/iTunesSearch">iTunesSearch</Hyperlink>
+                    <LineBreak />
+                    avatar29A's <Hyperlink NavigateUri="https://github.com/avatar29A/MusicBrainz">MusicBrainz</Hyperlink>
+                    <LineBreak />
+                    xyzzer's <Hyperlink NavigateUri="https://github.com/xyzzer/WinRTXamlToolkit/">WinRTXamlToolkit</Hyperlink>
+                    <LineBreak />
+                    xyzzer's <Hyperlink NavigateUri="https://github.com/xyzzer/WinRTXamlToolkit/">WinRTXamlToolkit</Hyperlink>
+                </TextBlock>
+
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" Text="License" />
+                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" Padding="5">
+                    MIT License
+
+                    Copyright (c) 2017 Alexander Mitchell-Robinson
+
+                    Permission is hereby granted, free of charge, to any person obtaining a copy
+                    of this software and associated documentation files (the "Software"), to deal
+                    in the Software without restriction, including without limitation the rights
+                    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+                    copies of the Software, and to permit persons to whom the Software is
+                    furnished to do so, subject to the following conditions:
+
+                    The above copyright notice and this permission notice shall be included in all
+                    copies or substantial portions of the Software.
+
+                    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+                    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+                    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+                    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+                    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+                    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+                    SOFTWARE.
+                </TextBlock>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

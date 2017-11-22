@@ -48,6 +48,7 @@ namespace Neptunium.ViewModel
             NepApp.UI.AddNavigationRoute("Now Playing", typeof(NowPlayingPageViewModel), "");
             NepApp.UI.AddNavigationRoute("History", typeof(SongHistoryPageViewModel), "");
             NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");
+            NepApp.UI.AddNavigationRoute("About", typeof(AboutPageViewModel), "");
 
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
