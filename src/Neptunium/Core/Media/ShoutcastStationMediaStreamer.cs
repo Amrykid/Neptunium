@@ -35,6 +35,19 @@ namespace Neptunium.Media
             }
             catch (Exception ex)
             {
+                if (ex is System.Runtime.InteropServices.COMException)
+                {
+                    if (ex.HResult == -2147014836)
+                    {
+                        /* A connection attempt failed because the connected party did not properly respond after a period of time, or 
+                           established connection failed because connected host has failed to respond. */
+
+                        //At this point, we've already timed out and informed the user. We can use return out of this.
+
+                        return;
+                    }
+                }
+
                 throw new Neptunium.Core.NeptuniumStreamConnectionFailedException(stream, ex);
             }
         }

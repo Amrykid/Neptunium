@@ -21,7 +21,6 @@ namespace Neptunium.Core.Media.Bluetooth
         public bool IsInitialized { get; private set; }
         public ReadOnlyObservableCollection<DeviceInformation> DetectedBluetoothDevices { get; private set; }
 
-        private RadioAccessStatus radioAccess = RadioAccessStatus.Unspecified;
         private Radio btRadio = null;
         public string SelectedBluetoothDeviceId { get; private set; }
         public BluetoothDevice SelectedBluetoothDevice { get; private set; }
@@ -38,11 +37,6 @@ namespace Neptunium.Core.Media.Bluetooth
         internal async Task InitializeAsync()
         {
             if (IsInitialized) return;
-
-            radioAccess = await await App.Dispatcher.RunAsync(IUIDispatcherPriority.High, () => Radio.RequestAccessAsync());
-
-            //we're not allowed to access radios so stop here.
-            if (radioAccess != RadioAccessStatus.Allowed) return;
 
             //there aren't any bluetooth radios so stop here.
             if (!await HasBluetoothRadiosAsync()) return;
@@ -106,14 +100,9 @@ namespace Neptunium.Core.Media.Bluetooth
 
         public async Task<bool> GetIfBluetoothIsOnAsync()
         {
-            if (radioAccess == RadioAccessStatus.Allowed)
-            {
-                var BTradios = (await Radio.GetRadiosAsync()).Where(x => x.Kind == RadioKind.Bluetooth);
+            var BTradios = (await Radio.GetRadiosAsync()).Where(x => x.Kind == RadioKind.Bluetooth);
 
-                return BTradios.Any(x => x.State == RadioState.On);
-            }
-
-            return false;
+            return BTradios.Any(x => x.State == RadioState.On);
         }
 
         private void SetBluetoothDevice(string id, BluetoothDevice device)
@@ -224,4 +213,4 @@ namespace Neptunium.Core.Media.Bluetooth
             UpdateBluetoothState(false);
         }
     }
-    }
+}

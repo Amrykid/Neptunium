@@ -1,4 +1,5 @@
-﻿using Crystal3.Navigation;
+﻿using Crystal3;
+using Crystal3.Navigation;
 using Crystal3.UI;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 using Neptunium.Core.UI;
@@ -10,9 +11,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -21,7 +24,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using WinRTXamlToolkit.Controls;
 using static Crystal3.UI.StatusManager.StatusManager;
+using Crystal3.Messaging;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -32,12 +37,17 @@ namespace Neptunium.View
     /// </summary>
     [Crystal3.Navigation.NavigationViewModel(typeof(AppShellViewModel),
         NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile)]
-    public sealed partial class AppShellView : Page
+    public sealed partial class AppShellView : Page, Crystal3.Messaging.IMessagingTarget
     {
         private FrameNavigationService inlineNavigationService = null;
+        private volatile bool isInNoChromeMode = false;
         public AppShellView()
         {
             this.InitializeComponent();
+
+            CoreApplicationView view = CoreApplication.GetCurrentView();
+            if (view != null)
+                view.TitleBar.ExtendViewIntoTitleBar = false;
 
             SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
 
@@ -47,7 +57,80 @@ namespace Neptunium.View
 
             NepApp.UI.SetOverlayParentAndSnackBarContainer(OverlayPanel, snackBarGrid);
             App.RegisterUIDialogs();
+            SetTitleBarAndMobileStatusBarToMatchAppBar();
 
+            PageTitleBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
+            //PageTitleBlock.SetValue(TextBlock.TextProperty, NepApp.UI.ViewTitle);
+
+            Window.Current.SizeChanged += Current_SizeChanged;
+
+            NowPlayingButton.SetBinding(Button.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
+            NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
+            NepApp.MediaPlayer.ConnectingBegin += Media_ConnectingBegin;
+            NepApp.MediaPlayer.ConnectingEnd += Media_ConnectingEnd;
+            NepApp.MediaPlayer.IsCastingChanged += Media_IsCastingChanged;
+            NepApp.MediaPlayer.MediaEngagementChanged += MediaPlayer_MediaEngagementChanged;
+
+            NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
+            NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
+
+            Messenger.AddTarget(this);
+        }
+
+        private void MediaPlayer_MediaEngagementChanged(object sender, EventArgs e)
+        {
+            switch (NepApp.MediaPlayer.IsMediaEngaged)
+            {
+                case true:
+                    bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+                    break;
+                case false:
+                    bottomAppBar.Visibility = Visibility.Collapsed;
+                    break;
+            }
+        }
+
+        private void Overlay_DialogShown(object sender, EventArgs e)
+        {
+            WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(true);
+        }
+
+        private void Overlay_DialogHidden(object sender, EventArgs e)
+        {
+            WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
+
+            bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void Media_IsCastingChanged(object sender, EventArgs e)
+        {
+            App.Dispatcher.RunAsync(() =>
+            {
+                UpdateCastingUI();
+
+                if (!isInNoChromeMode)
+                    SetTitleBarAndMobileStatusBarToMatchAppBar();
+            });
+        }
+
+        private void UpdateCastingUI()
+        {
+            if (NepApp.MediaPlayer.IsCasting)
+            {
+                var uiSettings = new Windows.UI.ViewManagement.UISettings();
+                topAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.AccentDark3));
+                bottomAppBar.Background = topAppBar.Background;
+            }
+            else
+            {
+                var uiSettings = new Windows.UI.ViewManagement.UISettings();
+                topAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
+                bottomAppBar.Background = topAppBar.Background;
+            }
+        }
+
+        private void SetTitleBarAndMobileStatusBarToMatchAppBar()
+        {
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
                 //sets the mobile status bar to match the top app bar.
@@ -56,45 +139,47 @@ namespace Neptunium.View
                 statusBar.BackgroundOpacity = 1.0;
             }
 
+
             ApplicationView.GetForCurrentView().TitleBar.BackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
             ApplicationView.GetForCurrentView().TitleBar.ButtonBackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
+        }
 
-            PageTitleBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
-            //PageTitleBlock.SetValue(TextBlock.TextProperty, NepApp.UI.ViewTitle);
-
-            OverlayPanel.RegisterPropertyChangedCallback(Grid.VisibilityProperty, new DependencyPropertyChangedCallback((grid, p) =>
+        private void SetMobileStatusBarToTransparent()
+        {
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
-                Visibility property = (Visibility)grid.GetValue(Grid.VisibilityProperty);
-                switch (property)
+                //sets the mobile status bar to match the top app bar.
+                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = Colors.Transparent;
+                statusBar.BackgroundOpacity = 0.0;
+            }
+
+            ApplicationView.GetForCurrentView().TitleBar.BackgroundColor = Colors.Transparent;
+            ApplicationView.GetForCurrentView().TitleBar.ButtonBackgroundColor = Colors.Transparent;
+
+        }
+
+        private void Current_SizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
+        {
+            CollapseBottomAppBarBasedOnSize();
+        }
+
+        private void CollapseBottomAppBarBasedOnSize()
+        {
+            if (NepApp.UI.Overlay.IsOverlayedDialogVisible)
+            {
+                //only collapse the app bars on smaller screens.
+                if (Window.Current.Bounds.Width < 720)
                 {
-                    case Visibility.Collapsed:
-                        topAppBar.IsEnabled = true;
-                        bottomAppBar.IsEnabled = true;
-                        topAppBar.Fade(1).StartAsync();
-                        bottomAppBar.Fade(1).StartAsync();
-                        break;
-                    case Visibility.Visible:
-                        topAppBar.IsEnabled = false;
-                        bottomAppBar.IsEnabled = false;
-                        topAppBar.Fade(0.5f).StartAsync();
-                        bottomAppBar.Fade(0.5f).StartAsync();
-                        break;
+                    topAppBar.Visibility = Visibility.Collapsed;
+                    bottomAppBar.Visibility = Visibility.Collapsed;
                 }
-            }));
-
-            NowPlayingButton.SetBinding(Button.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
-            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
-            NepApp.Media.ConnectingBegin += Media_ConnectingBegin;
-            NepApp.Media.ConnectingEnd += Media_ConnectingEnd;
-
-            //            NowPlayingButton.RegisterPropertyChangedCallback(Button.DataContextProperty, new DependencyPropertyChangedCallback((btn, dp) =>
-            //            {
-            //#if DEBUG
-            //                var x = btn.GetValue(Button.DataContextProperty);
-            //                var y = x;
-            //                System.Diagnostics.Debugger.Break();
-            //#endif
-            //            }));
+                else
+                {
+                    topAppBar.Visibility = Visibility.Visible;
+                    bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
         }
 
         private VisualStateChangedEventHandler noChromeHandler = null;
@@ -112,13 +197,22 @@ namespace Neptunium.View
                     RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
 
                     RootSplitView.IsPaneOpen = false;
+
+                    SetMobileStatusBarToTransparent();
+
+                    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+
+                    if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                    {
+                        RootGrid.Margin = new Thickness(0, -25, 0, 0);
+                    }
                 };
 
                 noChrome();
 
                 noChromeHandler = new VisualStateChangedEventHandler((o, args) =>
                 {
-                    //this is to "fix" the splitview opening when extending the window in no chrome mode. it doesn't work very will
+                    //this is to "fix" the splitview opening when extending the window in no chrome mode. it doesn't work very well
                     RootSplitView.Visibility = Visibility.Collapsed;
                     noChrome();
                     RootSplitView.Visibility = Visibility.Visible;
@@ -126,13 +220,15 @@ namespace Neptunium.View
 
                 ShellVisualStateGroup.CurrentStateChanged += noChromeHandler;
                 ShellVisualStateGroup.CurrentStateChanging += noChromeHandler;
+
+                isInNoChromeMode = true;
             }
             else
             {
                 //reactivate chrome
 
                 topAppBar.Visibility = Visibility.Visible;
-                bottomAppBar.Visibility = Visibility.Visible;
+                bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
 
                 //todo remember splitview state instead of trying to guess below.
                 if (Window.Current.Bounds.Width >= 720)
@@ -148,27 +244,36 @@ namespace Neptunium.View
                     }
                 }
 
+                UpdateCastingUI();
+
+                SetTitleBarAndMobileStatusBarToMatchAppBar();
+
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+
+                if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                {
+                    RootGrid.Margin = new Thickness(0);
+                }
+
                 if (noChromeHandler != null)
                 {
                     ShellVisualStateGroup.CurrentStateChanged -= noChromeHandler;
                     ShellVisualStateGroup.CurrentStateChanging -= noChromeHandler;
                     noChromeHandler = null;
                 }
+
+                isInNoChromeMode = false;
             }
         }
 
         IndefiniteWorkStatusManagerControl statusControl = null;
         private void Media_ConnectingEnd(object sender, EventArgs e)
         {
-            bottomAppBar.IsEnabled = true;
-
             statusControl?.Dispose();
         }
 
         private void Media_ConnectingBegin(object sender, EventArgs e)
         {
-            bottomAppBar.IsEnabled = false;
-
             statusControl = WindowManager.GetStatusManagerForCurrentWindow().DoIndefiniteWork(null, "Connecting...");
         }
 
@@ -201,7 +306,7 @@ namespace Neptunium.View
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            sleepTimerBtn.Visibility = NepApp.Media.IsPlaying ? Visibility.Visible : Visibility.Collapsed;
+            sleepTimerBtn.Visibility = NepApp.MediaPlayer.IsPlaying ? Visibility.Visible : Visibility.Collapsed;
 
             //FeedbackButton.Visibility = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported() ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -214,21 +319,6 @@ namespace Neptunium.View
         private void TogglePaneButton_Unchecked(object sender, RoutedEventArgs e)
         {
             RootSplitView.IsPaneOpen = false;
-        }
-
-        private void bottomAppBar_Opened(object sender, object e)
-        {
-            if (NepApp.Media.CurrentStreamer != null) //only show the image if we're actually streaming something
-            {
-                NowPlayingButton.Height = double.NaN;
-                NowPlayingImage.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void bottomAppBar_Closed(object sender, object e)
-        {
-            NowPlayingButton.Height = 45;
-            NowPlayingImage.Visibility = Visibility.Collapsed;
         }
 
         private void NowPlayingButton_Click(object sender, RoutedEventArgs e)
@@ -244,10 +334,35 @@ namespace Neptunium.View
                 TogglePaneButton.IsChecked = false;
         }
 
-        private void sleepTimerBtn_Click(object sender, RoutedEventArgs e)
+        private void HandoffListButton_Click(object sender, RoutedEventArgs e)
         {
-            //AppBarButton doesn't seem to like the ManualRelayCommand so, I have to execute its command function here.
-            this.GetViewModel<AppShellViewModel>().ShowSleepTimerDialogCommand.Execute(null);
+            var btn = sender as ListItemButton;
+
+            if (btn.DataContext == null) return;
+
+            this.GetViewModel<AppShellViewModel>()
+                .HandoffFragment
+                .HandOffCommand
+                .Execute(btn.DataContext);
+        }
+
+        public void OnReceivedMessage(Message message, Action<object> resultCallback)
+        {
+            switch (message.Name)
+            {
+                case "ShowHandoffFlyout":
+                    App.Dispatcher.RunAsync(() =>
+                    {
+                        HandoffButton.Flyout.ShowAt(HandoffButton);
+                    });
+
+                    break;
+            }
+        }
+
+        public IEnumerable<string> GetSubscriptions()
+        {
+            return new string[] { "ShowHandoffFlyout" };
         }
     }
 }

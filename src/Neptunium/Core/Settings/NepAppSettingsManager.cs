@@ -9,8 +9,10 @@ using static Neptunium.NepApp;
 
 namespace Neptunium.Core.Settings
 {
-    public class NepAppSettingsManager: INepAppFunctionManager
+    public class NepAppSettingsManager : INepAppFunctionManager
     {
+        public event EventHandler<NepAppSettingChangedEventArgs> SettingChanged;
+
         internal NepAppSettingsManager()
         {
             //initialize app settings
@@ -19,7 +21,7 @@ namespace Neptunium.Core.Settings
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.ShowSongNotifications)))
                 ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.ShowSongNotifications), true);
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.TryToFindSongMetadata)))
-                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.TryToFindSongMetadata), true);
+                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.TryToFindSongMetadata), true); //todo make this app setting false by default when we hit v1.0
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.NavigateToStationWhenLaunched)))
                 ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.NavigateToStationWhenLaunched), true);
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.MediaBarMatchStationColor)))
@@ -28,6 +30,8 @@ namespace Neptunium.Core.Settings
                 ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.PreferUsingCrossFadeWhenChangingStations), true);
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.UseHapticFeedbackForNavigation)))
                 ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.UseHapticFeedbackForNavigation), true);
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.UpdateLockScreenWithSongArt)))
+                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.UpdateLockScreenWithSongArt), false);
 
             //bluetooth mode stuff
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.SaySongNotificationsInBluetoothMode)))
@@ -77,6 +81,12 @@ namespace Neptunium.Core.Settings
                 ApplicationData.Current.LocalSettings.Values.Add(settingName, value);
             else
                 ApplicationData.Current.LocalSettings.Values[settingName] = value;
+
+            SettingChanged?.Invoke(this, new NepAppSettingChangedEventArgs()
+            {
+                ChangedSetting = (AppSettings)Enum.Parse(typeof(AppSettings), settingName),
+                NewValue = value
+            });
         }
 
         public void SetSetting(AppSettings setting, object value)

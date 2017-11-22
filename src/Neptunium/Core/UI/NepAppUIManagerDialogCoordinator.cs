@@ -2,6 +2,7 @@
 using Crystal3.Navigation;
 using Kimono.Controls.SnackBar;
 using Microsoft.Toolkit.Uwp.UI.Animations;
+using Neptunium.View.Dialog;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -57,24 +58,22 @@ namespace Neptunium.Core.UI
             inlineFrame.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Center;
 
             inlineFrame.ContentTransitions = new TransitionCollection();
-            inlineFrame.ContentTransitions.Add(new AddDeleteThemeTransition());
-            inlineFrame.ContentTransitions.Add(new ContentThemeTransition());
+            //inlineFrame.ContentTransitions.Add(new AddDeleteThemeTransition());
+            //inlineFrame.ContentTransitions.Add(new ContentThemeTransition());
 
             //todo handle orientation, etc
-            ApplicationView.GetForCurrentView().VisibleBoundsChanged += NepAppUIManagerOverlayHandle_VisibleBoundsChanged;
-            Window.Current.SizeChanged += Current_SizeChanged;
-            Rect bounds = GetScreenBounds();
-            ResizeInlineFrameDialog(bounds.Height, bounds.Width);
+            //ApplicationView.GetForCurrentView().VisibleBoundsChanged += NepAppUIManagerOverlayHandle_VisibleBoundsChanged;
+            //Window.Current.SizeChanged += Current_SizeChanged;
 
             overlayGridControl.HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment.Stretch;
             overlayGridControl.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Stretch;
             overlayGridControl.IsHitTestVisible = true;
             overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
-            overlayGridControl.ChildrenTransitions.Add(new EntranceThemeTransition());
+            //overlayGridControl.ChildrenTransitions.Add(new EntranceThemeTransition());
 
             overlayGridControl.Transitions = new TransitionCollection();
-            overlayGridControl.Transitions.Add(new PaneThemeTransition());
+            //overlayGridControl.Transitions.Add(new PaneThemeTransition());
         }
 
         private void NepAppUIManagerOverlayHandle_VisibleBoundsChanged(ApplicationView sender, object args)
@@ -140,6 +139,87 @@ namespace Neptunium.Core.UI
 
         public async Task<NepAppUIManagerDialogResult> ShowDialogFragmentAsync<T>(object parameter = null) where T : NepAppUIDialogFragment
         {
+            await BeginShowingDialogAsync();
+
+            //used to handle resizing the dialog
+            ApplicationView appView = ApplicationView.GetForCurrentView();
+            appView.VisibleBoundsChanged += NepAppUIManagerOverlayHandle_VisibleBoundsChanged;
+            Window.Current.SizeChanged += Current_SizeChanged;
+
+            Rect bounds = GetScreenBounds();
+            ResizeInlineFrameDialog(bounds.Height, bounds.Width);
+
+            var fragment = Activator.CreateInstance<T>() as NepAppUIDialogFragment;
+
+            var viewType = FragmentManager.ResolveFragmentView<T>();
+            var view = Activator.CreateInstance(viewType) as Control;
+
+            view.DataContext = fragment;
+
+            inlineFrame.Content = view;
+
+            KeyEventHandler escapeHandler = null;
+            bool escapeHandlerReleased = false;
+            escapeHandler = new KeyEventHandler((s, e) =>
+            {
+                //handles the escape button. On Xbox, the "B" button counts as Escape here.
+                if (e.Key == Windows.System.VirtualKey.Escape)
+                {
+                    e.Handled = true;
+                    view.KeyDown -= escapeHandler;
+                    escapeHandlerReleased = true;
+                    fragment.ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined);
+                }
+            });
+            view.KeyDown += escapeHandler;
+
+            var navManager = WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two);
+            EventHandler<NavigationManagerPreBackRequestedEventArgs> backHandler = null;
+            bool backHandlerReleased = false;
+            backHandler = new EventHandler<NavigationManagerPreBackRequestedEventArgs>((o, e) =>
+            {
+                //hack to handle the back button.
+                e.Handled = true;
+                navManager.PreBackRequested -= backHandler;
+                backHandlerReleased = true;
+                fragment.ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined);
+            });
+            navManager.PreBackRequested += backHandler;
+
+            var result = await fragment.InvokeAsync(parameter);
+
+            if (!backHandlerReleased)
+            {
+                navManager.PreBackRequested -= backHandler;
+            }
+
+            if (!escapeHandlerReleased)
+            {
+                view.KeyDown -= escapeHandler;
+            }
+
+            appView.VisibleBoundsChanged -= NepAppUIManagerOverlayHandle_VisibleBoundsChanged;
+            Window.Current.SizeChanged -= Current_SizeChanged;
+
+            await EndShowingDialogAsync();
+
+            return result;
+        }
+
+        private async Task EndShowingDialogAsync()
+        {
+            await overlayGridControl.Fade(0).StartAsync();
+
+            inlineFrame.Content = null;
+            overlayGridControl.Children.Remove(inlineFrame);
+            overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            IsOverlayedDialogVisible = false;
+            OverlayedDialogHidden?.Invoke(this, EventArgs.Empty);
+            overlayLock.Release();
+        }
+
+        private async Task BeginShowingDialogAsync()
+        {
             await overlayLock.WaitAsync();
 
             IsOverlayedDialogVisible = true;
@@ -149,70 +229,75 @@ namespace Neptunium.Core.UI
 
             OverlayedDialogShown?.Invoke(this, EventArgs.Empty);
 
-
-            var fragment = Activator.CreateInstance<T>() as NepAppUIDialogFragment;
-
-            var viewType = FragmentManager.ResolveFragmentView<T>();
-            var view = Activator.CreateInstance(viewType) as Control;
-
-            view.DataContext = fragment;
+            inlineFrame.BorderBrush = new SolidColorBrush((Color)Application.Current.Resources["SystemAccentColor"]);
+            inlineFrame.BorderThickness = new Thickness(1.5);
 
             overlayGridControl.Children.Add(inlineFrame);
-
-            inlineFrame.Content = view;
-            inlineFrame.BorderBrush = new SolidColorBrush((Color)view.Resources["SystemAccentColor"]);
-            inlineFrame.BorderThickness = new Thickness(1.5);
             inlineFrame.Focus(Windows.UI.Xaml.FocusState.Pointer);
 
-            KeyEventHandler escapeHandler = null;
-            bool escapeHandlerReleased = false;
-            escapeHandler = new KeyEventHandler((s, e) =>
+        }
+
+        public async Task<NepAppUIManagerDialogController> ShowProgressDialogAsync(string title, string message)
+        {
+            await BeginShowingDialogAsync();
+
+            inlineFrame.Width = double.NaN;
+            inlineFrame.Height = double.NaN;
+            inlineFrame.BorderThickness = new Thickness(0);
+
+            //no-mvvm
+            var dialog = new ProgressIndicatorDialog();
+            dialog.SetTitleAndMessage(title, message);
+            inlineFrame.Content = dialog;
+
+            return new NepAppUIManagerDialogController(dialog, async () =>
             {
-                //handles the escape button.
-                if (e.Key == Windows.System.VirtualKey.Escape)
+                if (NepApp.UI.Overlay.IsOverlayedDialogVisible)
                 {
-                    view.KeyDown -= escapeHandler;
-                    escapeHandlerReleased = true;
-                    fragment.ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined);
+                    await EndShowingDialogAsync();
                 }
             });
-            view.KeyDown += escapeHandler;
+        }
 
-            var navManager = SystemNavigationManager.GetForCurrentView();
-            EventHandler<BackRequestedEventArgs> backHandler = null;
-            bool backHandlerReleased = false;
-            backHandler = new EventHandler<BackRequestedEventArgs>((o, e) =>
+        public class NepAppUIManagerDialogController
+        {
+            private Func<Task> endingCallback = null;
+            private bool closed = false;
+            private ProgressIndicatorDialog dialog = null;
+            internal  NepAppUIManagerDialogController(ProgressIndicatorDialog openedDialog, Func<Task> callback)
             {
-                //hack to handle the back button.
-                e.Handled = true;
-                navManager.BackRequested -= backHandler;
-                backHandlerReleased = true;
-                fragment.ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined);
-            });
-            navManager.BackRequested += backHandler;
+                if (!NepApp.UI.Overlay.IsOverlayedDialogVisible) throw new InvalidOperationException();
 
-            var result = await fragment.InvokeAsync(parameter);
-
-            if (!backHandlerReleased)
-            {
-                navManager.BackRequested -= backHandler;
+                dialog = openedDialog;
+                endingCallback = callback;
             }
 
-            if (!escapeHandlerReleased)
+            public bool IsIndeterminate { get; private set; }
+
+            public void SetIndeterminate()
             {
-                view.KeyDown -= escapeHandler;
+                IsIndeterminate = true;
+                dialog.SetIndeterminate();
             }
 
-            await overlayGridControl.Fade(0).StartAsync();
+            public void SetDeterminateProgress(double value)
+            {
+                if (value > 1.0 || value < 0.0) throw new ArgumentOutOfRangeException(nameof(value));
 
-            inlineFrame.Content = null;
-            overlayGridControl.Children.Remove(inlineFrame);
-            overlayGridControl.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
-            IsOverlayedDialogVisible = false;
-            OverlayedDialogHidden?.Invoke(this, EventArgs.Empty);
-            overlayLock.Release();
+                IsIndeterminate = false;
+                dialog.SetDeterminateProgress(value);
+            }
 
-            return result;
+            public async Task CloseAsync()
+            {
+                if (closed) return;
+
+                if (NepApp.UI.Overlay.IsOverlayedDialogVisible)
+                {
+                    await endingCallback?.Invoke();
+                    closed = true;
+                }
+            }
         }
 
         public Task ShowSnackBarMessageAsync(string message)

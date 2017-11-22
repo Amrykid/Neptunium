@@ -12,10 +12,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
+using Windows.ApplicationModel.Core;
 using Windows.Gaming.Input;
 using Windows.Networking.Connectivity;
 using Windows.System;
@@ -59,15 +61,80 @@ namespace Neptunium
                     EnableDiagnostics = true
                 }).SetExceptionDescriptionLoader((Exception ex) =>
                 {
-                    return "Exception HResult: " + ex.HResult.ToString();
+                    StringBuilder reportBuilder = new StringBuilder();
+                    if (ex != null)
+                    {
+                        reportBuilder.AppendLine("Exception HResult: " + ex.HResult.ToString());
+                        if (ex.InnerException != null) reportBuilder.AppendLine("Inner-Exception: " + ex.InnerException.ToString());
+                        reportBuilder.AppendLine();
+                    }
+
+                    reportBuilder.AppendLine("Platform: " + Enum.GetName(typeof(Crystal3.Core.Platform), CrystalApplication.GetDevicePlatform()));
+                    reportBuilder.AppendLine("Is Playing?: " + NepApp.MediaPlayer.IsPlaying);
+                    reportBuilder.AppendLine("Current Station: " + NepApp.MediaPlayer.CurrentStream != null ? NepApp.MediaPlayer.CurrentStream.ParentStation.Name : "None");
+
+                    if (NepApp.MediaPlayer.CurrentStream != null) reportBuilder.AppendLine("Station Stream: " + NepApp.MediaPlayer.CurrentStream.ToString());
+
+                    reportBuilder.AppendLine("Is Casting?: " + NepApp.MediaPlayer.IsCasting);
+                    reportBuilder.AppendLine("Is Sleep Timer Running?: " + NepApp.MediaPlayer.IsSleepTimerRunning);
+
+
+                    return reportBuilder.ToString();
                 });
+
+                TaskScheduler.UnobservedTaskException += (sender, args) =>
+                {
+                    //https://stackoverflow.com/a/15804433
+
+                    foreach (var ex in args.Exception.InnerExceptions)
+                    {
+                        Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex);
+                    }
+                    args.SetObserved();
+                };
+            }
+        }
+
+        private async void Current_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+
+            var exception = e.Exception;
+            if (!System.Diagnostics.Debugger.IsAttached)
+            {
+                if (exception is NeptuniumException)
+                {
+                    if (await GetIfPrimaryWindowVisibleAsync())
+                        await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Something went wrong!", e.Message);
+                }
+                else
+                {
+                    Dictionary<string, string> dictionary = new Dictionary<string, string>();
+                    dictionary.Add("Original-Message", e.Message);
+                    HockeyClient.Current.TrackException(exception, dictionary);
+                    HockeyClient.Current.Flush();
+
+                    try
+                    {
+                        if (await GetIfPrimaryWindowVisibleAsync())
+                            await NepApp.UI.ShowInfoDialogAsync("Uh-oh! That's not supposed to happen.", e.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        HockeyClient.Current.TrackException(ex);
+                        HockeyClient.Current.Flush();
+                    }
+                }
+            }
+            else
+            {
+                System.Diagnostics.Debugger.Break();
             }
         }
 
         internal static void RegisterUIDialogs()
         {
             NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
-            NepApp.UI.Overlay.RegisterDialogFragment<SleepTimerDialogFragment, SleepTimerDialog>();
         }
 
         private static volatile bool isInBackground = false;
@@ -203,9 +270,15 @@ namespace Neptunium
                     await ExecuteQueryCommandsAsync(new Uri("nep:" + largs.Arguments));
                 }
             }
+            else if (args.Kind == ActivationKind.ToastNotification && args.PreviousExecutionState == ApplicationExecutionState.Running)
+            {
+                WindowManager.GetNavigationManagerForCurrentWindow()
+                    .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
+                    .SafeNavigateTo<NowPlayingPageViewModel>();
+            }
         }
 
-        private static Task ExecuteQueryCommandsAsync(Uri uri)
+        private static async Task ExecuteQueryCommandsAsync(Uri uri)
         {
             switch (uri.LocalPath.ToLower())
             {
@@ -222,11 +295,19 @@ namespace Neptunium
                         var stationName = query.First(x => x.Key.ToLower() == "station").Value;
                         stationName = stationName.Replace("%20", " ");
 
-                        throw new NotImplementedException();
+                        try
+                        {
+                            var station = await NepApp.Stations.GetStationByNameAsync(stationName);
+                            await NepApp.MediaPlayer.TryStreamStationAsync(station.Streams[0]);
+                        }
+                        catch (Exception ex)
+                        {
+                            //todo show error message.
+                            await NepApp.UI.ShowInfoDialogAsync("Unable to handoff station.", "The following error occurred: " + ex.ToString());
+                        }
+                        break;
                     }
             }
-
-            return Task.CompletedTask;
         }
 
         internal static bool GetIfPrimaryWindowVisible()
@@ -273,7 +354,11 @@ namespace Neptunium
         {
             //clears the tile if we're suspending.
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-            //ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
+            if (!NepApp.MediaPlayer.IsPlaying)
+            {
+                //removes the now playing notification from the action center.
+                ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
+            }
 
             return Task.CompletedTask;
         }
@@ -285,31 +370,28 @@ namespace Neptunium
 
         public override Task OnBackgroundActivatedAsync(BackgroundActivatedEventArgs args)
         {
+            switch (args.TaskInstance.Task.Name)
+            {
+                default:
+
+                    if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails)
+                    {
+
+                        var asTD = args.TaskInstance.TriggerDetails as AppServiceTriggerDetails;
+
+                        switch (asTD.Name)
+                        {
+                            case NepAppHandoffManager.ContinuedAppExperienceAppServiceName:
+                                NepApp.Handoff.HandleBackgroundActivation(asTD); //handles any messages aimed at the handoff manager from a remote devices
+                                break;
+                        }
+
+                    }
+
+                    break;
+            }
+
             return Task.CompletedTask;
-        }
-
-
-        private async void Current_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
-        {
-            if (e.Exception is NeptuniumException)
-            {
-                e.Handled = true;
-
-                await NepApp.UI.ShowErrorDialogAsync("Uh-oh! Something went wrong!", e.Exception.Message);
-            }
-            else
-            {
-                if (!System.Diagnostics.Debugger.IsAttached)
-                {
-                    HockeyClient.Current.TrackException(e.Exception);
-                    HockeyClient.Current.Flush();
-                }
-                else
-                {
-                    e.Handled = true;
-                    System.Diagnostics.Debugger.Break();
-                }
-            }
         }
     }
 }

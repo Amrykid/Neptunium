@@ -18,8 +18,58 @@ namespace Neptunium.Core.UI
             tileUpdater = TileUpdateManager.CreateTileUpdaterForApplication();
         }
 
+        public void ShowGenericToastNotification(string title, string message, string tag)
+        {
+            ToastContent content = new ToastContent()
+            {
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = title,
+                                HintStyle = AdaptiveTextStyle.Title
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = message,
+                                HintStyle = AdaptiveTextStyle.Subtitle
+                            },
+                        }
+                    }
+                }
+            };
+
+            var notification = new ToastNotification(content.GetXml());
+            notification.Tag = tag;
+            notification.NotificationMirroring = NotificationMirroring.Disabled;
+            toastNotifier.Show(notification);
+        }
+
         public void ShowSongToastNotification(ExtendedSongMetadata metaData)
         {
+            //try and find a nice image to set for the toast
+            string toastLogo = null;
+            if (!string.IsNullOrWhiteSpace(metaData.Album?.AlbumCoverUrl))
+            {
+                toastLogo = metaData.Album?.AlbumCoverUrl;
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(metaData.ArtistInfo?.ArtistImage))
+                {
+                    toastLogo = metaData.ArtistInfo?.ArtistImage;
+                }
+                else
+                {
+                    toastLogo = metaData.StationLogo.ToString();
+                }
+            }
+
             ToastContent content = new ToastContent()
             {
                 Launch = "now-playing",
@@ -53,7 +103,7 @@ namespace Neptunium.Core.UI
                         },
                         AppLogoOverride = new ToastGenericAppLogo()
                         {
-                            Source = !string.IsNullOrWhiteSpace(metaData.Album?.AlbumCoverUrl) ? metaData.Album?.AlbumCoverUrl : metaData.StationLogo.ToString(),
+                            Source = toastLogo
                         }
                     }
                 }
@@ -175,7 +225,7 @@ namespace Neptunium.Core.UI
                 };
             };
 
-            
+
 
             TileContent content = new TileContent()
             {
@@ -189,6 +239,49 @@ namespace Neptunium.Core.UI
 
             var tile = new TileNotification(content.GetXml());
             tiler.Update(tile);
+        }
+
+        internal void ShowStationProgrammingToastNotification(StationProgram program, SongMetadata metadata)
+        {
+            ToastContent content = new ToastContent()
+            {
+                Launch = "now-playing",
+                Audio = new ToastAudio()
+                {
+                    Silent = true,
+                },
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = "Turning into " + metadata.Track,
+                                HintStyle = AdaptiveTextStyle.Title
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = "Hosted by " + program.Host,
+                                HintStyle = AdaptiveTextStyle.Subtitle
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = metadata.StationPlayedOn,
+                                HintStyle = AdaptiveTextStyle.Caption
+                            },
+                        },
+                    }
+                }
+            };
+
+            var notification = new ToastNotification(content.GetXml());
+            notification.Tag = SongNotificationTag;
+            notification.NotificationMirroring = NotificationMirroring.Disabled;
+            toastNotifier.Show(notification);
         }
     }
 }

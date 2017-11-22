@@ -21,5 +21,7 @@ namespace Neptunium
         SelectedBluetoothDevice,
         SelectedBluetoothDeviceName,
         SaySongNotificationsInBluetoothMode,
+        UpdateLockScreenWithSongArt,
+        FallBackLockScreenImageUri,
     }
 }

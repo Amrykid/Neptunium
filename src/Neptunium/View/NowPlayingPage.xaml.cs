@@ -1,4 +1,8 @@
-﻿using Neptunium.ViewModel;
+﻿using Crystal3.Messaging;
+using Crystal3.Model;
+using Crystal3.Navigation;
+using Crystal3.UI;
+using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,21 +31,19 @@ namespace Neptunium.View
     [Neptunium.Core.UI.NepAppUINoChromePage()]
     public sealed partial class NowPlayingPage : Page
     {
+        private FrameNavigationService inlineNavigationService = null;
         public NowPlayingPage()
         {
             this.InitializeComponent();
 
-            ShellVisualStateGroup.CurrentStateChanged += ShellVisualStateGroup_CurrentStateChanged;
-            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+            NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
+
+            inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two) as FrameNavigationService;
 
             if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
             {
                 //https://blogs.msdn.microsoft.com/universal-windows-app-model/2017/02/11/compactoverlay-mode-aka-picture-in-picture/
                 compactViewButton.Visibility = Visibility.Visible;
-
-                compactViewButton.IsChecked = ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay;
-                compactViewButton.Checked += compactViewButton_Checked;
-                compactViewButton.Unchecked += compactViewButton_Unchecked;
             }
 
             //if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
@@ -62,119 +64,55 @@ namespace Neptunium.View
         {
             if (isPlaying)
             {
-                playPauseButton.Label = "Pause";
-                playPauseButton.Icon = new SymbolIcon(Symbol.Pause);
+                playPauseButton.SetValue(ToolTipService.ToolTipProperty, "Pause");
+                playPauseButton.Content = new SymbolIcon(Symbol.Pause);
                 playPauseButton.Command = ((NowPlayingPageViewModel)this.DataContext).PausePlaybackCommand;
             }
             else
             {
-                playPauseButton.Label = "Play";
-                playPauseButton.Icon = new SymbolIcon(Symbol.Play);
+                playPauseButton.SetValue(ToolTipService.ToolTipProperty, "Play");
+                playPauseButton.Content = new SymbolIcon(Symbol.Play);
                 playPauseButton.Command = ((NowPlayingPageViewModel)this.DataContext).ResumePlaybackCommand;
             }
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
-            {
-                if (ApplicationView.GetForCurrentView().ViewMode == ApplicationViewMode.CompactOverlay)
-                {
-                    //prevent navigation until we're switched out of compact overlay mode.
-                    e.Cancel = true;
-                    return;
-                }
-
-                compactViewButton.Checked -= compactViewButton_Checked;
-                compactViewButton.Unchecked -= compactViewButton_Unchecked;
-            }
-
-            NepApp.Media.IsPlayingChanged -= Media_IsPlayingChanged;
-            ShellVisualStateGroup.CurrentStateChanged -= ShellVisualStateGroup_CurrentStateChanged;
+            NepApp.MediaPlayer.IsPlayingChanged -= Media_IsPlayingChanged;
 
             base.OnNavigatingFrom(e);
         }
 
-        private VisualState lastVisualState = null;
-        private bool isInCompactMode = false;
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdatePlaybackStatus(NepApp.MediaPlayer.IsPlaying);
+        }
 
-        private async void compactViewButton_Checked(object sender, RoutedEventArgs e)
+        private async void compactViewButton_Click(object sender, RoutedEventArgs e)
         {
             //switch to compact overlay mode
             ViewModePreferences compactOptions = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
             compactOptions.CustomSize = new Windows.Foundation.Size(320, 280);
 
-            bool modeSwitched = await ApplicationView.GetForCurrentView()
-                .TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, compactOptions);
+            bool modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, compactOptions);
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(compactOptions.CustomSize);
 
             if (modeSwitched)
             {
-                if (ShellVisualStateGroup.States.Contains(TabletVisualState))
-                {
-                    ShellVisualStateGroup.States.Remove(TabletVisualState);
-                    ShellVisualStateGroup.States.Remove(DesktopVisualState);
-                    ShellVisualStateGroup.States.Remove(PhoneVisualState);
-                }
-
-                isInCompactMode = true;
-                ShellVisualStateGroup.CurrentStateChanged -= ShellVisualStateGroup_CurrentStateChanged;
-                VisualStateManager.GoToState(this, CompactVisualState.Name, true);
-
-                //hide the full screen button while in compact mode.
-                //fullScreenButton.Visibility = Visibility.Collapsed;
+                inlineNavigationService.SafeNavigateTo<CompactNowPlayingPageViewModel>();
             }
         }
 
-        private async void compactViewButton_Unchecked(object sender, RoutedEventArgs e)
+        private void HandoffButton_Click(object sender, RoutedEventArgs e)
         {
-            //switch back to regular mode
-            bool modeSwitched = await ApplicationView.GetForCurrentView()
-                .TryEnterViewModeAsync(ApplicationViewMode.Default,
-                    ViewModePreferences.CreateDefault(ApplicationViewMode.Default));
-
-            if (modeSwitched)
-            {
-                if (!ShellVisualStateGroup.States.Contains(TabletVisualState))
-                {
-                    ShellVisualStateGroup.States.Add(TabletVisualState);
-                    ShellVisualStateGroup.States.Add(DesktopVisualState);
-                    ShellVisualStateGroup.States.Add(PhoneVisualState);
-                }
-
-                isInCompactMode = false;
-
-                if (lastVisualState != null)
-                    VisualStateManager.GoToState(this, lastVisualState.Name, true);
-
-                ShellVisualStateGroup.CurrentStateChanged += ShellVisualStateGroup_CurrentStateChanged;
-
-                //if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
-                //{
-                //    //only show the full screen button again if we're on the desktop.
-                //    fullScreenButton.Visibility = Visibility.Visible;
-                //}
-            }
-        }
-
-        private void ShellVisualStateGroup_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
-        {
-            if (e.NewState != CompactVisualState)
-            {
-                lastVisualState = e.NewState;
-            }
+            Messenger.SendMessageAsync("ShowHandoffFlyout", "");
         }
 
         private void ShellVisualStateGroup_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
         {
-            if (isInCompactMode)
-            {
-                e.NewState = CompactVisualState;
-            }
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            UpdatePlaybackStatus(NepApp.Media.IsPlaying);
+#if DEBUG
+            System.Diagnostics.Debug.WriteLine("NowPlayingPage: " + e.OldState?.Name + " -> " + e.NewState?.Name);
+#endif
         }
     }
 }

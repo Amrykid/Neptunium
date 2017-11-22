@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Crystal3.Navigation;
 using Neptunium.Core.Media.History;
 using System.Collections.ObjectModel;
+using Crystal3.UI.Commands;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace Neptunium.ViewModel
 {
@@ -14,15 +16,15 @@ namespace Neptunium.ViewModel
     {
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.Media.History.HistoryOfSongs.CollectionChanged += HistoryOfSongs_CollectionChanged;
-            UpdateHistory(NepApp.Media.History.HistoryOfSongs);
+            NepApp.SongManager.History.HistoryOfSongs.CollectionChanged += HistoryOfSongs_CollectionChanged;
+            UpdateHistory(NepApp.SongManager.History.HistoryOfSongs);
 
             base.OnNavigatedTo(sender, e);
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.Media.History.HistoryOfSongs.CollectionChanged -= HistoryOfSongs_CollectionChanged;
+            NepApp.SongManager.History.HistoryOfSongs.CollectionChanged -= HistoryOfSongs_CollectionChanged;
 
             base.OnNavigatedFrom(sender, e);
         }
@@ -45,5 +47,23 @@ namespace Neptunium.ViewModel
             get { return GetPropertyValue<IEnumerable<IGrouping<DateTime, SongHistoryItem>>>(); }
             private set { SetPropertyValue<IEnumerable<IGrouping<DateTime, SongHistoryItem>>>(value: value); }
         }
+
+        public RelayCommand CopyMetadataCommand => new RelayCommand(x =>
+        {
+            if (x == null) return;
+            if (x is SongHistoryItem)
+            {
+                SongHistoryItem item = (SongHistoryItem)x;
+
+                DataPackage package = new DataPackage();
+                package.Properties.Description = "Song Metadata";
+                package.Properties.Title = item.Metadata.Track;
+                package.Properties.ApplicationName = "Neptunium";
+                package.SetText(item.Metadata.ToString());
+                Clipboard.SetContent(package);
+
+                NepApp.UI.Overlay.ShowSnackBarMessageAsync("Copied");
+            }
+        });
     }
 }

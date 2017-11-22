@@ -1,4 +1,5 @@
-﻿using Neptunium.Glue;
+﻿using Crystal3.Messaging;
+using Neptunium.Glue;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -26,10 +27,12 @@ namespace Neptunium.View
     [Neptunium.Core.UI.NepAppUINoChromePage()]
     public sealed partial class XboxNowPlayingPage : Page, IXboxInputPage
     {
+        private Button focusedButton = null;
+
         public XboxNowPlayingPage()
         {
             this.InitializeComponent();
-            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+            NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
@@ -58,17 +61,17 @@ namespace Neptunium.View
 
         public void PreserveFocus()
         {
-            
+            //focus is already preserved using the GotFocus event handlers below.
         }
 
         public void RestoreFocus()
         {
-
+            focusedButton?.Focus(FocusState.Keyboard);
         }
 
         public void SetLeftFocus(UIElement elementToTheLeft)
         {
-
+            this.XYFocusLeft = elementToTheLeft;
         }
 
         public void SetRightFocus(UIElement elementToTheRight)
@@ -88,7 +91,32 @@ namespace Neptunium.View
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            UpdatePlaybackStatus(NepApp.Media.IsPlaying);
+            UpdatePlaybackStatus(NepApp.MediaPlayer.IsPlaying);
+
+            foreach(AppBarButton btn in CommandPanel.Children.Where(x => x is AppBarButton))
+            {
+                btn.GotFocus += Btn_GotFocus;
+            }
+
+            playPauseButton.Focus(FocusState.Keyboard);
+        }
+
+        private void Btn_GotFocus(object sender, RoutedEventArgs e)
+        {
+            focusedButton = (Button)sender;
+        }
+
+        private void Page_Unloaded(object sender, RoutedEventArgs e)
+        {
+            foreach (AppBarButton btn in CommandPanel.Children.Where(x => x is AppBarButton))
+            {
+                btn.GotFocus -= Btn_GotFocus;
+            }
+        }
+
+        private void HandoffButton_Click(object sender, RoutedEventArgs e)
+        {
+            Messenger.SendMessageAsync("ShowHandoffFlyout", "");
         }
     }
 }

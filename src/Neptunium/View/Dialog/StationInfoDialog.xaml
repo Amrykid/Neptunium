@@ -10,7 +10,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="5 0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="150" />
+            <RowDefinition MinHeight="150" Height="Auto" MaxHeight="300" />
             <RowDefinition Height="62" />
             <RowDefinition Height="*" />
             <RowDefinition Height="75" />
@@ -44,9 +44,9 @@
                     <Setter Property="Margin" Value="0 0 10 0" />
                 </Style>
             </StackPanel.Resources>
-            <Button Content="Cancel" Grid.Column="0" Command="{Binding CancelCommand}" MinWidth="75" x:Name="CancelButton" />
+            <Button Content="Cancel" Grid.Column="0" Command="{Binding CancelCommand, UpdateSourceTrigger=PropertyChanged}" MinWidth="75" x:Name="CancelButton" />
 
-            <Button Content="Play" Grid.Column="1" Command="{Binding PlayCommand}"
+            <Button Content="Play" Grid.Column="1" Command="{Binding PlayCommand, UpdateSourceTrigger=PropertyChanged}"
                     Background="{ThemeResource AccentButtonBackground}" MinWidth="75" />
         </StackPanel>
     </Grid>

@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Windows.Storage;
+using Windows.Storage.Streams;
+using Windows.Web.Http;
 using static Neptunium.NepApp;
 
 namespace Neptunium.Core.Stations
@@ -14,8 +17,23 @@ namespace Neptunium.Core.Stations
         private const string StationsFilePath = @"Data\Stations\Data\Stations.xml";
         internal NepAppStationsManager()
         {
-
+            if (!ApplicationData.Current.RoamingSettings.Values.ContainsKey(nameof(LastPlayedStationName)))
+            {
+                ApplicationData.Current.RoamingSettings.Values.Add(new KeyValuePair<string, object>(nameof(LastPlayedStationName), null));
+            }
+            else
+            {
+                LastPlayedStationName = (string)ApplicationData.Current.RoamingSettings.Values[nameof(LastPlayedStationName)];
+            }
         }
+
+        internal void SetLastPlayedStationName(string value)
+        {
+            LastPlayedStationName = value;
+            ApplicationData.Current.RoamingSettings.Values[nameof(LastPlayedStationName)] = value;
+        }
+
+        public string LastPlayedStationName { get; private set; }
 
         internal async Task<StationItem[]> GetStationsAsync()
         {
@@ -56,11 +74,27 @@ namespace Neptunium.Core.Stations
                     return stream;
                 }).ToArray();
 
+                var stationLogoUri = await CacheStationLogoUriAsync(new Uri(stationElement.Element("Logo").Value));
+
                 var station = new StationItem(
                     name: stationElement.Element("Name").Value,
                     description: stationElement.Element("Description").Value,
-                    stationLogo: new Uri(stationElement.Element("Logo").Value),
+                    stationLogo: stationLogoUri,
                     streams: streams);
+
+                if (stationElement.Element("Programs") != null)
+                {
+                    station.Programs = stationElement.Element("Programs").Elements("Program").Select<XElement, StationProgram>(x =>
+                    {
+                        var hostExpression = x.Attribute("HostExp")?.Value;
+                        var programName = x.Attribute("Name")?.Value;
+                        return new StationProgram() { Host = x.Attribute("Host").Value, HostRegexExpression = hostExpression, Name = programName };
+                    }).ToArray();
+                }
+                else
+                {
+                    station.Programs = null;
+                }
 
                 if (stationElement.Element("Background") != null)
                 {
@@ -84,6 +118,8 @@ namespace Neptunium.Core.Stations
                     station.StationMessages = messages;
                 }
 
+                station.Group = stationElement.Element("StationGroup")?.Value;
+
                 stationList.Add(station);
 
             }
@@ -91,6 +127,50 @@ namespace Neptunium.Core.Stations
             reader.Dispose();
 
             return stationList.ToArray();
+        }
+
+        public async Task<Uri> CacheStationLogoUriAsync(Uri uri)
+        {
+            //this method takes the online station uri and redirects it to a local copy (and caches it locally if it hasn't already).
+
+
+            var imageCacheFolder = await NepApp.ImageCacheFolder.CreateFolderAsync("StationLogos", CreationCollisionOption.OpenIfExists);
+
+            var originalFileName = uri.Segments.Last().Trim();
+
+            StorageFile fileObject = await imageCacheFolder.TryGetItemAsync(originalFileName) as StorageFile;
+
+            if (fileObject == null)
+            {
+                if (!NepApp.Network.IsConnected)
+                {
+                    return uri; //return the online uri for now.
+                }
+                else
+                {
+                    //cache the station logo for offline use.
+
+                    fileObject = await imageCacheFolder.CreateFileAsync(originalFileName);
+                    Stream fileStream = await fileObject.OpenStreamForWriteAsync(); //auto disposed by the using statement on the next line
+                    using (IOutputStream outputFileStream = fileStream.AsOutputStream())
+                    {
+                        using (HttpClient http = new HttpClient())
+                        {
+                            var httpResponse = await http.GetAsync(uri);
+                            await httpResponse.Content.WriteToStreamAsync(outputFileStream);
+                            await outputFileStream.FlushAsync();
+                            httpResponse.Dispose();
+                        }
+                    }
+
+
+                    //falls through below where it returns our cached copy.
+                }
+            }
+
+            //return our local copy.
+
+            return new Uri(fileObject.Path);
         }
 
         internal async Task<StationItem> GetStationByNameAsync(string stationPlayedOn)

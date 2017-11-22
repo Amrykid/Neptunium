@@ -33,11 +33,13 @@ namespace Neptunium.Core.Stations
         public Uri StationLogoUrl { get; private set; }
 
         public StationStream[] Streams { get; private set; }
+        public StationProgram[] Programs { get; set; }
         public string Background { get; internal set; }
         public string Site { get; internal set; }
         public string[] Genres { get; internal set; }
         public string PrimaryLocale { get; internal set; }
         public string[] StationMessages { get; internal set; }
+        public string Group { get; internal set; }
 
         public override int GetHashCode()
         {

@@ -5,8 +5,15 @@
     xmlns:local="using:Neptunium.View"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uwp="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:cconv="using:Crystal3.UI.Converters"
     Loaded="Page_Loaded"
+    Unloaded="Page_Unloaded"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <cconv:NullToVisibilityConverter x:Key="NullToVisConv" />
+    </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid x:Name="SongInfoPanel"
@@ -17,8 +24,9 @@
                 <RowDefinition Height="100" />
             </Grid.RowDefinitions>
             <Grid Grid.RowSpan="3">
-                <Image HorizontalAlignment="Stretch"
-                       Source="{Binding CurrentStation.Background, UpdateSourceTrigger=PropertyChanged}"
+                <uwp:ImageEx HorizontalAlignment="Stretch"
+                       Source="{Binding Background, UpdateSourceTrigger=PropertyChanged}"
+                       Visibility="{Binding Background, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
                        Stretch="UniformToFill"
                        Opacity=".4"
                        VerticalAlignment="Stretch" />
@@ -60,12 +68,7 @@
             <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0 0 0 30" x:Name="CommandPanel">
                 <!--todo add a play button, a full screen button and some casting buttons -->
                 <AppBarButton Icon="Play" Label="Play" x:Name="playPauseButton" />
-                <AppBarButton Label="Cast">
-                    <AppBarButton.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE952;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarButton Label="Handoff">
+                <AppBarButton Label="Handoff" x:Name="HandoffButton" Click="HandoffButton_Click">
                     <AppBarButton.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
                     </AppBarButton.Icon>
@@ -74,7 +77,7 @@
         </Grid>
 
         <Grid x:Name="NoSongInfoPanel" Visibility="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}">
-            <TextBlock Text="There isn't anything playing."
+            <TextBlock Text="Nothing is playing. Go pick a station to stream!"
                        Style="{ThemeResource CaptionTextBlockStyle}" 
                        VerticalAlignment="Center" HorizontalAlignment="Center" />
         </Grid>

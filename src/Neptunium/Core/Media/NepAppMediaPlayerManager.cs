@@ -4,12 +4,15 @@ using Neptunium.Core.Media.History;
 using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media;
+using Windows.Media.Casting;
 using Windows.Media.Playback;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
@@ -19,27 +22,46 @@ namespace Neptunium.Media
 {
     public class NepAppMediaPlayerManager : INepAppFunctionManager, INotifyPropertyChanged
     {
-        private SystemMediaTransportControls systemMediaTransportControls = null;
         private SemaphoreSlim playLock = null;
         private DispatcherTimer sleepTimer = new DispatcherTimer();
+
+        public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
+        internal StationStream CurrentStream { get; private set; }
+        public NepAppMediaBluetoothManager Bluetooth { get; private set; }
+        private MediaPlayer CurrentPlayer { get; set; }
+        public SystemMediaTransportControls MediaTransportControls { get; private set; }
+        private MediaPlaybackSession CurrentPlayerSession { get; set; }
+        public CastingConnection MediaCastingConnection { get; private set; }
+        internal bool IsSleepTimerRunning { get { return sleepTimer.IsEnabled; } }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public double Volume
+        {
+            get { return (double)CurrentPlayer?.Volume; }
+        }
+        public bool IsPlaying { get; private set; }
+        public bool IsCasting { get; private set; }
+        public bool IsMediaEngaged { get; private set; }
+
+        public event EventHandler ConnectingBegin;
+        public event EventHandler ConnectingEnd;
+        public event EventHandler<NepAppMediaPlayerManagerIsPlayingEventArgs> IsPlayingChanged;
+        public event EventHandler<EventArgs> IsCastingChanged;
+        public event EventHandler MediaEngagementChanged;
+
+        public class NepAppMediaPlayerManagerIsPlayingEventArgs : EventArgs
+        {
+            internal NepAppMediaPlayerManagerIsPlayingEventArgs(bool isPlaying) { IsPlaying = isPlaying; }
+            public bool IsPlaying { get; private set; }
+        }
+
 
         internal NepAppMediaPlayerManager()
         {
             playLock = new SemaphoreSlim(1);
-            History = new SongHistorian();
-            History.InitializeAsync();
             Bluetooth = new NepAppMediaBluetoothManager(this);
 
             sleepTimer.Tick += SleepTimer_Tick;
         }
-
-        public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
-        public SongMetadata CurrentMetadata { get; private set; }
-        public ExtendedSongMetadata CurrentMetadataExtended { get; private set; }
-        internal StationStream CurrentStream { get; private set; }
-
-        public SongHistorian History { get; private set; }
-        public NepAppMediaBluetoothManager Bluetooth { get; private set; }
 
         internal void Pause()
         {
@@ -57,17 +79,24 @@ namespace Neptunium.Media
             CurrentPlayer.Play();
         }
 
-        private MediaPlayer CurrentPlayer { get; set; }
-        private MediaPlaybackSession CurrentPlayerSession { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private void RaisePropertyChanged(string propertyName)
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             });
+        }
+
+        private void SetMediaEngagement(bool isEngaged)
+        {
+            bool raise = IsMediaEngaged != isEngaged;
+            IsMediaEngaged = isEngaged;
+            if (raise)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaEngaged)));
+                MediaEngagementChanged?.Invoke(this, EventArgs.Empty);
+            }
+            
         }
 
         private BasicNepAppMediaStreamer CreateStreamerForServerFormat(StationStreamServerFormat format)
@@ -102,13 +131,16 @@ namespace Neptunium.Media
             if (sleepTimer.IsEnabled) sleepTimer.Stop();
         }
 
-        internal bool IsSleepTimerRunning { get { return sleepTimer.IsEnabled; } }
-
-        private void SleepTimer_Tick(object sender, object e)
+        private async void SleepTimer_Tick(object sender, object e)
         {
             if (IsPlaying)
             {
                 Pause();
+
+                if (!await App.GetIfPrimaryWindowVisibleAsync())
+                {
+                    NepApp.UI.Notifier.ShowGenericToastNotification("Sleep Timer", "Media paused.", "sleep-timer");
+                }
             }
 
             sleepTimer.Stop();
@@ -144,16 +176,16 @@ namespace Neptunium.Media
 
             CurrentPlayer = new MediaPlayer();
 
-            systemMediaTransportControls = CurrentPlayer.SystemMediaTransportControls;
-            systemMediaTransportControls.IsChannelDownEnabled = false;
-            systemMediaTransportControls.IsChannelUpEnabled = false;
-            systemMediaTransportControls.IsFastForwardEnabled = false;
-            systemMediaTransportControls.IsNextEnabled = false;
-            systemMediaTransportControls.IsPreviousEnabled = false;
-            systemMediaTransportControls.IsRewindEnabled = false;
-            systemMediaTransportControls.IsRewindEnabled = false;
-            systemMediaTransportControls.IsPlayEnabled = true;
-            systemMediaTransportControls.IsPauseEnabled = true;
+            MediaTransportControls = CurrentPlayer.SystemMediaTransportControls;
+            MediaTransportControls.IsChannelDownEnabled = false;
+            MediaTransportControls.IsChannelUpEnabled = false;
+            MediaTransportControls.IsFastForwardEnabled = false;
+            MediaTransportControls.IsNextEnabled = false;
+            MediaTransportControls.IsPreviousEnabled = false;
+            MediaTransportControls.IsRewindEnabled = false;
+            MediaTransportControls.IsRewindEnabled = false;
+            MediaTransportControls.IsPlayEnabled = true;
+            MediaTransportControls.IsPauseEnabled = true;
 
             CurrentPlayer.AudioCategory = MediaPlayerAudioCategory.Media;
             CurrentPlayer.CommandManager.IsEnabled = true;
@@ -167,14 +199,26 @@ namespace Neptunium.Media
 
             streamer.MetadataChanged += Streamer_MetadataChanged;
 
+            CurrentStreamer = streamer;
+            CurrentStream = stream;
+
             streamer.Play();
+
+            SetMediaEngagement(true);
+
+            NepApp.Stations.SetLastPlayedStationName(stream.ParentStation.Name);
+
+            if (streamer.SongMetadata == null)
+            {
+                NepApp.SongManager.SetCurrentMetadataToUnknown();
+            }
+            else
+            {
+                NepApp.SongManager.HandleMetadata(streamer.SongMetadata, stream);
+            }
 
             ConnectingEnd?.Invoke(this, EventArgs.Empty);
 
-            UpdateMetadata(streamer.SongMetadata);
-
-            CurrentStreamer = streamer;
-            CurrentStream = stream;
 
             playLock.Release();
         }
@@ -187,7 +231,8 @@ namespace Neptunium.Media
             {
                 CurrentStreamer.MetadataChanged -= Streamer_MetadataChanged;
 
-                CurrentStreamer.Pause();
+                if (IsPlaying)
+                    CurrentStreamer.Pause();
                 CurrentStreamer.Dispose();
                 CurrentStreamer = null;
             }
@@ -201,21 +246,13 @@ namespace Neptunium.Media
             }
 
             CurrentStream = null;
-            CurrentMetadata = null;
-            CurrentMetadataExtended = null;
-
-            RaisePropertyChanged(nameof(CurrentMetadata));
-            CurrentMetadataChanged?.Invoke(this, new NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs(null));
+            NepApp.SongManager.ResetMetadata();
+            SetMediaEngagement(false);
             IsPlaying = false;
 
-            if (systemMediaTransportControls != null) systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Closed;
+            if (MediaTransportControls != null) MediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Closed;
 
             IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(IsPlaying));
-        }
-
-        public double Volume
-        {
-            get { return (double)CurrentPlayer?.Volume; }
         }
 
         private async void CurrentPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
@@ -223,7 +260,7 @@ namespace Neptunium.Media
             var stream = CurrentStream;
             ShutdownPreviousPlaybackSession();
 
-            await NepApp.UI.ShowErrorDialogAsync("Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
+            await NepApp.UI.ShowInfoDialogAsync("Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
 
             if (!await App.GetIfPrimaryWindowVisibleAsync())
             {
@@ -238,93 +275,38 @@ namespace Neptunium.Media
             {
                 case MediaPlaybackState.Buffering:
                 case MediaPlaybackState.Opening:
-                    //show play
-                    IsPlaying = false;
-                    systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Changing;
+                    //show pause
+                    IsPlaying = true;
+                    MediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Changing;
                     break;
                 case MediaPlaybackState.Paused:
                 case MediaPlaybackState.None:
                     //show play
                     IsPlaying = false;
-                    systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
+                    MediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
                     break;
                 case MediaPlaybackState.Playing:
                     //show pause
                     IsPlaying = true;
-                    systemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
+                    MediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
                     break;
             }
 
             IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(IsPlaying));
         }
 
-        public event EventHandler ConnectingBegin;
-        public event EventHandler ConnectingEnd;
-
-        public bool IsPlaying { get; private set; }
-        public event EventHandler<NepAppMediaPlayerManagerIsPlayingEventArgs> IsPlayingChanged;
-        public event EventHandler<NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs> CurrentMetadataChanged;
-        public event EventHandler<NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs> CurrentMetadataExtendedInfoFound;
-
-        public class NepAppMediaPlayerManagerIsPlayingEventArgs : EventArgs
+        private void Streamer_MetadataChanged(object sender, MediaStreamerMetadataChangedEventArgs e)
         {
-            internal NepAppMediaPlayerManagerIsPlayingEventArgs(bool isPlaying) { IsPlaying = isPlaying; }
-            public bool IsPlaying { get; private set; }
-        }
+            if (CurrentStream == null) return;
 
-        private async void Streamer_MetadataChanged(object sender, MediaStreamerMetadataChangedEventArgs e)
-        {
-            if (CurrentStream.ParentStation.StationMessages.Contains(e.Metadata.Track) || CurrentStream.ParentStation.StationMessages.Contains(e.Metadata.Artist))
-                return;
-
-            UpdateMetadata(e.Metadata);
-
-            ExtendedSongMetadata newMetadata = await MetadataFinder.FindMetadataAsync(e.Metadata);
-            CurrentMetadataExtended = newMetadata;
-
-            CurrentMetadataExtendedInfoFound?.Invoke(this, new NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs(newMetadata));
-
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            History.AddSongAsync(newMetadata);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-
-            if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+            if (e.Metadata == null)
             {
-                if (CurrentMetadata.Track != newMetadata.Track) return; //the song has changed since we started.
-
-                if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
-                    NepApp.UI.Notifier.ShowSongToastNotification(newMetadata);
+                NepApp.SongManager.SetCurrentMetadataToUnknown();
             }
-
-            NepApp.UI.Notifier.UpdateLiveTile(newMetadata);
-        }
-
-        private void UpdateMetadata(SongMetadata metadata)
-        {
-            if (metadata == null) return;
-
-            CurrentMetadata = metadata;
-
-            try
+            else
             {
-                var updater = systemMediaTransportControls.DisplayUpdater;
-                updater.Type = MediaPlaybackType.Music;
-                updater.MusicProperties.Title = metadata.Track;
-                updater.MusicProperties.Artist = metadata.Artist;
-                updater.AppMediaId = metadata.StationPlayedOn.GetHashCode().ToString();
-                updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(metadata.StationLogo);
-                updater.Update();
+                NepApp.SongManager.HandleMetadata(e.Metadata, CurrentStream);
             }
-            catch (COMException) { }
-            catch (Exception ex)
-            {
-
-            }
-
-            //this is used for the now playing bar via data binding.
-            RaisePropertyChanged(nameof(CurrentMetadata));
-
-            CurrentMetadataChanged?.Invoke(this, new NepAppMediaPlayerManagerCurrentMetadataChangedEventArgs(metadata));
         }
 
         public async Task FadeVolumeDownToAsync(double value)
@@ -334,6 +316,103 @@ namespace Neptunium.Media
         public async Task FadeVolumeUpToAsync(double value)
         {
             await CurrentStreamer?.FadeVolumeUpToAsync(value);
+        }
+
+        private void SetIsCasting(bool value)
+        {
+            if (IsCasting != value)
+            {
+                IsCasting = value;
+
+                IsCastingChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public void ShowCastingPicker()
+        {
+            if (CurrentPlayer == null) return;
+
+            CastingDevicePicker picker = new CastingDevicePicker();
+            picker.CastingDeviceSelected += Picker_CastingDeviceSelected;
+            picker.CastingDevicePickerDismissed += Picker_CastingDevicePickerDismissed;
+            picker.Show(Window.Current.Bounds);
+        }
+
+        private void Picker_CastingDevicePickerDismissed(CastingDevicePicker sender, object args)
+        {
+            sender.CastingDevicePickerDismissed -= Picker_CastingDevicePickerDismissed;
+            sender.CastingDeviceSelected -= Picker_CastingDeviceSelected;
+        }
+
+        private void Picker_CastingDeviceSelected(CastingDevicePicker sender, CastingDeviceSelectedEventArgs args)
+        {
+            sender.CastingDevicePickerDismissed -= Picker_CastingDevicePickerDismissed;
+            sender.CastingDeviceSelected -= Picker_CastingDeviceSelected;
+
+            App.Dispatcher.RunWhenIdleAsync(async () =>
+            {
+                MediaCastingConnection = args.SelectedCastingDevice.CreateCastingConnection();
+
+                MediaCastingConnection.StateChanged += Connection_StateChanged;
+                MediaCastingConnection.ErrorOccurred += Connection_ErrorOccurred;
+
+                await MediaCastingConnection.RequestStartCastingAsync(CurrentPlayer.GetAsCastingSource());
+            });
+        }
+
+        private async void Connection_ErrorOccurred(CastingConnection sender, CastingConnectionErrorOccurredEventArgs args)
+        {
+            if (args.ErrorStatus != CastingConnectionErrorStatus.Succeeded)
+            {
+                try
+                {
+                    sender.StateChanged -= Connection_StateChanged;
+                    sender.ErrorOccurred -= Connection_ErrorOccurred;
+                }
+                catch (Exception) { 
+                    //We already unhooked.
+                }
+
+                await sender.DisconnectAsync();
+                sender.Dispose();
+                MediaCastingConnection = null;
+
+                //IsPlaying = false;
+
+                //ShutdownPreviousPlaybackSession();
+
+                await NepApp.UI.ShowInfoDialogAsync("Uh-Oh!", "An error occurred while casting: " + args.Message);
+
+                if (!await App.GetIfPrimaryWindowVisibleAsync())
+                {
+                    NepApp.UI.Notifier.ShowErrorToastNotification(CurrentStream, "Uh-Oh!", "An error occurred while casting: " + args.Message);
+                }
+            }
+        }
+
+        private void Connection_StateChanged(CastingConnection sender, object args)
+        {
+            switch (sender.State)
+            {
+                case CastingConnectionState.Connected:
+                case CastingConnectionState.Connecting:
+                case CastingConnectionState.Rendering:
+                    SetIsCasting(true);
+                    break;
+                default:
+                    SetIsCasting(false);
+
+                    try
+                    {
+                        sender.StateChanged -= Connection_StateChanged;
+                        sender.ErrorOccurred -= Connection_ErrorOccurred;
+                    }
+                    catch (Exception)
+                    {
+                        //We already unhooked.
+                    }
+                    break;
+            }
         }
     }
 }

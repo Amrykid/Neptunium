@@ -20,7 +20,13 @@ namespace Neptunium.Core.Stations
 
         public override string ToString()
         {
-            return string.Format("{0} [url: {1} ]", SpecificTitle, StreamUrl?.ToString());
+            return string.Format("{0} [url: {1} | content-type: {2} | bitrate: {3} | relative-path: {4} | server-format: {5}]", 
+                SpecificTitle, 
+                StreamUrl?.ToString(), 
+                ContentType, 
+                Bitrate, 
+                RelativePath, 
+                Enum.GetName(typeof(StationStreamServerFormat), ServerFormat));
         }
     }
 }

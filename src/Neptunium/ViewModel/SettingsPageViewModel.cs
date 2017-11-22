@@ -14,9 +14,9 @@ namespace Neptunium.ViewModel
     {
         public RelayCommand ClearBluetoothDeviceCommand => new RelayCommand(x =>
         {
-            if (NepApp.Media.Bluetooth.DeviceCoordinator.IsInitialized)
+            if (NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.IsInitialized)
             {
-                NepApp.Media.Bluetooth.DeviceCoordinator.ClearDevice();
+                NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.ClearDevice();
 
                 SelectedBluetoothDeviceName = "None";
             }
@@ -24,15 +24,34 @@ namespace Neptunium.ViewModel
 
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
+            NepApp.Settings.SettingChanged += Settings_SettingChanged;
+
             if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
             {
-                if (await NepApp.Media.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync())
+                if (await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync())
                 {
-                    SelectedBluetoothDeviceName = NepApp.Media.Bluetooth.DeviceCoordinator.SelectedBluetoothDeviceName ?? "None";
+                    SelectedBluetoothDeviceName = NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.SelectedBluetoothDeviceName ?? "None";
                 }
             }
 
             base.OnNavigatedTo(sender, e);
+        }
+
+        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
+        {
+            NepApp.Settings.SettingChanged -= Settings_SettingChanged;
+
+            base.OnNavigatedFrom(sender, e);
+        }
+
+        private void Settings_SettingChanged(object sender, Core.Settings.NepAppSettingChangedEventArgs e)
+        {
+            switch(e.ChangedSetting)
+            {
+                case AppSettings.FallBackLockScreenImageUri:
+                    RaisePropertyChanged(nameof(FallBackLockScreenArtworkUri));
+                    break;
+            }
         }
 
         public bool ShowSongNotification
@@ -51,6 +70,30 @@ namespace Neptunium.ViewModel
         {
             get { return (bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsInBluetoothMode); }
             set { NepApp.Settings.SetSetting(AppSettings.SaySongNotificationsInBluetoothMode, value); }
+        }
+
+        public bool UpdateLockScreenWithSongArt
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt); }
+            set { NepApp.Settings.SetSetting(AppSettings.UpdateLockScreenWithSongArt, value); }
+        }
+
+        public string FallBackLockScreenArtwork
+        {
+            get { return (string)NepApp.Settings.GetSetting(AppSettings.FallBackLockScreenImageUri); }
+            set
+            {
+                NepApp.Settings.SetSetting(AppSettings.FallBackLockScreenImageUri, value);
+                RaisePropertyChanged(nameof(FallBackLockScreenArtworkUri));
+            }
+        }
+
+        public Uri FallBackLockScreenArtworkUri
+        {
+            get
+            {
+                return NepApp.UI.LockScreen.FallbackLockScreenImage;
+            }
         }
 
         public string SelectedBluetoothDeviceName

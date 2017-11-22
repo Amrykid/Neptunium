@@ -20,6 +20,16 @@ namespace Neptunium.Core.Media.Metadata
         public string StationPlayedOn { get; set; }
         [DataMember]
         public Uri StationLogo { get; set; }
+
+        [IgnoreDataMember]
+        public bool IsUnknownMetadata { get; internal set; } = false;
+        [IgnoreDataMember]
+        public string RadioProgram { get; internal set; }
+
+        public override string ToString()
+        {
+            return string.Format("{0} - {1}", Artist ?? "Unknown Artist", Track ?? "Unknown Track");
+        }
     }
 
     public class ExtendedSongMetadata: SongMetadata
@@ -36,9 +46,14 @@ namespace Neptunium.Core.Media.Metadata
             Artist = original.Artist;
             StationPlayedOn = original.StationPlayedOn;
             StationLogo = original.StationLogo;
+            IsUnknownMetadata = original.IsUnknownMetadata;
+            RadioProgram = original.RadioProgram;
         }
 
         public AlbumData Album { get; internal set; }
         public ArtistData ArtistInfo { get; internal set; }
+        public JPopAsiaArtistData JPopAsiaArtistInfo { get; internal set; }
+        public Uri FanArtTVBackgroundUrl { get; internal set; }
+        public string[] FeaturedArtists { get; internal set; }
     }
 }

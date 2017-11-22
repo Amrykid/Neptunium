@@ -8,6 +8,7 @@
     xmlns:cconv="using:Crystal3.UI.Converters"
     xmlns:uwp="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:wst="using:WindowsStateTriggers"
+    xmlns:controls="using:Neptunium.Controls"
     RequestedTheme="Dark"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
@@ -24,18 +25,23 @@
                 <RowDefinition Height="*" />
                 <RowDefinition x:Name="SongInfoRowDef" Height="200" />
                 <RowDefinition Height="75" />
+                <RowDefinition x:Name="BottomRowDef" Height="50" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width=".33*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width=".33*" />
             </Grid.ColumnDefinitions>
-            <Grid Grid.RowSpan="3" Grid.ColumnSpan="3">
-                <Image HorizontalAlignment="Stretch"
+            <Grid Grid.RowSpan="4" Grid.ColumnSpan="3">
+                <uwp:ImageEx HorizontalAlignment="Center"
+                       x:Name="BackgroundImage"
                        Source="{Binding Background, UpdateSourceTrigger=PropertyChanged}"
                        Stretch="UniformToFill"
+                       Visibility="{Binding Background, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
                        Opacity=".4"
                        VerticalAlignment="Stretch" />
+
+                <controls:GlassPanel x:Name="GlassPanel" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
             </Grid>
 
             <Image x:Name="LargeStationImage"
@@ -45,11 +51,11 @@
                    MaxHeight="300"
                    MaxWidth="300"
                    MinHeight="100"
-                   MinWidth="100"
-                   Source="{Binding CurrentSong.StationLogo, UpdateSourceTrigger=PropertyChanged}"
+                   MinWidth="100"                   
+                   Source="{Binding CoverImage, UpdateSourceTrigger=PropertyChanged}"
                    Visibility="Collapsed" />
 
-            <Grid Grid.Row="1" Grid.ColumnSpan="3">
+            <Grid Grid.Row="1" Grid.ColumnSpan="3" x:Name="MetadataPanel" HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="SmallStationImageColumn" Width="135" />
                     <ColumnDefinition Width="*" />
@@ -83,27 +89,36 @@
                 </Grid>
             </Grid>
 
-            <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.ColumnSpan="3" Margin="0" x:Name="CommandPanel">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" 
+                        Grid.Row="2" Grid.ColumnSpan="3" Margin="0" x:Name="CommandPanel">
+                <StackPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Margin" Value="5 0" />
+                        <Setter Property="Height" Value="75" />
+                        <Setter Property="Width" Value="75" />
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                </StackPanel.Resources>
                 <!--todo add a play button, a full screen button and some casting buttons -->
-                <AppBarButton Icon="Play" Label="Play" x:Name="playPauseButton" />
-                <AppBarButton Label="Cast">
-                    <AppBarButton.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE952;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarButton Label="Handoff">
-                    <AppBarButton.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
+                <Button x:Name="playPauseButton" ToolTipService.ToolTip="Play/Pause">
+                    <SymbolIcon Symbol="Play" />
+                </Button>
+                <Button ToolTipService.ToolTip="Cast" Command="{Binding MediaCastingCommand}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE952;" />
+                </Button>
+                <Button ToolTipService.ToolTip="Handoff" x:Name="HandoffButton" Click="HandoffButton_Click">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
+                </Button>
                 <!--<AppBarToggleButton Icon="FullScreen" Label="Fullscreen" x:Name="fullScreenButton" Visibility="Collapsed" />-->
-                <AppBarToggleButton Icon="Attach" Label="Mini Player" x:Name="compactViewButton" 
-                                    Visibility="Collapsed" />
+                <Button  ToolTipService.ToolTip="Mini Player" x:Name="compactViewButton" 
+                                    Visibility="Collapsed" Click="compactViewButton_Click">
+                    <SymbolIcon Symbol="Attach" />
+                </Button>
             </StackPanel>
         </Grid>
 
         <Grid x:Name="NoSongInfoPanel" Visibility="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}">
-            <TextBlock Text="There isn't anything playing."
+            <TextBlock Text="Nothing is playing. Go pick a station to stream!"
                        Style="{ThemeResource BaseTextBlockStyle}" 
                        VerticalAlignment="Center" HorizontalAlignment="Center" />
         </Grid>
@@ -122,6 +137,11 @@
                         <Setter Target="SongInfoRowDef.Height" Value="200" />
                         <Setter Target="TrackArtistPanel.Margin" Value="0" />
                         <Setter Target="CommandPanel.Margin" Value="0" />
+                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
+                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="GlassPanel.IsGlassOn" Value="False" />
+                        <Setter Target="BottomRowDef.Height" Value="50" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
@@ -138,13 +158,21 @@
                         <Setter Target="SongInfoRowDef.Height" Value="200" />
                         <Setter Target="TrackArtistPanel.Margin" Value="0" />
                         <Setter Target="CommandPanel.Margin" Value="0" />
+                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
+                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="GlassPanel.IsGlassOn" Value="False" />
+                        <Setter Target="BottomRowDef.Height" Value="50" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
 
-                <VisualState x:Name="PhoneVisualState">
+                <VisualState x:Name="PhonePortraitVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="320" />
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:OrientationStateTrigger Orientation="Portrait" />
+                            <wst:AdaptiveTrigger MinWindowWidth="320" />
+                        </wst:CompositeStateTrigger>
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
@@ -154,17 +182,36 @@
                         <Setter Target="SongInfoRowDef.Height" Value="150" />
                         <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
                         <Setter Target="CommandPanel.Margin" Value="20 0" />
+                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Center" />
+                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
+                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Center" />
+                        <Setter Target="GlassPanel.IsGlassOn" Value="True" />
+                        <Setter Target="BottomRowDef.Height" Value="50" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
+                <VisualState x:Name="PhoneLandscapeVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:OrientationStateTrigger Orientation="Landscape" />
+                            <wst:AdaptiveTrigger MinWindowWidth="240" />
+                            <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
+                        </wst:CompositeStateTrigger>
+                    </VisualState.StateTriggers>
 
-                <VisualState x:Name="CompactVisualState">
                     <VisualState.Setters>
                         <Setter Target="SmallStationImageColumn.Width" Value="135" />
                         <Setter Target="SmallStationImage.Visibility" Value="Visible" />
                         <Setter Target="LargeStationImage.Visibility" Value="Collapsed" />
+                        <Setter Target="SongInfoRowDef.Height" Value="150" />
                         <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
                         <Setter Target="CommandPanel.Margin" Value="20 0" />
+                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Center" />
+                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
+                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Center" />
+                        <Setter Target="GlassPanel.IsGlassOn" Value="True" />
+                        <Setter Target="BottomRowDef.Height" Value="0" />
+                        <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

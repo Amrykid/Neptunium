@@ -5,7 +5,7 @@ Neptunium (or Nep for short) is a reimagining of [Hanasu](https://github.com/Amr
 ## Features
 - Background Audio Playback: Neptunium supports the background audio playback functionality provided by the Universal Windows Platform. That means it runs seamlessly on the platforms listed above.
 - Handoff: Handoff allows you to begin playing a station on one device and get it started on another device. Nep will also stop the stream from the first device as well. This works via Cortana/Continued App Experiences (also known as Project "Rome"). This functionality is currently disabled in builds in the store because of a compiling bug.
-- Car Mode (Windows 10 Mobile only): For those who like listening while on the road, Nep has a special car mode that can be activated via Bluetooth. In Car Mode, Nep can announce song names for you and even do it using the system provided Japanese voice.
+- Bluetooth Mode (formerly Car Mode for Windows 10 Mobile): For those who like listening while on the road or using a bluetooth speaker/headset. In Bluetooth Mode, Nep can announce song names for you and even do it using the system provided Japanese or Korean voice.
 
 ## Radio Stations
 I don't plan on supporting custom stations inside the application unfortunately. The part of the reason is because I wanted to limit the scope of metadata sources I need to support. The other (major) reason is because at the time, Nep couldn't read the bitrate, sample rate and channel count from streams. That means I had to hard code every stream in the application and manually test each and everyone one. Of course, with recent updates to UWPShoutcastMSS, this is no longer a limitation.
@@ -35,3 +35,4 @@ Here are some of the projects or libraries I've used when writing this:
 - @danesparza's [iTunesSearch](https://github.com/danesparza/iTunesSearch): This library is used for retreiving metadata from the iTunes store.
 - @avatar29A's [MusicBrainz](https://github.com/avatar29A/MusicBrainz): This library is used for retreiving metadata from MusicBrainz.
 - @xyzzer's [WinRTXamlToolkit](https://github.com/xyzzer/WinRTXamlToolkit/): Contains many GUI controls used in Nep.
+- [UWPCommunityToolkit](https://github.com/Microsoft/UWPCommunityToolkit)

@@ -20,11 +20,29 @@ namespace Neptunium.View.Dialog
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SleepTimerDialog : Page
+    public sealed partial class ProgressIndicatorDialog : Page
     {
-        public SleepTimerDialog()
+        public ProgressIndicatorDialog()
         {
             this.InitializeComponent();
+        }
+
+        public void SetIndeterminate()
+        {
+            PART_ProgressIndicator.IsIndeterminate = true;
+        }
+
+        public void SetDeterminateProgress(double value)
+        {
+            PART_ProgressIndicator.IsIndeterminate = false;
+            PART_ProgressIndicator.Value = value;
+            PART_ProgressIndicator.Maximum = 1.0;
+        }
+
+        public void SetTitleAndMessage(string title, string message)
+        {
+            PART_TitleBlock.Text = title;
+            PART_MessageBlock.Text = message;
         }
     }
 }

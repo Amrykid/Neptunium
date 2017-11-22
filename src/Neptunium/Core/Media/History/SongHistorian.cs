@@ -27,7 +27,7 @@ namespace Neptunium.Core.Media.History
             dataFolder = await CreateAndReturnDataDirectoryAsync();
 
             StorageFile historyFile = null;
-            if ((historyFile = await dataFolder.GetFileAsync("History.json")) != null)
+            if ((historyFile = await dataFolder.CreateFileAsync("History.json", CreationCollisionOption.OpenIfExists)) != null)
             {
                 var accessStream = await historyFile.OpenReadAsync();
                 byte[] data = null;
@@ -42,8 +42,20 @@ namespace Neptunium.Core.Media.History
                     {
                         var coll = serializer.Deserialize<ObservableCollection<SongHistoryItem>>(jtr);
 
-                        HistoryOfSongs.AddRange(coll);
+                        if (coll != null)
+                        {
+                            HistoryOfSongs.AddRange(coll);
+                        }
                     }
+                }
+            }
+
+            foreach (SongHistoryItem item in HistoryOfSongs)
+            {
+                if (item.Metadata.StationLogo != null)
+                {
+                    if (item.Metadata.StationLogo.Scheme.ToLower().StartsWith("http"))
+                        item.Metadata.StationLogo = await NepApp.Stations.CacheStationLogoUriAsync(item.Metadata.StationLogo);
                 }
             }
         }
@@ -64,12 +76,14 @@ namespace Neptunium.Core.Media.History
 
         public async Task AddSongAsync(ExtendedSongMetadata newMetadata)
         {
-            if (HistoryOfSongs.Count == 30)
+            if (newMetadata.IsUnknownMetadata) return;
+
+            if (HistoryOfSongs.Count == 100)
             {
-                HistoryOfSongs.RemoveAt(0); //remove the latest item from the beginning.
+                HistoryOfSongs.RemoveAt(HistoryOfSongs.Count - 1); //remove the latest item from the end since we're inserting at the beginning.
             }
 
-            HistoryOfSongs.Add(new SongHistoryItem() { Metadata = newMetadata, PlayedDate = DateTime.Now });
+            HistoryOfSongs.Insert(0, new SongHistoryItem() { Metadata = newMetadata, PlayedDate = DateTime.Now });
 
             StorageFile historyFile = null;
             if ((historyFile = await dataFolder.CreateFileAsync("History.json", CreationCollisionOption.OpenIfExists)) != null)

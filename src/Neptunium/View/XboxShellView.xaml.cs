@@ -2,22 +2,18 @@
 using Neptunium.Core.UI;
 using Neptunium.Glue;
 using Neptunium.ViewModel;
-using Neptunium.ViewModel.Dialog;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+using Crystal3.Messaging;
+using WinRTXamlToolkit.Controls;
+using Crystal3.UI;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -27,7 +23,7 @@ namespace Neptunium.View
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [Crystal3.Navigation.NavigationViewModel(typeof(AppShellViewModel), NavigationViewSupportedPlatform.Xbox)]
-    public sealed partial class XboxShellView : Page
+    public sealed partial class XboxShellView : Page, Crystal3.Messaging.IMessagingTarget
     {
         private FrameNavigationService inlineNavigationService = null;
         public XboxShellView()
@@ -39,6 +35,8 @@ namespace Neptunium.View
             NepApp.UI.SetNavigationService(inlineNavigationService);
             inlineNavigationService.Navigated += InlineNavigationService_Navigated;
 
+            inlineNavigationService.PreBackRequested += InlineNavigationService_PreBackRequested;
+
             NepApp.UI.SetOverlayParentAndSnackBarContainer(OverlayPanel, snackBarGrid);
 
             App.RegisterUIDialogs();
@@ -46,12 +44,29 @@ namespace Neptunium.View
             NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
             NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
 
-            NowPlayingTrackTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
-            NowPlayingArtistTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.Media, nameof(NepApp.Media.CurrentMetadata)));
+            NowPlayingTrackTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
+            NowPlayingArtistTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
 
             PageTitleTextBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
 
-            NepApp.Media.IsPlayingChanged += Media_IsPlayingChanged;
+            NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
+
+            //handler to allow the metadata to animate onto the screen for the first time.
+            CurrentMediaMetadataPanel.SetBinding(Control.VisibilityProperty, NepApp.CreateBinding(NepApp.MediaPlayer, nameof(NepApp.MediaPlayer.IsMediaEngaged), binding =>
+            {
+                binding.Converter = new Crystal3.UI.Converters.BooleanToVisibilityConverter();
+            }));
+
+            Messenger.AddTarget(this);
+        }
+
+        private void InlineNavigationService_PreBackRequested(object sender, NavigationManagerPreBackRequestedEventArgs e)
+        {
+            if (TransportControlGrid.Visibility == Visibility.Visible)
+            {
+                e.Handled = true;
+                HideTransportGrid();
+            }
         }
 
         private bool isInNoChromeMode = false;
@@ -61,16 +76,12 @@ namespace Neptunium.View
             {
                 //no chrome mode
                 RootSplitView.IsPaneOpen = false;
-                MediaGrid.Visibility = Visibility.Collapsed;
                 HeaderGrid.Visibility = Visibility.Collapsed;
                 isInNoChromeMode = true;
             }
             else
             {
                 //reactivate chrome
-
-                if (NepApp.Media.IsPlaying)
-                    MediaGrid.Visibility = Visibility.Visible;
 
                 HeaderGrid.Visibility = Visibility.Visible;
 
@@ -124,15 +135,13 @@ namespace Neptunium.View
                     PlayButton.Icon = new SymbolIcon(Symbol.Pause);
                     PlayButton.Command = ((AppShellViewModel)this.DataContext).PausePlaybackCommand;
 
-                    MediaGrid.Visibility = Visibility.Visible;
+                    HeaderControlHintIcon.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     PlayButton.Label = "Play";
                     PlayButton.Icon = new SymbolIcon(Symbol.Play);
                     PlayButton.Command = ((AppShellViewModel)this.DataContext).ResumePlaybackCommand;
-
-                    MediaGrid.Visibility = Visibility.Collapsed;
                 }
             });
         }
@@ -140,65 +149,6 @@ namespace Neptunium.View
         private void FeedbackButton_Click(object sender, RoutedEventArgs e)
         {
 
-        }
-
-        private void Page_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == Windows.System.VirtualKey.GamepadY)
-            {
-                if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
-                if (isInNoChromeMode) return;
-
-                if (TransportControlGrid.Visibility == Visibility.Collapsed)
-                {
-                    InlineFrame.IsEnabled = false;
-
-                    if (InlineFrame.Content is IXboxInputPage)
-                    {
-                        ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
-                    }
-
-                    TransportControlGrid.Visibility = Visibility.Visible;
-
-                    PlayButton.Focus(FocusState.Keyboard);
-                }
-                else
-                {
-                    TransportControlGrid.Visibility = Visibility.Collapsed;
-                    InlineFrame.IsEnabled = true;
-                    InlineFrame.Focus(FocusState.Keyboard);
-
-                    if (InlineFrame.Content is IXboxInputPage)
-                    {
-                        ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
-                    }
-                }
-
-                e.Handled = true;
-            }
-            else if (e.Key == Windows.System.VirtualKey.GamepadView || e.Key == Windows.System.VirtualKey.GamepadMenu)
-            {
-                if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
-                if (isInNoChromeMode) return;
-
-                e.Handled = true;
-                RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
-
-                if (RootSplitView.IsPaneOpen)
-                {
-                    HandleSplitViewPaneOpen();
-                }
-                else
-                {
-                    HandleSplitViewPaneClose();
-                }
-            }
-            else if (e.Key == Windows.System.VirtualKey.Left)
-            {
-                e.Handled = true;
-                RootSplitView.IsPaneOpen = true;
-                HandleSplitViewPaneOpen();
-            }
         }
 
         private void HandleSplitViewPaneClose()
@@ -241,6 +191,121 @@ namespace Neptunium.View
             //dismiss the menu if its open.
             if (RootSplitView.DisplayMode == SplitViewDisplayMode.Overlay)
                 RootSplitView.IsPaneOpen = false;
+        }
+
+        private void Page_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.GamepadY)
+            {
+                if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
+                if (isInNoChromeMode) return;
+
+                if (TransportControlGrid.Visibility == Visibility.Collapsed)
+                {
+                    ShowTransportGrid();
+                }
+                else
+                {
+                    HideTransportGrid();
+                }
+
+                e.Handled = true;
+            }
+            else if (e.Key == Windows.System.VirtualKey.GamepadView || e.Key == Windows.System.VirtualKey.GamepadMenu)
+            {
+                if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
+                //if (isInNoChromeMode) return;
+
+                e.Handled = true;
+                RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
+
+                if (RootSplitView.IsPaneOpen)
+                {
+                    HandleSplitViewPaneOpen();
+                }
+                else
+                {
+                    HandleSplitViewPaneClose();
+                }
+            }
+            //else if (e.Key == Windows.System.VirtualKey.Left)
+            //{
+            //    if (isInNoChromeMode) return;
+
+            //    if (e.Handled) return;
+
+            //    e.Handled = true;
+            //    RootSplitView.IsPaneOpen = true;
+            //    HandleSplitViewPaneOpen();
+            //}
+        }
+
+        private void ShowTransportGrid()
+        {
+            InlineFrame.IsEnabled = false;
+
+            if (InlineFrame.Content is IXboxInputPage)
+            {
+                ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
+            }
+
+            TransportControlGrid.Visibility = Visibility.Visible;
+
+            PlayButton.Focus(FocusState.Keyboard);
+
+            ElementSoundPlayer.Play(ElementSoundKind.Show);
+        }
+
+        private void HideTransportGrid()
+        {
+            TransportControlGrid.Visibility = Visibility.Collapsed;
+            InlineFrame.IsEnabled = true;
+            InlineFrame.Focus(FocusState.Keyboard);
+
+            ElementSoundPlayer.Play(ElementSoundKind.Hide);
+
+            if (InlineFrame.Content is IXboxInputPage)
+            {
+                ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
+            }
+        }
+
+        public void OnReceivedMessage(Message message, Action<object> resultCallback)
+        {
+            switch (message.Name)
+            {
+                case "ShowHandoffFlyout":
+                    //todo implement handoff flyout.
+
+                    App.Dispatcher.RunAsync(() =>
+                    {
+                        var handoffFlyout = Flyout.GetAttachedFlyout(HeaderControlHintIcon);
+                        if (handoffFlyout != null)
+                        {
+                            handoffFlyout.ShowAt(HeaderControlHintIcon);
+                            HandoffFlyoutSystemListBox.Focus(FocusState.Keyboard);
+                        }
+                    });
+
+                    break;
+            }
+        }
+
+        public IEnumerable<string> GetSubscriptions()
+        {
+            return new string[] { "ShowHandoffFlyout" };
+        }
+
+        private void HandoffListButton_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as ListItemButton;
+
+            if (btn.DataContext == null) return;
+
+            this.GetViewModel<AppShellViewModel>()
+                .HandoffFragment
+                .HandOffCommand
+                .Execute(btn.DataContext);
         }
     }
 }

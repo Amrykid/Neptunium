@@ -34,7 +34,7 @@ namespace Neptunium.View
         private async void SelectBluetoothButton_Click(object sender, RoutedEventArgs e)
         {
             SelectBluetoothButton.IsEnabled = false;
-            var device = await NepApp.Media.Bluetooth.DeviceCoordinator.SelectDeviceAsync(Window.Current.Bounds);
+            var device = await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.SelectDeviceAsync(Window.Current.Bounds);
             if (device != null)
             {
                 this.GetViewModel<SettingsPageViewModel>().SelectedBluetoothDeviceName = device.Name;
@@ -46,11 +46,34 @@ namespace Neptunium.View
         {
             if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
             {
-                if (await NepApp.Media.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync())
-                {
-                    //only show bluetooth settings on devices that have bluetooth.
-                    bluetoothPivot.Visibility = Visibility.Visible;
-                }
+                //only show bluetooth settings on devices that have bluetooth.
+                bluetoothPivot.IsEnabled = await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync();
+
+                UpdateLockScreenSwitch.Visibility = Visibility.Visible;
+            }
+        }
+
+        private async void SetFallBackLockScreenBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+            picker.FileTypeFilter.Add(".png");
+
+            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                // Application now has read/write access to the picked file
+
+                //todo check if less or equal to 2MB on mobile before proceeding.
+
+                await NepApp.UI.LockScreen.SetFallbackImageAsync(file);
+            }
+            else
+            {
+                //cancelled
             }
         }
     }
