@@ -12,6 +12,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Crystal3.Messaging;
+using WinRTXamlToolkit.Controls;
+using Crystal3.UI;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -275,10 +277,15 @@ namespace Neptunium.View
                 case "ShowHandoffFlyout":
                     //todo implement handoff flyout.
 
-                    //App.Dispatcher.RunAsync(() =>
-                    //{
-                    //    Handoff.Flyout.ShowAt(HandoffButton);
-                    //});
+                    App.Dispatcher.RunAsync(() =>
+                    {
+                        var handoffFlyout = Flyout.GetAttachedFlyout(HeaderControlHintIcon);
+                        if (handoffFlyout != null)
+                        {
+                            handoffFlyout.ShowAt(HeaderControlHintIcon);
+                            HandoffFlyoutSystemListBox.Focus(FocusState.Keyboard);
+                        }
+                    });
 
                     break;
             }
@@ -287,6 +294,18 @@ namespace Neptunium.View
         public IEnumerable<string> GetSubscriptions()
         {
             return new string[] { "ShowHandoffFlyout" };
+        }
+
+        private void HandoffListButton_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as ListItemButton;
+
+            if (btn.DataContext == null) return;
+
+            this.GetViewModel<AppShellViewModel>()
+                .HandoffFragment
+                .HandOffCommand
+                .Execute(btn.DataContext);
         }
     }
 }
