@@ -11,6 +11,11 @@
         <ScrollViewer>
             <StackPanel Padding="10">
                 <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Text="Neptunium" />
+
+                <StackPanel Orientation="Horizontal">
+                    <AppBarButton Icon="GlobalNavigationButton" Label="GitHub" Click="AppBarButton_Click" />
+                    <AppBarButton Icon="Shop" Label="Windows Store" Click="AppBarButton_Click_1" />
+                </StackPanel>
                 
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" Text="Introduction" Margin="0 5 0 0" />
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" Padding="5">
@@ -21,23 +26,19 @@
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" Text="Libraries Used" />
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" Padding="5">
                     dotMorten's <Hyperlink NavigateUri="https://github.com/dotMorten/WindowsStateTriggers/">WindowsStateTriggers</Hyperlink>
-                    <LineBreak />
-                    danesparza's <Hyperlink NavigateUri="https://github.com/danesparza/iTunesSearch">iTunesSearch</Hyperlink>
-                    <LineBreak />
-                    avatar29A's <Hyperlink NavigateUri="https://github.com/avatar29A/MusicBrainz">MusicBrainz</Hyperlink>
-                    <LineBreak />
-                    xyzzer's <Hyperlink NavigateUri="https://github.com/xyzzer/WinRTXamlToolkit/">WinRTXamlToolkit</Hyperlink>
-                    <LineBreak />
-                    xyzzer's <Hyperlink NavigateUri="https://github.com/xyzzer/WinRTXamlToolkit/">WinRTXamlToolkit</Hyperlink>
+                    <LineBreak />danesparza's <Hyperlink NavigateUri="https://github.com/danesparza/iTunesSearch">iTunesSearch</Hyperlink>
+                    <LineBreak />avatar29A's <Hyperlink NavigateUri="https://github.com/avatar29A/MusicBrainz">MusicBrainz</Hyperlink>
+                    <LineBreak />xyzzer's <Hyperlink NavigateUri="https://github.com/xyzzer/WinRTXamlToolkit/">WinRTXamlToolkit</Hyperlink>
+                    <LineBreak /><Hyperlink NavigateUri="https://github.com/Microsoft/UWPCommunityToolkit">UWPCommunityToolkit</Hyperlink>
                 </TextBlock>
 
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" Text="License" />
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" Padding="5">
                     MIT License
-
-                    Copyright (c) 2017 Alexander Mitchell-Robinson
-
-                    Permission is hereby granted, free of charge, to any person obtaining a copy
+                    <LineBreak />
+                    <LineBreak />Copyright (c) 2017 Alexander Mitchell-Robinson
+                    <LineBreak />
+                    <LineBreak />Permission is hereby granted, free of charge, to any person obtaining a copy
                     of this software and associated documentation files (the "Software"), to deal
                     in the Software without restriction, including without limitation the rights
                     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
