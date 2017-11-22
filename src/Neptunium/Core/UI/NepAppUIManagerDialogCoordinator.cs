@@ -162,9 +162,10 @@ namespace Neptunium.Core.UI
             bool escapeHandlerReleased = false;
             escapeHandler = new KeyEventHandler((s, e) =>
             {
-                //handles the escape button.
+                //handles the escape button. On Xbox, the "B" button counts as Escape here.
                 if (e.Key == Windows.System.VirtualKey.Escape)
                 {
+                    e.Handled = true;
                     view.KeyDown -= escapeHandler;
                     escapeHandlerReleased = true;
                     fragment.ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined);
