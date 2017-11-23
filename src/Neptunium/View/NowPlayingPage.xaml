@@ -161,7 +161,7 @@
                         <Setter Target="CommandPanel.HorizontalAlignment" Value="Left" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
                         <Setter Target="MetadataPanel.HorizontalAlignment" Value="Left" />
-                        <Setter Target="GlassPanel.IsGlassOn" Value="False" />
+                        <Setter Target="GlassPanel.IsGlassOn" Value="True" />
                         <Setter Target="BottomRowDef.Height" Value="50" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
