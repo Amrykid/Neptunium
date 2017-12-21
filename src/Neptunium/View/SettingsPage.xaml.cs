@@ -1,5 +1,6 @@
 ﻿using Crystal3;
 using Crystal3.UI;
+using Neptunium.Glue;
 using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace Neptunium.View
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [Crystal3.Navigation.NavigationViewModel(typeof(Neptunium.ViewModel.SettingsPageViewModel))]
-    public sealed partial class SettingsPage : Page
+    public sealed partial class SettingsPage : Page, IXboxInputPage
     {
         public SettingsPage()
         {
@@ -51,6 +52,11 @@ namespace Neptunium.View
 
                 UpdateLockScreenSwitch.Visibility = Visibility.Visible;
             }
+            else
+            {
+                //force focus on Xbox.
+                RootPivot.Focus(FocusState.Keyboard);
+            }
         }
 
         private async void SetFallBackLockScreenBtn_Click(object sender, RoutedEventArgs e)
@@ -75,6 +81,36 @@ namespace Neptunium.View
             {
                 //cancelled
             }
+        }
+
+        public void SetLeftFocus(UIElement elementToTheLeft)
+        {
+            
+        }
+
+        public void SetRightFocus(UIElement elementToTheRight)
+        {
+            
+        }
+
+        public void SetTopFocus(UIElement elementAbove)
+        {
+            
+        }
+
+        public void SetBottomFocus(UIElement elementBelow)
+        {
+            
+        }
+
+        public void RestoreFocus()
+        {
+            
+        }
+
+        public void PreserveFocus()
+        {
+            
         }
     }
 }
