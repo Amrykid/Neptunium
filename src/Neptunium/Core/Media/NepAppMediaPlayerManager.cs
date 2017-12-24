@@ -93,7 +93,7 @@ namespace Neptunium.Media
             IsMediaEngaged = isEngaged;
             if (raise)
             {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaEngaged)));
+                RaisePropertyChanged(nameof(IsMediaEngaged));
                 MediaEngagementChanged?.Invoke(this, EventArgs.Empty);
             }
             
