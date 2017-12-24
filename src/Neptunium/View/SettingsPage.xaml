@@ -30,12 +30,16 @@
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Notifications"/>
                         <ToggleSwitch Header="Show song change notifications"
-                                  IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                      x:Name="SongNotificationSwitch"
+                                      XYFocusDown="{Binding ElementName=MetadataSwitch}"
+                                      IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                         <MenuFlyoutSeparator />
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Metadata"/>
                         <ToggleSwitch Header="Find song metadata when song changes" 
-                                  IsOn="{Binding FindSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                      x:Name="MetadataSwitch"
+                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
+                                      IsOn="{Binding FindSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                         <ToggleSwitch Header="Update LockScreen with artwork when available"
                                   x:Name="UpdateLockScreenSwitch"
                                   Visibility="Collapsed"
