@@ -110,22 +110,22 @@ namespace Neptunium.ViewModel
                                 SundayItems.Add(item);
                                 break;
                             case "monday":
-                                SundayItems.Add(item);
+                                MondayItems.Add(item);
                                 break;
                             case "tuesday":
-                                SundayItems.Add(item);
+                                TuesdayItems.Add(item);
                                 break;
                             case "wednesday":
-                                SundayItems.Add(item);
+                                WednesdayItems.Add(item);
                                 break;
                             case "thursday":
-                                SundayItems.Add(item);
+                                ThursdayItems.Add(item);
                                 break;
                             case "friday":
-                                SundayItems.Add(item);
+                                FridayItems.Add(item);
                                 break;
                             case "saturday":
-                                SundayItems.Add(item);
+                                SaturdayItems.Add(item);
                                 break;
                         }
                     }
