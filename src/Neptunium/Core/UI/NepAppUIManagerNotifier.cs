@@ -258,7 +258,7 @@ namespace Neptunium.Core.UI
                         {
                             new AdaptiveText()
                             {
-                                Text = "Turning into " + metadata.Track,
+                                Text = "Tuning into " + metadata.Track,
                                 HintStyle = AdaptiveTextStyle.Title
                             },
 

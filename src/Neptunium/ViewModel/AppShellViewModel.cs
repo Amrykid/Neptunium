@@ -109,10 +109,16 @@ namespace Neptunium.ViewModel
 
         private async void SongManager_StationRadioProgramStarted(object sender, Media.Songs.NepAppStationProgramStartedEventArgs e)
         {
-            if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+            if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
             {
-                if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
+                if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+                {
                     NepApp.UI.Notifier.ShowStationProgrammingToastNotification(e.RadioProgram, e.Metadata);
+                }
+                else
+                {
+                    await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tuning into " + e.RadioProgram.Name + " by " + e.RadioProgram.Host);
+                }
             }
 
             NepApp.UI.Notifier.UpdateLiveTile(new ExtendedSongMetadata(e.Metadata));
