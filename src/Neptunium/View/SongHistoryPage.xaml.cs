@@ -34,10 +34,13 @@ namespace Neptunium.View
                 long itemsSourceHandler = 0;
                 itemsSourceHandler = SongHistoryListView.RegisterPropertyChangedCallback(GridView.ItemsSourceProperty, new DependencyPropertyChangedCallback(async (obj, dp) =>
                 {
-                    if (obj.GetValue(dp) != null)
+                    IEnumerable<object> collection = obj.GetValue(dp) as IEnumerable<object>;
+                    if (collection != null)
                     {
                         //try and force focus on the first item when we load this page.
                         SongHistoryListView.UnregisterPropertyChangedCallback(GridView.ItemsSourceProperty, itemsSourceHandler);
+
+                        if (collection.Count() == 0) return;
 
                         //wait until we can get an item from the station grid view to focus. this is a hack but it'll have to do.
                         ListViewItem firstItem = null;
