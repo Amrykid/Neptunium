@@ -79,6 +79,9 @@ namespace Neptunium.View
                 RootSplitView.IsPaneOpen = false;
                 HeaderGrid.Visibility = Visibility.Collapsed;
                 isInNoChromeMode = true;
+
+                TransportControlGrid.Opacity = 0;
+                transportGridVisible = false;
             }
             else
             {
@@ -87,6 +90,9 @@ namespace Neptunium.View
                 HeaderGrid.Visibility = Visibility.Visible;
 
                 isInNoChromeMode = false;
+
+                TransportControlGrid.Opacity = 0.1;
+                transportGridVisible = false;
 
                 SplitViewOpenButton.Focus(FocusState.Pointer); //reduces the amount of times that the splitview open button has the focus rectangle when that is used to open the menu.
 
