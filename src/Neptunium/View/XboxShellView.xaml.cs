@@ -63,7 +63,7 @@ namespace Neptunium.View
 
         private void InlineNavigationService_PreBackRequested(object sender, NavigationManagerPreBackRequestedEventArgs e)
         {
-            if (TransportControlGrid.Visibility == Visibility.Visible)
+            if (transportGridVisible)
             {
                 e.Handled = true;
                 HideTransportGrid();
@@ -87,6 +87,8 @@ namespace Neptunium.View
                 HeaderGrid.Visibility = Visibility.Visible;
 
                 isInNoChromeMode = false;
+
+                SplitViewOpenButton.Focus(FocusState.Pointer); //reduces the amount of times that the splitview open button has the focus rectangle when that is used to open the menu.
 
                 if (InlineFrame.Content is IXboxInputPage)
                 {
