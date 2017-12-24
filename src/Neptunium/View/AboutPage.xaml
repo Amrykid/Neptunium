@@ -12,6 +12,8 @@
             <StackPanel Padding="10">
                 <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Text="Neptunium" />
 
+                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" x:Name="VersionTextBlock" Text="Version:"/>
+
                 <StackPanel Orientation="Horizontal">
                     <AppBarButton Icon="Globe" Label="GitHub" Click="AppBarButton_Click" />
                     <AppBarButton Icon="Shop" Label="Windows Store" Click="AppBarButton_Click_1" />
