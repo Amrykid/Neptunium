@@ -179,13 +179,14 @@
                         <Grid x:Name="snackBarGrid" Margin="0 0 0 20" VerticalAlignment="Bottom" HorizontalAlignment="Center" />
 
                         <Grid x:Name="TransportControlGrid" Width="330" 
-                          Height="110" VerticalAlignment="Bottom"
-                          Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                          HorizontalAlignment="Right" Margin="0 0 20 20"
-                          Visibility="Collapsed"
-                          BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}"
-                          BorderThickness="1"
-                          Padding="5">
+                              Height="110" VerticalAlignment="Bottom"
+                              Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                              HorizontalAlignment="Right" Margin="0 0 20 20"
+                              Visibility="Visible"
+                              Opacity="0.1"
+                              BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}"
+                              BorderThickness="1"
+                              Padding="5">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="20" />
                                 <RowDefinition Height="*" />
@@ -194,6 +195,26 @@
                                 <ColumnDefinition Width="20" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
+                            <Grid.Resources>
+                                <Storyboard x:Name="ExitStoryboard" >
+                                    <DoubleAnimation From="1" To="0.1" Storyboard.TargetProperty="Opacity"
+                                                     Duration="0:0:0.350"
+                                                     Storyboard.TargetName="TransportControlGrid">
+                                        <DoubleAnimation.EasingFunction>
+                                            <CubicEase/>
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                </Storyboard>
+                                <Storyboard x:Name="EnterStoryboard">
+                                    <DoubleAnimation From="0.1" To="1" Storyboard.TargetProperty="Opacity" 
+                                                     Duration="0:0:0.350"
+                                                     Storyboard.TargetName="TransportControlGrid">
+                                        <DoubleAnimation.EasingFunction>
+                                            <CubicEase/>
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </Grid.Resources>
 
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Row="0" 
                                       Grid.Column="0"
@@ -220,6 +241,7 @@
             <Grid.ChildrenTransitions>
                 <TransitionCollection>
                     <RepositionThemeTransition />
+                    <AddDeleteThemeTransition />
                 </TransitionCollection>
             </Grid.ChildrenTransitions>
         </Grid>

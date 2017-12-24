@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Media;
 using Crystal3.Messaging;
 using WinRTXamlToolkit.Controls;
 using Crystal3.UI;
+using Windows.UI.Xaml.Media.Animation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -203,8 +204,9 @@ namespace Neptunium.View
             {
                 if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
                 if (isInNoChromeMode) return;
+                if (transportGridAnimating) return;
 
-                if (TransportControlGrid.Visibility == Visibility.Collapsed)
+                if (!transportGridVisible)
                 {
                     ShowTransportGrid();
                 }
@@ -244,6 +246,8 @@ namespace Neptunium.View
             //}
         }
 
+        private volatile bool transportGridVisible = false;
+        private volatile bool transportGridAnimating = false;
         private void ShowTransportGrid()
         {
             InlineFrame.IsEnabled = false;
@@ -253,25 +257,54 @@ namespace Neptunium.View
                 ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
             }
 
-            TransportControlGrid.Visibility = Visibility.Visible;
+            //TransportControlGrid.Visibility = Visibility.Visible;
 
-            PlayButton.Focus(FocusState.Keyboard);
+            transportGridAnimating = true;
 
-            ElementSoundPlayer.Play(ElementSoundKind.Show);
+            Storyboard storyboard = ((Storyboard)TransportControlGrid.Resources["EnterStoryboard"]);
+
+            EventHandler<object> handler = null;
+            handler = new EventHandler<object>((x, y) =>
+            {
+                storyboard.Completed -= handler;
+                transportGridAnimating = false;
+                transportGridVisible = true;
+
+                PlayButton.Focus(FocusState.Keyboard);
+                ElementSoundPlayer.Play(ElementSoundKind.Show);
+            });
+
+            storyboard.Completed += handler;
+            storyboard.Begin();
         }
 
         private void HideTransportGrid()
         {
-            TransportControlGrid.Visibility = Visibility.Collapsed;
-            InlineFrame.IsEnabled = true;
-            InlineFrame.Focus(FocusState.Programmatic);
+            transportGridAnimating = true;
 
-            ElementSoundPlayer.Play(ElementSoundKind.Hide);
+            Storyboard storyboard = ((Storyboard)TransportControlGrid.Resources["ExitStoryboard"]);
 
-            if (InlineFrame.Content is IXboxInputPage)
+            EventHandler<object> handler = null;
+            handler = new EventHandler<object>((x, y) =>
             {
-                ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
-            }
+                storyboard.Completed -= handler;
+                transportGridAnimating = false;
+                transportGridVisible = false;
+
+                //TransportControlGrid.Visibility = Visibility.Collapsed;
+                InlineFrame.IsEnabled = true;
+                InlineFrame.Focus(FocusState.Programmatic);
+
+                ElementSoundPlayer.Play(ElementSoundKind.Hide);
+
+                if (InlineFrame.Content is IXboxInputPage)
+                {
+                    ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
+                }
+            });
+
+            storyboard.Completed += handler;
+            storyboard.Begin();
         }
 
         public void OnReceivedMessage(Message message, Action<object> resultCallback)
