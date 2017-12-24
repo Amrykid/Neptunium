@@ -37,96 +37,141 @@ namespace Neptunium.Core.Stations
 
         internal async Task<StationItem[]> GetStationsAsync()
         {
+            
             var file = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(StationsFilePath);
             var reader = await file.OpenReadAsync();
 
             XDocument xmlDoc = XDocument.Load(reader.AsStream());
-            List<StationItem> stationList = new List<StationItem>();
 
-            foreach (var stationElement in xmlDoc.Element("Stations").Elements("Station"))
+            try
             {
-                var streams = stationElement.Element("Streams").Elements("Stream").Select<XElement, StationStream>(x =>
+                List<StationItem> stationList = new List<StationItem>();
+
+                foreach (var stationElement in xmlDoc.Element("Stations").Elements("Station"))
                 {
-                    var stream = new StationStream(new Uri(x.Value));
-                    stream.ContentType = x.Attribute("ContentType")?.Value;
-
-                    if (x.Attribute("Bitrate") != null)
-                        stream.Bitrate = int.Parse(x.Attribute("Bitrate")?.Value);
-
-                    if (x.Attribute("RelativePath") != null)
-                        stream.RelativePath = x.Attribute("RelativePath")?.Value;
-
-                    if (x.Attribute("ServerType") != null)
+                    var streams = stationElement.Element("Streams").Elements("Stream").Select<XElement, StationStream>(x =>
                     {
-                        stream.ServerFormat = (StationStreamServerFormat)Enum.Parse(typeof(StationStreamServerFormat), x.Attribute("ServerType").Value);
-                    }
+                        var stream = new StationStream(new Uri(x.Value));
+                        stream.ContentType = x.Attribute("ContentType")?.Value;
 
-                    if (x.Attribute("RequestMetadata") != null)
+                        if (x.Attribute("Bitrate") != null)
+                            stream.Bitrate = int.Parse(x.Attribute("Bitrate")?.Value);
+
+                        if (x.Attribute("RelativePath") != null)
+                            stream.RelativePath = x.Attribute("RelativePath")?.Value;
+
+                        if (x.Attribute("ServerType") != null)
+                        {
+                            stream.ServerFormat = (StationStreamServerFormat)Enum.Parse(typeof(StationStreamServerFormat), x.Attribute("ServerType").Value);
+                        }
+
+                        if (x.Attribute("RequestMetadata") != null)
+                        {
+                            stream.RequestMetadata = bool.Parse(x.Attribute("RequestMetadata").Value);
+                        }
+                        else
+                        {
+                            //defaults to true
+                            stream.RequestMetadata = true;
+                        }
+
+                        return stream;
+                    }).ToArray();
+
+                    var stationLogoUri = await CacheStationLogoUriAsync(new Uri(stationElement.Element("Logo").Value));
+
+                    var station = new StationItem(
+                        name: stationElement.Element("Name").Value,
+                        description: stationElement.Element("Description").Value,
+                        stationLogo: stationLogoUri,
+                        streams: streams);
+
+                    if (stationElement.Element("Programs") != null)
                     {
-                        stream.RequestMetadata = bool.Parse(x.Attribute("RequestMetadata").Value);
+                        station.Programs = stationElement.Element("Programs").Elements("Program").Select<XElement, StationProgram>(x =>
+                        {
+                            var hostExpression = x.Attribute("HostExp")?.Value;
+                            var programName = x.Attribute("Name")?.Value;
+
+                            var program = new StationProgram() { Host = x.Attribute("Host").Value, HostRegexExpression = hostExpression, Name = programName, Station = station };
+
+                            if (x.HasElements)
+                            {
+                                if (x.Elements("Listing") != null)
+                                {
+                                    //if the program has an actual schedule (e.g. always occur on a certain day around a certain time), grab its time listings.
+
+                                    var listings = new List<StationProgramTimeListing>();
+
+                                    foreach (var listingElement in x.Elements("Listing"))
+                                    {
+                                        try
+                                        {
+                                            StationProgramTimeListing listing = new StationProgramTimeListing();
+                                            listing.Day = listingElement.Attribute("Day").Value;
+                                            listing.Time = DateTime.Parse(listingElement.Attribute("Time").Value);
+
+                                            listings.Add(listing);
+                                        }
+                                        catch (Exception ex)
+                                        {
+#if !DEBUG
+                                            Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex);
+#endif
+                                        }
+                                    }
+
+                                    program.TimeListings = listings.ToArray();
+                                }
+                            }
+
+                            return program;
+                        }).ToArray();
                     }
                     else
                     {
-                        //defaults to true
-                        stream.RequestMetadata = true;
+                        station.Programs = null;
                     }
 
-                    return stream;
-                }).ToArray();
-
-                var stationLogoUri = await CacheStationLogoUriAsync(new Uri(stationElement.Element("Logo").Value));
-
-                var station = new StationItem(
-                    name: stationElement.Element("Name").Value,
-                    description: stationElement.Element("Description").Value,
-                    stationLogo: stationLogoUri,
-                    streams: streams);
-
-                if (stationElement.Element("Programs") != null)
-                {
-                    station.Programs = stationElement.Element("Programs").Elements("Program").Select<XElement, StationProgram>(x =>
+                    if (stationElement.Element("Background") != null)
                     {
-                        var hostExpression = x.Attribute("HostExp")?.Value;
-                        var programName = x.Attribute("Name")?.Value;
-                        return new StationProgram() { Host = x.Attribute("Host").Value, HostRegexExpression = hostExpression, Name = programName };
-                    }).ToArray();
-                }
-                else
-                {
-                    station.Programs = null;
-                }
+                        var backgroundElement = stationElement.Element("Background");
 
-                if (stationElement.Element("Background") != null)
-                {
-                    var backgroundElement = stationElement.Element("Background");
+                        station.Background = backgroundElement.Value;
+                    }
 
-                    station.Background = backgroundElement.Value;
-                }
+                    station.Site = stationElement.Element("Site").Value;
+                    station.Genres = stationElement.Element("Genres").Value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    station.PrimaryLocale = stationElement.Element("PrimaryLocale")?.Value;
 
-                station.Site = stationElement.Element("Site").Value;
-                station.Genres = stationElement.Element("Genres").Value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                station.PrimaryLocale = stationElement.Element("PrimaryLocale")?.Value;
+                    if (stationElement.Element("StationMessages") == null)
+                    {
+                        station.StationMessages = new string[] { };
+                    }
+                    else
+                    {
+                        var stationMsgElement = stationElement.Element("StationMessages");
+                        var messages = stationMsgElement.Elements("Message").Select(x => x.Value.ToString()).ToArray();
+                        station.StationMessages = messages;
+                    }
 
-                if (stationElement.Element("StationMessages") == null)
-                {
-                    station.StationMessages = new string[] { };
-                }
-                else
-                {
-                    var stationMsgElement = stationElement.Element("StationMessages");
-                    var messages = stationMsgElement.Elements("Message").Select(x => x.Value.ToString()).ToArray();
-                    station.StationMessages = messages;
+                    station.Group = stationElement.Element("StationGroup")?.Value;
+
+                    stationList.Add(station);
+
                 }
 
-                station.Group = stationElement.Element("StationGroup")?.Value;
-
-                stationList.Add(station);
-
+                return stationList.ToArray();
             }
-            xmlDoc = null;
-            reader.Dispose();
-
-            return stationList.ToArray();
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred", ex);
+            }
+            finally
+            {
+                xmlDoc = null;
+                reader.Dispose();
+            }
         }
 
         public async Task<Uri> CacheStationLogoUriAsync(Uri uri)

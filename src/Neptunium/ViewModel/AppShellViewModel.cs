@@ -47,6 +47,7 @@ namespace Neptunium.ViewModel
             NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), ""); //"");
             NepApp.UI.AddNavigationRoute("Now Playing", typeof(NowPlayingPageViewModel), "");
             NepApp.UI.AddNavigationRoute("History", typeof(SongHistoryPageViewModel), "");
+            NepApp.UI.AddNavigationRoute("Schedule", typeof(StationProgramsPageViewModel), "");
             NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");
             NepApp.UI.AddNavigationRoute("About", typeof(AboutPageViewModel), "");
 

@@ -1,0 +1,52 @@
+﻿<Page
+    x:Class="Neptunium.View.StationProgramsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Neptunium.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uwp="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Pivot>
+            <Pivot.Resources>
+                <DataTemplate x:Key="ScheduleListItemTemplate">
+
+                </DataTemplate>
+                <Style x:Key="ScheduleListStyle" TargetType="ListBox">
+                    <Setter Property="ItemTemplate" Value="{StaticResource ScheduleListItemTemplate}" />
+                    <Setter Property="Background" Value="Transparent" />
+                </Style>
+            </Pivot.Resources>
+            <PivotItem Header="Sunday">
+                <ListBox ItemsSource="{Binding SundayItems, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource ScheduleListStyle}" />
+            </PivotItem>
+            <PivotItem Header="Monday">
+                <ListBox ItemsSource="{Binding MondayItems, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource ScheduleListStyle}" />
+            </PivotItem>
+            <PivotItem Header="Tuesday">
+                <ListBox ItemsSource="{Binding TuesdayItems, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource ScheduleListStyle}" />
+            </PivotItem>
+            <PivotItem Header="Wednesday">
+                <ListBox ItemsSource="{Binding WednesdayItems, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource ScheduleListStyle}" />
+            </PivotItem>
+            <PivotItem Header="Thursday">
+                <ListBox ItemsSource="{Binding ThursdayItems, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource ScheduleListStyle}" />
+            </PivotItem>
+            <PivotItem Header="Friday">
+                <ListBox ItemsSource="{Binding FridayItems, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource ScheduleListStyle}" />
+            </PivotItem>
+            <PivotItem Header="Saturday">
+                <ListBox ItemsSource="{Binding SaturdayItems, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource ScheduleListStyle}" />
+            </PivotItem>
+        </Pivot>
+    </Grid>
+</Page>

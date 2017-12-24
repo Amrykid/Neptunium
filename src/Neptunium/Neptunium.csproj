@@ -158,6 +158,7 @@
     <Compile Include="Core\NepApp.cs" />
     <Compile Include="Model\AlbumData.cs" />
     <Compile Include="Model\ArtistData.cs" />
+    <Compile Include="Model\ScheduleItem.cs" />
     <Compile Include="StringUtilities.cs" />
     <Compile Include="Controls\StationItemControl.xaml.cs">
       <DependentUpon>StationItemControl.xaml</DependentUpon>
@@ -173,6 +174,7 @@
     <Compile Include="ViewModel\NowPlayingPageViewModel.cs" />
     <Compile Include="ViewModel\SettingsPageViewModel.cs" />
     <Compile Include="ViewModel\SongHistoryPageViewModel.cs" />
+    <Compile Include="ViewModel\StationProgramsPageViewModel.cs" />
     <Compile Include="ViewModel\StationsPageViewModel.cs" />
     <Compile Include="View\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
@@ -197,6 +199,9 @@
     </Compile>
     <Compile Include="View\SongHistoryPage.xaml.cs">
       <DependentUpon>SongHistoryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\StationProgramsPage.xaml.cs">
+      <DependentUpon>StationProgramsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\StationsPage.xaml.cs">
       <DependentUpon>StationsPage.xaml</DependentUpon>
@@ -368,6 +373,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\SongHistoryPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\StationProgramsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

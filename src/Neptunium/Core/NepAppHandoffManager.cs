@@ -53,6 +53,11 @@ namespace Neptunium
                 //app service listing got removed while building for store.
                 IsSupported = false;
 
+#if DEBUG
+                if (System.Diagnostics.Debugger.IsAttached)
+                    System.Diagnostics.Debugger.Break();
+#endif
+
                 return;
             }
 
