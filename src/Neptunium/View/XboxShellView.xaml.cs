@@ -89,11 +89,15 @@ namespace Neptunium.View
 
                 if (InlineFrame.Content is IXboxInputPage)
                 {
+                    var page = ((IXboxInputPage)InlineFrame.Content);
                     //makes sure that if we go left from the inline frame, we end up selecting the current page's item in the nav list.
                     IEnumerable<NepAppUINavigationItem> items = (IEnumerable<NepAppUINavigationItem>)SplitViewNavigationList.ItemsSource;
                     var selectedItem = items.First(x => x.IsSelected);
                     var container = SplitViewNavigationList.ContainerFromItem(selectedItem);
-                    ((IXboxInputPage)InlineFrame.Content).SetLeftFocus((UIElement)container);
+                    page.SetLeftFocus((UIElement)container);
+
+                    //set the upper focus to the hamburger menu
+                    page.SetTopFocus(SplitViewOpenButton);
                 }
             }
         }
@@ -153,7 +157,7 @@ namespace Neptunium.View
 
         private void HandleSplitViewPaneClose()
         {
-            InlineFrame.Focus(FocusState.Keyboard);
+            InlineFrame.Focus(FocusState.Programmatic);
 
             if (InlineFrame.Content is IXboxInputPage)
             {
@@ -260,7 +264,7 @@ namespace Neptunium.View
         {
             TransportControlGrid.Visibility = Visibility.Collapsed;
             InlineFrame.IsEnabled = true;
-            InlineFrame.Focus(FocusState.Keyboard);
+            InlineFrame.Focus(FocusState.Programmatic);
 
             ElementSoundPlayer.Play(ElementSoundKind.Hide);
 
