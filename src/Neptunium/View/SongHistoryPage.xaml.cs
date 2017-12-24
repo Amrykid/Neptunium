@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -27,6 +28,30 @@ namespace Neptunium.View
         public SongHistoryPage()
         {
             this.InitializeComponent();
+
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                long itemsSourceHandler = 0;
+                itemsSourceHandler = SongHistoryListView.RegisterPropertyChangedCallback(GridView.ItemsSourceProperty, new DependencyPropertyChangedCallback(async (obj, dp) =>
+                {
+                    if (obj.GetValue(dp) != null)
+                    {
+                        //try and force focus on the first item when we load this page.
+                        SongHistoryListView.UnregisterPropertyChangedCallback(GridView.ItemsSourceProperty, itemsSourceHandler);
+
+                        //wait until we can get an item from the station grid view to focus. this is a hack but it'll have to do.
+                        ListViewItem firstItem = null;
+                        do
+                        {
+                            firstItem = (ListViewItem)SongHistoryListView.ContainerFromIndex(0);
+                            await Task.Delay(50);
+                        } while (firstItem == null);
+
+                        firstItem.Focus(FocusState.Keyboard);
+
+                    }
+                }));
+            }
         }
 
         private ListViewItem focusedItem = null;
