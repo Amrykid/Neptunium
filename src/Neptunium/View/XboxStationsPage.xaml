@@ -31,9 +31,10 @@
                             <RowDefinition Height="25" />
                         </Grid.RowDefinitions>
 
-                        <uwp:ImageEx Height="125" Width="125" Grid.Row="0" Stretch="Fill" VerticalAlignment="Top" IsCacheEnabled="True">
+                        <uwp:ImageEx Height="125" Width="125" Grid.Row="0" Stretch="Fill" IsTabStop="False" 
+                                     VerticalAlignment="Top" IsCacheEnabled="True">
                             <uwp:ImageEx.Source>
-                                <BitmapImage UriSource="{Binding StationLogoUrl, Mode=OneTime}" />
+                                <BitmapImage UriSource="{Binding StationLogoUrl, Mode=OneTime}" AutoPlay="False" />
                             </uwp:ImageEx.Source>
                         </uwp:ImageEx>
 
