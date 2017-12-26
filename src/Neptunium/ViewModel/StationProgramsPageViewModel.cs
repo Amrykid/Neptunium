@@ -131,6 +131,14 @@ namespace Neptunium.ViewModel
                     }
                 }
             }
+
+            RaisePropertyChanged(nameof(SundayItems));
+            RaisePropertyChanged(nameof(MondayItems));
+            RaisePropertyChanged(nameof(TuesdayItems));
+            RaisePropertyChanged(nameof(WednesdayItems));
+            RaisePropertyChanged(nameof(ThursdayItems));
+            RaisePropertyChanged(nameof(FridayItems));
+            RaisePropertyChanged(nameof(SaturdayItems));
         }
     }
 }

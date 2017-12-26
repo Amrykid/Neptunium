@@ -1,4 +1,5 @@
-﻿using Neptunium.ViewModel;
+﻿using Crystal3;
+using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +28,15 @@ namespace Neptunium.View
         public StationProgramsPage()
         {
             this.InitializeComponent();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                //force focus on Xbox.
+                RootPivot.Focus(FocusState.Keyboard);
+            }
         }
     }
 }

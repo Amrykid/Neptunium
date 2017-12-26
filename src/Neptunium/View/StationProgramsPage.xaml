@@ -10,6 +10,7 @@
     xmlns:nui="using:Neptunium.UI"
     xmlns:cconv="using:Crystal3.UI.Converters"
     xmlns:wst="using:WindowsStateTriggers"
+    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -35,7 +36,7 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="Auto" MaxWidth="250" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="200" />
                         </Grid.ColumnDefinitions>
@@ -102,7 +103,7 @@
                     </Setter>
                 </Style>
             </Pivot.Resources>
-            <PivotItem Header="Sunday">
+            <PivotItem Header="Sunday" x:Name="SundayPivotItem">
                 <Grid>
                     <ListBox ItemsSource="{Binding SundayItems, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource ScheduleListStyle}" />
