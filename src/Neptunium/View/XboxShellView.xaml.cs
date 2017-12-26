@@ -278,6 +278,8 @@ namespace Neptunium.View
                 transportGridAnimating = false;
                 transportGridVisible = true;
 
+                TransportControlGrid.IsHitTestVisible = true;
+
                 PlayButton.Focus(FocusState.Keyboard);
                 ElementSoundPlayer.Play(ElementSoundKind.Show);
             });
@@ -298,6 +300,8 @@ namespace Neptunium.View
                 storyboard.Completed -= handler;
                 transportGridAnimating = false;
                 transportGridVisible = false;
+
+                TransportControlGrid.IsHitTestVisible = false;
 
                 //TransportControlGrid.Visibility = Visibility.Collapsed;
                 InlineFrame.IsEnabled = true;
