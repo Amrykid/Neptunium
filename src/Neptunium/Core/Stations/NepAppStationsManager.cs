@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI.Xaml;
 using Windows.Web.Http;
 using static Neptunium.NepApp;
 
@@ -37,7 +38,7 @@ namespace Neptunium.Core.Stations
 
         internal async Task<StationItem[]> GetStationsAsync()
         {
-            
+
             var file = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(StationsFilePath);
             var reader = await file.OpenReadAsync();
 
@@ -85,6 +86,8 @@ namespace Neptunium.Core.Stations
                         description: stationElement.Element("Description").Value,
                         stationLogo: stationLogoUri,
                         streams: streams);
+
+                    station.StationLogoUrlOnline = new Uri(stationElement.Element("Logo").Value);
 
                     if (stationElement.Element("Programs") != null)
                     {
@@ -194,7 +197,6 @@ namespace Neptunium.Core.Stations
                 else
                 {
                     //cache the station logo for offline use.
-
                     fileObject = await imageCacheFolder.CreateFileAsync(originalFileName);
                     Stream fileStream = await fileObject.OpenStreamForWriteAsync(); //auto disposed by the using statement on the next line
                     using (IOutputStream outputFileStream = fileStream.AsOutputStream())
@@ -216,6 +218,49 @@ namespace Neptunium.Core.Stations
             //return our local copy.
 
             return new Uri(fileObject.Path);
+        }
+
+
+
+        public async Task<Uri> GetCachedStationLogoRelativeUriAsync(StationItem station)
+        {
+            if (station == null) throw new ArgumentNullException(nameof(station));
+
+            var tileCacheFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("StationLogosForTiles", CreationCollisionOption.OpenIfExists);
+
+            Uri result = null;
+
+            var originalFileName = station.StationLogoUrlOnline.Segments.Last().Trim();
+
+            StorageFile fileObject = await tileCacheFolder.TryGetItemAsync(originalFileName) as StorageFile;
+
+            if (fileObject == null)
+            {
+                //cache the station logo for offline use.
+                fileObject = await tileCacheFolder.CreateFileAsync(originalFileName);
+                Stream fileStream = await fileObject.OpenStreamForWriteAsync(); //auto disposed by the using statement on the next line
+                using (IOutputStream outputFileStream = fileStream.AsOutputStream())
+                {
+                    using (HttpClient http = new HttpClient())
+                    {
+                        var httpResponse = await http.GetAsync(uri);
+                        await httpResponse.Content.WriteToStreamAsync(outputFileStream);
+                        await outputFileStream.FlushAsync();
+                        httpResponse.Dispose();
+                    }
+                }
+            }
+
+            result = new Uri(fileObject.Path);
+
+            if (result != null)
+            {
+                string fileName = result.Segments.Last();
+                var cached = new Uri("ms-appx:///StationLogosForTiles/" + fileName);
+                return cached;
+            }
+
+            return null;
         }
 
         internal async Task<StationItem> GetStationByNameAsync(string stationPlayedOn)

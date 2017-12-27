@@ -3,6 +3,8 @@ using Windows.UI.Notifications;
 using Neptunium.Core.Media.Metadata;
 using System;
 using Neptunium.Core.Stations;
+using Windows.UI.StartScreen;
+using System.Threading.Tasks;
 
 namespace Neptunium.Core.UI
 {
@@ -149,6 +151,38 @@ namespace Neptunium.Core.UI
             notification.Tag = "error";
             notification.NotificationMirroring = NotificationMirroring.Disabled;
             toastNotifier.Show(notification);
+        }
+
+        public bool CheckIfStationTilePinned(StationItem stationItem)
+        {
+            return SecondaryTile.Exists(GetStationItemTileId(stationItem));
+        }
+
+        public async Task<bool> PinStationAsTileAsync(StationItem stationItem)
+        {
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return false; //not supported
+
+            if (!CheckIfStationTilePinned(stationItem))
+            {
+                SecondaryTile secondaryTile = new SecondaryTile(GetStationItemTileId(stationItem));
+                secondaryTile.DisplayName = stationItem.Name + " - Neptunium";
+                secondaryTile.Arguments = "showtile:" + GetStationItemTileId(stationItem);
+                secondaryTile.VisualElements.Square150x150Logo = await NepApp.Stations.GetCachedStationLogoRelativeUriAsync(stationItem);
+                secondaryTile.VisualElements.Wide310x150Logo = await NepApp.Stations.GetCachedStationLogoRelativeUriAsync(stationItem);
+                secondaryTile.VisualElements.ShowNameOnSquare150x150Logo = true;
+                secondaryTile.VisualElements.ShowNameOnWide310x150Logo = true;
+
+                return await secondaryTile.RequestCreateAsync();
+            }
+
+            return false;
+        }
+
+        internal string GetStationItemTileId(StationItem stationItem)
+        {
+            if (stationItem == null) throw new ArgumentNullException(nameof(stationItem));
+
+            return stationItem.Name.GetHashCode().ToString();
         }
 
         public void UpdateLiveTile(ExtendedSongMetadata nowPlaying)
