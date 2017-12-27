@@ -243,7 +243,7 @@ namespace Neptunium.Core.Stations
                 {
                     using (HttpClient http = new HttpClient())
                     {
-                        var httpResponse = await http.GetAsync(uri);
+                        var httpResponse = await http.GetAsync(station.StationLogoUrlOnline);
                         await httpResponse.Content.WriteToStreamAsync(outputFileStream);
                         await outputFileStream.FlushAsync();
                         httpResponse.Dispose();
