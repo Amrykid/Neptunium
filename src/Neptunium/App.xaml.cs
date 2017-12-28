@@ -250,8 +250,11 @@ namespace Neptunium
 
         public override async Task OnActivationAsync(IActivatedEventArgs args)
         {
-            WindowManager.GetNavigationManagerForCurrentWindow()
-                 .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
+            if (args.PreviousExecutionState != ApplicationExecutionState.Running)
+            {
+                WindowManager.GetNavigationManagerForCurrentWindow()
+                     .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
+            }
 
             if (args.Kind == ActivationKind.Protocol)
             {
@@ -274,7 +277,7 @@ namespace Neptunium
             {
                 WindowManager.GetNavigationManagerForCurrentWindow()
                     .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
-                    .SafeNavigateTo<NowPlayingPageViewModel>();
+                    .NavigateTo<NowPlayingPageViewModel>();
             }
         }
 
