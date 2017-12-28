@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Storage.Streams;
+using Windows.UI.Xaml;
 using static Neptunium.NepApp;
 
 namespace Neptunium.Media.Songs
@@ -21,8 +22,11 @@ namespace Neptunium.Media.Songs
         private SemaphoreSlim metadataLock = null;
         private Regex featuredArtistRegex = new Regex(@"(?:(?:f|F)(?:ea)*t(?:uring)*\.?\s*(.+)(?:\n|$))");
         private Dictionary<NepAppSongMetadataBackground, Uri> artworkUriDictionary = null;
+        private DispatcherTimer blockStationProgramTimer = new DispatcherTimer();
 
         public SongMetadata CurrentSong { get; private set; }
+        private StationItem CurrentStation { get; set; }
+        private StationProgram CurrentProgram { get; set; }
         public ExtendedSongMetadata CurrentSongWithAdditionalMetadata { get; private set; }
 
         public SongHistorian History { get; private set; }
@@ -46,6 +50,87 @@ namespace Neptunium.Media.Songs
 
             History = new SongHistorian();
             History.InitializeAsync();
+
+            NepApp.MediaPlayer.IsPlayingChanged += MediaPlayer_IsPlayingChanged;
+
+            blockStationProgramTimer.Interval = TimeSpan.FromMinutes(15);
+            blockStationProgramTimer.Tick += BlockStationProgramTimer_Tick;
+        }
+
+        private void BlockStationProgramTimer_Tick(object sender, object e)
+        {
+            CheckForStationBlockRightNow();
+        }
+
+        private void MediaPlayer_IsPlayingChanged(object sender, NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
+        {
+            if (e.IsPlaying)
+            {
+                ActivateProgramBlockTimer();
+            }
+            else
+            {
+                DeactivateProgramBlockTimer();
+            }
+        }
+
+        private void DeactivateProgramBlockTimer()
+        {
+            if (blockStationProgramTimer.IsEnabled)
+                blockStationProgramTimer.Stop();
+
+            if (CurrentProgram != null)
+            {
+                if (CurrentProgram.Style == StationProgramStyle.Block)
+                {
+                    CurrentProgram = null;
+                }
+            }
+        }
+
+        private void ActivateProgramBlockTimer()
+        {
+            if (CurrentStation == null) return;
+            if (CurrentStation.Programs == null) return;
+            if (CurrentStation.Programs.Length == 0) return;
+
+            CheckForStationBlockRightNow();
+
+            if (blockStationProgramTimer.IsEnabled) return;
+
+            blockStationProgramTimer.Start();
+        }
+
+        private void CheckForStationBlockRightNow()
+        {
+            if (CurrentStation.Programs.Any(FilterStationBlockPrograms))
+            {
+                var currentBlock = CurrentStation.Programs.First(FilterStationBlockPrograms);
+
+                if (CurrentProgram == currentBlock) return; //prevent duplicate events.
+
+                CurrentProgram = currentBlock;
+
+                StationRadioProgramStarted?.Invoke(this, new NepAppStationProgramStartedEventArgs()
+                {
+                    RadioProgram = currentBlock,
+                    Metadata = CurrentSong,
+                    Station = CurrentStation.Name
+                });
+            }
+        }
+
+        private bool FilterStationBlockPrograms(StationProgram program)
+        {
+            if (program.Style != StationProgramStyle.Block)
+            {
+                return false;
+            }
+
+            return program.TimeListings.Any(listing =>
+            {
+                return listing.Time < DateTime.UtcNow && DateTime.UtcNow < listing.EndTime;
+            });
         }
 
         public Uri GetSongArtworkUri(NepAppSongMetadataBackground nepAppSongMetadataBackground)
@@ -81,16 +166,28 @@ namespace Neptunium.Media.Songs
 
             try
             {
+                CurrentStation = currentStream.ParentStation;
+
                 StationProgram currentProgram = null;
-                if (IsStationProgramBeginning(songMetadata, currentStream, out currentProgram))
+                if (IsHostedStationProgramBeginning(songMetadata, currentStream, out currentProgram))
                 {
-                    //we're tuning into a special radio program. this may be a DJ playing remixes, for exmaple.
+                    //we're tuning into a hosted radio program. this may be a DJ playing remixes, for example.
 
                     ActivateStationProgrammingMode(songMetadata, currentStream, currentProgram);
+
+                    //block programs are handled differently.
                 }
                 else
                 {
                     //we're tuned into regular programming/music
+
+                    if (CurrentProgram != null)
+                    {
+                        if (CurrentProgram.Style == StationProgramStyle.Hosted)
+                        {
+                            CurrentProgram = null; //hosted program ended.
+                        }
+                    }
 
                     //filter out station messages
                     if (currentStream.ParentStation != null)
@@ -173,6 +270,7 @@ namespace Neptunium.Media.Songs
             });
 
 
+            CurrentProgram = currentProgram;
             SetCurrentMetadataToUnknown(currentProgram.Name);
             CurrentSongWithAdditionalMetadata = null;
         }
@@ -286,7 +384,7 @@ namespace Neptunium.Media.Songs
         }
 
 
-        private bool IsStationProgramBeginning(SongMetadata songMetadata, StationStream currentStream, out StationProgram stationProgram)
+        private bool IsHostedStationProgramBeginning(SongMetadata songMetadata, StationStream currentStream, out StationProgram stationProgram)
         {
             //this function checkes for "hosted" programs which rely on metadata matching to activate.
             Func<StationProgram, bool> getStationProgram = x =>
