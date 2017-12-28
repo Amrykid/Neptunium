@@ -132,7 +132,7 @@ namespace Neptunium.Core.Stations
                                         try
                                         {
                                             StationProgramTimeListing listing = new StationProgramTimeListing();
-                                            listing.Day = listingElement.Attribute("Day").Value;
+                                            listing.Day = (DayOfWeek)Enum.Parse(typeof(DayOfWeek), listingElement.Attribute("Day").Value);
                                             listing.Time = DateTime.Parse(listingElement.Attribute("Time").Value);
 
                                             if (listingElement.Attribute("EndTime") != null)

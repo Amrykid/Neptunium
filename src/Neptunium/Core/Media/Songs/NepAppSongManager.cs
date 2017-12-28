@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Storage.Streams;
+using Windows.System.Threading;
 using Windows.UI.Xaml;
 using static Neptunium.NepApp;
 
@@ -20,9 +21,10 @@ namespace Neptunium.Media.Songs
     public class NepAppSongManager : INepAppFunctionManager, INotifyPropertyChanged
     {
         private SemaphoreSlim metadataLock = null;
+        private SemaphoreSlim blockProgrammingLock = null;
         private Regex featuredArtistRegex = new Regex(@"(?:(?:f|F)(?:ea)*t(?:uring)*\.?\s*(.+)(?:\n|$))");
         private Dictionary<NepAppSongMetadataBackground, Uri> artworkUriDictionary = null;
-        private DispatcherTimer blockStationProgramTimer = new DispatcherTimer();
+        private ThreadPoolTimer blockStationProgramTimer = null;
 
         public SongMetadata CurrentSong { get; private set; }
         public StationItem CurrentStation { get; set; }
@@ -44,48 +46,23 @@ namespace Neptunium.Media.Songs
         internal NepAppSongManager()
         {
             metadataLock = new SemaphoreSlim(1);
+            blockProgrammingLock = new SemaphoreSlim(1);
             artworkUriDictionary = new Dictionary<NepAppSongMetadataBackground, Uri>();
             artworkUriDictionary.Add(NepAppSongMetadataBackground.Album, null);
             artworkUriDictionary.Add(NepAppSongMetadataBackground.Artist, null);
 
             History = new SongHistorian();
             History.InitializeAsync();
-
-            NepApp.InitializationComplete += NepApp_InitializationComplete;
-
-            blockStationProgramTimer.Interval = TimeSpan.FromMinutes(15);
-            blockStationProgramTimer.Tick += BlockStationProgramTimer_Tick;
         }
-
-        private void NepApp_InitializationComplete(object sender, EventArgs e)
-        {
-            NepApp.MediaPlayer.IsPlayingChanged += MediaPlayer_IsPlayingChanged;
-        }
-
-        private void BlockStationProgramTimer_Tick(object sender, object e)
-        {
-            CheckForStationBlockRightNow();
-        }
-
-        private void MediaPlayer_IsPlayingChanged(object sender, NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
-        {
-            App.Dispatcher.RunAsync(() =>
-            {
-                if (e.IsPlaying)
-                {
-                    ActivateProgramBlockTimer();
-                }
-                else
-                {
-                    DeactivateProgramBlockTimer();
-                }
-            });
-        }
+        
 
         private void DeactivateProgramBlockTimer()
         {
-            if (blockStationProgramTimer.IsEnabled)
-                blockStationProgramTimer.Stop();
+            if (blockStationProgramTimer != null)
+            {
+                blockStationProgramTimer.Cancel();
+                blockStationProgramTimer = null;
+            }
 
             if (CurrentProgram != null)
             {
@@ -104,13 +81,17 @@ namespace Neptunium.Media.Songs
 
             CheckForStationBlockRightNow();
 
-            if (blockStationProgramTimer.IsEnabled) return;
+            if (blockStationProgramTimer != null) return;
 
-            blockStationProgramTimer.Start();
+            blockStationProgramTimer = ThreadPoolTimer.CreatePeriodicTimer(timer =>
+            {
+                CheckForStationBlockRightNow();
+            }, TimeSpan.FromMinutes(5));
         }
 
-        private void CheckForStationBlockRightNow()
+        private async void CheckForStationBlockRightNow()
         {
+            await blockProgrammingLock.WaitAsync();
             if (CurrentStation.Programs.Any(FilterStationBlockPrograms))
             {
                 var currentBlock = CurrentStation.Programs.First(FilterStationBlockPrograms);
@@ -126,6 +107,7 @@ namespace Neptunium.Media.Songs
                     Station = CurrentStation.Name
                 });
             }
+            blockProgrammingLock.Release();
         }
 
         private bool FilterStationBlockPrograms(StationProgram program)
@@ -137,7 +119,7 @@ namespace Neptunium.Media.Songs
 
             return program.TimeListings.Any(listing =>
             {
-                return listing.Time < DateTime.UtcNow && DateTime.UtcNow < listing.EndTime;
+                return listing.Time.TimeOfDay < DateTime.Now.TimeOfDay && DateTime.Now.TimeOfDay < listing.EndTime.TimeOfDay && listing.Day == DateTime.Now.DayOfWeek;
             });
         }
 
@@ -268,6 +250,13 @@ namespace Neptunium.Media.Songs
             }
         }
 
+        internal void SetCurrentStation(StationItem parentStation)
+        {
+            CurrentStation = parentStation;
+
+            ActivateProgramBlockTimer();
+        }
+
         private void ActivateStationProgrammingMode(SongMetadata songMetadata, StationStream currentStream, StationProgram currentProgram)
         {
             StationRadioProgramStarted?.Invoke(this, new NepAppStationProgramStartedEventArgs()
@@ -311,6 +300,8 @@ namespace Neptunium.Media.Songs
 
         internal void ResetMetadata()
         {
+            DeactivateProgramBlockTimer();
+
             CurrentSong = null;
             CurrentSongWithAdditionalMetadata = null;
             CurrentStation = null;

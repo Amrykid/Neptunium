@@ -188,6 +188,8 @@ namespace Neptunium.View
         private VisualStateChangedEventHandler noChromeHandler = null;
         private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
         {
+            WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
+
             if (inlineNavigationService.NavigationFrame.Content?.GetType().GetTypeInfo().GetCustomAttribute<NepAppUINoChromePageAttribute>() != null)
             {
                 //no chrome mode

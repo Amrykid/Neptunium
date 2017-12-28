@@ -278,7 +278,7 @@ namespace Neptunium.Core.UI
             tiler.Update(tile);
         }
 
-        internal void ShowStationProgrammingToastNotification(StationProgram program, SongMetadata metadata)
+        internal void ShowStationHostedProgrammingToastNotification(StationProgram program, SongMetadata metadata)
         {
             ToastContent content = new ToastContent()
             {
@@ -308,6 +308,42 @@ namespace Neptunium.Core.UI
                             new AdaptiveText()
                             {
                                 Text = metadata.StationPlayedOn,
+                                HintStyle = AdaptiveTextStyle.Caption
+                            },
+                        },
+                    }
+                }
+            };
+
+            var notification = new ToastNotification(content.GetXml());
+            notification.Tag = SongNotificationTag;
+            notification.NotificationMirroring = NotificationMirroring.Disabled;
+            toastNotifier.Show(notification);
+        }
+        internal void ShowStationBlockProgrammingToastNotification(StationProgram program, SongMetadata metadata)
+        {
+            ToastContent content = new ToastContent()
+            {
+                Launch = "now-playing",
+                Audio = new ToastAudio()
+                {
+                    Silent = true,
+                },
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = "Tuning into " + program.Name,
+                                HintStyle = AdaptiveTextStyle.Title
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = program.Station.Name,
                                 HintStyle = AdaptiveTextStyle.Caption
                             },
                         },

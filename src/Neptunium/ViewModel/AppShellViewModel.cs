@@ -114,15 +114,30 @@ namespace Neptunium.ViewModel
             {
                 if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
                 {
-                    NepApp.UI.Notifier.ShowStationProgrammingToastNotification(e.RadioProgram, e.Metadata);
+                    if (e.RadioProgram.Style == Core.Stations.StationProgramStyle.Block)
+                    {
+                        NepApp.UI.Notifier.ShowStationBlockProgrammingToastNotification(e.RadioProgram, e.Metadata);
+                    }
+                    else
+                    {
+                        NepApp.UI.Notifier.ShowStationHostedProgrammingToastNotification(e.RadioProgram, e.Metadata);
+                    }
                 }
                 else
                 {
-                    await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tuning into " + e.RadioProgram.Name + " by " + e.RadioProgram.Host);
+                    if (e.RadioProgram.Style == Core.Stations.StationProgramStyle.Block)
+                    {
+                        await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tuning into " + e.RadioProgram.Name + " on " + e.Station);
+                    }
+                    else
+                    {
+                        await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tuning into " + e.RadioProgram.Name + " by " + e.RadioProgram.Host);
+                    }
                 }
             }
 
-            NepApp.UI.Notifier.UpdateLiveTile(new ExtendedSongMetadata(e.Metadata));
+            if (e.Metadata != null)
+                NepApp.UI.Notifier.UpdateLiveTile(new ExtendedSongMetadata(e.Metadata));
         }
 
         private async void SongManager_SongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
