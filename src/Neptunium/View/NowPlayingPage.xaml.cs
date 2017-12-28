@@ -86,6 +86,12 @@ namespace Neptunium.View
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             UpdatePlaybackStatus(NepApp.MediaPlayer.IsPlaying);
+
+            if (Window.Current.Bounds.Width < 720)
+            {
+                //ensure the glass is on when we navigate to this page with a small size.
+                GlassPanel.IsGlassOn = true;
+            }
         }
 
         private async void compactViewButton_Click(object sender, RoutedEventArgs e)
