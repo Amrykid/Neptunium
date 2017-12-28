@@ -159,6 +159,12 @@ namespace Neptunium.Controls
             TurnOnGlass();
         }
 
+        public void SetBlurColor(Color newColor)
+        {
+            lastBlurColor = blurColor;
+            blurColor = newColor;
+        }
+
         public void TurnOnGlass()
         {
             if (IsGlassOn) return;
