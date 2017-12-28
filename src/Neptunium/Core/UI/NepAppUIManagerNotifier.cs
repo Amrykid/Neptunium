@@ -5,6 +5,7 @@ using System;
 using Neptunium.Core.Stations;
 using Windows.UI.StartScreen;
 using System.Threading.Tasks;
+using Windows.UI;
 
 namespace Neptunium.Core.UI
 {
@@ -164,11 +165,13 @@ namespace Neptunium.Core.UI
 
             if (!CheckIfStationTilePinned(stationItem))
             {
+                //https://github.com/Amrykid/Neptunium/blob/divergent-master-v0.5/src/Neptunium/ViewModel/StationInfoViewModel.cs#L57
                 SecondaryTile secondaryTile = new SecondaryTile(GetStationItemTileId(stationItem));
                 secondaryTile.DisplayName = stationItem.Name + " - Neptunium";
-                secondaryTile.Arguments = "showtile:" + GetStationItemTileId(stationItem);
-                secondaryTile.VisualElements.Square150x150Logo = await NepApp.Stations.GetCachedStationLogoRelativeUriAsync(stationItem);
-                secondaryTile.VisualElements.Wide310x150Logo = await NepApp.Stations.GetCachedStationLogoRelativeUriAsync(stationItem);
+                secondaryTile.Arguments = "play-station?station=" + stationItem.Name.Replace(" ", "%20").Trim();
+                secondaryTile.VisualElements.BackgroundColor = Colors.Purple; //await StationSupplementaryDataManager.GetStationLogoDominantColorAsync(stationItem);
+                secondaryTile.VisualElements.Square150x150Logo = new Uri("ms-appx:///Assets/Square150x150Logo.png", UriKind.Absolute);
+                secondaryTile.VisualElements.Wide310x150Logo = new Uri("ms-appx:///Assets/Wide310x150Logo.png", UriKind.Absolute);
                 secondaryTile.VisualElements.ShowNameOnSquare150x150Logo = true;
                 secondaryTile.VisualElements.ShowNameOnWide310x150Logo = true;
 

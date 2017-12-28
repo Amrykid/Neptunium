@@ -303,7 +303,7 @@ namespace Neptunium
                         catch (Exception ex)
                         {
                             //todo show error message.
-                            await NepApp.UI.ShowInfoDialogAsync("Unable to handoff station.", "The following error occurred: " + ex.ToString());
+                            await NepApp.UI.ShowInfoDialogAsync("Unable to play station.", "The following error occurred: " + ex.ToString());
                         }
                         break;
                     }
