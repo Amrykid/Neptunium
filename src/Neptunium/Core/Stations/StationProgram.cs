@@ -16,7 +16,7 @@ namespace Neptunium.Core.Stations
     public class StationProgramTimeListing
     {
         public DateTime Time { get; internal set; }
-        public string Day { get; internal set; }
+        public DayOfWeek Day { get; internal set; }
         public DateTime EndTime { get; internal set; }
     }
 

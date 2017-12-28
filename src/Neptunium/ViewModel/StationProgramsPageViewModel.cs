@@ -100,11 +100,11 @@ namespace Neptunium.ViewModel
                     {
                         ScheduleItem item = new ScheduleItem();
                         item.Station = program.Station;
-                        item.Day = listing.Day;
+                        item.Day = Enum.GetName(typeof(DayOfWeek), listing.Day);
                         item.Time = listing.Time;
                         item.Program = program;
 
-                        switch(item.Day.ToLower())
+                        switch (item.Day.ToLower())
                         {
                             case "sunday":
                                 SundayItems.Add(item);
