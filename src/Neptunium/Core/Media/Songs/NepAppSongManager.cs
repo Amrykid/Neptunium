@@ -25,7 +25,7 @@ namespace Neptunium.Media.Songs
         private DispatcherTimer blockStationProgramTimer = new DispatcherTimer();
 
         public SongMetadata CurrentSong { get; private set; }
-        private StationItem CurrentStation { get; set; }
+        public StationItem CurrentStation { get; set; }
         private StationProgram CurrentProgram { get; set; }
         public ExtendedSongMetadata CurrentSongWithAdditionalMetadata { get; private set; }
 
@@ -51,10 +51,15 @@ namespace Neptunium.Media.Songs
             History = new SongHistorian();
             History.InitializeAsync();
 
-            NepApp.MediaPlayer.IsPlayingChanged += MediaPlayer_IsPlayingChanged;
+            NepApp.InitializationComplete += NepApp_InitializationComplete;
 
             blockStationProgramTimer.Interval = TimeSpan.FromMinutes(15);
             blockStationProgramTimer.Tick += BlockStationProgramTimer_Tick;
+        }
+
+        private void NepApp_InitializationComplete(object sender, EventArgs e)
+        {
+            NepApp.MediaPlayer.IsPlayingChanged += MediaPlayer_IsPlayingChanged;
         }
 
         private void BlockStationProgramTimer_Tick(object sender, object e)
@@ -64,14 +69,17 @@ namespace Neptunium.Media.Songs
 
         private void MediaPlayer_IsPlayingChanged(object sender, NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
         {
-            if (e.IsPlaying)
+            App.Dispatcher.RunAsync(() =>
             {
-                ActivateProgramBlockTimer();
-            }
-            else
-            {
-                DeactivateProgramBlockTimer();
-            }
+                if (e.IsPlaying)
+                {
+                    ActivateProgramBlockTimer();
+                }
+                else
+                {
+                    DeactivateProgramBlockTimer();
+                }
+            });
         }
 
         private void DeactivateProgramBlockTimer()
@@ -251,7 +259,7 @@ namespace Neptunium.Media.Songs
             {
                 Dictionary<string, string> properties = new Dictionary<string, string>();
                 properties.Add("Song-Metadata", songMetadata?.ToString());
-                properties.Add("Current-Station", currentStream?.ParentStation?.ToString());
+                properties.Add("Current-Station", currentStream?.ParentStation?.Name);
                 Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, properties);
             }
             finally
@@ -305,6 +313,7 @@ namespace Neptunium.Media.Songs
         {
             CurrentSong = null;
             CurrentSongWithAdditionalMetadata = null;
+            CurrentStation = null;
 
             RaisePropertyChanged(nameof(CurrentSong));
             PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(null));
@@ -389,10 +398,11 @@ namespace Neptunium.Media.Songs
             //this function checkes for "hosted" programs which rely on metadata matching to activate.
             Func<StationProgram, bool> getStationProgram = x =>
             {
+                if (x.Style != StationProgramStyle.Hosted) return false;
                 if (x.Host.ToLower().Equals(songMetadata.Artist.Trim().ToLower())) return true;
                 if (!string.IsNullOrWhiteSpace(x.HostRegexExpression))
                 {
-                    if (Regex.IsMatch(songMetadata.Artist, x.HostRegexExpression) && x.Style == StationProgramStyle.Hosted)
+                    if (Regex.IsMatch(songMetadata.Artist, x.HostRegexExpression))
                         return true;
                 }
 

@@ -34,6 +34,8 @@ namespace Neptunium
 
         public static StorageFolder ImageCacheFolder { get; private set; }
 
+        public static event EventHandler InitializationComplete;
+
         public static async Task InitializeAsync()
         {
             CookieJar.ApplicationName = "Neptunium";
@@ -54,6 +56,8 @@ namespace Neptunium
             UI = new NepAppUIManager();
 
             await Handoff.InitializeAsync();
+
+            InitializationComplete?.Invoke(null, EventArgs.Empty);
 
             //return Task.CompletedTask;
         }

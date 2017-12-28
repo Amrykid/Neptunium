@@ -202,6 +202,8 @@ namespace Neptunium.Media
             CurrentStreamer = streamer;
             CurrentStream = stream;
 
+            NepApp.SongManager.CurrentStation = CurrentStream.ParentStation;
+
             streamer.Play();
 
             SetMediaEngagement(true);

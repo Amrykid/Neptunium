@@ -35,9 +35,9 @@ namespace Neptunium.Core.Stations
             catch (Exception ex)
             {
                 Dictionary<string, string> data = new Dictionary<string, string>();
-                data.Add("Station Name", station.Name);
-                data.Add("Station Logo URL", station.StationLogoUrlOnline?.ToString());
-                data.Add("Station URL", station.Site);
+                data.Add("StationName", station.Name);
+                data.Add("StationLogoURL", station.StationLogoUrlOnline?.ToString());
+                data.Add("StationURL", station.Site);
 
                 Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, data);
             }
@@ -77,9 +77,9 @@ namespace Neptunium.Core.Stations
             catch (Exception ex)
             {
                 Dictionary<string, string> data = new Dictionary<string, string>();
-                data.Add("Station Name", station.Name);
-                data.Add("Station Background URL", station.Background?.ToString());
-                data.Add("Station URL", station.Site);
+                data.Add("StationName", station.Name);
+                data.Add("StationBackgroundURL", station.Background?.ToString());
+                data.Add("StationURL", station.Site);
 
                 Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, data);
             }
@@ -109,7 +109,7 @@ namespace Neptunium.Core.Stations
             catch (Exception ex)
             {
                 Dictionary<string, string> data = new Dictionary<string, string>();
-                data.Add("Background URI", uri.ToString());
+                data.Add("BackgroundURI", uri.ToString());
 
                 Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, data);
             }

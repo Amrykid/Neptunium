@@ -79,15 +79,18 @@ namespace Neptunium.View
 
         private void MediaPlayer_MediaEngagementChanged(object sender, EventArgs e)
         {
-            switch (NepApp.MediaPlayer.IsMediaEngaged)
+            App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                case true:
-                    bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
-                    break;
-                case false:
-                    bottomAppBar.Visibility = Visibility.Collapsed;
-                    break;
-            }
+                switch (NepApp.MediaPlayer.IsMediaEngaged)
+                {
+                    case true:
+                        bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+                        break;
+                    case false:
+                        bottomAppBar.Visibility = Visibility.Collapsed;
+                        break;
+                }
+            });
         }
 
         private void Overlay_DialogShown(object sender, EventArgs e)
