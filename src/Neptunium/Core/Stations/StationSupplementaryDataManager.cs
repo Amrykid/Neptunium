@@ -108,10 +108,10 @@ namespace Neptunium.Core.Stations
             }
             catch (Exception ex)
             {
-                Dictionary<string, string> data = new Dictionary<string, string>();
-                data.Add("BackgroundURI", uri.ToString());
+                //Dictionary<string, string> data = new Dictionary<string, string>();
+                //data.Add("BackgroundURI", uri.ToString());
 
-                Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, data);
+               // Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, data);
             }
             finally
             {
