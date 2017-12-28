@@ -122,6 +122,7 @@
             <ListView.Transitions>
                 <TransitionCollection>
                     <AddDeleteThemeTransition />
+                    <EntranceThemeTransition />
                 </TransitionCollection>
             </ListView.Transitions>
         </ListView>

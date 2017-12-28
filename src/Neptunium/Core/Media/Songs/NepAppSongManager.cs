@@ -86,16 +86,7 @@ namespace Neptunium.Media.Songs
                 {
                     //we're tuning into a special radio program. this may be a DJ playing remixes, for exmaple.
 
-                    StationRadioProgramStarted?.Invoke(this, new NepAppStationProgramStartedEventArgs()
-                    {
-                        RadioProgram = currentProgram,
-                        Metadata = songMetadata,
-                        Station = currentStream?.ParentStation?.Name
-                    });
-
-
-                    SetCurrentMetadataToUnknown(currentProgram.Name);
-                    CurrentSongWithAdditionalMetadata = null;
+                    ActivateStationProgrammingMode(songMetadata, currentStream, currentProgram);
                 }
                 else
                 {
@@ -170,6 +161,20 @@ namespace Neptunium.Media.Songs
             {
                 metadataLock.Release();
             }
+        }
+
+        private void ActivateStationProgrammingMode(SongMetadata songMetadata, StationStream currentStream, StationProgram currentProgram)
+        {
+            StationRadioProgramStarted?.Invoke(this, new NepAppStationProgramStartedEventArgs()
+            {
+                RadioProgram = currentProgram,
+                Metadata = songMetadata,
+                Station = currentStream?.ParentStation?.Name
+            });
+
+
+            SetCurrentMetadataToUnknown(currentProgram.Name);
+            CurrentSongWithAdditionalMetadata = null;
         }
 
         internal void SetCurrentMetadataToUnknown(string program = null)
@@ -283,12 +288,13 @@ namespace Neptunium.Media.Songs
 
         private bool IsStationProgramBeginning(SongMetadata songMetadata, StationStream currentStream, out StationProgram stationProgram)
         {
+            //this function checkes for "hosted" programs which rely on metadata matching to activate.
             Func<StationProgram, bool> getStationProgram = x =>
             {
                 if (x.Host.ToLower().Equals(songMetadata.Artist.Trim().ToLower())) return true;
                 if (!string.IsNullOrWhiteSpace(x.HostRegexExpression))
                 {
-                    if (Regex.IsMatch(songMetadata.Artist, x.HostRegexExpression))
+                    if (Regex.IsMatch(songMetadata.Artist, x.HostRegexExpression) && x.Style == StationProgramStyle.Hosted)
                         return true;
                 }
 

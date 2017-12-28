@@ -93,10 +93,31 @@ namespace Neptunium.Core.Stations
                     {
                         station.Programs = stationElement.Element("Programs").Elements("Program").Select<XElement, StationProgram>(x =>
                         {
-                            var hostExpression = x.Attribute("HostExp")?.Value;
-                            var programName = x.Attribute("Name")?.Value;
 
-                            var program = new StationProgram() { Host = x.Attribute("Host").Value, HostRegexExpression = hostExpression, Name = programName, Station = station };
+                            var program = new StationProgram();
+                            program.Name = x.Attribute("Name")?.Value;
+                            program.Station = station;
+
+                            if (x.Attribute("Style") != null)
+                            {
+                                program.Style = (StationProgramStyle)Enum.Parse(typeof(StationProgramStyle), x.Attribute("Style").Value);
+                            }
+                            else
+                            {
+                                program.Style = StationProgramStyle.Hosted;
+                            }
+
+                            if (program.Style == StationProgramStyle.Hosted)
+                            {
+                                //hosted programs rely on the "artist" string (from song metadata) to match in order to activate.
+
+                                program.Host = x.Attribute("Host").Value;
+                                program.HostRegexExpression = x.Attribute("HostExp")?.Value;
+                            }
+                            else if (program.Style == StationProgramStyle.Block)
+                            {
+                                //block programs are activated based on the time and the current station.
+                            }
 
                             if (x.HasElements)
                             {
@@ -113,6 +134,11 @@ namespace Neptunium.Core.Stations
                                             StationProgramTimeListing listing = new StationProgramTimeListing();
                                             listing.Day = listingElement.Attribute("Day").Value;
                                             listing.Time = DateTime.Parse(listingElement.Attribute("Time").Value);
+
+                                            if (listingElement.Attribute("EndTime") != null)
+                                            {
+                                                listing.EndTime = DateTime.Parse(listingElement.Attribute("Time").Value);
+                                            }
 
                                             listings.Add(listing);
                                         }
