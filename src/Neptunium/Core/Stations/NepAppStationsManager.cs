@@ -137,7 +137,7 @@ namespace Neptunium.Core.Stations
 
                                             if (listingElement.Attribute("EndTime") != null)
                                             {
-                                                listing.EndTime = DateTime.Parse(listingElement.Attribute("Time").Value);
+                                                listing.EndTime = DateTime.Parse(listingElement.Attribute("EndTime").Value);
                                             }
 
                                             listings.Add(listing);
