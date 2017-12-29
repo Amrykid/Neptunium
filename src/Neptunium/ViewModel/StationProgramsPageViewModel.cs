@@ -101,7 +101,7 @@ namespace Neptunium.ViewModel
                         ScheduleItem item = new ScheduleItem();
                         item.Station = program.Station;
                         item.Day = Enum.GetName(typeof(DayOfWeek), listing.Day);
-                        item.Time = listing.Time;
+                        item.TimeLocal = listing.Time;
                         item.Program = program;
 
                         switch (item.Day.ToLower())
@@ -131,6 +131,14 @@ namespace Neptunium.ViewModel
                     }
                 }
             }
+
+            SundayItems = new ObservableCollection<ScheduleItem>(SundayItems.OrderBy(x => x.Time));
+            MondayItems = new ObservableCollection<ScheduleItem>(MondayItems.OrderBy(x => x.Time));
+            TuesdayItems = new ObservableCollection<ScheduleItem>(TuesdayItems.OrderBy(x => x.Time));
+            WednesdayItems = new ObservableCollection<ScheduleItem>(WednesdayItems.OrderBy(x => x.Time));
+            ThursdayItems = new ObservableCollection<ScheduleItem>(ThursdayItems.OrderBy(x => x.Time));
+            FridayItems = new ObservableCollection<ScheduleItem>(FridayItems.OrderBy(x => x.Time));
+            SaturdayItems = new ObservableCollection<ScheduleItem>(SaturdayItems.OrderBy(x => x.Time));
 
             RaisePropertyChanged(nameof(SundayItems));
             RaisePropertyChanged(nameof(MondayItems));

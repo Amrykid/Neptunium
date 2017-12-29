@@ -83,7 +83,7 @@
                                    Grid.Row="0" />
 
                         <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
-                                   Text="{Binding Time, Converter={StaticResource StripDateFromDateTimeConverter}}"
+                                   Text="{Binding TimeLocal, Converter={StaticResource StripDateFromDateTimeConverter}}"
                                    Foreground="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                    Grid.Column="3"
                                    HorizontalAlignment="Right"
