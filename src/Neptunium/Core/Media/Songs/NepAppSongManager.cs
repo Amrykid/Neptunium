@@ -4,6 +4,7 @@ using Neptunium.Core.Stations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -266,7 +267,6 @@ namespace Neptunium.Media.Songs
                 Station = currentStream?.ParentStation?.Name
             });
 
-
             CurrentProgram = currentProgram;
             SetCurrentMetadataToUnknown(currentProgram.Name);
             CurrentSongWithAdditionalMetadata = null;
@@ -386,29 +386,39 @@ namespace Neptunium.Media.Songs
 
         private bool IsHostedStationProgramBeginning(SongMetadata songMetadata, StationStream currentStream, out StationProgram stationProgram)
         {
-            //this function checkes for "hosted" programs which rely on metadata matching to activate.
-            Func<StationProgram, bool> getStationProgram = x =>
+            try
             {
-                if (x.Style != StationProgramStyle.Hosted) return false;
-                if (x.Host.ToLower().Equals(songMetadata.Artist.Trim().ToLower())) return true;
-                if (!string.IsNullOrWhiteSpace(x.HostRegexExpression))
+                //this function checkes for "hosted" programs which rely on metadata matching to activate.
+                Func<StationProgram, bool> getStationProgram = x =>
                 {
-                    if (Regex.IsMatch(songMetadata.Artist, x.HostRegexExpression))
+                    if (x.Style != StationProgramStyle.Hosted) return false;
+                    if (x.Host.ToLower().Equals(songMetadata.Artist.Trim().ToLower())) return true;
+                    if (!string.IsNullOrWhiteSpace(x.HostRegexExpression))
+                    {
+                        if (Regex.IsMatch(songMetadata.Artist, x.HostRegexExpression))
+                            return true;
+                    }
+
+                    return false;
+                };
+
+                if (currentStream.ParentStation?.Programs != null)
+                {
+                    if (currentStream.ParentStation.Programs.Any(getStationProgram))
+                    {
+                        //we're tuning into a special radio program. this may be a DJ playing remixes, for exmaple.
+                        stationProgram = currentStream.ParentStation.Programs?.First(getStationProgram);
+
                         return true;
+                    }
                 }
-
-                return false;
-            };
-
-            if (currentStream.ParentStation?.Programs != null)
+            }
+            catch (Exception ex)
             {
-                if (currentStream.ParentStation.Programs.Any(getStationProgram))
-                {
-                    //we're tuning into a special radio program. this may be a DJ playing remixes, for exmaple.
-                    stationProgram = currentStream.ParentStation.Programs?.First(getStationProgram);
-
-                    return true;
-                }
+#if DEBUG
+                if (Debugger.IsAttached)
+                    Debugger.Break();
+#endif
             }
 
             stationProgram = null;
