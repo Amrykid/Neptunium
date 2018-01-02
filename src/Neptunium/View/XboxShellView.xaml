@@ -15,7 +15,7 @@
             Margin="0,0,0,0"
             DisplayMode="Overlay">
             <SplitView.Pane>
-                <Grid>
+                <Grid Margin="48, 0, 48, 48">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
@@ -75,7 +75,7 @@
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>
-                <Grid>
+                <Grid Margin="48,0,48,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
@@ -132,7 +132,7 @@
                                 </TextBlock.Transitions>
                             </TextBlock>
                         </StackPanel>
-                        
+
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Column="3" FontSize="25" 
                                   HorizontalAlignment="Center" Foreground="White" x:Name="HeaderControlHintIcon">
                             <FontIcon.Transitions>
