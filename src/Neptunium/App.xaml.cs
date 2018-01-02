@@ -210,6 +210,9 @@ namespace Neptunium
             {
                 Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+
+                //https://docs.microsoft.com/en-us/windows/uwp/xbox-apps/disable-scaling
+                bool result = Windows.UI.ViewManagement.ApplicationViewScaling.TrySetDisableLayoutScaling(true);
             }
 
             Window.Current.Activated += Current_Activated;
