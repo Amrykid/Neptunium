@@ -122,16 +122,31 @@
             <ListView.Transitions>
                 <TransitionCollection>
                     <AddDeleteThemeTransition />
-                    <EntranceThemeTransition />
                 </TransitionCollection>
             </ListView.Transitions>
         </ListView>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
+                <VisualState x:Name="XboxVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:DeviceFamilyStateTrigger DeviceFamily="Xbox" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SongHistoryListView.Margin" Value="48 0 48 0" />
+                        <Setter Target="SongHistoryListView.ItemTemplate" Value="{StaticResource TabletOrHigherSongHistoryItemTemplate}" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="TabletOrHigherVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="720" />
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:CompositeStateTrigger Operator="Or">
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
+                            </wst:CompositeStateTrigger>
+
+                            <wst:AdaptiveTrigger MinWindowWidth="720" />
+                        </wst:CompositeStateTrigger>
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>

@@ -85,30 +85,45 @@
                 </StackPanel>
             </PivotItem>
         </Pivot>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="XboxVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:DeviceFamilyStateTrigger DeviceFamily="Xbox" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="RootPivot.Margin" Value="48 0 48 0" />
+                        <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="TabletOrHigherVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:CompositeStateTrigger Operator="Or">
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
+                            </wst:CompositeStateTrigger>
+
+                            <wst:AdaptiveTrigger MinWindowWidth="720" />
+                        </wst:CompositeStateTrigger>
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="PhoneVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="True" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
-
-    <VisualStateManager.VisualStateGroups>
-        <VisualStateGroup>
-            <VisualState x:Name="TabletOrHigherVisualState">
-                <!--this should include Xbox-->
-                <VisualState.StateTriggers>
-                    <wst:AdaptiveTrigger MinWindowWidth="720" />
-                </VisualState.StateTriggers>
-
-                <VisualState.Setters>
-                    <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
-                </VisualState.Setters>
-            </VisualState>
-
-            <VisualState x:Name="PhoneVisualState">
-                <VisualState.StateTriggers>
-                    <wst:AdaptiveTrigger MinWindowWidth="0" />
-                </VisualState.StateTriggers>
-
-                <VisualState.Setters>
-                    <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="True" />
-                </VisualState.Setters>
-            </VisualState>
-        </VisualStateGroup>
-    </VisualStateManager.VisualStateGroups>
 </Page>

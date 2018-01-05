@@ -170,10 +170,26 @@
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
-                <VisualState x:Name="TabletOrHigherVisualState">
-                    <!--this should include Xbox-->
+                <VisualState x:Name="XboxVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="720" />
+                        <wst:DeviceFamilyStateTrigger DeviceFamily="Xbox" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="RootPivot.Margin" Value="48 0 48 0" />
+                        <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="TabletOrHigherVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:CompositeStateTrigger Operator="Or">
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
+                            </wst:CompositeStateTrigger>
+                            
+                            <wst:AdaptiveTrigger MinWindowWidth="720" />
+                        </wst:CompositeStateTrigger>
+                        
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>

@@ -75,13 +75,14 @@
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>
-                <Grid Margin="48,0,48,0">
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" x:Name="HeaderGrid" Height="65" Visibility="Visible" 
+                    <Grid Grid.Row="0" x:Name="HeaderGrid" Height="65" Visibility="Visible"
+                          Padding="48,0,48,0"
                           Background="{ThemeResource SystemControlBackgroundAccentBrush}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50" />
@@ -176,12 +177,12 @@
                     <Grid Grid.Row="1">
                         <Frame x:Name="InlineFrame" Margin="0" />
 
-                        <Grid x:Name="snackBarGrid" Margin="0 0 0 20" VerticalAlignment="Bottom" HorizontalAlignment="Center" />
+                        <Grid x:Name="snackBarGrid" Margin="0 0 48 20" VerticalAlignment="Bottom" HorizontalAlignment="Center" />
 
                         <Grid x:Name="TransportControlGrid" Width="330" 
                               Height="110" VerticalAlignment="Bottom"
                               Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                              HorizontalAlignment="Right" Margin="0 0 20 20"
+                              HorizontalAlignment="Right" Margin="0 0 68 20"
                               Visibility="Visible"
                               IsHitTestVisible="False"
                               Opacity="0.1"

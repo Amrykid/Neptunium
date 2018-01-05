@@ -32,7 +32,8 @@
                        VerticalAlignment="Stretch" />
             </Grid>
 
-            <Grid Grid.Row="1">
+
+            <Grid Grid.Row="1" Padding="48 0 48 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="SmallStationImageColumn" Width="135" MaxWidth="135" />
                     <ColumnDefinition Width="*" />
@@ -65,7 +66,7 @@
                 </Grid>
             </Grid>
 
-            <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0 0 0 30" x:Name="CommandPanel">
+            <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0 0 0 30" Padding="48 0 48 0" x:Name="CommandPanel">
                 <!--todo add a play button, a full screen button and some casting buttons -->
                 <AppBarButton Icon="Play" Label="Play" x:Name="playPauseButton" />
                 <AppBarButton Label="Handoff" x:Name="HandoffButton" Click="HandoffButton_Click">
@@ -76,7 +77,9 @@
             </StackPanel>
         </Grid>
 
-        <Grid x:Name="NoSongInfoPanel" Visibility="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}">
+        <Grid x:Name="NoSongInfoPanel" 
+              Padding="48 0 48 0"
+              Visibility="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}">
             <TextBlock Text="Nothing is playing. Go pick a station to stream!"
                        Style="{ThemeResource CaptionTextBlockStyle}" 
                        VerticalAlignment="Center" HorizontalAlignment="Center" />

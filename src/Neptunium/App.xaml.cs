@@ -212,7 +212,8 @@ namespace Neptunium
                     .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
 
                 //https://docs.microsoft.com/en-us/windows/uwp/xbox-apps/disable-scaling
-                bool result = Windows.UI.ViewManagement.ApplicationViewScaling.TrySetDisableLayoutScaling(true);
+                //todo make this a feature. for now, the xbox UI isn't designed to be at 1080p+
+                //bool result = Windows.UI.ViewManagement.ApplicationViewScaling.TrySetDisableLayoutScaling(true);
             }
 
             Window.Current.Activated += Current_Activated;
