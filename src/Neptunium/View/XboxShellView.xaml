@@ -15,7 +15,7 @@
             Margin="0,0,0,0"
             DisplayMode="Overlay">
             <SplitView.Pane>
-                <Grid Margin="48, 0, 48, 48">
+                <Grid Margin="48, 27, 48, 27">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
@@ -81,8 +81,8 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" x:Name="HeaderGrid" Height="65" Visibility="Visible"
-                          Padding="48,0,48,0"
+                    <Grid Grid.Row="0" x:Name="HeaderGrid" Height="78" Visibility="Visible"
+                          Padding="48,27,48,0"
                           Background="{ThemeResource SystemControlBackgroundAccentBrush}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50" />
@@ -108,6 +108,7 @@
                             <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                    Style="{ThemeResource BaseTextBlockStyle}"
                                    TextAlignment="Right"
+                                   TextWrapping="NoWrap"
                                    Text="{Binding Track, UpdateSourceTrigger=PropertyChanged}"
                                    x:Name="NowPlayingTrackTextBlock">
                                 <TextBlock.Transitions>
