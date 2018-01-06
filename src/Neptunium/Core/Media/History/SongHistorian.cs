@@ -24,7 +24,7 @@ namespace Neptunium.Core.Media.History
         }
         internal async Task InitializeAsync()
         {
-            dataFolder = await CreateAndReturnDataDirectoryAsync();
+            dataFolder = NepApp.CacheManager.RoamingDataFilesFolder;
 
             StorageFile historyFile = null;
             if ((historyFile = await dataFolder.CreateFileAsync("History.json", CreationCollisionOption.OpenIfExists)) != null)
@@ -50,26 +50,15 @@ namespace Neptunium.Core.Media.History
                 }
             }
 
-            foreach (SongHistoryItem item in HistoryOfSongs)
-            {
-                if (item.Metadata.StationLogo != null)
-                {
-                    if (item.Metadata.StationLogo.Scheme.ToLower().StartsWith("http"))
-                        item.Metadata.StationLogo = await NepApp.Stations.CacheStationLogoUriAsync(item.Metadata.StationLogo);
-                }
-            }
-        }
-
-        private async Task<StorageFolder> CreateAndReturnDataDirectoryAsync()
-        {
-            StorageFolder rootFolder = Windows.Storage.ApplicationData.Current.RoamingFolder;
-            try
-            {
-                return await rootFolder.GetFolderAsync("Neptunium");
-            }
-            catch (Exception) { }
-
-            return await rootFolder.CreateFolderAsync("Neptunium");
+            //todo plug into new caching model
+            //foreach (SongHistoryItem item in HistoryOfSongs)
+            //{
+            //    if (item.Metadata.StationLogo != null)
+            //    {
+            //        if (item.Metadata.StationLogo.Scheme.ToLower().StartsWith("http"))
+            //            item.Metadata.StationLogo = await NepApp.Stations.CacheStationLogoUriAsync(item.Metadata.StationLogo);
+            //    }
+            //}
         }
 
         public ObservableCollection<SongHistoryItem> HistoryOfSongs { get; private set; }

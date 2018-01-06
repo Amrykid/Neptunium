@@ -23,6 +23,7 @@ namespace Neptunium
     {
         public interface INepAppFunctionManager { }
 
+        public static NepAppDataCacheManager CacheManager { get; private set; }
         public static NepAppHandoffManager Handoff { get; private set; }
         public static NepAppMediaPlayerManager MediaPlayer { get; private set; }
         public static NepAppSongManager SongManager { get; private set; }
@@ -31,21 +32,20 @@ namespace Neptunium
         public static NepAppStationsManager Stations { get; private set; }
         public static NepAppUIManager UI { get; private set; }
 
-
-        public static StorageFolder ImageCacheFolder { get; private set; }
-
         public static event EventHandler InitializationComplete;
 
         public static async Task InitializeAsync()
         {
             CookieJar.ApplicationName = "Neptunium";
-
-            ImageCacheFolder = await ApplicationData.Current.LocalCacheFolder.CreateFolderAsync("ImageCache", CreationCollisionOption.OpenIfExists);
             MetadataFinder.BuiltInArtistsFile = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(@"Data\BuiltinArtists.xml");
 
             //Hqub.MusicBrainz.API.MyHttpClient.UserAgent = 
             //    "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Minor + " ( amrykid@gmail.com )";
             Hqub.MusicBrainz.API.MyHttpClient.UserAgent = "Neptunium/1.0 ( amrykid@gmail.com )";
+
+            CacheManager = new NepAppDataCacheManager();
+
+            await CacheManager.InitializeAsync();
 
             Settings = new NepAppSettingsManager();
             Stations = new NepAppStationsManager();

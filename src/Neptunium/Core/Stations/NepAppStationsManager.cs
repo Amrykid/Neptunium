@@ -38,8 +38,15 @@ namespace Neptunium.Core.Stations
 
         internal async Task<StationItem[]> GetStationsAsync()
         {
+            var cachedStationsUri = await NepApp.CacheManager.GetOrCacheUriAsync(NepAppDataCacheManager.CacheType.TextualDataFiles,
+                    new Uri("https://raw.githubusercontent.com/Amrykid/Neptunium-Stations/master/Stations.xml"), preferOnline: true);
+            StorageFile file = null;
 
-            var file = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(StationsFilePath);
+            if (cachedStationsUri.Item2 != null)
+                file = cachedStationsUri.Item2;
+            else
+                file = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(StationsFilePath);
+
             var reader = await file.OpenReadAsync();
 
             XDocument xmlDoc = XDocument.Load(reader.AsStream());
@@ -79,7 +86,11 @@ namespace Neptunium.Core.Stations
                         return stream;
                     }).ToArray();
 
-                    var stationLogoUri = await CacheStationLogoUriAsync(new Uri(stationElement.Element("Logo").Value));
+                    var stationLogoData = await NepApp.CacheManager.GetOrCacheUriAsync(NepAppDataCacheManager.CacheType.StationImages, new Uri(stationElement.Element("Logo").Value));
+                    Uri stationLogoUri = stationLogoData.Item1;
+                    if (stationLogoData.Item2 != null)
+                        stationLogoUri = new Uri(stationLogoData.Item2.Path);
+
 
                     var station = new StationItem(
                         name: stationElement.Element("Name").Value,
@@ -202,51 +213,6 @@ namespace Neptunium.Core.Stations
                 reader.Dispose();
             }
         }
-
-        public async Task<Uri> CacheStationLogoUriAsync(Uri uri)
-        {
-            //this method takes the online station uri and redirects it to a local copy (and caches it locally if it hasn't already).
-
-
-            var imageCacheFolder = await NepApp.ImageCacheFolder.CreateFolderAsync("StationLogos", CreationCollisionOption.OpenIfExists);
-
-            var originalFileName = uri.Segments.Last().Trim();
-
-            StorageFile fileObject = await imageCacheFolder.TryGetItemAsync(originalFileName) as StorageFile;
-
-            if (fileObject == null)
-            {
-                if (!NepApp.Network.IsConnected)
-                {
-                    return uri; //return the online uri for now.
-                }
-                else
-                {
-                    //cache the station logo for offline use.
-                    fileObject = await imageCacheFolder.CreateFileAsync(originalFileName);
-                    Stream fileStream = await fileObject.OpenStreamForWriteAsync(); //auto disposed by the using statement on the next line
-                    using (IOutputStream outputFileStream = fileStream.AsOutputStream())
-                    {
-                        using (HttpClient http = new HttpClient())
-                        {
-                            var httpResponse = await http.GetAsync(uri);
-                            await httpResponse.Content.WriteToStreamAsync(outputFileStream);
-                            await outputFileStream.FlushAsync();
-                            httpResponse.Dispose();
-                        }
-                    }
-
-
-                    //falls through below where it returns our cached copy.
-                }
-            }
-
-            //return our local copy.
-
-            return new Uri(fileObject.Path);
-        }
-
-
 
         public async Task<Uri> GetCachedStationLogoRelativeUriAsync(StationItem station)
         {
