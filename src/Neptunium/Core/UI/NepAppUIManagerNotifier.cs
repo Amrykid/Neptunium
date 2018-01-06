@@ -165,6 +165,7 @@ namespace Neptunium.Core.UI
 
             if (!CheckIfStationTilePinned(stationItem))
             {
+                //create the secondary tile
                 //https://github.com/Amrykid/Neptunium/blob/divergent-master-v0.5/src/Neptunium/ViewModel/StationInfoViewModel.cs#L57
                 SecondaryTile secondaryTile = new SecondaryTile(GetStationItemTileId(stationItem));
                 secondaryTile.DisplayName = stationItem.Name + " - Neptunium";
@@ -175,7 +176,100 @@ namespace Neptunium.Core.UI
                 secondaryTile.VisualElements.ShowNameOnSquare150x150Logo = true;
                 secondaryTile.VisualElements.ShowNameOnWide310x150Logo = true;
 
-                return await secondaryTile.RequestCreateAsync();
+                if (await secondaryTile.RequestCreateAsync())
+                {
+                    //if we successfully created and pinned the secondary tile, let's update it as a live tile with the station's image.
+                    var tiler = TileUpdateManager.CreateTileUpdaterForSecondaryTile(secondaryTile.TileId);
+
+                    TileBindingContentAdaptive largeBindingContent = new TileBindingContentAdaptive()
+                    {
+                        PeekImage = new TilePeekImage()
+                        {
+                            Source = stationItem.StationLogoUrlOnline.ToString(),
+                            AlternateText = stationItem.Name,
+                            HintCrop = TilePeekImageCrop.None
+                        },
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = stationItem.Name,
+                                HintStyle = AdaptiveTextStyle.Body
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = stationItem.Description,
+                                HintWrap = true,
+                                HintStyle = AdaptiveTextStyle.CaptionSubtle
+                            }
+                        }
+                    };
+
+                    TileBindingContentAdaptive mediumBindingContent = new TileBindingContentAdaptive()
+                    {
+                        BackgroundImage = new TileBackgroundImage()
+                        {
+                            Source = stationItem.StationLogoUrlOnline.ToString(),
+                        },
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = stationItem.Name,
+                                HintStyle = AdaptiveTextStyle.Body
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = stationItem.Description,
+                                HintWrap = true,
+                                HintStyle = AdaptiveTextStyle.CaptionSubtle
+                            }
+                        }
+                    };
+
+                    TileBindingContentAdaptive smallBindingContent = new TileBindingContentAdaptive()
+                    {
+                        BackgroundImage = new TileBackgroundImage()
+                        {
+                            Source = stationItem.StationLogoUrlOnline.ToString(),
+                        }
+                    };
+
+                    Func<TileBindingContentAdaptive, TileBinding> createBinding = (TileBindingContentAdaptive con) =>
+                    {
+                        return new TileBinding()
+                        {
+                            Branding = TileBranding.NameAndLogo,
+
+                            DisplayName = stationItem.Name + " - Neptunium",
+
+                            Content = con,
+
+                            ContentId = stationItem.Name.GetHashCode().ToString()
+                        };
+                    };
+
+
+
+                    TileContent content = new TileContent()
+                    {
+                        Visual = new TileVisual()
+                        {
+                            TileSmall = createBinding(smallBindingContent),
+                            TileMedium = createBinding(smallBindingContent),
+                            TileWide = createBinding(mediumBindingContent),
+                            TileLarge = createBinding(largeBindingContent)
+                        }
+                    };
+
+                    var tile = new TileNotification(content.GetXml());
+                    tiler.Update(tile);
+
+
+                    return true;
+                }
             }
 
             return false;

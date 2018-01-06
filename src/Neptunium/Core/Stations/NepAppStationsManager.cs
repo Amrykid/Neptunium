@@ -214,47 +214,6 @@ namespace Neptunium.Core.Stations
             }
         }
 
-        public async Task<Uri> GetCachedStationLogoRelativeUriAsync(StationItem station)
-        {
-            if (station == null) throw new ArgumentNullException(nameof(station));
-
-            var tileCacheFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("StationLogosForTiles", CreationCollisionOption.OpenIfExists);
-
-            Uri result = null;
-
-            var originalFileName = station.StationLogoUrlOnline.Segments.Last().Trim();
-
-            StorageFile fileObject = await tileCacheFolder.TryGetItemAsync(originalFileName) as StorageFile;
-
-            if (fileObject == null)
-            {
-                //cache the station logo for offline use.
-                fileObject = await tileCacheFolder.CreateFileAsync(originalFileName);
-                Stream fileStream = await fileObject.OpenStreamForWriteAsync(); //auto disposed by the using statement on the next line
-                using (IOutputStream outputFileStream = fileStream.AsOutputStream())
-                {
-                    using (HttpClient http = new HttpClient())
-                    {
-                        var httpResponse = await http.GetAsync(station.StationLogoUrlOnline);
-                        await httpResponse.Content.WriteToStreamAsync(outputFileStream);
-                        await outputFileStream.FlushAsync();
-                        httpResponse.Dispose();
-                    }
-                }
-            }
-
-            result = new Uri(fileObject.Path);
-
-            if (result != null)
-            {
-                string fileName = result.Segments.Last();
-                var cached = new Uri("ms-appx:///StationLogosForTiles/" + fileName);
-                return cached;
-            }
-
-            return null;
-        }
-
         internal async Task<StationItem> GetStationByNameAsync(string stationPlayedOn)
         {
             //ugly way to do this
