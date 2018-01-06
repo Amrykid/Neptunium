@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Storage;
@@ -16,8 +17,11 @@ namespace Neptunium.Core.Stations
     public class NepAppStationsManager : INepAppFunctionManager
     {
         private const string StationsFilePath = @"Data\Stations\Data\Stations.xml";
+        private SemaphoreSlim stationsLock = null;
         internal NepAppStationsManager()
         {
+            stationsLock = new SemaphoreSlim(1);
+
             if (!ApplicationData.Current.RoamingSettings.Values.ContainsKey(nameof(LastPlayedStationName)))
             {
                 ApplicationData.Current.RoamingSettings.Values.Add(new KeyValuePair<string, object>(nameof(LastPlayedStationName), null));
@@ -34,18 +38,27 @@ namespace Neptunium.Core.Stations
             ApplicationData.Current.RoamingSettings.Values[nameof(LastPlayedStationName)] = value;
         }
 
-        public string LastPlayedStationName { get; private set; }
-
-        internal async Task<StationItem[]> GetStationsAsync()
+        private async Task<StorageFile> GetStationsFileAsync()
         {
             var cachedStationsUri = await NepApp.CacheManager.GetOrCacheUriAsync(NepAppDataCacheManager.CacheType.TextualDataFiles,
-                    new Uri("https://raw.githubusercontent.com/Amrykid/Neptunium-Stations/master/Stations.xml"), preferOnline: true);
+                new Uri("https://raw.githubusercontent.com/Amrykid/Neptunium-Stations/master/Stations.xml"), preferOnline: true);
             StorageFile file = null;
 
             if (cachedStationsUri.Item2 != null)
                 file = cachedStationsUri.Item2;
             else
                 file = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(StationsFilePath);
+
+            return file;
+        }
+
+        public string LastPlayedStationName { get; private set; }
+
+        internal async Task<StationItem[]> GetStationsAsync()
+        {
+            await stationsLock.WaitAsync();
+
+            StorageFile file = await GetStationsFileAsync();
 
             var reader = await file.OpenReadAsync();
 
@@ -201,10 +214,12 @@ namespace Neptunium.Core.Stations
 
                 }
 
+                stationsLock.Release();
                 return stationList.ToArray();
             }
             catch (Exception ex)
             {
+                stationsLock.Release();
                 throw new Exception("An error occurred", ex);
             }
             finally
