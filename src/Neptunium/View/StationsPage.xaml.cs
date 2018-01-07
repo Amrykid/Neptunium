@@ -22,7 +22,7 @@ namespace Neptunium.View
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [Crystal3.Navigation.NavigationViewModel(typeof(StationsPageViewModel), 
-        Crystal3.Navigation.NavigationViewSupportedPlatform.Desktop | Crystal3.Navigation.NavigationViewSupportedPlatform.Mobile)]
+        Crystal3.Navigation.NavigationViewSupportedPlatform.Desktop | Crystal3.Navigation.NavigationViewSupportedPlatform.Mobile | Crystal3.Navigation.NavigationViewSupportedPlatform.IoT)]
     public sealed partial class StationsPage : Page
     {
         public StationsPage()
