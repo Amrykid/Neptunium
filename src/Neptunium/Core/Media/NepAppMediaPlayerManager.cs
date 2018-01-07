@@ -71,12 +71,41 @@ namespace Neptunium.Media
             CurrentPlayer.Pause();
         }
 
-        internal void Resume()
+        internal async void Resume()
         {
             if (CurrentPlayer == null) return;
             if (CurrentPlayer.Source == null) return;
             if (CurrentPlayer.PlaybackSession?.PlaybackState != MediaPlaybackState.Paused) return;
-            CurrentPlayer.Play();
+
+            if (!CurrentStreamer.PollConnection())
+            {
+                //connection is stale. reconnect
+
+                //NepApp.UI.Overlay.ShowSnackBarMessageAsync("This station has been paused for a while. It will jump ahead.");
+
+                var stream = CurrentStream;
+                ShutdownPreviousPlaybackSession();
+
+                var controller = await NepApp.UI.Overlay.ShowProgressDialogAsync("Reconnecting...", "Please wait...");
+                controller.SetIndeterminate();
+
+                try
+                {
+                    await TryStreamStationAsync(stream);
+                    await controller.CloseAsync();
+                }
+                catch (Neptunium.Core.NeptuniumException ex)
+                {
+                    await controller.CloseAsync();
+                    await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Couldn't reconnect for some reason!", ex.Message);
+                    ShutdownPreviousPlaybackSession();
+                }
+            }
+            else
+            {
+                //resume playback
+                CurrentPlayer.Play();
+            }
         }
 
         private void RaisePropertyChanged(string propertyName)
@@ -96,7 +125,7 @@ namespace Neptunium.Media
                 RaisePropertyChanged(nameof(IsMediaEngaged));
                 MediaEngagementChanged?.Invoke(this, EventArgs.Empty);
             }
-            
+
         }
 
         private BasicNepAppMediaStreamer CreateStreamerForServerFormat(StationStreamServerFormat format)
@@ -371,7 +400,8 @@ namespace Neptunium.Media
                     sender.StateChanged -= Connection_StateChanged;
                     sender.ErrorOccurred -= Connection_ErrorOccurred;
                 }
-                catch (Exception) { 
+                catch (Exception)
+                {
                     //We already unhooked.
                 }
 

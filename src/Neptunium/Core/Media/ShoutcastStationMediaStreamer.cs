@@ -31,6 +31,7 @@ namespace Neptunium.Media
                 streamSource.Reconnected += StreamSource_Reconnected;
                 streamSource.MetadataChanged += ShoutcastStream_MetadataChanged;
                 StreamMediaSource = MediaSource.CreateFromMediaStreamSource(streamSource.MediaStreamSource);
+                StreamMediaSource.StateChanged += StreamMediaSource_StateChanged;
                 this.StationPlaying = stream.ParentStation;
             }
             catch (Exception ex)
@@ -50,6 +51,18 @@ namespace Neptunium.Media
 
                 throw new Neptunium.Core.NeptuniumStreamConnectionFailedException(stream, ex);
             }
+        }
+
+        public override bool PollConnection()
+        {
+            if (streamSource == null) return false;
+
+            return streamSource.PollConnection();
+        }
+
+        private void StreamMediaSource_StateChanged(MediaSource sender, MediaSourceStateChangedEventArgs args)
+        {
+
         }
 
         private void StreamSource_Reconnected(object sender, EventArgs e)
@@ -75,6 +88,11 @@ namespace Neptunium.Media
                 streamSource.Disconnect();
                 streamSource.Reconnected -= StreamSource_Reconnected;
                 streamSource.MetadataChanged -= ShoutcastStream_MetadataChanged;
+            }
+
+            if (StreamMediaSource != null)
+            {
+                StreamMediaSource.StateChanged -= StreamMediaSource_StateChanged;
             }
 
             base.Dispose();
