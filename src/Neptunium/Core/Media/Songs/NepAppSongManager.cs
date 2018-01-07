@@ -4,6 +4,7 @@ using Neptunium.Core.Stations;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -12,6 +13,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Storage.Streams;
+using Windows.System.Threading;
+using Windows.UI.Xaml;
 using static Neptunium.NepApp;
 
 namespace Neptunium.Media.Songs
@@ -19,10 +22,14 @@ namespace Neptunium.Media.Songs
     public class NepAppSongManager : INepAppFunctionManager, INotifyPropertyChanged
     {
         private SemaphoreSlim metadataLock = null;
+        private SemaphoreSlim blockProgrammingLock = null;
         private Regex featuredArtistRegex = new Regex(@"(?:(?:f|F)(?:ea)*t(?:uring)*\.?\s*(.+)(?:\n|$))");
         private Dictionary<NepAppSongMetadataBackground, Uri> artworkUriDictionary = null;
+        private ThreadPoolTimer blockStationProgramTimer = null;
 
         public SongMetadata CurrentSong { get; private set; }
+        public StationItem CurrentStation { get; set; }
+        private StationProgram CurrentProgram { get; set; }
         public ExtendedSongMetadata CurrentSongWithAdditionalMetadata { get; private set; }
 
         public SongHistorian History { get; private set; }
@@ -40,12 +47,81 @@ namespace Neptunium.Media.Songs
         internal NepAppSongManager()
         {
             metadataLock = new SemaphoreSlim(1);
+            blockProgrammingLock = new SemaphoreSlim(1);
             artworkUriDictionary = new Dictionary<NepAppSongMetadataBackground, Uri>();
             artworkUriDictionary.Add(NepAppSongMetadataBackground.Album, null);
             artworkUriDictionary.Add(NepAppSongMetadataBackground.Artist, null);
 
             History = new SongHistorian();
             History.InitializeAsync();
+        }
+        
+
+        private void DeactivateProgramBlockTimer()
+        {
+            if (blockStationProgramTimer != null)
+            {
+                blockStationProgramTimer.Cancel();
+                blockStationProgramTimer = null;
+            }
+
+            if (CurrentProgram != null)
+            {
+                if (CurrentProgram.Style == StationProgramStyle.Block)
+                {
+                    CurrentProgram = null;
+                }
+            }
+        }
+
+        private void ActivateProgramBlockTimer()
+        {
+            if (CurrentStation == null) return;
+            if (CurrentStation.Programs == null) return;
+            if (CurrentStation.Programs.Length == 0) return;
+
+            CheckForStationBlockRightNow();
+
+            if (blockStationProgramTimer != null) return;
+
+            blockStationProgramTimer = ThreadPoolTimer.CreatePeriodicTimer(timer =>
+            {
+                CheckForStationBlockRightNow();
+            }, TimeSpan.FromMinutes(5));
+        }
+
+        private async void CheckForStationBlockRightNow()
+        {
+            await blockProgrammingLock.WaitAsync();
+            if (CurrentStation.Programs.Any(FilterStationBlockPrograms))
+            {
+                var currentBlock = CurrentStation.Programs.First(FilterStationBlockPrograms);
+
+                if (CurrentProgram == currentBlock) return; //prevent duplicate events.
+
+                CurrentProgram = currentBlock;
+
+                StationRadioProgramStarted?.Invoke(this, new NepAppStationProgramStartedEventArgs()
+                {
+                    RadioProgram = currentBlock,
+                    Metadata = CurrentSong,
+                    Station = CurrentStation.Name
+                });
+            }
+            blockProgrammingLock.Release();
+        }
+
+        private bool FilterStationBlockPrograms(StationProgram program)
+        {
+            if (program.Style != StationProgramStyle.Block)
+            {
+                return false;
+            }
+
+            return program.TimeListings.Any(listing =>
+            {
+                return listing.Time.TimeOfDay < DateTime.Now.TimeOfDay && DateTime.Now.TimeOfDay < listing.EndTime.TimeOfDay && listing.Day == DateTime.Now.DayOfWeek;
+            });
         }
 
         public Uri GetSongArtworkUri(NepAppSongMetadataBackground nepAppSongMetadataBackground)
@@ -81,25 +157,28 @@ namespace Neptunium.Media.Songs
 
             try
             {
+                CurrentStation = currentStream.ParentStation;
+
                 StationProgram currentProgram = null;
-                if (IsStationProgramBeginning(songMetadata, currentStream, out currentProgram))
+                if (IsHostedStationProgramBeginning(songMetadata, currentStream, out currentProgram))
                 {
-                    //we're tuning into a special radio program. this may be a DJ playing remixes, for exmaple.
+                    //we're tuning into a hosted radio program. this may be a DJ playing remixes, for example.
 
-                    StationRadioProgramStarted?.Invoke(this, new NepAppStationProgramStartedEventArgs()
-                    {
-                        RadioProgram = currentProgram,
-                        Metadata = songMetadata,
-                        Station = currentStream?.ParentStation?.Name
-                    });
+                    ActivateStationProgrammingMode(songMetadata, currentStream, currentProgram);
 
-
-                    SetCurrentMetadataToUnknown(currentProgram.Name);
-                    CurrentSongWithAdditionalMetadata = null;
+                    //block programs are handled differently.
                 }
                 else
                 {
                     //we're tuned into regular programming/music
+
+                    if (CurrentProgram != null)
+                    {
+                        if (CurrentProgram.Style == StationProgramStyle.Hosted)
+                        {
+                            CurrentProgram = null; //hosted program ended.
+                        }
+                    }
 
                     //filter out station messages
                     if (currentStream.ParentStation != null)
@@ -163,13 +242,34 @@ namespace Neptunium.Media.Songs
             {
                 Dictionary<string, string> properties = new Dictionary<string, string>();
                 properties.Add("Song-Metadata", songMetadata?.ToString());
-                properties.Add("Current-Station", currentStream?.ParentStation?.ToString());
+                properties.Add("Current-Station", currentStream?.ParentStation?.Name);
                 Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, properties);
             }
             finally
             {
                 metadataLock.Release();
             }
+        }
+
+        internal void SetCurrentStation(StationItem parentStation)
+        {
+            CurrentStation = parentStation;
+
+            ActivateProgramBlockTimer();
+        }
+
+        private void ActivateStationProgrammingMode(SongMetadata songMetadata, StationStream currentStream, StationProgram currentProgram)
+        {
+            StationRadioProgramStarted?.Invoke(this, new NepAppStationProgramStartedEventArgs()
+            {
+                RadioProgram = currentProgram,
+                Metadata = songMetadata,
+                Station = currentStream?.ParentStation?.Name
+            });
+
+            CurrentProgram = currentProgram;
+            SetCurrentMetadataToUnknown(currentProgram.Name);
+            CurrentSongWithAdditionalMetadata = null;
         }
 
         internal void SetCurrentMetadataToUnknown(string program = null)
@@ -200,8 +300,11 @@ namespace Neptunium.Media.Songs
 
         internal void ResetMetadata()
         {
+            DeactivateProgramBlockTimer();
+
             CurrentSong = null;
             CurrentSongWithAdditionalMetadata = null;
+            CurrentStation = null;
 
             RaisePropertyChanged(nameof(CurrentSong));
             PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(null));
@@ -281,29 +384,41 @@ namespace Neptunium.Media.Songs
         }
 
 
-        private bool IsStationProgramBeginning(SongMetadata songMetadata, StationStream currentStream, out StationProgram stationProgram)
+        private bool IsHostedStationProgramBeginning(SongMetadata songMetadata, StationStream currentStream, out StationProgram stationProgram)
         {
-            Func<StationProgram, bool> getStationProgram = x =>
+            try
             {
-                if (x.Host.ToLower().Equals(songMetadata.Artist.Trim().ToLower())) return true;
-                if (!string.IsNullOrWhiteSpace(x.HostRegexExpression))
+                //this function checkes for "hosted" programs which rely on metadata matching to activate.
+                Func<StationProgram, bool> getStationProgram = x =>
                 {
-                    if (Regex.IsMatch(songMetadata.Artist, x.HostRegexExpression))
+                    if (x.Style != StationProgramStyle.Hosted) return false;
+                    if (x.Host.ToLower().Equals(songMetadata.Artist.Trim().ToLower())) return true;
+                    if (!string.IsNullOrWhiteSpace(x.HostRegexExpression))
+                    {
+                        if (Regex.IsMatch(songMetadata.Artist, x.HostRegexExpression))
+                            return true;
+                    }
+
+                    return false;
+                };
+
+                if (currentStream.ParentStation?.Programs != null)
+                {
+                    if (currentStream.ParentStation.Programs.Any(getStationProgram))
+                    {
+                        //we're tuning into a special radio program. this may be a DJ playing remixes, for exmaple.
+                        stationProgram = currentStream.ParentStation.Programs?.First(getStationProgram);
+
                         return true;
+                    }
                 }
-
-                return false;
-            };
-
-            if (currentStream.ParentStation?.Programs != null)
+            }
+            catch (Exception ex)
             {
-                if (currentStream.ParentStation.Programs.Any(getStationProgram))
-                {
-                    //we're tuning into a special radio program. this may be a DJ playing remixes, for exmaple.
-                    stationProgram = currentStream.ParentStation.Programs?.First(getStationProgram);
-
-                    return true;
-                }
+#if DEBUG
+                if (Debugger.IsAttached)
+                    Debugger.Break();
+#endif
             }
 
             stationProgram = null;

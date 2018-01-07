@@ -47,6 +47,7 @@ namespace Neptunium.ViewModel
             NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), ""); //"");
             NepApp.UI.AddNavigationRoute("Now Playing", typeof(NowPlayingPageViewModel), "");
             NepApp.UI.AddNavigationRoute("History", typeof(SongHistoryPageViewModel), "");
+            NepApp.UI.AddNavigationRoute("Schedule", typeof(StationProgramsPageViewModel), "");
             NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");
             NepApp.UI.AddNavigationRoute("About", typeof(AboutPageViewModel), "");
 
@@ -109,13 +110,34 @@ namespace Neptunium.ViewModel
 
         private async void SongManager_StationRadioProgramStarted(object sender, Media.Songs.NepAppStationProgramStartedEventArgs e)
         {
-            if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+            if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
             {
-                if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
-                    NepApp.UI.Notifier.ShowStationProgrammingToastNotification(e.RadioProgram, e.Metadata);
+                if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+                {
+                    if (e.RadioProgram.Style == Core.Stations.StationProgramStyle.Block)
+                    {
+                        NepApp.UI.Notifier.ShowStationBlockProgrammingToastNotification(e.RadioProgram, e.Metadata);
+                    }
+                    else
+                    {
+                        NepApp.UI.Notifier.ShowStationHostedProgrammingToastNotification(e.RadioProgram, e.Metadata);
+                    }
+                }
+                else
+                {
+                    if (e.RadioProgram.Style == Core.Stations.StationProgramStyle.Block)
+                    {
+                        await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tuning into " + e.RadioProgram.Name + " on " + e.Station);
+                    }
+                    else
+                    {
+                        await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tuning into " + e.RadioProgram.Name + " by " + e.RadioProgram.Host);
+                    }
+                }
             }
 
-            NepApp.UI.Notifier.UpdateLiveTile(new ExtendedSongMetadata(e.Metadata));
+            if (e.Metadata != null)
+                NepApp.UI.Notifier.UpdateLiveTile(new ExtendedSongMetadata(e.Metadata));
         }
 
         private async void SongManager_SongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)

@@ -127,6 +127,7 @@
     <Compile Include="Core\Media\Songs\NepAppSongMetadataArtworkEventArgs.cs" />
     <Compile Include="Core\Media\Songs\NepAppSongMetadataBackground.cs" />
     <Compile Include="Core\Media\Songs\NepAppStationProgramStartedEventArgs.cs" />
+    <Compile Include="Core\NepAppDataCacheManager.cs" />
     <Compile Include="Core\NepAppHandoffManager.cs" />
     <Compile Include="Core\Media\NepAppMediaPlayerManager.cs" />
     <Compile Include="Core\NepAppNetworkManager.cs" />
@@ -140,6 +141,7 @@
       <DependentUpon>GlassPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Core\Stations\StationProgram.cs" />
+    <Compile Include="Core\Stations\StationSupplementaryDataManager.cs" />
     <Compile Include="Core\UI\NepAppUIDialogFragment.cs" />
     <Compile Include="Core\UI\NepAppUILockScreenManager.cs" />
     <Compile Include="Core\UI\NepAppUIManager.cs" />
@@ -158,12 +160,14 @@
     <Compile Include="Core\NepApp.cs" />
     <Compile Include="Model\AlbumData.cs" />
     <Compile Include="Model\ArtistData.cs" />
+    <Compile Include="Model\ScheduleItem.cs" />
     <Compile Include="StringUtilities.cs" />
     <Compile Include="Controls\StationItemControl.xaml.cs">
       <DependentUpon>StationItemControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="MediaExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\StripDateFromDateTimeConverter.cs" />
     <Compile Include="ViewModel\AboutPageViewModel.cs" />
     <Compile Include="ViewModel\AppShellViewModel.cs" />
     <Compile Include="ViewModel\CompactNowPlayingPageViewModel.cs" />
@@ -173,6 +177,7 @@
     <Compile Include="ViewModel\NowPlayingPageViewModel.cs" />
     <Compile Include="ViewModel\SettingsPageViewModel.cs" />
     <Compile Include="ViewModel\SongHistoryPageViewModel.cs" />
+    <Compile Include="ViewModel\StationProgramsPageViewModel.cs" />
     <Compile Include="ViewModel\StationsPageViewModel.cs" />
     <Compile Include="View\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
@@ -197,6 +202,9 @@
     </Compile>
     <Compile Include="View\SongHistoryPage.xaml.cs">
       <DependentUpon>SongHistoryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\StationProgramsPage.xaml.cs">
+      <DependentUpon>StationProgramsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\StationsPage.xaml.cs">
       <DependentUpon>StationsPage.xaml</DependentUpon>
@@ -297,10 +305,6 @@
       <Project>{e7ac86be-e1f7-42e4-8da0-7e1ebef1130b}</Project>
       <Name>Crystal3</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\lib\iTunesSearch\iTunesSearch.Library\iTunesSearch.Library.csproj">
-      <Project>{c36d8dde-14cf-4a2d-b2c6-179eebb77e0c}</Project>
-      <Name>iTunesSearch.Library</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\lib\Kimono\src\Kimono\Kimono.csproj">
       <Project>{329833b1-79b7-4724-b9a2-0629d735bea1}</Project>
       <Name>Kimono</Name>
@@ -371,6 +375,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\StationProgramsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\StationsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -403,26 +411,29 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="HockeySDK.Core">
+      <Version>4.1.6</Version>
+    </PackageReference>
     <PackageReference Include="HockeySDK.UWP">
       <Version>4.1.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.1</Version>
+      <Version>6.0.5</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp">
-      <Version>2.0.0</Version>
+      <Version>2.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications">
-      <Version>2.0.0</Version>
+      <Version>2.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
-      <Version>2.0.0</Version>
+      <Version>2.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Animations">
-      <Version>2.0.0</Version>
+      <Version>2.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
-      <Version>2.0.0</Version>
+      <Version>2.1.1</Version>
     </PackageReference>
     <PackageReference Include="System.Reactive">
       <Version>3.1.1</Version>

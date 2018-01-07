@@ -74,7 +74,9 @@
 
                         <wrt:ListItemButton.ContextFlyout>
                             <MenuFlyout>
-                                <MenuFlyoutItem Text="Pin" />
+                                <MenuFlyoutItem Text="Pin"
+                                                Command="{Binding ElementName=thisPage, Path=DataContext.PinStationCommand}"
+                                                CommandParameter="{Binding}"/>
                                 <MenuFlyoutSeparator />
                                 <MenuFlyoutItem Text="Website"
                                                 Command="{Binding ElementName=thisPage, Path=DataContext.OpenStationWebsiteCommand}"
@@ -136,7 +138,9 @@
                         </Grid>
                         <wrt:ListItemButton.ContextFlyout>
                             <MenuFlyout>
-                                <MenuFlyoutItem Text="Pin" />
+                                <MenuFlyoutItem Text="Pin"
+                                                Command="{Binding ElementName=thisPage, Path=DataContext.PinStationCommand}"
+                                                CommandParameter="{Binding}"/>
                                 <MenuFlyoutSeparator />
                                 <MenuFlyoutItem Text="Website"
                                                 Command="{Binding ElementName=thisPage, Path=DataContext.OpenStationWebsiteCommand}"

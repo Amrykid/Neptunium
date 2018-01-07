@@ -54,6 +54,18 @@ namespace Neptunium.View
 
                 }
             }));
+
+#if DEBUG
+            this.GotFocus += (object sender, RoutedEventArgs e) =>
+            {
+                FrameworkElement focus = FocusManager.GetFocusedElement() as FrameworkElement;
+                if (focus != null)
+                {
+                    System.Diagnostics.Debug.WriteLine("got focus: " + focus.Name + " (" +
+                        focus.GetType().ToString() + ")");
+                }
+            };
+#endif
         }
 
 
@@ -94,7 +106,7 @@ namespace Neptunium.View
 
         public void SetTopFocus(UIElement elementAbove)
         {
-
+            stationsGridView.XYFocusUp = elementAbove;
         }
 
         public void SetBottomFocus(UIElement elementBelow)

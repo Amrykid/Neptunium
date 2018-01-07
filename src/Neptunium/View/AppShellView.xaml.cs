@@ -36,7 +36,7 @@ namespace Neptunium.View
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [Crystal3.Navigation.NavigationViewModel(typeof(AppShellViewModel),
-        NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile)]
+        NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile | NavigationViewSupportedPlatform.IoT)]
     public sealed partial class AppShellView : Page, Crystal3.Messaging.IMessagingTarget
     {
         private FrameNavigationService inlineNavigationService = null;
@@ -79,15 +79,18 @@ namespace Neptunium.View
 
         private void MediaPlayer_MediaEngagementChanged(object sender, EventArgs e)
         {
-            switch (NepApp.MediaPlayer.IsMediaEngaged)
+            App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                case true:
-                    bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
-                    break;
-                case false:
-                    bottomAppBar.Visibility = Visibility.Collapsed;
-                    break;
-            }
+                switch (NepApp.MediaPlayer.IsMediaEngaged)
+                {
+                    case true:
+                        bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+                        break;
+                    case false:
+                        bottomAppBar.Visibility = Visibility.Collapsed;
+                        break;
+                }
+            });
         }
 
         private void Overlay_DialogShown(object sender, EventArgs e)
@@ -185,6 +188,8 @@ namespace Neptunium.View
         private VisualStateChangedEventHandler noChromeHandler = null;
         private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
         {
+            WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
+
             if (inlineNavigationService.NavigationFrame.Content?.GetType().GetTypeInfo().GetCustomAttribute<NepAppUINoChromePageAttribute>() != null)
             {
                 //no chrome mode

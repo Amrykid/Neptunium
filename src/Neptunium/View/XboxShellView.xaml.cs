@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Media;
 using Crystal3.Messaging;
 using WinRTXamlToolkit.Controls;
 using Crystal3.UI;
+using Windows.UI.Xaml.Media.Animation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -62,7 +63,7 @@ namespace Neptunium.View
 
         private void InlineNavigationService_PreBackRequested(object sender, NavigationManagerPreBackRequestedEventArgs e)
         {
-            if (TransportControlGrid.Visibility == Visibility.Visible)
+            if (transportGridVisible)
             {
                 e.Handled = true;
                 HideTransportGrid();
@@ -78,6 +79,9 @@ namespace Neptunium.View
                 RootSplitView.IsPaneOpen = false;
                 HeaderGrid.Visibility = Visibility.Collapsed;
                 isInNoChromeMode = true;
+
+                TransportControlGrid.Opacity = 0;
+                transportGridVisible = false;
             }
             else
             {
@@ -87,13 +91,22 @@ namespace Neptunium.View
 
                 isInNoChromeMode = false;
 
+                TransportControlGrid.Opacity = 0.1;
+                transportGridVisible = false;
+
+                SplitViewOpenButton.Focus(FocusState.Pointer); //reduces the amount of times that the splitview open button has the focus rectangle when that is used to open the menu.
+
                 if (InlineFrame.Content is IXboxInputPage)
                 {
+                    var page = ((IXboxInputPage)InlineFrame.Content);
                     //makes sure that if we go left from the inline frame, we end up selecting the current page's item in the nav list.
                     IEnumerable<NepAppUINavigationItem> items = (IEnumerable<NepAppUINavigationItem>)SplitViewNavigationList.ItemsSource;
                     var selectedItem = items.First(x => x.IsSelected);
                     var container = SplitViewNavigationList.ContainerFromItem(selectedItem);
-                    ((IXboxInputPage)InlineFrame.Content).SetLeftFocus((UIElement)container);
+                    page.SetLeftFocus((UIElement)container);
+
+                    //set the upper focus to the hamburger menu
+                    page.SetTopFocus(SplitViewOpenButton);
                 }
             }
         }
@@ -153,7 +166,7 @@ namespace Neptunium.View
 
         private void HandleSplitViewPaneClose()
         {
-            InlineFrame.Focus(FocusState.Keyboard);
+            InlineFrame.Focus(FocusState.Programmatic);
 
             if (InlineFrame.Content is IXboxInputPage)
             {
@@ -199,8 +212,9 @@ namespace Neptunium.View
             {
                 if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
                 if (isInNoChromeMode) return;
+                if (transportGridAnimating) return;
 
-                if (TransportControlGrid.Visibility == Visibility.Collapsed)
+                if (!transportGridVisible)
                 {
                     ShowTransportGrid();
                 }
@@ -240,6 +254,8 @@ namespace Neptunium.View
             //}
         }
 
+        private volatile bool transportGridVisible = false;
+        private volatile bool transportGridAnimating = false;
         private void ShowTransportGrid()
         {
             InlineFrame.IsEnabled = false;
@@ -249,25 +265,58 @@ namespace Neptunium.View
                 ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
             }
 
-            TransportControlGrid.Visibility = Visibility.Visible;
+            //TransportControlGrid.Visibility = Visibility.Visible;
 
-            PlayButton.Focus(FocusState.Keyboard);
+            transportGridAnimating = true;
 
-            ElementSoundPlayer.Play(ElementSoundKind.Show);
+            Storyboard storyboard = ((Storyboard)TransportControlGrid.Resources["EnterStoryboard"]);
+
+            EventHandler<object> handler = null;
+            handler = new EventHandler<object>((x, y) =>
+            {
+                storyboard.Completed -= handler;
+                transportGridAnimating = false;
+                transportGridVisible = true;
+
+                TransportControlGrid.IsHitTestVisible = true;
+
+                PlayButton.Focus(FocusState.Keyboard);
+                ElementSoundPlayer.Play(ElementSoundKind.Show);
+            });
+
+            storyboard.Completed += handler;
+            storyboard.Begin();
         }
 
         private void HideTransportGrid()
         {
-            TransportControlGrid.Visibility = Visibility.Collapsed;
-            InlineFrame.IsEnabled = true;
-            InlineFrame.Focus(FocusState.Keyboard);
+            transportGridAnimating = true;
 
-            ElementSoundPlayer.Play(ElementSoundKind.Hide);
+            Storyboard storyboard = ((Storyboard)TransportControlGrid.Resources["ExitStoryboard"]);
 
-            if (InlineFrame.Content is IXboxInputPage)
+            EventHandler<object> handler = null;
+            handler = new EventHandler<object>((x, y) =>
             {
-                ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
-            }
+                storyboard.Completed -= handler;
+                transportGridAnimating = false;
+                transportGridVisible = false;
+
+                TransportControlGrid.IsHitTestVisible = false;
+
+                //TransportControlGrid.Visibility = Visibility.Collapsed;
+                InlineFrame.IsEnabled = true;
+                InlineFrame.Focus(FocusState.Programmatic);
+
+                ElementSoundPlayer.Play(ElementSoundKind.Hide);
+
+                if (InlineFrame.Content is IXboxInputPage)
+                {
+                    ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
+                }
+            });
+
+            storyboard.Completed += handler;
+            storyboard.Begin();
         }
 
         public void OnReceivedMessage(Message message, Action<object> resultCallback)

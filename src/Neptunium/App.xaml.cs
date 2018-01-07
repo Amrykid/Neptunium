@@ -210,6 +210,10 @@ namespace Neptunium
             {
                 Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+
+                //https://docs.microsoft.com/en-us/windows/uwp/xbox-apps/disable-scaling
+                //todo make this a feature. for now, the xbox UI isn't designed to be at 1080p+
+                //bool result = Windows.UI.ViewManagement.ApplicationViewScaling.TrySetDisableLayoutScaling(true);
             }
 
             Window.Current.Activated += Current_Activated;
@@ -250,8 +254,11 @@ namespace Neptunium
 
         public override async Task OnActivationAsync(IActivatedEventArgs args)
         {
-            WindowManager.GetNavigationManagerForCurrentWindow()
-                 .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
+            if (args.PreviousExecutionState != ApplicationExecutionState.Running)
+            {
+                WindowManager.GetNavigationManagerForCurrentWindow()
+                     .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
+            }
 
             if (args.Kind == ActivationKind.Protocol)
             {
@@ -274,7 +281,7 @@ namespace Neptunium
             {
                 WindowManager.GetNavigationManagerForCurrentWindow()
                     .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
-                    .SafeNavigateTo<NowPlayingPageViewModel>();
+                    .NavigateTo<NowPlayingPageViewModel>();
             }
         }
 
@@ -303,7 +310,7 @@ namespace Neptunium
                         catch (Exception ex)
                         {
                             //todo show error message.
-                            await NepApp.UI.ShowInfoDialogAsync("Unable to handoff station.", "The following error occurred: " + ex.ToString());
+                            await NepApp.UI.ShowInfoDialogAsync("Unable to play station.", "The following error occurred: " + ex.ToString());
                         }
                         break;
                     }

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -27,9 +28,9 @@ namespace Neptunium.View
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [Crystal3.Navigation.NavigationViewModel(typeof(Neptunium.ViewModel.NowPlayingPageViewModel),
-        Crystal3.Navigation.NavigationViewSupportedPlatform.Desktop | Crystal3.Navigation.NavigationViewSupportedPlatform.Mobile)]
+        Crystal3.Navigation.NavigationViewSupportedPlatform.Desktop | Crystal3.Navigation.NavigationViewSupportedPlatform.Mobile | NavigationViewSupportedPlatform.IoT)]
     [Neptunium.Core.UI.NepAppUINoChromePage()]
-    public sealed partial class NowPlayingPage : Page
+    public sealed partial class NowPlayingPage : Page, IMessagingTarget
     {
         private FrameNavigationService inlineNavigationService = null;
         public NowPlayingPage()
@@ -50,6 +51,8 @@ namespace Neptunium.View
             //{
             //    fullScreenButton.Visibility = Visibility.Visible;
             //}
+
+            Messenger.AddTarget(this);
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
@@ -86,6 +89,12 @@ namespace Neptunium.View
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             UpdatePlaybackStatus(NepApp.MediaPlayer.IsPlaying);
+
+            if (Window.Current.Bounds.Width < 720)
+            {
+                //ensure the glass is on when we navigate to this page with a small size.
+                GlassPanel.IsGlassOn = true;
+            }
         }
 
         private async void compactViewButton_Click(object sender, RoutedEventArgs e)
@@ -113,6 +122,29 @@ namespace Neptunium.View
 #if DEBUG
             System.Diagnostics.Debug.WriteLine("NowPlayingPage: " + e.OldState?.Name + " -> " + e.NewState?.Name);
 #endif
+        }
+
+        public void OnReceivedMessage(Message message, Action<object> resultCallback)
+        {
+            if (message.Name == "NowPlayingBgColor")
+            {
+                App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    if (GlassPanel.IsGlassOn)
+                    {
+                        GlassPanel.ChangeBlurColor((Color)message.Value);
+                    }
+                    else
+                    {
+                        GlassPanel.SetBlurColor((Color)message.Value);
+                    }
+                });
+            }
+        }
+
+        public IEnumerable<string> GetSubscriptions()
+        {
+            return new string[] { "NowPlayingBgColor" };
         }
     }
 }

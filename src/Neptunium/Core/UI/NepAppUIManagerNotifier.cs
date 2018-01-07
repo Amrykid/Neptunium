@@ -3,6 +3,9 @@ using Windows.UI.Notifications;
 using Neptunium.Core.Media.Metadata;
 using System;
 using Neptunium.Core.Stations;
+using Windows.UI.StartScreen;
+using System.Threading.Tasks;
+using Windows.UI;
 
 namespace Neptunium.Core.UI
 {
@@ -151,6 +154,134 @@ namespace Neptunium.Core.UI
             toastNotifier.Show(notification);
         }
 
+        public bool CheckIfStationTilePinned(StationItem stationItem)
+        {
+            return SecondaryTile.Exists(GetStationItemTileId(stationItem));
+        }
+
+        public async Task<bool> PinStationAsTileAsync(StationItem stationItem)
+        {
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return false; //not supported
+
+            if (!CheckIfStationTilePinned(stationItem))
+            {
+                //create the secondary tile
+                //https://github.com/Amrykid/Neptunium/blob/divergent-master-v0.5/src/Neptunium/ViewModel/StationInfoViewModel.cs#L57
+                SecondaryTile secondaryTile = new SecondaryTile(GetStationItemTileId(stationItem));
+                secondaryTile.DisplayName = stationItem.Name + " - Neptunium";
+                secondaryTile.Arguments = "play-station?station=" + stationItem.Name.Replace(" ", "%20").Trim();
+                secondaryTile.VisualElements.BackgroundColor = Colors.Purple; //await StationSupplementaryDataManager.GetStationLogoDominantColorAsync(stationItem);
+                secondaryTile.VisualElements.Square150x150Logo = new Uri("ms-appx:///Assets/Square150x150Logo.png", UriKind.Absolute);
+                secondaryTile.VisualElements.Wide310x150Logo = new Uri("ms-appx:///Assets/Wide310x150Logo.png", UriKind.Absolute);
+                secondaryTile.VisualElements.ShowNameOnSquare150x150Logo = true;
+                secondaryTile.VisualElements.ShowNameOnWide310x150Logo = true;
+
+                if (await secondaryTile.RequestCreateAsync())
+                {
+                    //if we successfully created and pinned the secondary tile, let's update it as a live tile with the station's image.
+                    var tiler = TileUpdateManager.CreateTileUpdaterForSecondaryTile(secondaryTile.TileId);
+
+                    TileBindingContentAdaptive largeBindingContent = new TileBindingContentAdaptive()
+                    {
+                        PeekImage = new TilePeekImage()
+                        {
+                            Source = stationItem.StationLogoUrlOnline.ToString(),
+                            AlternateText = stationItem.Name,
+                            HintCrop = TilePeekImageCrop.None
+                        },
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = stationItem.Name,
+                                HintStyle = AdaptiveTextStyle.Body
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = stationItem.Description,
+                                HintWrap = true,
+                                HintStyle = AdaptiveTextStyle.CaptionSubtle
+                            }
+                        }
+                    };
+
+                    TileBindingContentAdaptive mediumBindingContent = new TileBindingContentAdaptive()
+                    {
+                        BackgroundImage = new TileBackgroundImage()
+                        {
+                            Source = stationItem.StationLogoUrlOnline.ToString(),
+                        },
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = stationItem.Name,
+                                HintStyle = AdaptiveTextStyle.Body
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = stationItem.Description,
+                                HintWrap = true,
+                                HintStyle = AdaptiveTextStyle.CaptionSubtle
+                            }
+                        }
+                    };
+
+                    TileBindingContentAdaptive smallBindingContent = new TileBindingContentAdaptive()
+                    {
+                        BackgroundImage = new TileBackgroundImage()
+                        {
+                            Source = stationItem.StationLogoUrlOnline.ToString(),
+                        }
+                    };
+
+                    Func<TileBindingContentAdaptive, TileBinding> createBinding = (TileBindingContentAdaptive con) =>
+                    {
+                        return new TileBinding()
+                        {
+                            Branding = TileBranding.NameAndLogo,
+
+                            DisplayName = stationItem.Name + " - Neptunium",
+
+                            Content = con,
+
+                            ContentId = stationItem.Name.GetHashCode().ToString()
+                        };
+                    };
+
+
+
+                    TileContent content = new TileContent()
+                    {
+                        Visual = new TileVisual()
+                        {
+                            TileSmall = createBinding(smallBindingContent),
+                            TileMedium = createBinding(smallBindingContent),
+                            TileWide = createBinding(mediumBindingContent),
+                            TileLarge = createBinding(largeBindingContent)
+                        }
+                    };
+
+                    var tile = new TileNotification(content.GetXml());
+                    tiler.Update(tile);
+
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        internal string GetStationItemTileId(StationItem stationItem)
+        {
+            if (stationItem == null) throw new ArgumentNullException(nameof(stationItem));
+
+            return stationItem.Name.GetHashCode().ToString();
+        }
+
         public void UpdateLiveTile(ExtendedSongMetadata nowPlaying)
         {
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
@@ -241,7 +372,7 @@ namespace Neptunium.Core.UI
             tiler.Update(tile);
         }
 
-        internal void ShowStationProgrammingToastNotification(StationProgram program, SongMetadata metadata)
+        internal void ShowStationHostedProgrammingToastNotification(StationProgram program, SongMetadata metadata)
         {
             ToastContent content = new ToastContent()
             {
@@ -258,7 +389,7 @@ namespace Neptunium.Core.UI
                         {
                             new AdaptiveText()
                             {
-                                Text = "Turning into " + metadata.Track,
+                                Text = "Tuning into " + metadata.Track,
                                 HintStyle = AdaptiveTextStyle.Title
                             },
 
@@ -271,6 +402,42 @@ namespace Neptunium.Core.UI
                             new AdaptiveText()
                             {
                                 Text = metadata.StationPlayedOn,
+                                HintStyle = AdaptiveTextStyle.Caption
+                            },
+                        },
+                    }
+                }
+            };
+
+            var notification = new ToastNotification(content.GetXml());
+            notification.Tag = SongNotificationTag;
+            notification.NotificationMirroring = NotificationMirroring.Disabled;
+            toastNotifier.Show(notification);
+        }
+        internal void ShowStationBlockProgrammingToastNotification(StationProgram program, SongMetadata metadata)
+        {
+            ToastContent content = new ToastContent()
+            {
+                Launch = "now-playing",
+                Audio = new ToastAudio()
+                {
+                    Silent = true,
+                },
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = "Tuning into " + program.Name,
+                                HintStyle = AdaptiveTextStyle.Title
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = program.Station.Name,
                                 HintStyle = AdaptiveTextStyle.Caption
                             },
                         },

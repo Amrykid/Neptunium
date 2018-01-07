@@ -10,12 +10,52 @@
     xmlns:wst="using:WindowsStateTriggers"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <Style x:Key="TitleSafeGridViewStyle" TargetType="GridView">
+            <!-- modified version of the style from here: https://docs.microsoft.com/en-us/windows/uwp/design/devices/designing-for-tv#tv-safe-area -->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridView">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                        Background="{TemplateBinding Background}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                            <ScrollViewer x:Name="ScrollViewer"
+                                  TabNavigation="{TemplateBinding TabNavigation}"
+                                  HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                  HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                  IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
+                                  VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                  IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
+                                  IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                  IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                  ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
+                                  IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                  BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
+                                  AutomationProperties.AccessibilityView="Raw">
+                                <ItemsPresenter Header="{TemplateBinding Header}"
+                                        HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                                        HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                                        Footer="{TemplateBinding Footer}"
+                                        FooterTemplate="{TemplateBinding FooterTemplate}"
+                                        FooterTransitions="{TemplateBinding FooterTransitions}"
+                                        Padding="{TemplateBinding Padding}"
+                                        Margin="0,0,0,27"/>
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="48,0,48,0">
         <GridView ItemsSource="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}"
                   SelectionMode="Single"
                   Margin="5"
                   x:Name="stationsGridView"
                   IsItemClickEnabled="True"
+                  Style="{StaticResource TitleSafeGridViewStyle}"
                   ItemClick="stationsGridView_ItemClick">
             <GridView.Resources>
                 <Style TargetType="GridViewItemPresenter">
@@ -31,9 +71,10 @@
                             <RowDefinition Height="25" />
                         </Grid.RowDefinitions>
 
-                        <uwp:ImageEx Height="125" Width="125" Grid.Row="0" Stretch="Fill" VerticalAlignment="Top" IsCacheEnabled="True">
+                        <uwp:ImageEx Height="125" Width="125" Grid.Row="0" Stretch="Fill" IsTabStop="False" 
+                                     VerticalAlignment="Top" IsCacheEnabled="True">
                             <uwp:ImageEx.Source>
-                                <BitmapImage UriSource="{Binding StationLogoUrl, Mode=OneTime}" />
+                                <BitmapImage UriSource="{Binding StationLogoUrl, Mode=OneTime}" AutoPlay="False" />
                             </uwp:ImageEx.Source>
                         </uwp:ImageEx>
 

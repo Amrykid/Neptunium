@@ -5,12 +5,15 @@
     xmlns:local="using:Neptunium.View"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wst="using:WindowsStateTriggers"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ScrollViewer>
-            <StackPanel Padding="10">
+            <StackPanel Padding="10" x:Name="ContentPanel">
                 <TextBlock Style="{ThemeResource TitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Text="Neptunium" />
+
+                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" x:Name="VersionTextBlock" Text="Version:"/>
 
                 <StackPanel Orientation="Horizontal">
                     <AppBarButton Icon="Globe" Label="GitHub" Click="AppBarButton_Click" />
@@ -58,5 +61,44 @@
                 </TextBlock>
             </StackPanel>
         </ScrollViewer>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="XboxVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:DeviceFamilyStateTrigger DeviceFamily="Xbox" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentPanel.Margin" Value="48 0 48 0" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="TabletOrHigherVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:CompositeStateTrigger Operator="Or">
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
+                            </wst:CompositeStateTrigger>
+
+                            <wst:AdaptiveTrigger MinWindowWidth="720" />
+                        </wst:CompositeStateTrigger>
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="ContentPanel.Margin" Value="0" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="PhoneVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="ContentPanel.Margin" Value="0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

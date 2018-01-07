@@ -26,13 +26,15 @@ namespace Neptunium.Media
         double Volume { get; set; }
         StationItem StationPlaying { get; }
         bool IsPlaying { get; }
-        bool IsConnected { get; }
+        bool IsOpen { get; }
         MediaPlayer Player { get; }
         MediaSource StreamMediaSource { get; }
         SongMetadata SongMetadata { get; }
 
         void Play();
         void Pause();
+
+        bool PollConnection();
 
         event EventHandler<MediaStreamerMetadataChangedEventArgs> MetadataChanged;
     }
@@ -42,7 +44,7 @@ namespace Neptunium.Media
         private SemaphoreSlim volumeLock = null;
 
         public MediaSource StreamMediaSource { get; protected set; }
-        public virtual bool IsConnected { get { return (bool)StreamMediaSource?.IsOpen; } }
+        public virtual bool IsOpen { get { return (bool)StreamMediaSource?.IsOpen; } }
 
         public bool IsPlaying { get; protected set; }
 
@@ -146,6 +148,11 @@ namespace Neptunium.Media
             }
 
             volumeLock.Release();
+        }
+
+        public virtual bool PollConnection()
+        {
+            return IsOpen;
         }
     }
 }

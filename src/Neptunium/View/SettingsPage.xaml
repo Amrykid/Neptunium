@@ -30,12 +30,16 @@
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Notifications"/>
                         <ToggleSwitch Header="Show song change notifications"
-                                  IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                      x:Name="SongNotificationSwitch"
+                                      XYFocusDown="{Binding ElementName=MetadataSwitch}"
+                                      IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                         <MenuFlyoutSeparator />
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Metadata"/>
                         <ToggleSwitch Header="Find song metadata when song changes" 
-                                  IsOn="{Binding FindSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                      x:Name="MetadataSwitch"
+                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
+                                      IsOn="{Binding FindSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                         <ToggleSwitch Header="Update LockScreen with artwork when available"
                                   x:Name="UpdateLockScreenSwitch"
                                   Visibility="Collapsed"
@@ -81,30 +85,45 @@
                 </StackPanel>
             </PivotItem>
         </Pivot>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="XboxVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:DeviceFamilyStateTrigger DeviceFamily="Xbox" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="RootPivot.Margin" Value="48 0 48 0" />
+                        <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="TabletOrHigherVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:CompositeStateTrigger Operator="And">
+                            <wst:CompositeStateTrigger Operator="Or">
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
+                                <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
+                            </wst:CompositeStateTrigger>
+
+                            <wst:AdaptiveTrigger MinWindowWidth="720" />
+                        </wst:CompositeStateTrigger>
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="PhoneVisualState">
+                    <VisualState.StateTriggers>
+                        <wst:AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="True" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
-
-    <VisualStateManager.VisualStateGroups>
-        <VisualStateGroup>
-            <VisualState x:Name="TabletOrHigherVisualState">
-                <!--this should include Xbox-->
-                <VisualState.StateTriggers>
-                    <wst:AdaptiveTrigger MinWindowWidth="720" />
-                </VisualState.StateTriggers>
-
-                <VisualState.Setters>
-                    <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
-                </VisualState.Setters>
-            </VisualState>
-
-            <VisualState x:Name="PhoneVisualState">
-                <VisualState.StateTriggers>
-                    <wst:AdaptiveTrigger MinWindowWidth="0" />
-                </VisualState.StateTriggers>
-
-                <VisualState.Setters>
-                    <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="True" />
-                </VisualState.Setters>
-            </VisualState>
-        </VisualStateGroup>
-    </VisualStateManager.VisualStateGroups>
 </Page>

@@ -42,6 +42,25 @@ namespace Neptunium.ViewModel.Dialog
             }
         });
 
+        public RelayCommand PinStationCommand => new RelayCommand(async x =>
+        {
+            if (!NepApp.UI.Notifier.CheckIfStationTilePinned(Station))
+            {
+                try
+                {
+                    bool result = await NepApp.UI.Notifier.PinStationAsTileAsync(Station);
+                }
+                catch (Exception)
+                {
+                    await NepApp.UI.ShowInfoDialogAsync("Uh-oh!", "Wasn't able to pin the station.");
+                }
+            }
+            else
+            {
+                await NepApp.UI.ShowInfoDialogAsync("Can't do that!", "This station is already pinned!");
+            }
+        });
+
         public override Task<NepAppUIManagerDialogResult> InvokeAsync(object parameter)
         {
             if (parameter == null || !(parameter is StationItem))

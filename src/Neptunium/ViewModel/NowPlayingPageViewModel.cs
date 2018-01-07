@@ -8,6 +8,8 @@ using Crystal3.Navigation;
 using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
 using Crystal3.UI.Commands;
+using Crystal3.Messaging;
+using Windows.UI;
 
 namespace Neptunium.ViewModel
 {
@@ -46,6 +48,12 @@ namespace Neptunium.ViewModel
             private set { SetPropertyValue<Uri>(value: value); }
         }
 
+        public Color BackgroundColor
+        {
+            get { return GetPropertyValue<Color>(); }
+            private set { SetPropertyValue<Color>(value: value); }
+        }
+
         public Uri CoverImage
         {
             get { return GetPropertyValue<Uri>(); }
@@ -72,7 +80,7 @@ namespace Neptunium.ViewModel
             });
         }
 
-        private void UpdateArtwork()
+        private async void UpdateArtwork()
         {
             var albumArt = NepApp.SongManager.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Album);
             if (albumArt != null)
@@ -99,6 +107,20 @@ namespace Neptunium.ViewModel
                         //update the background
                         Background = new Uri(NepApp.MediaPlayer.CurrentStream.ParentStation.Background);
                     }
+                    else
+                    {
+                        Background = null;
+                    }
+                }
+            }
+
+            if (Background != null)
+            {
+                var backgroundColor = await StationSupplementaryDataManager.GetDominantColorAsync(Background);
+                if (backgroundColor != BackgroundColor)
+                {
+                    BackgroundColor = backgroundColor;
+                    await Messenger.SendMessageAsync("NowPlayingBgColor", backgroundColor);
                 }
             }
         }

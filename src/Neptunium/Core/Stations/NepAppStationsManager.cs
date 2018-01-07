@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI.Xaml;
 using Windows.Web.Http;
 using static Neptunium.NepApp;
 
@@ -15,8 +17,11 @@ namespace Neptunium.Core.Stations
     public class NepAppStationsManager : INepAppFunctionManager
     {
         private const string StationsFilePath = @"Data\Stations\Data\Stations.xml";
+        private SemaphoreSlim stationsLock = null;
         internal NepAppStationsManager()
         {
+            stationsLock = new SemaphoreSlim(1);
+
             if (!ApplicationData.Current.RoamingSettings.Values.ContainsKey(nameof(LastPlayedStationName)))
             {
                 ApplicationData.Current.RoamingSettings.Values.Add(new KeyValuePair<string, object>(nameof(LastPlayedStationName), null));
@@ -33,144 +38,195 @@ namespace Neptunium.Core.Stations
             ApplicationData.Current.RoamingSettings.Values[nameof(LastPlayedStationName)] = value;
         }
 
+        private async Task<StorageFile> GetStationsFileAsync()
+        {
+            var cachedStationsUri = await NepApp.CacheManager.GetOrCacheUriAsync(NepAppDataCacheManager.CacheType.TextualDataFiles,
+                new Uri("https://raw.githubusercontent.com/Amrykid/Neptunium-Stations/master/Stations.xml"), preferOnline: true);
+            StorageFile file = null;
+
+            if (cachedStationsUri.Item2 != null)
+                file = cachedStationsUri.Item2;
+            else
+                file = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(StationsFilePath);
+
+            return file;
+        }
+
         public string LastPlayedStationName { get; private set; }
 
         internal async Task<StationItem[]> GetStationsAsync()
         {
-            var file = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(StationsFilePath);
+            await stationsLock.WaitAsync();
+
+            StorageFile file = await GetStationsFileAsync();
+
             var reader = await file.OpenReadAsync();
 
             XDocument xmlDoc = XDocument.Load(reader.AsStream());
-            List<StationItem> stationList = new List<StationItem>();
 
-            foreach (var stationElement in xmlDoc.Element("Stations").Elements("Station"))
+            try
             {
-                var streams = stationElement.Element("Streams").Elements("Stream").Select<XElement, StationStream>(x =>
+                List<StationItem> stationList = new List<StationItem>();
+
+                foreach (var stationElement in xmlDoc.Element("Stations").Elements("Station"))
                 {
-                    var stream = new StationStream(new Uri(x.Value));
-                    stream.ContentType = x.Attribute("ContentType")?.Value;
-
-                    if (x.Attribute("Bitrate") != null)
-                        stream.Bitrate = int.Parse(x.Attribute("Bitrate")?.Value);
-
-                    if (x.Attribute("RelativePath") != null)
-                        stream.RelativePath = x.Attribute("RelativePath")?.Value;
-
-                    if (x.Attribute("ServerType") != null)
+                    var streams = stationElement.Element("Streams").Elements("Stream").Select<XElement, StationStream>(x =>
                     {
-                        stream.ServerFormat = (StationStreamServerFormat)Enum.Parse(typeof(StationStreamServerFormat), x.Attribute("ServerType").Value);
-                    }
+                        var stream = new StationStream(new Uri(x.Value));
+                        stream.ContentType = x.Attribute("ContentType")?.Value;
 
-                    if (x.Attribute("RequestMetadata") != null)
+                        if (x.Attribute("Bitrate") != null)
+                            stream.Bitrate = int.Parse(x.Attribute("Bitrate")?.Value);
+
+                        if (x.Attribute("RelativePath") != null)
+                            stream.RelativePath = x.Attribute("RelativePath")?.Value;
+
+                        if (x.Attribute("ServerType") != null)
+                        {
+                            stream.ServerFormat = (StationStreamServerFormat)Enum.Parse(typeof(StationStreamServerFormat), x.Attribute("ServerType").Value);
+                        }
+
+                        if (x.Attribute("RequestMetadata") != null)
+                        {
+                            stream.RequestMetadata = bool.Parse(x.Attribute("RequestMetadata").Value);
+                        }
+                        else
+                        {
+                            //defaults to true
+                            stream.RequestMetadata = true;
+                        }
+
+                        return stream;
+                    }).ToArray();
+
+                    var stationLogoData = await NepApp.CacheManager.GetOrCacheUriAsync(NepAppDataCacheManager.CacheType.StationImages, new Uri(stationElement.Element("Logo").Value));
+                    Uri stationLogoUri = stationLogoData.Item1;
+                    if (stationLogoData.Item2 != null)
+                        stationLogoUri = new Uri(stationLogoData.Item2.Path);
+
+
+                    var station = new StationItem(
+                        name: stationElement.Element("Name").Value,
+                        description: stationElement.Element("Description").Value,
+                        stationLogo: stationLogoUri,
+                        streams: streams);
+
+                    station.StationLogoUrlOnline = new Uri(stationElement.Element("Logo").Value);
+
+                    if (stationElement.Element("Programs") != null)
                     {
-                        stream.RequestMetadata = bool.Parse(x.Attribute("RequestMetadata").Value);
+                        station.Programs = stationElement.Element("Programs").Elements("Program").Select<XElement, StationProgram>(x =>
+                        {
+
+                            var program = new StationProgram();
+                            program.Name = x.Attribute("Name")?.Value;
+                            program.Station = station;
+
+                            if (x.Attribute("Style") != null)
+                            {
+                                program.Style = (StationProgramStyle)Enum.Parse(typeof(StationProgramStyle), x.Attribute("Style").Value);
+                            }
+                            else
+                            {
+                                program.Style = StationProgramStyle.Hosted;
+                            }
+
+                            if (program.Style == StationProgramStyle.Hosted)
+                            {
+                                //hosted programs rely on the "artist" string (from song metadata) to match in order to activate.
+
+                                program.Host = x.Attribute("Host").Value;
+                                program.HostRegexExpression = x.Attribute("HostExp")?.Value;
+                            }
+                            else if (program.Style == StationProgramStyle.Block)
+                            {
+                                //block programs are activated based on the time and the current station.
+                            }
+
+                            if (x.HasElements)
+                            {
+                                if (x.Elements("Listing") != null)
+                                {
+                                    //if the program has an actual schedule (e.g. always occur on a certain day around a certain time), grab its time listings.
+
+                                    var listings = new List<StationProgramTimeListing>();
+
+                                    foreach (var listingElement in x.Elements("Listing"))
+                                    {
+                                        try
+                                        {
+                                            StationProgramTimeListing listing = new StationProgramTimeListing();
+                                            listing.Day = (DayOfWeek)Enum.Parse(typeof(DayOfWeek), listingElement.Attribute("Day").Value);
+                                            listing.Time = DateTime.Parse(listingElement.Attribute("Time").Value);
+
+                                            if (listingElement.Attribute("EndTime") != null)
+                                            {
+                                                listing.EndTime = DateTime.Parse(listingElement.Attribute("EndTime").Value);
+                                            }
+
+                                            listings.Add(listing);
+                                        }
+                                        catch (Exception ex)
+                                        {
+#if !DEBUG
+                                            Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex);
+#endif
+                                        }
+                                    }
+
+                                    program.TimeListings = listings.ToArray();
+                                }
+                            }
+
+                            return program;
+                        }).ToArray();
                     }
                     else
                     {
-                        //defaults to true
-                        stream.RequestMetadata = true;
+                        station.Programs = null;
                     }
 
-                    return stream;
-                }).ToArray();
-
-                var stationLogoUri = await CacheStationLogoUriAsync(new Uri(stationElement.Element("Logo").Value));
-
-                var station = new StationItem(
-                    name: stationElement.Element("Name").Value,
-                    description: stationElement.Element("Description").Value,
-                    stationLogo: stationLogoUri,
-                    streams: streams);
-
-                if (stationElement.Element("Programs") != null)
-                {
-                    station.Programs = stationElement.Element("Programs").Elements("Program").Select<XElement, StationProgram>(x =>
+                    if (stationElement.Element("Background") != null)
                     {
-                        var hostExpression = x.Attribute("HostExp")?.Value;
-                        var programName = x.Attribute("Name")?.Value;
-                        return new StationProgram() { Host = x.Attribute("Host").Value, HostRegexExpression = hostExpression, Name = programName };
-                    }).ToArray();
-                }
-                else
-                {
-                    station.Programs = null;
-                }
+                        var backgroundElement = stationElement.Element("Background");
 
-                if (stationElement.Element("Background") != null)
-                {
-                    var backgroundElement = stationElement.Element("Background");
+                        station.Background = backgroundElement.Value;
+                    }
 
-                    station.Background = backgroundElement.Value;
-                }
+                    station.Site = stationElement.Element("Site").Value;
+                    station.Genres = stationElement.Element("Genres").Value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                    station.PrimaryLocale = stationElement.Element("PrimaryLocale")?.Value;
 
-                station.Site = stationElement.Element("Site").Value;
-                station.Genres = stationElement.Element("Genres").Value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                station.PrimaryLocale = stationElement.Element("PrimaryLocale")?.Value;
+                    if (stationElement.Element("StationMessages") == null)
+                    {
+                        station.StationMessages = new string[] { };
+                    }
+                    else
+                    {
+                        var stationMsgElement = stationElement.Element("StationMessages");
+                        var messages = stationMsgElement.Elements("Message").Select(x => x.Value.ToString()).ToArray();
+                        station.StationMessages = messages;
+                    }
 
-                if (stationElement.Element("StationMessages") == null)
-                {
-                    station.StationMessages = new string[] { };
-                }
-                else
-                {
-                    var stationMsgElement = stationElement.Element("StationMessages");
-                    var messages = stationMsgElement.Elements("Message").Select(x => x.Value.ToString()).ToArray();
-                    station.StationMessages = messages;
+                    station.Group = stationElement.Element("StationGroup")?.Value;
+
+                    stationList.Add(station);
+
                 }
 
-                station.Group = stationElement.Element("StationGroup")?.Value;
-
-                stationList.Add(station);
-
+                stationsLock.Release();
+                return stationList.ToArray();
             }
-            xmlDoc = null;
-            reader.Dispose();
-
-            return stationList.ToArray();
-        }
-
-        public async Task<Uri> CacheStationLogoUriAsync(Uri uri)
-        {
-            //this method takes the online station uri and redirects it to a local copy (and caches it locally if it hasn't already).
-
-
-            var imageCacheFolder = await NepApp.ImageCacheFolder.CreateFolderAsync("StationLogos", CreationCollisionOption.OpenIfExists);
-
-            var originalFileName = uri.Segments.Last().Trim();
-
-            StorageFile fileObject = await imageCacheFolder.TryGetItemAsync(originalFileName) as StorageFile;
-
-            if (fileObject == null)
+            catch (Exception ex)
             {
-                if (!NepApp.Network.IsConnected)
-                {
-                    return uri; //return the online uri for now.
-                }
-                else
-                {
-                    //cache the station logo for offline use.
-
-                    fileObject = await imageCacheFolder.CreateFileAsync(originalFileName);
-                    Stream fileStream = await fileObject.OpenStreamForWriteAsync(); //auto disposed by the using statement on the next line
-                    using (IOutputStream outputFileStream = fileStream.AsOutputStream())
-                    {
-                        using (HttpClient http = new HttpClient())
-                        {
-                            var httpResponse = await http.GetAsync(uri);
-                            await httpResponse.Content.WriteToStreamAsync(outputFileStream);
-                            await outputFileStream.FlushAsync();
-                            httpResponse.Dispose();
-                        }
-                    }
-
-
-                    //falls through below where it returns our cached copy.
-                }
+                stationsLock.Release();
+                throw new Exception("An error occurred", ex);
             }
-
-            //return our local copy.
-
-            return new Uri(fileObject.Path);
+            finally
+            {
+                xmlDoc = null;
+                reader.Dispose();
+            }
         }
 
         internal async Task<StationItem> GetStationByNameAsync(string stationPlayedOn)
