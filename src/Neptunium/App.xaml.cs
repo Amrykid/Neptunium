@@ -359,8 +359,12 @@ namespace Neptunium
 
         protected override Task OnSuspendingAsync()
         {
-            //clears the tile if we're suspending.
-            TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+            if (App.GetDevicePlatform() == Crystal3.Core.Platform.Desktop || App.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            {
+                //clears the tile if we're suspending.
+                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+            }
+
             if (!NepApp.MediaPlayer.IsPlaying)
             {
                 //removes the now playing notification from the action center.
