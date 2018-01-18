@@ -111,12 +111,21 @@ namespace Neptunium.Core.UI
 
         public async Task ShowInfoDialogAsync(string title, string message)
         {
-            await await App.Dispatcher.RunWhenIdleAsync(() =>
+            if (App.Dispatcher.HasThreadAccess)
             {
                 MessageDialog dialog = new MessageDialog(message);
                 dialog.Title = title;
-                return dialog.ShowAsync();
-            });
+                await dialog.ShowAsync();
+            }
+            else
+            {
+                await await App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    MessageDialog dialog = new MessageDialog(message);
+                    dialog.Title = title;
+                    return dialog.ShowAsync();
+                });
+            }
         }
         #endregion
 
