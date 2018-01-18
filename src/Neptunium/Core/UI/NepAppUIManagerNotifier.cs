@@ -156,6 +156,8 @@ namespace Neptunium.Core.UI
 
         public bool CheckIfStationTilePinned(StationItem stationItem)
         {
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return false; //not supported
+
             return SecondaryTile.Exists(GetStationItemTileId(stationItem));
         }
 
@@ -284,6 +286,8 @@ namespace Neptunium.Core.UI
 
         public void UpdateLiveTile(ExtendedSongMetadata nowPlaying)
         {
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //not supported
+
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
 
             TileBindingContentAdaptive largeBindingContent = new TileBindingContentAdaptive()
