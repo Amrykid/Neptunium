@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -15,6 +16,7 @@ namespace Neptunium.Core.Media.Bluetooth
         private SpeechSynthesizer speechSynth = new SpeechSynthesizer();
         private VoiceInformation japaneseFemaleVoice = null;
         private VoiceInformation koreanFemaleVoice = null;
+        private SemaphoreSlim announcementLock = new SemaphoreSlim(1);
         public NepAppMediaBluetoothDeviceCoordinator DeviceCoordinator { get; private set; }
         public bool IsBluetoothModeActive { get; private set; }
 
@@ -42,6 +44,7 @@ namespace Neptunium.Core.Media.Bluetooth
             {
                 if ((bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsInBluetoothMode))
                 {
+                    await announcementLock.WaitAsync();
 
                     var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, NepApp.MediaPlayer.CurrentStream.ParentStation.PrimaryLocale);
                     var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
@@ -52,6 +55,8 @@ namespace Neptunium.Core.Media.Bluetooth
                     if (shouldFade) await NepApp.MediaPlayer.FadeVolumeDownToAsync(0.1);
                     await PlayAnnouncementAudioStreamAsync(stream);
                     if (shouldFade) await NepApp.MediaPlayer.FadeVolumeUpToAsync(initialVolume);
+
+                    announcementLock.Release();
                 }
             }
         }
