@@ -107,24 +107,11 @@ namespace Neptunium
                     if (await GetIfPrimaryWindowVisibleAsync())
                         await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Something went wrong!", e.Message);
                 }
-                else
-                {
-                    Dictionary<string, string> dictionary = new Dictionary<string, string>();
-                    dictionary.Add("Original-Message", e.Message);
-                    HockeyClient.Current.TrackException(exception, dictionary);
-                    HockeyClient.Current.Flush();
 
-                    try
-                    {
-                        if (await GetIfPrimaryWindowVisibleAsync())
-                            await NepApp.UI.ShowInfoDialogAsync("Uh-oh! That's not supposed to happen.", e.Message);
-                    }
-                    catch (Exception ex)
-                    {
-                        HockeyClient.Current.TrackException(ex);
-                        HockeyClient.Current.Flush();
-                    }
-                }
+                Dictionary<string, string> dictionary = new Dictionary<string, string>();
+                dictionary.Add("Original-Message", e.Message);
+                HockeyClient.Current.TrackException(exception, dictionary);
+                HockeyClient.Current.Flush();
             }
             else
             {
