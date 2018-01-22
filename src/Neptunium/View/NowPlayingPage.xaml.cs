@@ -79,9 +79,24 @@ namespace Neptunium.View
             }
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (!Messenger.IsTarget(this))
+            {
+                Messenger.AddTarget(this);
+            }
+
+            base.OnNavigatedTo(e);
+        }
+
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             NepApp.MediaPlayer.IsPlayingChanged -= Media_IsPlayingChanged;
+
+            if (Messenger.IsTarget(this))
+            {
+                Messenger.RemoveTarget(this);
+            }
 
             base.OnNavigatingFrom(e);
         }
