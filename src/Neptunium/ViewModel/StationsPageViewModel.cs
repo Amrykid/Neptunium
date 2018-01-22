@@ -78,14 +78,17 @@ namespace Neptunium.ViewModel
             StationItem stationItem = (StationItem)station;
             if (NepApp.MediaPlayer.CurrentStreamer?.StationPlaying == stationItem) return; //don't show a dialog to play the current station
 
-            if ((await NepApp.UI.Overlay.ShowDialogFragmentAsync<StationInfoDialogFragment>(stationItem)).ResultType == Core.UI.NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive)
+            var result = await NepApp.UI.Overlay.ShowDialogFragmentAsync<StationInfoDialogFragment>(stationItem);
+            if (result.ResultType == Core.UI.NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive)
             {
                 var controller = await NepApp.UI.Overlay.ShowProgressDialogAsync(string.Format("Connecting to {0}...", stationItem.Name), "Please wait...");
                 controller.SetIndeterminate();
 
                 try
                 {
-                    await NepApp.MediaPlayer.TryStreamStationAsync(stationItem.Streams[0]);
+                    StationStream stream = result.Selection as StationStream;
+                    if (stream == null) stream = stationItem.Streams[0];
+                    await NepApp.MediaPlayer.TryStreamStationAsync(stream);
                     await controller.CloseAsync();
                 }
                 catch (Neptunium.Core.NeptuniumException ex)

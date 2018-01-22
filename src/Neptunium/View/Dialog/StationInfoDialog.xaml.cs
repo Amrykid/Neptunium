@@ -1,4 +1,6 @@
 ﻿using Crystal3;
+using Crystal3.UI;
+using Neptunium.ViewModel.Dialog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,6 +37,19 @@ namespace Neptunium.View
 
             //Focus on the cancel button.
             CancelButton.Focus(FocusState.Programmatic);
+        }
+
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var item = e.ClickedItem;
+
+            this.GetViewModel<StationInfoDialogFragment>().PlayStreamCommand.Execute(item);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var item = ((Button)sender).DataContext;
+            this.GetViewModel<StationInfoDialogFragment>().PlayStreamCommand.Execute(item);
         }
     }
 }

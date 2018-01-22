@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    x:Name="thisPage"
     Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="5 0">
@@ -37,6 +38,58 @@
             <AppBarButton Label="Website" Icon="Globe" Command="{Binding OpenStationWebsiteCommand}" />
             <AppBarButton Label="Pin" Icon="Pin" x:Name="PinStationButton" Visibility="Visible" Command="{Binding PinStationCommand}" />
         </StackPanel>
+
+        <ListView Grid.Row="2" ItemsSource="{Binding Station.Streams, UpdateSourceTrigger=PropertyChanged}"
+                  ItemClick="ListView_ItemClick"
+                  IsItemClickEnabled="True"
+                  IsFocusEngagementEnabled="True"
+                  SelectionMode="None">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Width="NaN">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="50" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="{Binding SpecificTitle}" Grid.Row="0"
+                                   Grid.Column="0"
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
+
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="0"
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                            <Span>
+                                <Run Text="{Binding Bitrate}" />
+                                <Run Text="Kbps" />
+                                <Run Text="·" FontWeight="ExtraBold" />
+                                <Run Text="{Binding ContentType}" />
+                            </Span>
+                        </TextBlock>
+
+                        <Button Grid.Column="1"
+                                Grid.RowSpan="2"
+                                Click="Button_Click"
+                                Background="{ThemeResource AccentButtonBackground}"
+                                CommandParameter="{Binding}">
+                            <SymbolIcon Symbol="Play" />
+                        </Button>
+                        
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
         
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <StackPanel.Resources>

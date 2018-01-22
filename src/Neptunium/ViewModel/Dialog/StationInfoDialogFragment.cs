@@ -33,6 +33,13 @@ namespace Neptunium.ViewModel.Dialog
             ResultTaskCompletionSource.SetResult(new NepAppUIManagerDialogResult() { ResultType = NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive });
             dialogAnswered = true;
         });
+        public RelayCommand PlayStreamCommand => new RelayCommand(x =>
+        {
+            if (dialogAnswered) return;
+            ResultTaskCompletionSource.SetResult(new NepAppUIManagerDialogResult() { ResultType = NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive, Selection = x });
+            dialogAnswered = true;
+        });
+
 
         public RelayCommand OpenStationWebsiteCommand => new RelayCommand(async x =>
         {
