@@ -75,7 +75,10 @@ namespace Neptunium.ViewModel
 
             ScheduleItems = new ObservableCollection<ScheduleItem>(items);
             var collectionViewSource = new CollectionViewSource();
-            collectionViewSource.Source = items. OrderBy(x => x.TimeLocal.Hour).GroupBy(x => x.Day);
+            collectionViewSource.Source = items
+                .OrderBy(x => x.TimeLocal.Hour)
+                .OrderBy(x => (int)x.TimeLocal.DayOfWeek)
+                .GroupBy(x => x.Day);
             collectionViewSource.IsSourceGrouped = true;
             SortedScheduleItems = collectionViewSource;
 
