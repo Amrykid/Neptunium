@@ -44,6 +44,11 @@
                   IsItemClickEnabled="True"
                   IsFocusEngagementEnabled="True"
                   SelectionMode="None">
+            <ListView.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="Available Streams" Style="{ThemeResource BaseTextBlockStyle}" Margin="5, 0" />
+                </DataTemplate>
+            </ListView.HeaderTemplate>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Width="NaN">
@@ -59,12 +64,12 @@
                         <TextBlock Text="{Binding SpecificTitle}" Grid.Row="0"
                                    Grid.Column="0"
                                    Style="{ThemeResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
+                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}" />
 
                         <TextBlock Grid.Row="1"
                                    Grid.Column="0"
                                    Style="{ThemeResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
                             <Span>
                                 <Run Text="{Binding Bitrate}" />
                                 <Run Text="Kbps" />
@@ -74,13 +79,13 @@
                         </TextBlock>
 
                         <Button Grid.Column="1"
+                                Grid.Row="0"
                                 Grid.RowSpan="2"
                                 Click="Button_Click"
                                 Background="{ThemeResource AccentButtonBackground}"
                                 CommandParameter="{Binding}">
                             <SymbolIcon Symbol="Play" />
                         </Button>
-                        
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
