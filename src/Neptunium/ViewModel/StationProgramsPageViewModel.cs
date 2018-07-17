@@ -7,48 +7,19 @@ using System.Threading.Tasks;
 using Crystal3.Navigation;
 using System.Collections.ObjectModel;
 using Neptunium.Model;
+using Windows.UI.Xaml.Data;
 
 namespace Neptunium.ViewModel
 {
     public class StationProgramsPageViewModel : UIViewModelBase
     {
-        public ObservableCollection<ScheduleItem> SundayItems
+        public CollectionViewSource SortedScheduleItems
         {
-            get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
-            private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
+            get { return GetPropertyValue<CollectionViewSource>(); }
+            private set { SetPropertyValue<CollectionViewSource>(value: value); }
         }
 
-        public ObservableCollection<ScheduleItem> MondayItems
-        {
-            get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
-            private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
-        }
-
-        public ObservableCollection<ScheduleItem> TuesdayItems
-        {
-            get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
-            private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
-        }
-
-        public ObservableCollection<ScheduleItem> WednesdayItems
-        {
-            get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
-            private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
-        }
-
-        public ObservableCollection<ScheduleItem> ThursdayItems
-        {
-            get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
-            private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
-        }
-
-        public ObservableCollection<ScheduleItem> FridayItems
-        {
-            get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
-            private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
-        }
-
-        public ObservableCollection<ScheduleItem> SaturdayItems
+        public ObservableCollection<ScheduleItem> ScheduleItems
         {
             get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
             private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
@@ -78,14 +49,7 @@ namespace Neptunium.ViewModel
 
         private async Task LoadScheduleAsync()
         {
-            //theres a better way to do this.
-            SundayItems = new ObservableCollection<ScheduleItem>();
-            MondayItems = new ObservableCollection<ScheduleItem>();
-            TuesdayItems = new ObservableCollection<ScheduleItem>();
-            WednesdayItems = new ObservableCollection<ScheduleItem>();
-            ThursdayItems = new ObservableCollection<ScheduleItem>();
-            FridayItems = new ObservableCollection<ScheduleItem>();
-            SaturdayItems = new ObservableCollection<ScheduleItem>();
+            var items = new List<ScheduleItem>();
 
             var stations = await NepApp.Stations.GetStationsAsync();
 
@@ -104,49 +68,19 @@ namespace Neptunium.ViewModel
                         item.TimeLocal = listing.Time;
                         item.Program = program;
 
-                        switch (item.Day.ToLower())
-                        {
-                            case "sunday":
-                                SundayItems.Add(item);
-                                break;
-                            case "monday":
-                                MondayItems.Add(item);
-                                break;
-                            case "tuesday":
-                                TuesdayItems.Add(item);
-                                break;
-                            case "wednesday":
-                                WednesdayItems.Add(item);
-                                break;
-                            case "thursday":
-                                ThursdayItems.Add(item);
-                                break;
-                            case "friday":
-                                FridayItems.Add(item);
-                                break;
-                            case "saturday":
-                                SaturdayItems.Add(item);
-                                break;
-                        }
+                        items.Add(item);
                     }
                 }
             }
 
-            SundayItems = new ObservableCollection<ScheduleItem>(SundayItems.OrderBy(x => x.Time));
-            MondayItems = new ObservableCollection<ScheduleItem>(MondayItems.OrderBy(x => x.Time));
-            TuesdayItems = new ObservableCollection<ScheduleItem>(TuesdayItems.OrderBy(x => x.Time));
-            WednesdayItems = new ObservableCollection<ScheduleItem>(WednesdayItems.OrderBy(x => x.Time));
-            ThursdayItems = new ObservableCollection<ScheduleItem>(ThursdayItems.OrderBy(x => x.Time));
-            FridayItems = new ObservableCollection<ScheduleItem>(FridayItems.OrderBy(x => x.Time));
-            SaturdayItems = new ObservableCollection<ScheduleItem>(SaturdayItems.OrderBy(x => x.Time));
+            ScheduleItems = new ObservableCollection<ScheduleItem>(items);
+            var collectionViewSource = new CollectionViewSource();
+            collectionViewSource.Source = items. OrderBy(x => x.TimeLocal.Hour).GroupBy(x => x.Day);
+            collectionViewSource.IsSourceGrouped = true;
+            SortedScheduleItems = collectionViewSource;
 
-            RaisePropertyChanged(nameof(SundayItems));
-            RaisePropertyChanged(nameof(MondayItems));
-            RaisePropertyChanged(nameof(TuesdayItems));
-            RaisePropertyChanged(nameof(WednesdayItems));
-            RaisePropertyChanged(nameof(ThursdayItems));
-            RaisePropertyChanged(nameof(FridayItems));
-            RaisePropertyChanged(nameof(SaturdayItems));
+            RaisePropertyChanged(nameof(ScheduleItems));
+            RaisePropertyChanged(nameof(SortedScheduleItems));
         }
     }
 }

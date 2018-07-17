@@ -35,7 +35,7 @@ namespace Neptunium.View
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
             {
                 //force focus on Xbox.
-                RootPivot.Focus(FocusState.Keyboard);
+                ScheduleListView.Focus(FocusState.Keyboard);
             }
         }
     }
