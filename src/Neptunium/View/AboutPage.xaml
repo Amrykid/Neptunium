@@ -18,6 +18,7 @@
                 <StackPanel Orientation="Horizontal">
                     <AppBarButton Icon="Globe" Label="GitHub" Click="AppBarButton_Click" />
                     <AppBarButton Icon="Shop" Label="Windows Store" Click="AppBarButton_Click_1" />
+                    <AppBarButton Icon="ContactInfo" Label="Privacy Policy" Click="AppBarButton_Click_2" />
                 </StackPanel>
                 
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" Text="Introduction" Margin="0 5 0 0" />
