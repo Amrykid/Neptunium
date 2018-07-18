@@ -197,11 +197,10 @@ namespace Neptunium.View
                 Action noChrome = () =>
                 {
                     topAppBar.Visibility = Visibility.Collapsed;
-                    bottomAppBar.Visibility = Visibility.Collapsed;
-
-                    RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
+                    bottomAppBar.Visibility = Visibility.Collapsed;        
 
                     RootSplitView.IsPaneOpen = false;
+                    RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
 
                     SetMobileStatusBarToTransparent();
 
@@ -215,13 +214,17 @@ namespace Neptunium.View
 
                 noChrome();
 
-                noChromeHandler = new VisualStateChangedEventHandler((o, args) =>
+                noChromeHandler = new VisualStateChangedEventHandler((System.Object o, VisualStateChangedEventArgs args) =>
                 {
                     //this is to "fix" the splitview opening when extending the window in no chrome mode. it doesn't work very well
                     RootSplitView.Visibility = Visibility.Collapsed;
                     noChrome();
                     RootSplitView.Visibility = Visibility.Visible;
                 });
+
+                ShellVisualStateGroup.States.Remove(DesktopVisualState);
+                ShellVisualStateGroup.States.Remove(TabletVisualState);
+                ShellVisualStateGroup.States.Remove(PhoneVisualState);
 
                 ShellVisualStateGroup.CurrentStateChanged += noChromeHandler;
                 ShellVisualStateGroup.CurrentStateChanging += noChromeHandler;
@@ -259,6 +262,15 @@ namespace Neptunium.View
                 {
                     RootGrid.Margin = new Thickness(0);
                 }
+
+                if (!ShellVisualStateGroup.States.Contains(DesktopVisualState))
+                    ShellVisualStateGroup.States.Add(DesktopVisualState);
+
+                if (!ShellVisualStateGroup.States.Contains(TabletVisualState))
+                    ShellVisualStateGroup.States.Add(TabletVisualState);
+
+                if (!ShellVisualStateGroup.States.Contains(PhoneVisualState))
+                    ShellVisualStateGroup.States.Add(PhoneVisualState);
 
                 if (noChromeHandler != null)
                 {

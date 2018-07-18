@@ -323,7 +323,7 @@
             <VisualStateGroup x:Name="ShellVisualStateGroup">
                 <VisualState x:Name="DesktopVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="1080" />
+                        <wst:AdaptiveTrigger x:Name="DesktopVisualStateTrigger" MinWindowWidth="1080" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
@@ -347,7 +347,7 @@
 
                 <VisualState x:Name="TabletVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="720" />
+                        <wst:AdaptiveTrigger x:Name="TabletVisualStateTrigger" MinWindowWidth="720" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
@@ -371,7 +371,7 @@
 
                 <VisualState x:Name="PhoneVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="0" />
+                        <wst:AdaptiveTrigger x:Name="PhoneVisualStateTrigger" MinWindowWidth="0" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
