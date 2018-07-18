@@ -23,7 +23,7 @@
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" Text="Introduction" Margin="0 5 0 0" />
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" Padding="5">
                     Neptunium (or Nep for short) is a reimagining of Hanasu, a streaming radio player catered to Japanese and Korean music. Hanasu began as a proof of concept and a hobby project. 
-                    Neptunium began as an attend to build Hanasu as a Windows 10 Universal application. Neptunium runs on Windows 10 PC, Windows 10 Mobile phones and Xbox One (via Windows 10).
+                    Neptunium began as an attempt to build Hanasu as a Windows 10 Universal application. Neptunium runs on Windows 10 PC, Windows 10 Mobile phones and Xbox One (via Windows 10).
                 </TextBlock>
 
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" Text="Libraries Used" />
