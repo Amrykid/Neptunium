@@ -185,7 +185,6 @@ namespace Neptunium.View
             }
         }
 
-        private VisualStateChangedEventHandler noChromeHandler = null;
         private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
         {
             WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
@@ -194,40 +193,25 @@ namespace Neptunium.View
             {
                 //no chrome mode
 
-                Action noChrome = () =>
+                topAppBar.Visibility = Visibility.Collapsed;
+                bottomAppBar.Visibility = Visibility.Collapsed;
+
+                RootSplitView.IsPaneOpen = false;
+                RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
+
+                SetMobileStatusBarToTransparent();
+
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+
+                if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
                 {
-                    topAppBar.Visibility = Visibility.Collapsed;
-                    bottomAppBar.Visibility = Visibility.Collapsed;        
+                    RootGrid.Margin = new Thickness(0, -25, 0, 0);
+                }
 
-                    RootSplitView.IsPaneOpen = false;
-                    RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
-
-                    SetMobileStatusBarToTransparent();
-
-                    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-
-                    if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-                    {
-                        RootGrid.Margin = new Thickness(0, -25, 0, 0);
-                    }
-                };
-
-                noChrome();
-
-                noChromeHandler = new VisualStateChangedEventHandler((System.Object o, VisualStateChangedEventArgs args) =>
-                {
-                    //this is to "fix" the splitview opening when extending the window in no chrome mode. it doesn't work very well
-                    RootSplitView.Visibility = Visibility.Collapsed;
-                    noChrome();
-                    RootSplitView.Visibility = Visibility.Visible;
-                });
 
                 ShellVisualStateGroup.States.Remove(DesktopVisualState);
                 ShellVisualStateGroup.States.Remove(TabletVisualState);
                 ShellVisualStateGroup.States.Remove(PhoneVisualState);
-
-                ShellVisualStateGroup.CurrentStateChanged += noChromeHandler;
-                ShellVisualStateGroup.CurrentStateChanging += noChromeHandler;
 
                 isInNoChromeMode = true;
             }
@@ -271,13 +255,6 @@ namespace Neptunium.View
 
                 if (!ShellVisualStateGroup.States.Contains(PhoneVisualState))
                     ShellVisualStateGroup.States.Add(PhoneVisualState);
-
-                if (noChromeHandler != null)
-                {
-                    ShellVisualStateGroup.CurrentStateChanged -= noChromeHandler;
-                    ShellVisualStateGroup.CurrentStateChanging -= noChromeHandler;
-                    noChromeHandler = null;
-                }
 
                 isInNoChromeMode = false;
             }
