@@ -22,6 +22,18 @@ namespace Neptunium.ViewModel
                 IsBusy = true;
                 AvailableStations = new ObservableCollection<StationItem>((await NepApp.Stations.GetStationsAsync())?.OrderBy(x => x.Name));
                 //GroupedStations = AvailableStations.GroupBy(x => x.Group ?? "Ungrouped Stations").OrderBy(x => x.Key).Select(x => x);
+
+                LastPlayedStation = NepApp.Stations.LastPlayedStationName;
+                if (!string.IsNullOrWhiteSpace(LastPlayedStation))
+                {
+                    var station = await NepApp.Stations.GetStationByNameAsync(LastPlayedStation);
+                    if (station != null)
+                    {
+                        LastPlayedStationLogoUrl = station.StationLogoUrl;
+                        LastPlayedStationDescription = station.Description;
+                    }
+                }
+
                 IsBusy = false;
             }
 
@@ -44,6 +56,24 @@ namespace Neptunium.ViewModel
         {
             get { return GetPropertyValue<StationItem>(); }
             private set { SetPropertyValue<StationItem>(value: value); }
+        }
+
+        public string LastPlayedStation
+        {
+            get { return GetPropertyValue<string>(); }
+            private set { SetPropertyValue<string>(value: value); }
+        }
+
+        public Uri LastPlayedStationLogoUrl
+        {
+            get { return GetPropertyValue<Uri>(); }
+            private set { SetPropertyValue<Uri>(value: value); }
+        }
+
+        public string LastPlayedStationDescription
+        {
+            get { return GetPropertyValue<string>(); }
+            private set { SetPropertyValue<string>(value: value); }
         }
 
         public RelayCommand OpenStationWebsiteCommand => new RelayCommand(async station =>
