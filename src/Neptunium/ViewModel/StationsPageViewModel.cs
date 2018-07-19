@@ -76,6 +76,22 @@ namespace Neptunium.ViewModel
             private set { SetPropertyValue<string>(value: value); }
         }
 
+        public RelayCommand PlayLastPlayedStationCommand => new RelayCommand(async x =>
+        {
+            if (!string.IsNullOrWhiteSpace(LastPlayedStation))
+            {
+                var station = await NepApp.Stations.GetStationByNameAsync(LastPlayedStation);
+                if (station != null)
+                {
+                    ShowStationInfoCommand.Execute(station);
+
+                    LastPlayedStation = null;
+                    LastPlayedStationLogoUrl = null;
+                    LastPlayedStationDescription = null;
+                }
+            }
+        });
+
         public RelayCommand OpenStationWebsiteCommand => new RelayCommand(async station =>
         {
             StationItem stationItem = (StationItem)station;

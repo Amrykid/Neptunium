@@ -18,22 +18,23 @@
     <ScrollViewer>
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
+                <RowDefinition x:Name="LastPlayedPanelRowDef" Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0"
-                        Height="Auto"
-                        Margin="0 0 0 10"
+                        Margin="0 0 0 0"
                         Orientation="Vertical"
+                        x:Name="LastPlayedPanel"
+                        LayoutUpdated="LastPlayedPanel_LayoutUpdated"
                         Visibility="{Binding LastPlayedStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
 
                 <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
-                           Margin="5 0"
-                           Text="Last Played:" />
+                           Margin="10 0"
+                           Text="Last Played" />
 
                 <StackPanel Orientation="Horizontal">
-                    <AppBarButton Icon="Play" Label="Play" />
+                    <AppBarButton Icon="Play" Label="Play" Command="{Binding PlayLastPlayedStationCommand}" />
                     <Grid Height="80" VerticalAlignment="Center">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="75" />
