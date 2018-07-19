@@ -229,7 +229,8 @@
             </GridView>
 
             <ProgressRing Height="60" Width="60" VerticalAlignment="Center" HorizontalAlignment="Center"
-                          IsActive="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged}" />
+                          IsActive="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged}"
+                          Grid.RowSpan="2"/>
 
             
         </Grid>

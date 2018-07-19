@@ -113,5 +113,13 @@ namespace Neptunium.View
         {
 
         }
+
+        private void LastPlayedPanel_LayoutUpdated(object sender, object e)
+        {
+            if (LastPlayedPanel.Visibility == Visibility.Visible)
+                LastPlayedPanelRowDef.Height = GridLength.Auto;
+            else
+                LastPlayedPanelRowDef.Height = new GridLength(0);
+        }
     }
 }
