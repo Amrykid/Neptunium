@@ -64,9 +64,10 @@
                                             Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                             VerticalAlignment="Bottom"/>
                             <TextBlock Grid.Row="1"
-                                            VerticalAlignment="Top"
-                                            Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                            Style="{ThemeResource BodyTextBlockStyle}">
+                                       VerticalAlignment="Top"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                       Style="{ThemeResource BodyTextBlockStyle}"
+                                       TextWrapping="WrapWholeWords">
                                         <Span>
                                             <Run Text="{Binding LastPlayedStationDescription, UpdateSourceTrigger=PropertyChanged}" />
                                         </Span>
