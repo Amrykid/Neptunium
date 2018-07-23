@@ -18,6 +18,8 @@ namespace Neptunium.ViewModel
     {
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
+            NepApp.Network.IsConnectedChanged += Network_IsConnectedChanged;
+
             if (AvailableStations == null || AvailableStations?.Count == 0)
             {
                 IsBusy = true;
@@ -38,7 +40,40 @@ namespace Neptunium.ViewModel
                 IsBusy = false;
             }
 
+            DetectNetworkStatus();
+
             base.OnNavigatedTo(sender, e);
+        }
+
+        private void Network_IsConnectedChanged(object sender, EventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                DetectNetworkStatus();
+            });
+        }
+
+        private void DetectNetworkStatus()
+        {
+            NetworkAvailable = NepApp.Network.IsConnected;
+
+            if (!NetworkAvailable)
+            {
+                NepApp.UI.Overlay.ShowSnackBarMessageAsync("Network disconnected.");
+            }
+        }
+
+        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
+        {
+            NepApp.Network.IsConnectedChanged -= Network_IsConnectedChanged;
+
+            base.OnNavigatedFrom(sender, e);
+        }
+
+        public bool NetworkAvailable
+        {
+            get { return GetPropertyValue<bool>(); }
+            private set { SetPropertyValue<bool>(value: value); }
         }
 
         public ObservableCollection<StationItem> AvailableStations
