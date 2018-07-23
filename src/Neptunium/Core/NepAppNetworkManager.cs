@@ -11,7 +11,7 @@ namespace Neptunium
             NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
 
             IsConnected = IsInternetConnected();
-            UpdateNetworkUtilizationBehavior();
+            DetectConnectionType();
         }
 
         private bool IsInternetConnected()
@@ -29,10 +29,38 @@ namespace Neptunium
             IsConnected = newStatus;
 
             if (oldStatus != newStatus)
-            {
+            {              
+                DetectConnectionType();
                 IsConnectedChanged?.Invoke(this, EventArgs.Empty);
-                UpdateNetworkUtilizationBehavior();
             }
+        }
+
+        private void DetectConnectionType()
+        {
+            ConnectionProfile connections = NetworkInformation.GetInternetConnectionProfile();
+
+            if (connections != null)
+            {
+                if (connections.IsWlanConnectionProfile)
+                {
+                    ConnectionType = NetworkConnectionType.WiFi;
+                }
+                else if (connections.IsWwanConnectionProfile)
+                {
+                    ConnectionType = NetworkConnectionType.CellularData;
+                }
+                else
+                {
+                    ConnectionType = NetworkConnectionType.Ethernet;
+                    //dial-up?
+                }
+            }
+            else
+            {
+                ConnectionType = NetworkConnectionType.Unknown; //none?
+            }
+
+            UpdateNetworkUtilizationBehavior();
         }
 
         private void UpdateNetworkUtilizationBehavior()
@@ -67,12 +95,21 @@ namespace Neptunium
         public bool IsConnected { get; private set; }
 
         public NetworkDeterminedAppBehaviorStyle NetworkUtilizationBehavior { get; private set; }
+        public NetworkConnectionType ConnectionType { get; private set; }
 
         public enum NetworkDeterminedAppBehaviorStyle
         {
             Normal = 2,
             Conservative = 1,
             OptIn = 0
+        }
+
+        public enum NetworkConnectionType
+        {
+            Ethernet = 3,
+            WiFi = 2,
+            CellularData = 1,
+            Unknown = 0
         }
     }
 }
