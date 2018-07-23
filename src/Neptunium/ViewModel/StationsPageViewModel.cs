@@ -188,7 +188,7 @@ namespace Neptunium.ViewModel
                         }
                         else
                         {
-                            stream = stationItem.Streams.OrderByDescending(x => x.Bitrate).First(); ; //otherwise, grab a higher bitrate
+                            stream = stationItem.Streams.OrderByDescending(x => x.Bitrate).First(); //otherwise, grab a higher bitrate
                         }
                     }
 

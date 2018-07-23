@@ -59,7 +59,7 @@
                                       x:Name="MetadataSwitch"
                                       XYFocusUp="{Binding ElementName=ChooseBitrateSwitch}"
                                       IsOn="{Binding FindSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                        <ToggleSwitch Header="Update LockScreen with artwork when available"
+                        <ToggleSwitch Header="Update LockScreen with artwork when available."
                                   x:Name="UpdateLockScreenSwitch"
                                   Visibility="Collapsed"
                                   IsOn="{Binding UpdateLockScreenWithSongArt, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
