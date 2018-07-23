@@ -70,9 +70,9 @@ namespace Neptunium
 
         public enum NetworkDeterminedAppBehaviorStyle
         {
-            Normal,
-            Conservative,
-            OptIn
+            Normal = 2,
+            Conservative = 1,
+            OptIn = 0
         }
     }
 }
