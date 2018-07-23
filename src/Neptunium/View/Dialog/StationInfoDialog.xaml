@@ -11,7 +11,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="5 0">
         <Grid.RowDefinitions>
-            <RowDefinition MinHeight="150" Height="Auto" MaxHeight="300" />
+            <RowDefinition MinHeight="150" Height="Auto" MaxHeight="315" />
             <RowDefinition Height="62" />
             <RowDefinition Height="*" />
             <RowDefinition Height="75" />
@@ -19,7 +19,7 @@
 
         <Grid Grid.Row="0" Margin="5,5,5,5">
             <Grid.RowDefinitions>
-                <RowDefinition Height="50" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <TextBlock Text="{Binding Station.Name, UpdateSourceTrigger=PropertyChanged}" 

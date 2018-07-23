@@ -44,7 +44,7 @@
                                       XYFocusDown="{Binding ElementName=ChooseBitrateSwitch}"
                                       IsOn="{Binding ConserveData, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
-                        <ToggleSwitch Header="Automatically choose appropriate bitrate based on connection." 
+                        <ToggleSwitch Header="Automatically choose appropriate&#10;bitrate based on connection." 
                                       x:Name="ChooseBitrateSwitch"
                                       XYFocusUp="{Binding ElementName=ConserveDataSwitch}"
                                       XYFocusDown="{Binding ElementName=MetadataSwitch}"
