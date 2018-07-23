@@ -73,20 +73,27 @@ namespace Neptunium
                 var cost = connections.GetConnectionCost();
                 var dataPlan = connections.GetDataPlanStatus();
 
-                if (cost.NetworkCostType == NetworkCostType.Unrestricted || cost.NetworkCostType == NetworkCostType.Unknown)
+                if ((bool)NepApp.Settings.GetSetting(AppSettings.AutomaticallyConserveDataWhenOnMeteredConnections))
+                {
+                    if (cost.NetworkCostType == NetworkCostType.Unrestricted || cost.NetworkCostType == NetworkCostType.Unknown)
+                    {
+                        NetworkUtilizationBehavior = NetworkDeterminedAppBehaviorStyle.Normal;
+                    }
+                    else if (cost.NetworkCostType == NetworkCostType.Fixed || cost.NetworkCostType == NetworkCostType.Variable)
+                    {
+                        if (!cost.Roaming && !cost.OverDataLimit)
+                        {
+                            NetworkUtilizationBehavior = NetworkDeterminedAppBehaviorStyle.Conservative;
+                        }
+                        else
+                        {
+                            NetworkUtilizationBehavior = NetworkDeterminedAppBehaviorStyle.OptIn;
+                        }
+                    }
+                }
+                else
                 {
                     NetworkUtilizationBehavior = NetworkDeterminedAppBehaviorStyle.Normal;
-                }
-                else if (cost.NetworkCostType == NetworkCostType.Fixed || cost.NetworkCostType == NetworkCostType.Variable)
-                {
-                    if (!cost.Roaming && !cost.OverDataLimit)
-                    {
-                        NetworkUtilizationBehavior = NetworkDeterminedAppBehaviorStyle.Conservative;
-                    }
-                    else
-                    {
-                        NetworkUtilizationBehavior = NetworkDeterminedAppBehaviorStyle.OptIn;
-                    }
                 }
             }
         }
