@@ -10,6 +10,7 @@ using Neptunium.Core.Stations;
 using Crystal3.UI.Commands;
 using Neptunium.ViewModel.Dialog;
 using Windows.System;
+using Windows.UI.Popups;
 
 namespace Neptunium.ViewModel
 {
@@ -127,6 +128,15 @@ namespace Neptunium.ViewModel
             var result = await NepApp.UI.Overlay.ShowDialogFragmentAsync<StationInfoDialogFragment>(stationItem);
             if (result.ResultType == Core.UI.NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive)
             {
+                if (NepApp.Network.NetworkUtilizationBehavior == NepAppNetworkManager.NetworkDeterminedAppBehaviorStyle.OptIn)
+                {
+                    if (await NepApp.UI.ShowYesNoDialogAsync("Data usage", "You're either over your data limit or roaming. Do you want to stream this station?") == false)
+                    {
+                        //user answered no
+                        return;
+                    }
+                }
+
                 var controller = await NepApp.UI.Overlay.ShowProgressDialogAsync(string.Format("Connecting to {0}...", stationItem.Name), "Please wait...");
                 controller.SetIndeterminate();
 

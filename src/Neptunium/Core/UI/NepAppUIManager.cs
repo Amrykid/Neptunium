@@ -109,23 +109,45 @@ namespace Neptunium.Core.UI
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public async Task ShowInfoDialogAsync(string title, string message)
+        public async Task<IUICommand> ShowInfoDialogAsync(string title, string message, IEnumerable<IUICommand> commands = null)
         {
             if (App.Dispatcher.HasThreadAccess)
             {
                 MessageDialog dialog = new MessageDialog(message);
                 dialog.Title = title;
-                await dialog.ShowAsync();
+                if (commands != null)
+                {
+                    foreach(IUICommand command in commands)
+                    {
+                        dialog.Commands.Add(command);
+                    }
+                }
+                return await dialog.ShowAsync();
             }
             else
             {
-                await await App.Dispatcher.RunWhenIdleAsync(() =>
+                return await await App.Dispatcher.RunWhenIdleAsync(() =>
                 {
                     MessageDialog dialog = new MessageDialog(message);
                     dialog.Title = title;
+                    if (commands != null)
+                    {
+                        foreach (IUICommand command in commands)
+                        {
+                            dialog.Commands.Add(command);
+                        }
+                    }
                     return dialog.ShowAsync();
                 });
             }
+        }
+        public async Task<bool> ShowYesNoDialogAsync(string title, string message, IEnumerable<IUICommand> commands = null)
+        {
+            var yes = new UICommand("Yes");
+            var no = new UICommand("No");
+            var result = await ShowInfoDialogAsync(title, message, new IUICommand[] { yes, no });
+
+            return result == yes;
         }
         #endregion
 
