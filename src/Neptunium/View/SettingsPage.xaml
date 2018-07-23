@@ -31,14 +31,33 @@
                                Text="Notifications"/>
                         <ToggleSwitch Header="Show song change notifications"
                                       x:Name="SongNotificationSwitch"
-                                      XYFocusDown="{Binding ElementName=MetadataSwitch}"
+                                      XYFocusDown="{Binding ElementName=ConserveDataSwitch}"
                                       IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        
                         <MenuFlyoutSeparator />
+                        
+                        <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
+                               Text="Data"/>
+                        <ToggleSwitch Header="Conserve data on metered connections."
+                                      x:Name="ConserveDataSwitch"
+                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
+                                      XYFocusDown="{Binding ElementName=ChooseBitrateSwitch}"
+                                      IsOn="{Binding ConserveData, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                        <ToggleSwitch Header="Automatically choose appropriate bitrate based on connection." 
+                                      x:Name="ChooseBitrateSwitch"
+                                      XYFocusUp="{Binding ElementName=ConserveDataSwitch}"
+                                      XYFocusDown="{Binding ElementName=MetadataSwitch}"
+                                      IsEnabled="{Binding ElementName=ConserveDataSwitch, Path=IsOn, UpdateSourceTrigger=PropertyChanged}"
+                                      IsOn="{Binding ChooseBitrate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                        <MenuFlyoutSeparator />
+                        
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Metadata"/>
                         <ToggleSwitch Header="Find song metadata when song changes" 
                                       x:Name="MetadataSwitch"
-                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
+                                      XYFocusUp="{Binding ElementName=ChooseBitrateSwitch}"
                                       IsOn="{Binding FindSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                         <ToggleSwitch Header="Update LockScreen with artwork when available"
                                   x:Name="UpdateLockScreenSwitch"

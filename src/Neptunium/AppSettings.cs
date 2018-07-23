@@ -23,5 +23,9 @@ namespace Neptunium
         SaySongNotificationsInBluetoothMode,
         UpdateLockScreenWithSongArt,
         FallBackLockScreenImageUri,
+
+        AutomaticallyConserveDataWhenOnMeteredConnections,
+        AutomaticallyDetermineAppropriateBitrateBasedOnConnection,
+
     }
 }

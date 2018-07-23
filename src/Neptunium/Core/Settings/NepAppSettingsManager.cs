@@ -33,6 +33,11 @@ namespace Neptunium.Core.Settings
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.UpdateLockScreenWithSongArt)))
                 ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.UpdateLockScreenWithSongArt), false);
 
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.AutomaticallyConserveDataWhenOnMeteredConnections)))
+                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.AutomaticallyConserveDataWhenOnMeteredConnections), true);
+            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection)))
+                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection), true);
+
             //bluetooth mode stuff
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.SaySongNotificationsInBluetoothMode)))
                 ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.SaySongNotificationsInBluetoothMode), false);

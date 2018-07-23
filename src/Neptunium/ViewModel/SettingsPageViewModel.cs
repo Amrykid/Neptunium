@@ -46,7 +46,7 @@ namespace Neptunium.ViewModel
 
         private void Settings_SettingChanged(object sender, Core.Settings.NepAppSettingChangedEventArgs e)
         {
-            switch(e.ChangedSetting)
+            switch (e.ChangedSetting)
             {
                 case AppSettings.FallBackLockScreenImageUri:
                     RaisePropertyChanged(nameof(FallBackLockScreenArtworkUri));
@@ -100,6 +100,28 @@ namespace Neptunium.ViewModel
         {
             get { return GetPropertyValue<string>(); }
             set { SetPropertyValue<string>(value: value); }
+        }
+
+        public bool ConserveData
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.AutomaticallyConserveDataWhenOnMeteredConnections); }
+            set
+            {
+                NepApp.Settings.SetSetting(AppSettings.AutomaticallyConserveDataWhenOnMeteredConnections, value);
+
+                if (!value)
+                {
+                    //automatically set Choose Bitrate to false if "Conserve Data" is turned off.
+                    ChooseBitrate = false;
+                    RaisePropertyChanged(nameof(ChooseBitrate));
+                }
+            }
+        }
+
+        public bool ChooseBitrate
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection); }
+            set { NepApp.Settings.SetSetting(AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection, value); }
         }
     }
 }
