@@ -143,7 +143,20 @@ namespace Neptunium.ViewModel
                 try
                 {
                     StationStream stream = result.Selection as StationStream;
-                    if (stream == null) stream = stationItem.Streams[0];
+                    if (stream == null)
+                    {
+                        //check if we need to automatically choose a lower bitrate.
+                        if ((int)NepApp.Network.NetworkUtilizationBehavior < 2) //check if we're on "conservative" or "opt-in"
+                        {
+                            //grab the stream with the lowest bitrate
+                            stream = stationItem.Streams.OrderBy(x => x.Bitrate).First();
+                        }
+                        else
+                        {
+                            stream = stationItem.Streams.OrderByDescending(x => x.Bitrate).First(); ; //otherwise, grab a higher bitrate
+                        }
+                    }
+
                     await NepApp.MediaPlayer.TryStreamStationAsync(stream);
                     await controller.CloseAsync();
                 }
