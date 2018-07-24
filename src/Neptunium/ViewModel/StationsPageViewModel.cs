@@ -20,27 +20,37 @@ namespace Neptunium.ViewModel
         {
             NepApp.Network.IsConnectedChanged += Network_IsConnectedChanged;
 
-            if (AvailableStations == null || AvailableStations?.Count == 0)
+            DetectNetworkStatus();
+            
+            try
             {
                 IsBusy = true;
-                AvailableStations = new ObservableCollection<StationItem>((await NepApp.Stations.GetStationsAsync())?.OrderBy(x => x.Name));
-                //GroupedStations = AvailableStations.GroupBy(x => x.Group ?? "Ungrouped Stations").OrderBy(x => x.Key).Select(x => x);
-
-                LastPlayedStation = NepApp.Stations.LastPlayedStationName;
-                if (!string.IsNullOrWhiteSpace(LastPlayedStation))
+            
+                if (AvailableStations == null || AvailableStations?.Count == 0)
                 {
-                    var station = await NepApp.Stations.GetStationByNameAsync(LastPlayedStation);
-                    if (station != null)
+                    AvailableStations = new ObservableCollection<StationItem>((await NepApp.Stations.GetStationsAsync())?.OrderBy(x => x.Name));
+                    //GroupedStations = AvailableStations.GroupBy(x => x.Group ?? "Ungrouped Stations").OrderBy(x => x.Key).Select(x => x);
+
+                    LastPlayedStation = NepApp.Stations.LastPlayedStationName;
+                    if (!string.IsNullOrWhiteSpace(LastPlayedStation))
                     {
-                        LastPlayedStationLogoUrl = station.StationLogoUrl;
-                        LastPlayedStationDescription = station.Description;
+                        var station = await NepApp.Stations.GetStationByNameAsync(LastPlayedStation);
+                        if (station != null)
+                        {
+                            LastPlayedStationLogoUrl = station.StationLogoUrl;
+                            LastPlayedStationDescription = station.Description;
+                        }
                     }
                 }
-
+            }
+            catch (Exception ex)
+            {
+                await NepApp.UI.ShowInfoDialogAsync("Uh-oh!", "An unexpected error occurred. " + ex.ToString());
+            }
+            finally
+            {
                 IsBusy = false;
             }
-
-            DetectNetworkStatus();
 
             base.OnNavigatedTo(sender, e);
         }
