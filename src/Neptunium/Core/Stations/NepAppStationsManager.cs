@@ -232,7 +232,7 @@ namespace Neptunium.Core.Stations
         internal async Task<StationItem> GetStationByNameAsync(string stationPlayedOn)
         {
             //ugly way to do this
-            var station = (await GetStationsAsync()).First(x => x.Name.Equals(stationPlayedOn));
+            var station = (await GetStationsAsync()).FirstOrDefault(x => x.Name.Equals(stationPlayedOn));
             return station;
         }
     }
