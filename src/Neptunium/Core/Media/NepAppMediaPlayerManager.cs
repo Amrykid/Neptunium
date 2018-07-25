@@ -237,7 +237,7 @@ namespace Neptunium.Media
 
             SetMediaEngagement(true);
 
-            NepApp.Stations.SetLastPlayedStationName(stream.ParentStation.Name);
+            NepApp.Stations.SetLastPlayedStation(stream.ParentStation.Name, DateTime.Now);
 
             if (streamer.SongMetadata == null)
             {

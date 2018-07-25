@@ -30,12 +30,23 @@ namespace Neptunium.Core.Stations
             {
                 LastPlayedStationName = (string)ApplicationData.Current.RoamingSettings.Values[nameof(LastPlayedStationName)];
             }
+
+            if (!ApplicationData.Current.RoamingSettings.Values.ContainsKey(nameof(LastPlayedStationDate)))
+            {
+                ApplicationData.Current.RoamingSettings.Values.Add(new KeyValuePair<string, object>(nameof(LastPlayedStationDate), null));
+            }
+            else
+            {
+                LastPlayedStationDate = DateTime.Parse(ApplicationData.Current.RoamingSettings.Values[nameof(LastPlayedStationDate)].ToString());
+            }
         }
 
-        internal void SetLastPlayedStationName(string value)
+        internal void SetLastPlayedStation(string value, DateTime time)
         {
             LastPlayedStationName = value;
+            LastPlayedStationDate = time;
             ApplicationData.Current.RoamingSettings.Values[nameof(LastPlayedStationName)] = value;
+            ApplicationData.Current.RoamingSettings.Values[nameof(LastPlayedStationDate)] = time.ToString();
         }
 
         private async Task<StorageFile> GetStationsFileAsync()
@@ -53,6 +64,7 @@ namespace Neptunium.Core.Stations
         }
 
         public string LastPlayedStationName { get; private set; }
+        public DateTime LastPlayedStationDate { get; private set; }
 
         internal async Task<StationItem[]> GetStationsAsync()
         {

@@ -40,6 +40,8 @@ namespace Neptunium.ViewModel
                             LastPlayedStationLogoUrl = station.StationLogoUrl;
                             LastPlayedStationDescription = station.Description;
                         }
+
+                        LastPlayedStationDate = NepApp.Stations.LastPlayedStationDate;
                     }
                 }
             }
@@ -108,6 +110,12 @@ namespace Neptunium.ViewModel
         {
             get { return GetPropertyValue<string>(); }
             private set { SetPropertyValue<string>(value: value); }
+        }
+
+        public DateTime LastPlayedStationDate
+        {
+            get { return GetPropertyValue<DateTime>(); }
+            private set { SetPropertyValue<DateTime>(value: value); }
         }
 
         public Uri LastPlayedStationLogoUrl

@@ -35,6 +35,7 @@
 
                 <StackPanel Orientation="Horizontal">
                     <AppBarButton Icon="Play" Label="Play" Command="{Binding PlayLastPlayedStationCommand}" 
+                                  VerticalAlignment="Center"
                                   IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}" />
                     <Grid Height="80" VerticalAlignment="Center">
                         <Grid.ColumnDefinitions>
@@ -70,7 +71,7 @@
                                        Style="{ThemeResource BodyTextBlockStyle}"
                                        TextWrapping="WrapWholeWords">
                                         <Span>
-                                            <Run Text="{Binding LastPlayedStationDescription, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Run Text="{Binding LastPlayedStationDate, UpdateSourceTrigger=PropertyChanged}" />
                                         </Span>
                             </TextBlock>
                         </Grid>
