@@ -141,7 +141,7 @@ namespace Neptunium.Core.UI
                 });
             }
         }
-        public async Task<bool> ShowYesNoDialogAsync(string title, string message, IEnumerable<IUICommand> commands = null)
+        public async Task<bool> ShowYesNoDialogAsync(string title, string message)
         {
             var yes = new UICommand("Yes");
             var no = new UICommand("No");

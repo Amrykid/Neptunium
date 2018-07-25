@@ -12,6 +12,9 @@ using Neptunium.ViewModel.Dialog;
 using Neptunium.ViewModel.Fragments;
 using Neptunium.Core.Media.Metadata;
 using Windows.System.UserProfile;
+using Windows.Services.Store;
+using Windows.Foundation;
+using Windows.UI.Xaml;
 
 namespace Neptunium.ViewModel
 {
@@ -161,7 +164,7 @@ namespace Neptunium.ViewModel
 
         }
 
-        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             base.OnNavigatedTo(sender, e);
 
@@ -172,6 +175,77 @@ namespace Neptunium.ViewModel
             RaisePropertyChanged(nameof(ResumePlaybackCommand));
 
             //CheckForReverseHandoffOpportunitiesIfSupported();
+
+#if RELEASE
+            await CheckForUpdatesAsync();
+#endif
+        }
+
+        private static async Task CheckForUpdatesAsync()
+        {
+            //https://docs.microsoft.com/en-us/windows/uwp/packaging/self-install-package-updates
+            if (NepApp.Network.IsConnected && NepApp.Network.NetworkUtilizationBehavior == NepAppNetworkManager.NetworkDeterminedAppBehaviorStyle.Normal)
+            {
+                var storeContext = Windows.Services.Store.StoreContext.GetDefault();
+
+                if (storeContext != null)
+                {
+                    var updates = await storeContext.GetAppAndOptionalStorePackageUpdatesAsync();
+                    if (updates.Count > 0)
+                    {
+                        if (await NepApp.UI.ShowYesNoDialogAsync("Updates available!", "There is an update to this application available. Would you like to install it?") == true)
+                        {
+                            var dialogController = await NepApp.UI.Overlay.ShowProgressDialogAsync("Update in progress", "Downloading updates....");
+
+                            //download the updates
+
+                            IAsyncOperationWithProgress<StorePackageUpdateResult, StorePackageUpdateStatus> downloadOperation = storeContext.RequestDownloadStorePackageUpdatesAsync(updates);
+                            downloadOperation.Progress = async (asyncInfo, progress) =>
+                            {
+                                await App.Dispatcher.RunWhenIdleAsync(() =>
+                                {
+                                    dialogController.SetDeterminateProgress(progress.PackageDownloadProgress);
+                                });
+                            };
+
+                            var downloadResults = await downloadOperation.AsTask();
+
+                            await dialogController.CloseAsync();
+
+                            if (downloadResults.OverallState == StorePackageUpdateState.Completed)
+                            {
+                                //continue to installing updates
+                                dialogController = await NepApp.UI.Overlay.ShowProgressDialogAsync("Update in progress", "Installing updates....");
+
+                                dialogController.SetIndeterminate();
+                                IAsyncOperationWithProgress<StorePackageUpdateResult, StorePackageUpdateStatus> installOperation = storeContext.RequestDownloadAndInstallStorePackageUpdatesAsync(updates);
+
+                                StorePackageUpdateResult result = await installOperation.AsTask();
+
+                                switch (result.OverallState)
+                                {
+                                    case StorePackageUpdateState.Completed:
+                                        await NepApp.UI.ShowInfoDialogAsync("Update successfull", "Please restart this application. This application will now close.");
+                                        Application.Current.Exit();
+                                        break;
+                                    default:
+                                        // Get the failed updates.
+                                        var failedUpdates = result.StorePackageUpdateStatuses.Where(
+                                            status => status.PackageUpdateState != StorePackageUpdateState.Completed);
+
+                                        await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Updates failed to install.");
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Updates failed to download.");
+                            }
+
+                        }
+                    }
+                }
+            }
         }
 
         //private async void CheckForReverseHandoffOpportunitiesIfSupported()
