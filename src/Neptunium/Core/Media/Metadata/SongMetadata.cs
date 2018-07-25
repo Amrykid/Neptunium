@@ -26,6 +26,9 @@ namespace Neptunium.Core.Media.Metadata
         [IgnoreDataMember]
         public string RadioProgram { get; internal set; }
 
+        [DataMember]
+        public TimeSpan SongLength { get; internal set; }
+
         public override string ToString()
         {
             return string.Format("{0} - {1}", Artist ?? "Unknown Artist", Track ?? "Unknown Track");

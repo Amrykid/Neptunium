@@ -182,5 +182,27 @@ namespace Neptunium.Core.Media.Metadata
 
             return null;
         }
+
+        public async override Task TryFindSongAsync(ExtendedSongMetadata song, string locale = "JP")
+        {
+            var recordingQuery = new Hqub.MusicBrainz.API.QueryParameters<Hqub.MusicBrainz.API.Entities.Recording>();
+
+            //artistQuery.Add("inc", "url-rels");
+
+            recordingQuery.Add("artist", song.Artist);
+
+            recordingQuery.Add("recording", song.Track);
+
+            recordingQuery.Add("country", locale);
+
+            var recordingResults = await Recording.SearchAsync(recordingQuery);
+
+            var recording = recordingResults?.Items.FirstOrDefault();
+
+            if (recording != null)
+            {
+                song.SongLength = TimeSpan.FromMilliseconds(recording.Length);
+            }
+        }
     }
 }
