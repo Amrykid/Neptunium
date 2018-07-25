@@ -103,6 +103,7 @@ namespace Neptunium.View
             WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
 
             bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+            topAppBar.Visibility = Visibility.Visible;
         }
 
         private void Media_IsCastingChanged(object sender, EventArgs e)
