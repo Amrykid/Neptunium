@@ -31,33 +31,16 @@
                                Text="Notifications"/>
                         <ToggleSwitch Header="Show song change notifications"
                                       x:Name="SongNotificationSwitch"
-                                      XYFocusDown="{Binding ElementName=ConserveDataSwitch}"
+                                      XYFocusDown="{Binding ElementName=MetadataSwitch}"
                                       IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                         
-                        <MenuFlyoutSeparator />
-                        
-                        <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
-                               Text="Data"/>
-                        <ToggleSwitch Header="Conserve data on metered connections."
-                                      x:Name="ConserveDataSwitch"
-                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
-                                      XYFocusDown="{Binding ElementName=ChooseBitrateSwitch}"
-                                      IsOn="{Binding ConserveData, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-
-                        <ToggleSwitch Header="Automatically choose appropriate&#10;bitrate based on connection." 
-                                      x:Name="ChooseBitrateSwitch"
-                                      XYFocusUp="{Binding ElementName=ConserveDataSwitch}"
-                                      XYFocusDown="{Binding ElementName=MetadataSwitch}"
-                                      IsEnabled="{Binding ElementName=ConserveDataSwitch, Path=IsOn, UpdateSourceTrigger=PropertyChanged}"
-                                      IsOn="{Binding ChooseBitrate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-
                         <MenuFlyoutSeparator />
                         
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Metadata"/>
                         <ToggleSwitch Header="Find song metadata when song changes" 
                                       x:Name="MetadataSwitch"
-                                      XYFocusUp="{Binding ElementName=ChooseBitrateSwitch}"
+                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
                                       IsOn="{Binding FindSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                         <ToggleSwitch Header="Update LockScreen with artwork when available."
                                   x:Name="UpdateLockScreenSwitch"
@@ -72,6 +55,26 @@
 
                             <Button Content="Set Fallback Lockscreen" x:Name="SetFallBackLockScreenBtn" Click="SetFallBackLockScreenBtn_Click" />
                         </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="Network">
+                <ScrollViewer>
+                    <StackPanel Margin="10 0">
+                        <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
+                               Text="Data"/>
+                        <ToggleSwitch Header="Conserve data on metered connections."
+                                      x:Name="ConserveDataSwitch"
+                                      XYFocusDown="{Binding ElementName=ChooseBitrateSwitch}"
+                                      IsOn="{Binding ConserveData, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                        <ToggleSwitch Header="Automatically choose appropriate&#10;bitrate based on connection." 
+                                      x:Name="ChooseBitrateSwitch"
+                                      XYFocusUp="{Binding ElementName=ConserveDataSwitch}"
+                                      IsEnabled="{Binding ElementName=ConserveDataSwitch, Path=IsOn, UpdateSourceTrigger=PropertyChanged}"
+                                      IsOn="{Binding ChooseBitrate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                        <!--<MenuFlyoutSeparator />-->
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

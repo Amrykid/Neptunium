@@ -1,10 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using Windows.Networking.Connectivity;
 using static Neptunium.NepApp;
 
 namespace Neptunium
 {
-    public class NepAppNetworkManager : INepAppFunctionManager
+    public class NepAppNetworkManager : INepAppFunctionManager, INotifyPropertyChanged
     {
         public NepAppNetworkManager()
         {
@@ -32,6 +33,7 @@ namespace Neptunium
             {              
                 DetectConnectionType();
                 IsConnectedChanged?.Invoke(this, EventArgs.Empty);
+                RaisePropertyChanged(nameof(IsConnected));
             }
         }
 
@@ -59,6 +61,8 @@ namespace Neptunium
             {
                 ConnectionType = NetworkConnectionType.Unknown; //none?
             }
+
+            RaisePropertyChanged(nameof(ConnectionType));
 
             UpdateNetworkUtilizationBehavior();
         }
@@ -95,10 +99,14 @@ namespace Neptunium
                 {
                     NetworkUtilizationBehavior = NetworkDeterminedAppBehaviorStyle.Normal;
                 }
+
+                RaisePropertyChanged(nameof(NetworkUtilizationBehavior));
             }
         }
 
         public event EventHandler IsConnectedChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public bool IsConnected { get; private set; }
 
         public NetworkDeterminedAppBehaviorStyle NetworkUtilizationBehavior { get; private set; }
@@ -117,6 +125,14 @@ namespace Neptunium
             WiFi = 2,
             CellularData = 1,
             Unknown = 0
+        }
+
+        private void RaisePropertyChanged(string propertyName)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            });
         }
     }
 }
