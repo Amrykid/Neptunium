@@ -37,7 +37,7 @@ namespace Neptunium.Core.Media.Metadata
 
                             await Task.Delay(250); //250 ms sleep
 
-                            await metaSrc.TryFindSongAsync(extendedMetadata, station.PrimaryLocale);
+                            //await metaSrc.TryFindSongAsync(extendedMetadata, station.PrimaryLocale);
 
                             extendedMetadata.JPopAsiaArtistInfo = await ArtistFetcher.FindArtistDataOnJPopAsiaAsync(originalMetadata.Artist.Trim());
 
