@@ -127,7 +127,6 @@ namespace Neptunium.ViewModel
 
         private void SongManager_SongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
         {
-
         }
 
         private void SongManager_PreSongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)

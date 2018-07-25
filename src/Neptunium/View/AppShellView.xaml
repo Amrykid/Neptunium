@@ -295,9 +295,15 @@
                             <TextBlock Grid.Row="1" Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}"
                                        Style="{ThemeResource BodyTextBlockStyle}"
                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
-                            <TextBlock Grid.Row="2" Text="{Binding StationPlayedOn, UpdateSourceTrigger=PropertyChanged}"
+                            <TextBlock Grid.Row="2"
                                        Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"/>
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
+                                <Span>
+                                    <Run Text="{Binding StationPlayedOn, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Run Text="·" />
+                                    <Run Text="{Binding RadioProgram, UpdateSourceTrigger=PropertyChanged}" />
+                                </Span>
+                            </TextBlock>
                         </Grid>
 
                     </Grid>
