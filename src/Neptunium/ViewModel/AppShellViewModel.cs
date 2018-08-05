@@ -47,39 +47,62 @@ namespace Neptunium.ViewModel
 
         public AppShellViewModel()
         {
-            NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), ""); //"");
-            NepApp.UI.AddNavigationRoute("Now Playing", typeof(NowPlayingPageViewModel), "");
-            NepApp.UI.AddNavigationRoute("History", typeof(SongHistoryPageViewModel), "");
-            NepApp.UI.AddNavigationRoute("Schedule", typeof(StationProgramsPageViewModel), "");
-            NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");
-            NepApp.UI.AddNavigationRoute("About", typeof(AboutPageViewModel), "");
+            if (App.GetDevicePlatform() != Crystal3.Core.Platform.IoT)
+            {
+                NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), ""); //"");
+                NepApp.UI.AddNavigationRoute("Now Playing", typeof(NowPlayingPageViewModel), "");
+                NepApp.UI.AddNavigationRoute("History", typeof(SongHistoryPageViewModel), "");
+                NepApp.UI.AddNavigationRoute("Schedule", typeof(StationProgramsPageViewModel), "");
+                NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");
+                NepApp.UI.AddNavigationRoute("About", typeof(AboutPageViewModel), "");
+            }
 
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged += SongManager_SongChanged;
             NepApp.SongManager.StationRadioProgramStarted += SongManager_StationRadioProgramStarted;
 
-            if (UserProfilePersonalizationSettings.IsSupported())
+            if (App.GetDevicePlatform() != Crystal3.Core.Platform.IoT)
             {
-                NepApp.SongManager.SongArtworkAvailable += SongManager_SongArtworkAvailable;
-                NepApp.SongManager.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
+                if (UserProfilePersonalizationSettings.IsSupported())
+                {
+                    NepApp.SongManager.SongArtworkAvailable += SongManager_SongArtworkAvailable;
+                    NepApp.SongManager.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
+                }
+            }
+            else
+            {
+                //if its IoT
+                NepApp.ServerFrontEnd.DataReceived += ServerFrontEnd_DataReceived;
+            }
+        }
+
+        private void ServerFrontEnd_DataReceived(object sender, NepAppServerFrontEndManager.NepAppServerFrontEndManagerDataReceivedEventArgs e)
+        {
+            switch(e.Data)
+            {
+                default:
+                    return;
             }
         }
 
         private async void SongManager_NoSongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
         {
-            if ((bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt))
+            if (App.GetDevicePlatform() != Crystal3.Core.Platform.IoT)
             {
-                //sets the fallback lockscreen image when we don't have any artwork available.
-                if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Artist)
+                if ((bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt))
                 {
-                    try
+                    //sets the fallback lockscreen image when we don't have any artwork available.
+                    if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Artist)
                     {
-                        await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
-                    }
-                    catch (Exception)
-                    {
+                        try
+                        {
+                            await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
+                        }
+                        catch (Exception)
+                        {
 
+                        }
                     }
                 }
             }
@@ -87,25 +110,28 @@ namespace Neptunium.ViewModel
 
         private async void SongManager_SongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
         {
-            if ((bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt))
+            if (App.GetDevicePlatform() != Crystal3.Core.Platform.IoT)
             {
-                if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Artist)
+                if ((bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt))
                 {
-                    try
+                    if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Artist)
                     {
-                        bool result = await NepApp.UI.LockScreen.TrySetLockScreenImageFromUriAsync(e.ArtworkUri);
-
-                        if (!result)
+                        try
                         {
+                            bool result = await NepApp.UI.LockScreen.TrySetLockScreenImageFromUriAsync(e.ArtworkUri);
+
+                            if (!result)
+                            {
+                                await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            //todo make and set an image that represents the lack of artwork. maybe a dark image with the app logo?
+                            //maybe allow the user to set an image to use in this case.
+
                             await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
                         }
-                    }
-                    catch (Exception)
-                    {
-                        //todo make and set an image that represents the lack of artwork. maybe a dark image with the app logo?
-                        //maybe allow the user to set an image to use in this case.
-
-                        await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
                     }
                 }
             }
@@ -113,45 +139,51 @@ namespace Neptunium.ViewModel
 
         private async void SongManager_StationRadioProgramStarted(object sender, Media.Songs.NepAppStationProgramStartedEventArgs e)
         {
-            if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
+            if (App.GetDevicePlatform() != Crystal3.Core.Platform.IoT)
             {
-                if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+                if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
                 {
-                    if (e.RadioProgram.Style == Core.Stations.StationProgramStyle.Block)
+                    if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
                     {
-                        NepApp.UI.Notifier.ShowStationBlockProgrammingToastNotification(e.RadioProgram, e.Metadata);
+                        if (e.RadioProgram.Style == Core.Stations.StationProgramStyle.Block)
+                        {
+                            NepApp.UI.Notifier.ShowStationBlockProgrammingToastNotification(e.RadioProgram, e.Metadata);
+                        }
+                        else
+                        {
+                            NepApp.UI.Notifier.ShowStationHostedProgrammingToastNotification(e.RadioProgram, e.Metadata);
+                        }
                     }
                     else
                     {
-                        NepApp.UI.Notifier.ShowStationHostedProgrammingToastNotification(e.RadioProgram, e.Metadata);
+                        if (e.RadioProgram.Style == Core.Stations.StationProgramStyle.Block)
+                        {
+                            await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tuning into " + e.RadioProgram.Name + " on " + e.Station);
+                        }
+                        else
+                        {
+                            await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tuning into " + e.RadioProgram.Name + " by " + e.RadioProgram.Host);
+                        }
                     }
                 }
-                else
-                {
-                    if (e.RadioProgram.Style == Core.Stations.StationProgramStyle.Block)
-                    {
-                        await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tuning into " + e.RadioProgram.Name + " on " + e.Station);
-                    }
-                    else
-                    {
-                        await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tuning into " + e.RadioProgram.Name + " by " + e.RadioProgram.Host);
-                    }
-                }
-            }
 
-            if (e.Metadata != null)
-                NepApp.UI.Notifier.UpdateLiveTile(new ExtendedSongMetadata(e.Metadata));
+                if (e.Metadata != null)
+                    NepApp.UI.Notifier.UpdateLiveTile(new ExtendedSongMetadata(e.Metadata));
+            }
         }
 
         private async void SongManager_SongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
         {
-            if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+            if (App.GetDevicePlatform() != Crystal3.Core.Platform.IoT)
             {
-                if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
-                    NepApp.UI.Notifier.ShowSongToastNotification((ExtendedSongMetadata)e.Metadata);
-            }
+                if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
+                {
+                    if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
+                        NepApp.UI.Notifier.ShowSongToastNotification((ExtendedSongMetadata)e.Metadata);
+                }
 
-            NepApp.UI.Notifier.UpdateLiveTile((ExtendedSongMetadata)e.Metadata);
+                NepApp.UI.Notifier.UpdateLiveTile((ExtendedSongMetadata)e.Metadata);
+            }
         }
 
         private void SongManager_PreSongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
@@ -168,17 +200,21 @@ namespace Neptunium.ViewModel
         {
             base.OnNavigatedTo(sender, e);
 
-            var stationsPage = NepApp.UI.NavigationItems.FirstOrDefault(X => X.NavigationViewModelType == typeof(StationsPageViewModel));
-            if (stationsPage == null) throw new Exception("Stations page not found.");
-            NepApp.UI.NavigateToItem(stationsPage);
+            if (App.GetDevicePlatform() != Crystal3.Core.Platform.IoT)
+            {
+                var stationsPage = NepApp.UI.NavigationItems.FirstOrDefault(X => X.NavigationViewModelType == typeof(StationsPageViewModel));
+                if (stationsPage == null) throw new Exception("Stations page not found.");
+                NepApp.UI.NavigateToItem(stationsPage);
 
-            RaisePropertyChanged(nameof(ResumePlaybackCommand));
+                RaisePropertyChanged(nameof(ResumePlaybackCommand));
 
-            //CheckForReverseHandoffOpportunitiesIfSupported();
+
+                //CheckForReverseHandoffOpportunitiesIfSupported();
 
 #if RELEASE
             await CheckForUpdatesAsync();
 #endif
+            }
         }
 
         private static async Task CheckForUpdatesAsync()

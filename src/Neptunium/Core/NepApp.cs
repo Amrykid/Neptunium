@@ -31,6 +31,7 @@ namespace Neptunium
         public static NepAppSettingsManager Settings { get; private set; }
         public static NepAppStationsManager Stations { get; private set; }
         public static NepAppUIManager UI { get; private set; }
+        public static NepAppServerFrontEndManager ServerFrontEnd {get;private set;}
 
         public static event EventHandler InitializationComplete;
 
@@ -52,10 +53,20 @@ namespace Neptunium
             SongManager = new NepAppSongManager();
             MediaPlayer = new NepAppMediaPlayerManager();
             Network = new NepAppNetworkManager();
-            Handoff = new NepAppHandoffManager();
-            UI = new NepAppUIManager();
 
-            await Handoff.InitializeAsync();
+            if (App.GetDevicePlatform() != Crystal3.Core.Platform.IoT)
+            {
+                Handoff = new NepAppHandoffManager();
+                UI = new NepAppUIManager();
+
+                await Handoff.InitializeAsync();
+            }
+            else
+            {
+                //specifically for IoT, we start a server
+                ServerFrontEnd = new NepAppServerFrontEndManager();
+                await ServerFrontEnd.InitializeAsync();
+            }
 
             InitializationComplete?.Invoke(null, EventArgs.Empty);
 

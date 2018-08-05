@@ -134,6 +134,7 @@
     <Compile Include="Core\NepAppHandoffManager.cs" />
     <Compile Include="Core\Media\NepAppMediaPlayerManager.cs" />
     <Compile Include="Core\NepAppNetworkManager.cs" />
+    <Compile Include="Core\NepAppServerFrontEndManager.cs" />
     <Compile Include="Core\Settings\NepAppSettingChangedEventArgs.cs" />
     <Compile Include="Core\Settings\NepAppSettingsManager.cs" />
     <Compile Include="ColorUtilities.cs" />
@@ -196,6 +197,9 @@
     </Compile>
     <Compile Include="View\Dialog\StationInfoDialog.xaml.cs">
       <DependentUpon>StationInfoDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\IoTShellView.xaml.cs">
+      <DependentUpon>IoTShellView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\NowPlayingPage.xaml.cs">
       <DependentUpon>NowPlayingPage.xaml</DependentUpon>
@@ -363,6 +367,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Dialog\StationInfoDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\IoTShellView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
