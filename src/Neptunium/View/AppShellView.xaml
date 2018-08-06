@@ -134,6 +134,14 @@
                         </Flyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>
+                <AppBarButton Icon="FourBars" ToolTipService.ToolTip="IoT Remote"
+                              Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Text="Remote" Command="{Binding GoToRemoteCommand}" />
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
             </StackPanel>
         </Grid>
 

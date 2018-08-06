@@ -1,0 +1,33 @@
+﻿<Page
+    x:Class="Neptunium.View.ServerRemotePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Neptunium.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" x:Name="AddressTextBox" />
+                <AppBarButton Grid.Column="1" x:Name="ConnectButton" Icon="Add" Content="Connect" Command="{Binding ConnectCommand}"
+                        CommandParameter="{Binding ElementName=AddressTextBox, Path=Text}"/>
+                <AppBarButton Grid.Column="2" x:Name="DisconnectButton" Icon="Delete" Content="Disconnect" Command="{Binding DisconnectCommand}" />
+            </Grid>
+
+            <Grid x:Name="NowPlayingPanel">
+                <!-- todo? maybe?-->
+            </Grid>
+
+            <ListBox x:Name="StationsList" ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" />
+        </StackPanel>
+    </Grid>
+</Page>

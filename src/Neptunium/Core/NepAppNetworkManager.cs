@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Net;
 using Windows.Networking.Connectivity;
 using static Neptunium.NepApp;
+using System.Linq;
 
 namespace Neptunium
 {
@@ -30,7 +32,7 @@ namespace Neptunium
             IsConnected = newStatus;
 
             if (oldStatus != newStatus)
-            {              
+            {
                 DetectConnectionType();
                 IsConnectedChanged?.Invoke(this, EventArgs.Empty);
                 RaisePropertyChanged(nameof(IsConnected));
@@ -65,6 +67,29 @@ namespace Neptunium
             RaisePropertyChanged(nameof(ConnectionType));
 
             UpdateNetworkUtilizationBehavior();
+        }
+
+        internal IPAddress GetLocalIPAddress()
+        {
+            //based on: https://stackoverflow.com/a/33774534
+
+            var icp = NetworkInformation.GetInternetConnectionProfile();
+
+            if (icp?.NetworkAdapter == null) return null;
+            var hostname =
+                NetworkInformation.GetHostNames()
+                    .FirstOrDefault(
+                        hn =>
+                            hn.IPInformation?.NetworkAdapter != null && hn.IPInformation.NetworkAdapter.NetworkAdapterId
+                            == icp.NetworkAdapter.NetworkAdapterId);
+
+            if (hostname != null)
+            {
+                // the ip address
+                return IPAddress.Parse(hostname?.CanonicalName);
+            }
+
+            return null;
         }
 
         private void UpdateNetworkUtilizationBehavior()

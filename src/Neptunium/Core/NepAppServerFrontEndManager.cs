@@ -8,6 +8,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Networking.Connectivity;
+using Windows.Networking.Sockets;
+using Windows.Storage.Streams;
 using Windows.System.Threading;
 using static Neptunium.NepApp;
 
@@ -40,72 +43,134 @@ namespace Neptunium.Core
         }
 
         public bool IsInitialized { get; private set; }
-        public EndPoint LocalEndPoint { get; private set; }
+        public IPAddress LocalEndPoint { get; private set; }
 
         public event EventHandler<NepAppServerFrontEndManagerDataReceivedEventArgs> DataReceived;
 
-
-        private Task serverRunningTask = null;
-        private CancellationTokenSource serverTaskCancelTokenSrc = null;
+        private List<StreamSocket> connections = new List<StreamSocket>();
+        private StreamSocketListener listener = null;
 
         public async Task InitializeAsync()
         {
             if (IsInitialized) return;
 
-            serverTaskCancelTokenSrc = new CancellationTokenSource();
-            serverRunningTask = new Task(HandleServer, serverTaskCancelTokenSrc.Token);
+            listener = new StreamSocketListener();
+            listener.ConnectionReceived += Listener_ConnectionReceived;
+            await listener.BindServiceNameAsync(ServerPortNumber.ToString());
 
-            serverRunningTask.Start();
+            LocalEndPoint = NepApp.Network.GetLocalIPAddress();
+            RaisePropertyChanged(nameof(LocalEndPoint));
 
             IsInitialized = true;
         }
 
-        private async void HandleServer()
+        private void Listener_ConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args)
         {
-            List<Socket> connections = new List<Socket>();
+            DataReader reader = new DataReader(args.Socket.InputStream);
+            DataWriter writer = new DataWriter(args.Socket.OutputStream);
 
-            TcpListener listener = new TcpListener(IPAddress.Any, ServerPortNumber);
-            listener.Start();
+            var data = reader.ReadString(2048).Trim();
 
-            LocalEndPoint = listener.LocalEndpoint;
-            RaisePropertyChanged(nameof(LocalEndPoint));
+            DataReceived?.Invoke(this, new NepAppServerFrontEndManagerDataReceivedEventArgs(data));
+        }
 
-            while (!serverTaskCancelTokenSrc.IsCancellationRequested)
-            {
-                if (listener.Pending())
-                {
-                    connections.Add(await listener.AcceptSocketAsync());
-                }
-
-                List<Socket> sockets = connections.ToList();
-                Socket.Select(sockets, null, null, 20); //figure out which ones have data available to read.
-
-                foreach(var socket in sockets)
-                {
-                    byte[] data = new byte[2048];
-                    socket.Receive(data);
-
-                    var dataString = Encoding.Unicode.GetString(data);
-
-                    await ThreadPool.RunAsync(new WorkItemHandler(x =>
-                    {
-                        DataReceived?.Invoke(this, new NepAppServerFrontEndManagerDataReceivedEventArgs(dataString));
-                    }));
-                }
-            }
-
+        private void CleanUp()
+        {
             //clean up
-            listener.Stop();
-
-            foreach(Socket client in connections)
-            {
-                client.Dispose();
-            }
-
-            connections.Clear();
+            listener.Dispose();
 
             LocalEndPoint = null;
             RaisePropertyChanged(nameof(LocalEndPoint));
+        }
+
+        public class NepAppServerClient : IDisposable, INotifyPropertyChanged
+        {
+            private StreamSocket tcpClient = null;
+            private DataWriter dataWriter = null;
+
+            public bool IsConnected { get; private set; }
+
+            public NepAppServerClient()
+            {
+                tcpClient = new StreamSocket();
+            }
+
+            public async Task TryConnectAsync(IPAddress address)
+            {
+                await tcpClient.ConnectAsync(new Windows.Networking.HostName(address.ToString()), ServerPortNumber.ToString());
+                dataWriter = new DataWriter(tcpClient.OutputStream);
+
+                IsConnected = true;
+                RaisePropertyChanged(nameof(IsConnected));
+            }
+
+            public void AskServerToStreamStation(Stations.StationItem station)
+            {
+                if (IsConnected)
+                {
+                    dataWriter.WriteString("PLAY," + station.Name);
+                }
+            }
+
+            public void AskServerToStop()
+            {
+                if (IsConnected)
+                {
+                    dataWriter.WriteString("STOP");
+                }
+            }
+
+
+            #region IDisposable Support
+            private bool disposedValue = false; // To detect redundant calls
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        // TODO: dispose managed state (managed objects).
+                        dataWriter.Dispose();
+                        tcpClient.Dispose();
+                    }
+
+                    // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                    // TODO: set large fields to null.
+
+                    disposedValue = true;
+                }
+            }
+
+            // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+            // ~NepAppServerClient() {
+            //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            //   Dispose(false);
+            // }
+
+            // This code added to correctly implement the disposable pattern.
+            public void Dispose()
+            {
+                // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+                Dispose(true);
+                // TODO: uncomment the following line if the finalizer is overridden above.
+                // GC.SuppressFinalize(this);
+            }
+            #endregion
+
+
+            /// <summary>
+            /// From INotifyPropertyChanged
+            /// </summary>
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+            {
+                if (string.IsNullOrWhiteSpace(propertyName)) throw new ArgumentNullException("propertyName");
+
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }

@@ -18,7 +18,7 @@
 
 
         <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="Connect with a remote to stream something."
-                   x:Name="NothingPlayingTextBlock" Visibility="{Binding , UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}"
+                   x:Name="NothingPlayingTextBlock" Visibility="{Binding UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}"
                    Grid.RowSpan="2" HorizontalAlignment="Center"
                    VerticalAlignment="Center"/>
 
@@ -26,7 +26,7 @@
               VerticalAlignment="Top"
               Margin="0 50 0 0"
               HorizontalAlignment="Center"
-              Visibility="{Binding , UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
+              Visibility="{Binding UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
             <Grid.ColumnDefinitions>
                     <ColumnDefinition MaxWidth="60" Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -72,11 +72,11 @@
         </Grid>
 
         <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <Grid Width="400" Visibility="{Binding IsInitialized, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}">
+            <Grid Width="400" x:Name="NetworkPanel" Visibility="{Binding IsInitialized, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}">
                 <TextBlock>
                     <Span>
                         <Run Text="Address:" />
-                        <Run Text="{Binding EndPoint, UpdateSourceTrigger=PropertyChanged}" />
+                        <Run Text="{Binding LocalEndPoint, UpdateSourceTrigger=PropertyChanged}" />
                     </Span>
                 </TextBlock>
             </Grid>

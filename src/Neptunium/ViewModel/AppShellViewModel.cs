@@ -45,6 +45,13 @@ namespace Neptunium.ViewModel
             }
         });
 
+        public RelayCommand GoToRemoteCommand => new RelayCommand(async x =>
+        {
+            var remotePage = NepApp.UI.NavigationItems.FirstOrDefault(X => X.NavigationViewModelType == typeof(ServerRemotePageViewModel));
+            if (remotePage == null) throw new Exception("Remote page not found.");
+            NepApp.UI.NavigateToItem(remotePage);
+        });
+
         public AppShellViewModel()
         {
             if (App.GetDevicePlatform() != Crystal3.Core.Platform.IoT)
@@ -54,6 +61,7 @@ namespace Neptunium.ViewModel
                 NepApp.UI.AddNavigationRoute("History", typeof(SongHistoryPageViewModel), "");
                 NepApp.UI.AddNavigationRoute("Schedule", typeof(StationProgramsPageViewModel), "");
                 NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");
+                NepApp.UI.AddNavigationRoute("Remote", typeof(ServerRemotePageViewModel), "");
                 NepApp.UI.AddNavigationRoute("About", typeof(AboutPageViewModel), "");
             }
 
@@ -77,12 +85,35 @@ namespace Neptunium.ViewModel
             }
         }
 
-        private void ServerFrontEnd_DataReceived(object sender, NepAppServerFrontEndManager.NepAppServerFrontEndManagerDataReceivedEventArgs e)
+        private async void ServerFrontEnd_DataReceived(object sender, NepAppServerFrontEndManager.NepAppServerFrontEndManagerDataReceivedEventArgs e)
         {
-            switch(e.Data)
+            if (!string.IsNullOrWhiteSpace(e.Data))
             {
-                default:
-                    return;
+                string data = e.Data.Trim();
+                string[] dataBits = data.Split(',');
+
+                if (dataBits.Length > 0)
+                {
+                    switch(dataBits[0].ToUpper())
+                    {
+                        case "PLAY":
+                            if (dataBits.Length > 1)
+                            {
+                                string stationName = dataBits[1];
+                                var station = await NepApp.Stations.GetStationByNameAsync(stationName);
+                                if (station != null)
+                                {
+                                    var stream = station.Streams.First();
+                                    await NepApp.MediaPlayer.TryStreamStationAsync(stream);
+                                }
+                            }
+
+                            break;
+                        case "STOP":
+                            NepApp.MediaPlayer.Pause();
+                            break;
+                    }
+                }
             }
         }
 

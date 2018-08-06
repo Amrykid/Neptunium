@@ -101,6 +101,11 @@ namespace Neptunium.Core.UI
             }
         }
 
+        internal void ClearNavigationRoutes()
+        {
+            navigationItems.Clear();
+        }
+
         private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
             if (string.IsNullOrWhiteSpace(propertyName)) throw new ArgumentNullException("propertyName");
