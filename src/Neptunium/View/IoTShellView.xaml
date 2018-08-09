@@ -76,7 +76,7 @@
                 <TextBlock>
                     <Span>
                         <Run Text="Address:" />
-                        <Run Text="{Binding LocalEndPoint, UpdateSourceTrigger=PropertyChanged}" />
+                        <Run Text="{Binding LocalEndPoints, UpdateSourceTrigger=PropertyChanged}" />
                     </Span>
                 </TextBlock>
             </Grid>

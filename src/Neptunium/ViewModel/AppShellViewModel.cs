@@ -90,7 +90,7 @@ namespace Neptunium.ViewModel
             if (!string.IsNullOrWhiteSpace(e.Data))
             {
                 string data = e.Data.Trim();
-                string[] dataBits = data.Split(',');
+                string[] dataBits = data.Split(NepAppServerFrontEndManager.NepAppServerClient.MessageTypeSeperator);
 
                 if (dataBits.Length > 0)
                 {
@@ -104,7 +104,11 @@ namespace Neptunium.ViewModel
                                 if (station != null)
                                 {
                                     var stream = station.Streams.First();
-                                    await NepApp.MediaPlayer.TryStreamStationAsync(stream);
+                                    await await App.Dispatcher.RunAsync(async () =>
+                                    {
+                                        await NepApp.MediaPlayer.TryStreamStationAsync(stream);
+                                    });
+                                    
                                 }
                             }
 

@@ -31,14 +31,6 @@ namespace Neptunium.View
             NowPlayingPanel.SetBinding(Button.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
 
             NetworkPanel.SetBinding(Grid.DataContextProperty, new Binding() { Source = NepApp.ServerFrontEnd, UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged });
-
-
-            //auto play a station after 5 seconds.
-            System.Threading.Tasks.Task.Delay(5000).ContinueWith(async x =>
-            {
-                var station = await NepApp.Stations.GetStationByNameAsync("AnimeNfo");
-                await NepApp.MediaPlayer.TryStreamStationAsync(station.Streams[0]);
-            });
         }
     }
 }

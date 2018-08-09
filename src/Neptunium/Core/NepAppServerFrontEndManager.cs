@@ -18,7 +18,7 @@ namespace Neptunium.Core
 {
     public class NepAppServerFrontEndManager : INotifyPropertyChanged, INepAppFunctionManager
     {
-        public const int ServerPortNumber = 8806;
+        public const int ServerPortNumber = 8806; //netsh advfirewall firewall add rule name="Open port 8806" dir=in action=allow protocol=TCP localport=8806
 
         /// <summary>
         /// From INotifyPropertyChanged
@@ -43,7 +43,7 @@ namespace Neptunium.Core
         }
 
         public bool IsInitialized { get; private set; }
-        public IPAddress LocalEndPoint { get; private set; }
+        public IEnumerable<IPAddress> LocalEndPoints { get; private set; }
 
         public event EventHandler<NepAppServerFrontEndManagerDataReceivedEventArgs> DataReceived;
 
@@ -58,20 +58,35 @@ namespace Neptunium.Core
             listener.ConnectionReceived += Listener_ConnectionReceived;
             await listener.BindServiceNameAsync(ServerPortNumber.ToString());
 
-            LocalEndPoint = NepApp.Network.GetLocalIPAddress();
-            RaisePropertyChanged(nameof(LocalEndPoint));
+            LocalEndPoints = NepApp.Network.GetLocalIPAddresses();
+            RaisePropertyChanged(nameof(LocalEndPoints));
 
             IsInitialized = true;
         }
 
-        private void Listener_ConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args)
+        private async void Listener_ConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args)
         {
             DataReader reader = new DataReader(args.Socket.InputStream);
             DataWriter writer = new DataWriter(args.Socket.OutputStream);
 
-            var data = reader.ReadString(2048).Trim();
+            reader.InputStreamOptions = InputStreamOptions.Partial;
 
-            DataReceived?.Invoke(this, new NepAppServerFrontEndManagerDataReceivedEventArgs(data));
+            while (true)
+            {
+                uint available = await reader.LoadAsync(50);
+
+                if (available > 0)
+                {
+                    var data = reader.ReadString(available);
+                    data = data.Trim();
+
+                    DataReceived?.Invoke(this, new NepAppServerFrontEndManagerDataReceivedEventArgs(data));
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
 
         private void CleanUp()
@@ -79,12 +94,14 @@ namespace Neptunium.Core
             //clean up
             listener.Dispose();
 
-            LocalEndPoint = null;
-            RaisePropertyChanged(nameof(LocalEndPoint));
+            LocalEndPoints = null;
+            RaisePropertyChanged(nameof(LocalEndPoints));
         }
 
         public class NepAppServerClient : IDisposable, INotifyPropertyChanged
         {
+            public const char MessageTypeSeperator = '|';
+
             private StreamSocket tcpClient = null;
             private DataWriter dataWriter = null;
 
@@ -108,7 +125,7 @@ namespace Neptunium.Core
             {
                 if (IsConnected)
                 {
-                    dataWriter.WriteString("PLAY," + station.Name);
+                    dataWriter.WriteString("PLAY" + MessageTypeSeperator + station.Name);
                 }
             }
 
@@ -116,7 +133,7 @@ namespace Neptunium.Core
             {
                 if (IsConnected)
                 {
-                    dataWriter.WriteString("STOP");
+                    dataWriter.WriteString("STOP" + MessageTypeSeperator);
                 }
             }
 

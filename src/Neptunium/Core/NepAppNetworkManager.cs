@@ -4,6 +4,8 @@ using System.Net;
 using Windows.Networking.Connectivity;
 using static Neptunium.NepApp;
 using System.Linq;
+using Windows.Networking;
+using System.Collections.Generic;
 
 namespace Neptunium
 {
@@ -69,27 +71,30 @@ namespace Neptunium
             UpdateNetworkUtilizationBehavior();
         }
 
-        internal IPAddress GetLocalIPAddress()
+        internal IEnumerable<IPAddress> GetLocalIPAddresses()
         {
             //based on: https://stackoverflow.com/a/33774534
 
             var icp = NetworkInformation.GetInternetConnectionProfile();
 
-            if (icp?.NetworkAdapter == null) return null;
-            var hostname =
+            if (icp?.NetworkAdapter == null) yield break;
+            var hostnames =
                 NetworkInformation.GetHostNames()
-                    .FirstOrDefault(
+                    .Where(
                         hn =>
                             hn.IPInformation?.NetworkAdapter != null && hn.IPInformation.NetworkAdapter.NetworkAdapterId
                             == icp.NetworkAdapter.NetworkAdapterId);
 
-            if (hostname != null)
+            if (hostnames != null)
             {
-                // the ip address
-                return IPAddress.Parse(hostname?.CanonicalName);
+                foreach (HostName host in hostnames)
+                {
+                    // the ip address
+                    yield return IPAddress.Parse(host.CanonicalName);
+                }
             }
 
-            return null;
+            yield break;
         }
 
         private void UpdateNetworkUtilizationBehavior()
