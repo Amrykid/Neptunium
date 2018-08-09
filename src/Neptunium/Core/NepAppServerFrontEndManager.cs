@@ -47,12 +47,14 @@ namespace Neptunium.Core
 
         public event EventHandler<NepAppServerFrontEndManagerDataReceivedEventArgs> DataReceived;
 
-        private List<StreamSocket> connections = new List<StreamSocket>();
+        private List<Tuple<StreamSocket,DataReader,DataWriter>> connections = new List<Tuple<StreamSocket, DataReader, DataWriter>>();
         private StreamSocketListener listener = null;
 
         public async Task InitializeAsync()
         {
             if (IsInitialized) return;
+
+            NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
 
             listener = new StreamSocketListener();
             listener.ConnectionReceived += Listener_ConnectionReceived;
@@ -64,12 +66,51 @@ namespace Neptunium.Core
             IsInitialized = true;
         }
 
+        private void SongManager_PreSongChanged(object sender, Neptunium.Media.Songs.NepAppSongChangedEventArgs e)
+        {
+            List<Tuple<StreamSocket, DataReader, DataWriter>> connectionsToRemove = new List<Tuple<StreamSocket, DataReader, DataWriter>>();
+
+            foreach (Tuple<StreamSocket, DataReader, DataWriter> tup in connections)
+            {
+                try
+                {
+                    tup.Item3.WriteString("MEDIA" + NepAppServerClient.MessageTypeSeperator + e.Metadata.ToString());
+                }
+                catch (SocketException ex)
+                {
+                    if (ex.SocketErrorCode == System.Net.Sockets.SocketError.ConnectionReset
+                        || ex.SocketErrorCode == System.Net.Sockets.SocketError.ConnectionAborted)
+                    {
+                        connectionsToRemove.Add(tup);
+                    }
+                }
+            }
+
+            foreach (Tuple<StreamSocket, DataReader, DataWriter> tup in connectionsToRemove)
+            {
+                try
+                {
+                    tup.Item3.Dispose();
+                    tup.Item2.Dispose();
+                    tup.Item1.Dispose();
+                }
+                catch (Exception) { }
+
+                connections.Remove(tup);
+            }
+
+            connectionsToRemove.Clear();
+        }
+
         private async void Listener_ConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args)
         {
             DataReader reader = new DataReader(args.Socket.InputStream);
             DataWriter writer = new DataWriter(args.Socket.OutputStream);
 
             reader.InputStreamOptions = InputStreamOptions.Partial;
+
+            var socketTup = new Tuple<StreamSocket, DataReader, DataWriter>(args.Socket, reader, writer);
+            connections.Add(socketTup);
 
             while (true)
             {
@@ -84,6 +125,11 @@ namespace Neptunium.Core
                 }
                 else
                 {
+                    lock(connections)
+                    {
+                        connections.Remove(socketTup);
+                    }
+
                     break;
                 }
             }
@@ -91,11 +137,17 @@ namespace Neptunium.Core
 
         private void CleanUp()
         {
+            if (!IsInitialized) return;
+
             //clean up
             listener.Dispose();
 
             LocalEndPoints = null;
             RaisePropertyChanged(nameof(LocalEndPoints));
+
+            NepApp.SongManager.PreSongChanged -= SongManager_PreSongChanged;
+
+            IsInitialized = false;
         }
 
         public class NepAppServerClient : IDisposable, INotifyPropertyChanged
