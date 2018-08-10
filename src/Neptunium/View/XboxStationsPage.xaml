@@ -102,7 +102,7 @@
                                             Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                             Style="{ThemeResource BodyTextBlockStyle}">
                                         <Span>
-                                            <Run Text="{Binding LastPlayedStationDate, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Run Text="{Binding LastPlayedStationDate, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RelTimeConv}}" />
                                         </Span>
                         </TextBlock>
                     </Grid>

@@ -71,7 +71,7 @@
                                        Style="{ThemeResource BodyTextBlockStyle}"
                                        TextWrapping="WrapWholeWords">
                                         <Span>
-                                            <Run Text="{Binding LastPlayedStationDate, UpdateSourceTrigger=PropertyChanged}" />
+                                            <Run Text="{Binding LastPlayedStationDate, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RelTimeConv}}" />
                                         </Span>
                             </TextBlock>
                         </Grid>
