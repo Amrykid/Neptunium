@@ -79,7 +79,7 @@
                 </StackPanel>
             </StackPanel>
 
-            <ListView ItemsSource="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}"
+            <ListView ItemsSource="{Binding SortedAvailableStations, UpdateSourceTrigger=PropertyChanged}"
                       SelectionMode="Single"
                       Margin="5"
                       x:Name="stationsListView"
@@ -159,7 +159,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <GridView ItemsSource="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}"
+            <GridView ItemsSource="{Binding SortedAvailableStations, UpdateSourceTrigger=PropertyChanged}"
                       SelectionMode="Single"
                       Margin="5"
                       x:Name="stationsGridView"

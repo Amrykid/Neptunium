@@ -12,12 +12,14 @@ using Crystal3.UI.Commands;
 using Neptunium.ViewModel.Dialog;
 using Windows.System;
 using Windows.UI.Popups;
+using Windows.UI.Xaml.Data;
+using Microsoft.Toolkit.Uwp.UI;
 
 namespace Neptunium.ViewModel
 {
     public class StationsPageViewModel : UIViewModelBase
     {
-        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             NepApp.Network.IsConnectedChanged += Network_IsConnectedChanged;
 
@@ -26,12 +28,27 @@ namespace Neptunium.ViewModel
             if (AvailableStations == null || AvailableStations?.Count == 0)
             {
                 IsBusy = true;
+
+                LastPlayedStation = NepApp.Stations.LastPlayedStationName;
+                if (!string.IsNullOrWhiteSpace(LastPlayedStation))
+                {
+                    var station = await NepApp.Stations.GetStationByNameAsync(LastPlayedStation);
+                    if (station != null)
+                    {
+                        LastPlayedStationLogoUrl = station.StationLogoUrl;
+                        LastPlayedStationDescription = station.Description;
+                    }
+
+                    LastPlayedStationDate = NepApp.Stations.LastPlayedStationDate;
+                }
+
                 AvailableStations = new ObservableCollection<StationItem>();
+                SortedAvailableStations = new AdvancedCollectionView(AvailableStations, false);
+                SortedAvailableStations.SortDescriptions.Add(new SortDescription("Name", SortDirection.Ascending, null));
 
                 NepApp.Stations.ObserveStationsAsync().Subscribe<StationItem>((StationItem item) =>
                 {
                     AvailableStations.Add(item);
-                    //todo figure out how to sort again.
                 }, async (Exception ex) =>
                 {
                     IsBusy = false;
@@ -39,21 +56,6 @@ namespace Neptunium.ViewModel
                 }, async () =>
                 {
                     //when done
-
-                    LastPlayedStation = NepApp.Stations.LastPlayedStationName;
-                    if (!string.IsNullOrWhiteSpace(LastPlayedStation))
-                    {
-                        var station = await NepApp.Stations.GetStationByNameAsync(LastPlayedStation);
-                        if (station != null)
-                        {
-                            LastPlayedStationLogoUrl = station.StationLogoUrl;
-                            LastPlayedStationDescription = station.Description;
-                        }
-
-                        LastPlayedStationDate = NepApp.Stations.LastPlayedStationDate;
-                    }
-                    
-
                     IsBusy = false;
                 });
 
@@ -100,6 +102,12 @@ namespace Neptunium.ViewModel
         {
             get { return GetPropertyValue<ObservableCollection<StationItem>>(); }
             private set { SetPropertyValue<ObservableCollection<StationItem>>(value: value); }
+        }
+
+        public IAdvancedCollectionView SortedAvailableStations
+        {
+            get { return GetPropertyValue<IAdvancedCollectionView>(); }
+            private set { SetPropertyValue<IAdvancedCollectionView>(value: value); }
         }
 
         public IEnumerable<IGrouping<string, StationItem>> GroupedStations
