@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Crystal3.Navigation;
@@ -16,20 +17,28 @@ namespace Neptunium.ViewModel
 {
     public class StationsPageViewModel : UIViewModelBase
     {
-        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             NepApp.Network.IsConnectedChanged += Network_IsConnectedChanged;
 
             DetectNetworkStatus();
-            
-            try
+
+            if (AvailableStations == null || AvailableStations?.Count == 0)
             {
                 IsBusy = true;
-            
-                if (AvailableStations == null || AvailableStations?.Count == 0)
+                AvailableStations = new ObservableCollection<StationItem>();
+
+                NepApp.Stations.ObserveStationsAsync().Subscribe<StationItem>((StationItem item) =>
                 {
-                    AvailableStations = new ObservableCollection<StationItem>((await NepApp.Stations.GetStationsAsync())?.OrderBy(x => x.Name));
-                    //GroupedStations = AvailableStations.GroupBy(x => x.Group ?? "Ungrouped Stations").OrderBy(x => x.Key).Select(x => x);
+                    AvailableStations.Add(item);
+                    //todo figure out how to sort again.
+                }, async (Exception ex) =>
+                {
+                    IsBusy = false;
+                    await NepApp.UI.ShowInfoDialogAsync("Uh-oh!", "An unexpected error occurred. " + ex.ToString());
+                }, async () =>
+                {
+                    //when done
 
                     LastPlayedStation = NepApp.Stations.LastPlayedStationName;
                     if (!string.IsNullOrWhiteSpace(LastPlayedStation))
@@ -43,16 +52,15 @@ namespace Neptunium.ViewModel
 
                         LastPlayedStationDate = NepApp.Stations.LastPlayedStationDate;
                     }
-                }
+                    
+
+                    IsBusy = false;
+                });
+
+                //GroupedStations = AvailableStations.GroupBy(x => x.Group ?? "Ungrouped Stations").OrderBy(x => x.Key).Select(x => x);
+
             }
-            catch (Exception ex)
-            {
-                await NepApp.UI.ShowInfoDialogAsync("Uh-oh!", "An unexpected error occurred. " + ex.ToString());
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+
 
             base.OnNavigatedTo(sender, e);
         }
