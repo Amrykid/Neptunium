@@ -19,6 +19,7 @@ namespace Neptunium.Core
     public class NepAppServerFrontEndManager : INotifyPropertyChanged, INepAppFunctionManager
     {
         public const int ServerPortNumber = 8806; //netsh advfirewall firewall add rule name="Open port 8806" dir=in action=allow protocol=TCP localport=8806
+        public const int BroadcastPortNumber = 8807; //netsh advfirewall firewall add rule name="Open port 8807" dir=out action=allow protocol=UDP localport=8807
 
         /// <summary>
         /// From INotifyPropertyChanged
@@ -47,8 +48,9 @@ namespace Neptunium.Core
 
         public event EventHandler<NepAppServerFrontEndManagerDataReceivedEventArgs> DataReceived;
 
-        private List<Tuple<StreamSocket,DataReader,DataWriter>> connections = new List<Tuple<StreamSocket, DataReader, DataWriter>>();
-        private StreamSocketListener listener = null;
+        private List<Tuple<StreamSocket, DataReader, DataWriter>> connections = new List<Tuple<StreamSocket, DataReader, DataWriter>>();
+        private StreamSocketListener listener = null; //TCP
+        private DatagramSocket serverBroadcaster = null; //UDP
 
         public async Task InitializeAsync()
         {
@@ -56,25 +58,49 @@ namespace Neptunium.Core
 
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
 
+            //set up the tcp listener to listen for connections
             listener = new StreamSocketListener();
             listener.ConnectionReceived += Listener_ConnectionReceived;
             await listener.BindServiceNameAsync(ServerPortNumber.ToString());
 
+            //set up the broadcaster that will broadcast the server's prescence over the network.
+            serverBroadcaster = new DatagramSocket();
+            await serverBroadcaster.BindServiceNameAsync(BroadcastPortNumber.ToString());
+
             LocalEndPoints = NepApp.Network.GetLocalIPAddresses();
             RaisePropertyChanged(nameof(LocalEndPoints));
+
+            var broadcastAddr = NepApp.Network.GetBroadastAddress(LocalEndPoints.Last());
+            var broadcastDataWriter = new DataWriter(await serverBroadcaster.GetOutputStreamAsync(new HostName(broadcastAddr), BroadcastPortNumber.ToString()));
+
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            Task.Run(async () =>
+            {
+                //todo make a way to stop.
+                while (true)
+                {
+                    broadcastDataWriter.WriteString("NEP" + NepAppServerClient.MessageTypeSeperator + LocalEndPoints.First().ToString());
+                    await broadcastDataWriter.StoreAsync();
+
+                    await Task.Delay(30000); //wait 30 seconds
+                }
+            });
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             IsInitialized = true;
         }
 
-        private void SongManager_PreSongChanged(object sender, Neptunium.Media.Songs.NepAppSongChangedEventArgs e)
+        private async void SongManager_PreSongChanged(object sender, Neptunium.Media.Songs.NepAppSongChangedEventArgs e)
         {
             List<Tuple<StreamSocket, DataReader, DataWriter>> connectionsToRemove = new List<Tuple<StreamSocket, DataReader, DataWriter>>();
 
+            //todo, make an object for this
             foreach (Tuple<StreamSocket, DataReader, DataWriter> tup in connections)
             {
                 try
                 {
                     tup.Item3.WriteString("MEDIA" + NepAppServerClient.MessageTypeSeperator + e.Metadata.ToString());
+                    await tup.Item3.StoreAsync();
                 }
                 catch (SocketException ex)
                 {
@@ -125,7 +151,7 @@ namespace Neptunium.Core
                 }
                 else
                 {
-                    lock(connections)
+                    lock (connections)
                     {
                         connections.Remove(socketTup);
                     }
@@ -156,6 +182,7 @@ namespace Neptunium.Core
 
             private StreamSocket tcpClient = null;
             private DataWriter dataWriter = null;
+            private DataReader dataReader = null;
 
             public bool IsConnected { get; private set; }
 
@@ -168,6 +195,7 @@ namespace Neptunium.Core
             {
                 await tcpClient.ConnectAsync(new Windows.Networking.HostName(address.ToString()), ServerPortNumber.ToString());
                 dataWriter = new DataWriter(tcpClient.OutputStream);
+                dataReader = new DataReader(tcpClient.InputStream);
 
                 IsConnected = true;
                 RaisePropertyChanged(nameof(IsConnected));
@@ -202,6 +230,8 @@ namespace Neptunium.Core
                         // TODO: dispose managed state (managed objects).
                         dataWriter.Dispose();
                         tcpClient.Dispose();
+
+                        IsConnected = false;
                     }
 
                     // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.

@@ -23,6 +23,8 @@ namespace Neptunium.ViewModel
                 {
                     await serverClient.TryConnectAsync(IPAddress.Parse((string)parameter);
                     IsConnected = true;
+
+                    serverClient.
                 }
                 catch (Exception ex)
                 {

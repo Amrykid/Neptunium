@@ -164,5 +164,39 @@ namespace Neptunium
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             });
         }
+
+        #region FROM: https://stackoverflow.com/a/43068327
+        public IPAddress GetSubnetMask(IPAddress hostAddress)
+        {
+            var addressBytes = hostAddress.GetAddressBytes();
+
+            if (addressBytes[0] >= 1 && addressBytes[0] <= 126)
+                return IPAddress.Parse("255.0.0.0");
+            else if (addressBytes[0] >= 128 && addressBytes[0] <= 191)
+                return IPAddress.Parse("255.255.255.0");
+            else if (addressBytes[0] >= 192 && addressBytes[0] <= 223)
+                return IPAddress.Parse("255.255.255.0");
+            else
+                throw new ArgumentOutOfRangeException();
+        }
+
+        public IPAddress GetBroadastAddress(IPAddress hostIPAddress)
+        {
+            var subnetAddress = GetSubnetMask(hostIPAddress);
+
+            var deviceAddressBytes = hostIPAddress.GetAddressBytes();
+            var subnetAddressBytes = subnetAddress.GetAddressBytes();
+
+            if (deviceAddressBytes.Length != subnetAddressBytes.Length)
+                throw new ArgumentOutOfRangeException();
+
+            var broadcastAddressBytes = new byte[deviceAddressBytes.Length];
+
+            for (var i = 0; i < broadcastAddressBytes.Length; i++)
+                broadcastAddressBytes[i] = (byte)(deviceAddressBytes[i] | subnetAddressBytes[i] ^ 255);
+
+            return new IPAddress(broadcastAddressBytes);
+        }
+        #endregion
     }
 }
