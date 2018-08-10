@@ -8,8 +8,9 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid Padding="10">
         <StackPanel>
+            <TextBlock Text="Connect" Style="{ThemeResource HeaderTextBlockStyle}" />
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -17,17 +18,18 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" x:Name="AddressTextBox" />
+                <TextBox Grid.Column="0" x:Name="AddressTextBox" Height="25" />
                 <AppBarButton Grid.Column="1" x:Name="ConnectButton" Icon="Add" Content="Connect" Command="{Binding ConnectCommand}"
                         CommandParameter="{Binding ElementName=AddressTextBox, Path=Text}"/>
-                <AppBarButton Grid.Column="2" x:Name="DisconnectButton" Icon="Delete" Content="Disconnect" Command="{Binding DisconnectCommand}" />
+                <AppBarButton Grid.Column="2" x:Name="DisconnectButton" Icon="Delete" Content="Disconnect" Command="{Binding DisconnectCommand}"/>
             </Grid>
 
-            <Grid x:Name="NowPlayingPanel">
+            <Grid x:Name="NowPlayingPanel" Visibility="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}">
                 <!-- todo? maybe?-->
             </Grid>
 
-            <ListBox x:Name="StationsList" ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" />
+            <ListBox x:Name="StationsList" Visibility="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}"
+                     ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" />
         </StackPanel>
     </Grid>
 </Page>
