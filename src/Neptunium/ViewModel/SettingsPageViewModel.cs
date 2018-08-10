@@ -123,5 +123,11 @@ namespace Neptunium.ViewModel
             get { return (bool)NepApp.Settings.GetSetting(AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection); }
             set { NepApp.Settings.SetSetting(AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection, value); }
         }
+
+        public bool ShowRemote
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.ShowRemoteMenu); }
+            set { NepApp.Settings.SetSetting(AppSettings.ShowRemoteMenu, value); }
+        }
     }
 }

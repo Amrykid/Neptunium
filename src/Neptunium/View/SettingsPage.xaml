@@ -106,6 +106,15 @@
                                   IsOn="{Binding SaySongNotifications, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </StackPanel>
             </PivotItem>
+            <PivotItem Header="Experimental">
+                <StackPanel Margin="10 0">
+                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
+                               Text="Miscellaneous"/>
+                    <ToggleSwitch Header="Show Remote menu"
+                                      x:Name="ShowRemoteSwitch"
+                                      IsOn="{Binding ShowRemote, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                </StackPanel>
+            </PivotItem>
         </Pivot>
 
         <VisualStateManager.VisualStateGroups>
