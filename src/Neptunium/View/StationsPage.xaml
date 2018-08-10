@@ -81,7 +81,7 @@
 
             <ListView ItemsSource="{Binding SortedAvailableStations, UpdateSourceTrigger=PropertyChanged}"
                       SelectionMode="Single"
-                      Margin="5"
+                      Margin="5 5 5 15"
                       x:Name="stationsListView"
                       Visibility="Visible"
                       IsItemClickEnabled="True"
