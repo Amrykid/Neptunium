@@ -213,7 +213,7 @@ namespace Neptunium.Core.Stations
                     {
                         //hosted programs rely on the "artist" string (from song metadata) to match in order to activate.
 
-                        program.Host = x.Attribute("Host").Value;
+                        program.Host = x.Attribute("Host")?.Value;
                         program.HostRegexExpression = x.Attribute("HostExp")?.Value;
                     }
                     else if (program.Style == StationProgramStyle.Block)
