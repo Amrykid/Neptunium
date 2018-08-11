@@ -23,7 +23,7 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Pivot x:Name="RootPivot" Pivot.IsHeaderItemsCarouselEnabled="False">
+        <Pivot x:Name="RootPivot" Pivot.IsHeaderItemsCarouselEnabled="True">
             <PivotItem Header="General">
                 <ScrollViewer>
                     <StackPanel Margin="10 0">
