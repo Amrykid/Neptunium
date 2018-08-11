@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Networking;
 using Windows.Networking.Connectivity;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
@@ -71,7 +72,7 @@ namespace Neptunium.Core
             RaisePropertyChanged(nameof(LocalEndPoints));
 
             var broadcastAddr = NepApp.Network.GetBroadastAddress(LocalEndPoints.Last());
-            var broadcastDataWriter = new DataWriter(await serverBroadcaster.GetOutputStreamAsync(new HostName(broadcastAddr), BroadcastPortNumber.ToString()));
+            var broadcastDataWriter = new DataWriter(await serverBroadcaster.GetOutputStreamAsync(new HostName(broadcastAddr.ToString()), BroadcastPortNumber.ToString()));
 
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             Task.Run(async () =>
@@ -183,6 +184,7 @@ namespace Neptunium.Core
             private StreamSocket tcpClient = null;
             private DataWriter dataWriter = null;
             private DataReader dataReader = null;
+            private CancellationTokenSource readerTaskCancellationSource = null;
 
             public bool IsConnected { get; private set; }
 
@@ -196,9 +198,26 @@ namespace Neptunium.Core
                 await tcpClient.ConnectAsync(new Windows.Networking.HostName(address.ToString()), ServerPortNumber.ToString());
                 dataWriter = new DataWriter(tcpClient.OutputStream);
                 dataReader = new DataReader(tcpClient.InputStream);
+                readerTaskCancellationSource = new CancellationTokenSource();
+
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                Task.Run(action: ReadDataFromServer, cancellationToken: readerTaskCancellationSource.Token);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
                 IsConnected = true;
                 RaisePropertyChanged(nameof(IsConnected));
+            }
+
+            private async void ReadDataFromServer()
+            {
+                dataReader.InputStreamOptions = InputStreamOptions.Partial;
+                while (!readerTaskCancellationSource.IsCancellationRequested)
+                {
+                    await dataReader.LoadAsync(100);
+                    var data = dataReader.ReadString(100);
+
+                    var x = data;
+                }
             }
 
             public void AskServerToStreamStation(Stations.StationItem station)
@@ -229,6 +248,7 @@ namespace Neptunium.Core
                     {
                         // TODO: dispose managed state (managed objects).
                         dataWriter.Dispose();
+                        dataReader.Dispose();
                         tcpClient.Dispose();
 
                         IsConnected = false;
@@ -270,6 +290,60 @@ namespace Neptunium.Core
                 if (PropertyChanged != null)
                     PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        public class NepAppServerDiscoverer : IDisposable, INotifyPropertyChanged
+        {
+            private DatagramSocket udpSocket = new DatagramSocket();
+
+            //todo an event for alerting users of a discovered server. methods for starting and stopping this object.
+
+            #region IDisposable Support
+            private bool disposedValue = false; // To detect redundant calls
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        // TODO: dispose managed state (managed objects).
+                    }
+
+                    // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                    // TODO: set large fields to null.
+
+                    disposedValue = true;
+                }
+            }
+
+            // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+            // ~NepAppServerDiscoverer() {
+            //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            //   Dispose(false);
+            // }
+
+            // This code added to correctly implement the disposable pattern.
+            public void Dispose()
+            {
+                // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+                Dispose(true);
+                // TODO: uncomment the following line if the finalizer is overridden above.
+                // GC.SuppressFinalize(this);
+            }
+            #endregion
+            #region INotifyPropertyChanged Support
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+            {
+                if (string.IsNullOrWhiteSpace(propertyName)) throw new ArgumentNullException("propertyName");
+
+                if (PropertyChanged != null)
+                    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+            #endregion
         }
     }
 }

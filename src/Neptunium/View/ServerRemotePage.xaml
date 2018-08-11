@@ -18,18 +18,26 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" x:Name="AddressTextBox" Height="25" />
-                <AppBarButton Grid.Column="1" x:Name="ConnectButton" Icon="Add" Content="Connect" Command="{Binding ConnectCommand}"
+                <TextBox Grid.Column="0" x:Name="AddressTextBox" Height="25"
+                         IsEnabled="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvBoolToVisConv}}"/>
+                <AppBarButton Grid.Column="1" x:Name="ConnectButton" Icon="Add" Content="Connect" 
+                              IsEnabled="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvBoolToVisConv}}"
+                              Command="{Binding ConnectCommand, UpdateSourceTrigger=PropertyChanged}"
                         CommandParameter="{Binding ElementName=AddressTextBox, Path=Text}"/>
-                <AppBarButton Grid.Column="2" x:Name="DisconnectButton" Icon="Delete" Content="Disconnect" Command="{Binding DisconnectCommand}"/>
+                <AppBarButton Grid.Column="2" x:Name="DisconnectButton" Icon="Delete" Content="Disconnect"
+                              IsEnabled="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}"
+                              Command="{Binding DisconnectCommand, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
 
             <Grid x:Name="NowPlayingPanel" Visibility="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}">
                 <!-- todo? maybe?-->
             </Grid>
 
-            <ListBox x:Name="StationsList" Visibility="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}"
-                     ItemsSource="{Binding Stations, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" />
+            <ScrollViewer>
+                <ListView Header="Pick a station" x:Name="StationsList" 
+                      Visibility="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}"
+                      ItemsSource="{Binding SortedAvailableStations, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="Name" />
+            </ScrollViewer>
         </StackPanel>
     </Grid>
 </Page>

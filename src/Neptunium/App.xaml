@@ -15,6 +15,7 @@
             <conv:NullToVisibilityConverter x:Key="NullToVisConv" />
             <conv:InverseNullToVisibilityConverter x:Key="InvNullToVisConv" />
             <conv:BooleanToVisibilityConverter x:Key="BoolToVisConv" />
+            <conv:InverseBooleanToVisibilityConverter x:Key="InvBoolToVisConv" />
             <conv:StringToUriConverter x:Key="StrUriConv" />
             <conv:RelativeTimeConverter x:Key="RelTimeConv" />
 
