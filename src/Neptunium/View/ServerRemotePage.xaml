@@ -19,6 +19,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBox Grid.Column="0" x:Name="AddressTextBox" Height="25"
+                         PlaceholderText="Enter the IP address to the Neptunium server."
                          Visibility="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvBoolToVisConv}}"/>
                 <AppBarButton Grid.Column="1" x:Name="ConnectButton" Icon="Add" Content="Connect" 
                               Visibility="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvBoolToVisConv}}"

@@ -47,15 +47,13 @@ namespace Neptunium.ViewModel
 
             DisconnectCommand = new RelayCommand(parameter =>
             {
-                if (IsConnected)
+                if (IsConnected && serverClient != null)
                 {
+                    IsConnected = false;
                     serverClient.SongChanged -= ServerClient_SongChanged;
                     serverClient.PropertyChanged -= ServerClient_PropertyChanged;
                     serverClient?.Dispose();
                     serverClient = null;
-
-                    AvailableStations.Clear();
-                    SortedAvailableStations.Clear();
                 }
             });
 
@@ -124,6 +122,9 @@ namespace Neptunium.ViewModel
             }
 
             serverFinder?.Dispose();
+
+            AvailableStations.Clear();
+            SortedAvailableStations.Clear();
 
             base.OnNavigatedFrom(sender, e);
         }

@@ -315,6 +315,9 @@ namespace Neptunium.Core
                     if (disposing)
                     {
                         // TODO: dispose managed state (managed objects).
+                        if (readerTaskCancellationSource == null) return;
+                        if (tcpClient == null) return;
+
                         readerTaskCancellationSource.Cancel();
 
                         IsConnected = false;
