@@ -80,7 +80,7 @@ namespace Neptunium.Core
                 //todo make a way to stop.
                 while (true)
                 {
-                    broadcastDataWriter.WriteString("NEP" + NepAppServerClient.MessageTypeSeperator + LocalEndPoints.First().ToString());
+                    broadcastDataWriter.WriteString("NEP" + NepAppServerClient.MessageTypeSeperator + LocalEndPoints.First().ToString() + Environment.NewLine);
                     await broadcastDataWriter.StoreAsync();
 
                     await Task.Delay(30000); //wait 30 seconds
@@ -100,7 +100,7 @@ namespace Neptunium.Core
             {
                 try
                 {
-                    tup.Item3.WriteString("MEDIA" + NepAppServerClient.MessageTypeSeperator + e.Metadata.ToString());
+                    tup.Item3.WriteString("MEDIA" + NepAppServerClient.MessageTypeSeperator + e.Metadata.ToString() + Environment.NewLine);
                     await tup.Item3.StoreAsync();
                 }
                 catch (SocketException ex)
@@ -141,23 +141,30 @@ namespace Neptunium.Core
 
             while (true)
             {
-                uint available = await reader.LoadAsync(50);
 
-                if (available > 0)
+                string data = "";
+                while (!data.EndsWith("\n"))
                 {
-                    var data = reader.ReadString(available);
-                    data = data.Trim();
+                    uint available = await reader.LoadAsync(1);
 
-                    DataReceived?.Invoke(this, new NepAppServerFrontEndManagerDataReceivedEventArgs(data));
-                }
-                else
-                {
-                    lock (connections)
+                    if (available > 0)
                     {
-                        connections.Remove(socketTup);
-                    }
+                        data += reader.ReadString(available);
 
-                    break;
+                        DataReceived?.Invoke(this, new NepAppServerFrontEndManagerDataReceivedEventArgs(data));
+                    }
+                    else
+                    {
+                        lock (connections)
+                        {
+                            connections.Remove(socketTup);
+                            reader.Dispose();
+                            writer.Dispose();
+                            socketTup.Item1.Dispose();
+                        }
+
+                        return;
+                    }
                 }
             }
         }
@@ -213,26 +220,46 @@ namespace Neptunium.Core
                 dataReader.InputStreamOptions = InputStreamOptions.Partial;
                 while (!readerTaskCancellationSource.IsCancellationRequested)
                 {
-                    await dataReader.LoadAsync(100);
-                    var data = dataReader.ReadString(100);
+                    try
+                    {
+                        string data = "";
+                        while (!data.EndsWith("\n"))
+                        {
+                            await dataReader.LoadAsync(1);
+                            data += dataReader.ReadString(1);
+                        }
 
-                    var x = data;
+                        ParseDataCommand(data);
+                    }
+                    catch (Exception ex)
+                    {
+                        readerTaskCancellationSource.Token.ThrowIfCancellationRequested();
+                    }
                 }
             }
 
-            public void AskServerToStreamStation(Stations.StationItem station)
+            private void ParseDataCommand(string data)
+            {
+
+            }
+
+            public async void AskServerToStreamStation(Stations.StationItem station)
             {
                 if (IsConnected)
                 {
-                    dataWriter.WriteString("PLAY" + MessageTypeSeperator + station.Name);
+                    dataWriter.WriteString("PLAY" + MessageTypeSeperator + station.Name + Environment.NewLine);
+                    await dataWriter.StoreAsync();
+                    await dataWriter.FlushAsync();
                 }
             }
 
-            public void AskServerToStop()
+            public async void AskServerToStop()
             {
                 if (IsConnected)
                 {
-                    dataWriter.WriteString("STOP" + MessageTypeSeperator);
+                    dataWriter.WriteString("STOP" + MessageTypeSeperator + Environment.NewLine);
+                    await dataWriter.StoreAsync();
+                    await dataWriter.FlushAsync();
                 }
             }
 
@@ -247,6 +274,8 @@ namespace Neptunium.Core
                     if (disposing)
                     {
                         // TODO: dispose managed state (managed objects).
+                        readerTaskCancellationSource.Cancel();
+
                         dataWriter.Dispose();
                         dataReader.Dispose();
                         tcpClient.Dispose();

@@ -52,8 +52,26 @@ namespace Neptunium.ViewModel
                 }
             });
 
+            SendStationCommand = new RelayCommand(parameter =>
+            {
+                if (IsConnected && parameter != null)
+                {
+                    serverClient?.AskServerToStreamStation((StationItem)parameter);
+                }
+            });
+
+            SendStopCommand = new RelayCommand(parameter =>
+            {
+                if (IsConnected)
+                {
+                    serverClient?.AskServerToStop();
+                }
+            });
+
             RaisePropertyChanged(nameof(ConnectCommand));
             RaisePropertyChanged(nameof(DisconnectCommand));
+            RaisePropertyChanged(nameof(SendStationCommand));
+            RaisePropertyChanged(nameof(SendStopCommand));
 
             base.OnNavigatedTo(sender, e);
         }
@@ -101,5 +119,9 @@ namespace Neptunium.ViewModel
         public RelayCommand ConnectCommand { get; private set; }
 
         public RelayCommand DisconnectCommand { get; private set; }
+
+        public RelayCommand SendStationCommand { get; private set; }
+
+        public RelayCommand SendStopCommand { get; private set; }
     }
 }
