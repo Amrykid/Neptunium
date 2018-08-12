@@ -400,7 +400,12 @@ namespace Neptunium.Media.Songs
                 Func<StationProgram, bool> getStationProgram = x =>
                 {
                     if (x.Style != StationProgramStyle.Hosted) return false;
-                    if (x.Host.ToLower().Equals(songMetadata.Artist.Trim().ToLower())) return true;
+
+                    if (!string.IsNullOrWhiteSpace(x.Host))
+                    {
+                        if (x.Host.ToLower().Equals(songMetadata.Artist.Trim().ToLower())) return true;
+                    }
+
                     if (!string.IsNullOrWhiteSpace(x.HostRegexExpression))
                     {
                         if (Regex.IsMatch(songMetadata.Artist, x.HostRegexExpression))
