@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Neptunium.Core.Media.Metadata;
+using Neptunium.Media.Songs;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -82,6 +84,7 @@ namespace Neptunium.Core
                 {
                     broadcastDataWriter.WriteString("NEP" + NepAppServerClient.MessageTypeSeperator + LocalEndPoints.First().ToString() + Environment.NewLine);
                     await broadcastDataWriter.StoreAsync();
+                    await broadcastDataWriter.FlushAsync();
 
                     await Task.Delay(30000); //wait 30 seconds
                 }
@@ -100,8 +103,7 @@ namespace Neptunium.Core
             {
                 try
                 {
-                    tup.Item3.WriteString("MEDIA" + NepAppServerClient.MessageTypeSeperator + e.Metadata.ToString() + Environment.NewLine);
-                    await tup.Item3.StoreAsync();
+                    await SendMetadataToClientAsync(e.Metadata, tup.Item3);
                 }
                 catch (SocketException ex)
                 {
@@ -129,6 +131,13 @@ namespace Neptunium.Core
             connectionsToRemove.Clear();
         }
 
+        private static async Task SendMetadataToClientAsync(SongMetadata songMetadata, DataWriter dataWriter)
+        {
+            dataWriter.WriteString("MEDIA" + NepAppServerClient.MessageTypeSeperator + songMetadata.ToString() + Environment.NewLine);
+            await dataWriter.StoreAsync();
+            await dataWriter.FlushAsync();
+        }
+
         private async void Listener_ConnectionReceived(StreamSocketListener sender, StreamSocketListenerConnectionReceivedEventArgs args)
         {
             DataReader reader = new DataReader(args.Socket.InputStream);
@@ -138,6 +147,9 @@ namespace Neptunium.Core
 
             var socketTup = new Tuple<StreamSocket, DataReader, DataWriter>(args.Socket, reader, writer);
             connections.Add(socketTup);
+
+            if (NepApp.SongManager.CurrentSong != null) //send metadata to a freshly connected client.
+                await SendMetadataToClientAsync(NepApp.SongManager.CurrentSong, writer);
 
             while (true)
             {
@@ -158,7 +170,9 @@ namespace Neptunium.Core
                         lock (connections)
                         {
                             connections.Remove(socketTup);
+                            reader.DetachStream();
                             reader.Dispose();
+                            writer.DetachStream();
                             writer.Dispose();
                             socketTup.Item1.Dispose();
                         }
@@ -225,7 +239,16 @@ namespace Neptunium.Core
                         string data = "";
                         while (!data.EndsWith("\n"))
                         {
-                            await dataReader.LoadAsync(1);
+                            uint available = await dataReader.LoadAsync(1);
+
+                            if (available == 0)
+                            {
+                                IsConnected = false;
+                                RaisePropertyChanged(nameof(IsConnected));
+                                Dispose();
+                                return;
+                            }
+
                             data += dataReader.ReadString(1);
                         }
 
@@ -233,14 +256,30 @@ namespace Neptunium.Core
                     }
                     catch (Exception ex)
                     {
-                        readerTaskCancellationSource.Token.ThrowIfCancellationRequested();
+                        return;
                     }
                 }
             }
 
             private void ParseDataCommand(string data)
             {
+                if (!string.IsNullOrWhiteSpace(data))
+                {
+                    data = data.Trim();
+                    string[] bits = data.Split(new char[] { MessageTypeSeperator }, 2);
 
+                    switch (bits[0].ToUpper())
+                    {
+                        case "MEDIA":
+                            {
+                                //now playing info
+
+                                var metadata = SongMetadata.Parse(bits[1]);
+                                SongChanged?.Invoke(this, new NepAppSongChangedEventArgs(metadata));
+                                break;
+                            }
+                    }
+                }
             }
 
             public async void AskServerToStreamStation(Stations.StationItem station)
@@ -263,6 +302,8 @@ namespace Neptunium.Core
                 }
             }
 
+            public event EventHandler<NepAppSongChangedEventArgs> SongChanged;
+
 
             #region IDisposable Support
             private bool disposedValue = false; // To detect redundant calls
@@ -276,11 +317,30 @@ namespace Neptunium.Core
                         // TODO: dispose managed state (managed objects).
                         readerTaskCancellationSource.Cancel();
 
-                        dataWriter.Dispose();
-                        dataReader.Dispose();
-                        tcpClient.Dispose();
-
                         IsConnected = false;
+                        RaisePropertyChanged(nameof(IsConnected));
+
+                        //not proud of this code right here:
+                        try
+                        {
+                            dataWriter.DetachStream();
+                        }
+                        catch (Exception) { }
+                        finally
+                        {
+                            dataWriter.Dispose();
+                        }
+                        
+                        try
+                        {
+                            dataReader.DetachStream();
+                        }
+                        catch (Exception) { }
+                        finally
+                        {
+                            dataReader.Dispose();
+                        }
+                        tcpClient.Dispose();
                     }
 
                     // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
@@ -337,6 +397,7 @@ namespace Neptunium.Core
                     if (disposing)
                     {
                         // TODO: dispose managed state (managed objects).
+                        udpSocket.Dispose();
                     }
 
                     // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.

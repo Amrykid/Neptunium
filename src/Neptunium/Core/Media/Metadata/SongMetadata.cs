@@ -33,6 +33,20 @@ namespace Neptunium.Core.Media.Metadata
         {
             return string.Format("{0} - {1}", Artist ?? "Unknown Artist", Track ?? "Unknown Track");
         }
+
+        internal static SongMetadata Parse(string str)
+        {
+            if (string.IsNullOrWhiteSpace(str)) return null;
+
+            SongMetadata data = new SongMetadata();
+
+            string[] bits = str.Split(new string[] { " - " }, 2, StringSplitOptions.None);
+
+            data.Artist = bits[0].Trim();
+            data.Track = bits[1].Trim();
+
+            return data;
+        }
     }
 
     public class ExtendedSongMetadata: SongMetadata

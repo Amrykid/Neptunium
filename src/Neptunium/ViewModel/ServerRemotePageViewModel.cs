@@ -2,6 +2,7 @@
 using Crystal3.Navigation;
 using Crystal3.UI.Commands;
 using Microsoft.Toolkit.Uwp.UI;
+using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
 using System;
 using System.Collections.Generic;
@@ -16,10 +17,13 @@ namespace Neptunium.ViewModel
     public class ServerRemotePageViewModel : ViewModelBase
     {
         private Neptunium.Core.NepAppServerFrontEndManager.NepAppServerClient serverClient = null;
+        private Neptunium.Core.NepAppServerFrontEndManager.NepAppServerDiscoverer serverFinder = null;
+
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            Neptunium.Core.NepAppServerFrontEndManager.NepAppServerClient serverClient = new Core.NepAppServerFrontEndManager.NepAppServerClient();
-            Neptunium.Core.NepAppServerFrontEndManager.NepAppServerDiscoverer serverFinder = new Core.NepAppServerFrontEndManager.NepAppServerDiscoverer();
+            serverClient = new Core.NepAppServerFrontEndManager.NepAppServerClient();
+            serverClient.SongChanged += ServerClient_SongChanged;
+            serverFinder = new Core.NepAppServerFrontEndManager.NepAppServerDiscoverer();
 
             ConnectCommand = new RelayCommand(async parameter =>
             {
@@ -76,6 +80,14 @@ namespace Neptunium.ViewModel
             base.OnNavigatedTo(sender, e);
         }
 
+        private void ServerClient_SongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
+        {
+            App.Dispatcher.RunAsync(() =>
+            {
+                CurrentSong = e.Metadata;
+            });
+        }
+
         private void LoadStations()
         {
             AvailableStations = new ObservableCollection<StationItem>();
@@ -90,7 +102,9 @@ namespace Neptunium.ViewModel
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
+            serverClient.SongChanged -= ServerClient_SongChanged;          
             serverClient?.Dispose();
+            serverFinder?.Dispose();
 
             base.OnNavigatedFrom(sender, e);
         }
@@ -123,5 +137,11 @@ namespace Neptunium.ViewModel
         public RelayCommand SendStationCommand { get; private set; }
 
         public RelayCommand SendStopCommand { get; private set; }
+
+        public SongMetadata CurrentSong
+        {
+            get { return GetPropertyValue<SongMetadata>(); }
+            private set { SetPropertyValue<SongMetadata>(value: value); }
+        }
     }
 }
