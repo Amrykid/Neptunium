@@ -19,13 +19,13 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBox Grid.Column="0" x:Name="AddressTextBox" Height="25"
-                         IsEnabled="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvBoolToVisConv}}"/>
+                         Visibility="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvBoolToVisConv}}"/>
                 <AppBarButton Grid.Column="1" x:Name="ConnectButton" Icon="Add" Content="Connect" 
-                              IsEnabled="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvBoolToVisConv}}"
+                              Visibility="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvBoolToVisConv}}"
                               Command="{Binding ConnectCommand, UpdateSourceTrigger=PropertyChanged}"
                         CommandParameter="{Binding ElementName=AddressTextBox, Path=Text}"/>
                 <AppBarButton Grid.Column="2" x:Name="DisconnectButton" Icon="Delete" Content="Disconnect"
-                              IsEnabled="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}"
+                              Visibility="{Binding IsConnected, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}"
                               Command="{Binding DisconnectCommand, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
 

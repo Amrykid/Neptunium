@@ -21,9 +21,9 @@ namespace Neptunium.ViewModel
 
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            serverClient = new Core.NepAppServerFrontEndManager.NepAppServerClient();
-            serverClient.SongChanged += ServerClient_SongChanged;
             serverFinder = new Core.NepAppServerFrontEndManager.NepAppServerDiscoverer();
+
+            LoadStations();
 
             ConnectCommand = new RelayCommand(async parameter =>
             {
@@ -31,12 +31,12 @@ namespace Neptunium.ViewModel
                 {
                     try
                     {
+                        serverClient = new Core.NepAppServerFrontEndManager.NepAppServerClient();
+                        serverClient.SongChanged += ServerClient_SongChanged;
+                        serverClient.PropertyChanged += ServerClient_PropertyChanged;
+
                         await serverClient.TryConnectAsync(IPAddress.Parse((string)parameter));
                         IsConnected = true;
-
-                        //todo subscribe to an event from serverClient for receiving metadata.
-
-                        LoadStations();
                     }
                     catch (Exception ex)
                     {
@@ -49,7 +49,10 @@ namespace Neptunium.ViewModel
             {
                 if (IsConnected)
                 {
+                    serverClient.SongChanged -= ServerClient_SongChanged;
+                    serverClient.PropertyChanged -= ServerClient_PropertyChanged;
                     serverClient?.Dispose();
+                    serverClient = null;
 
                     AvailableStations.Clear();
                     SortedAvailableStations.Clear();
@@ -80,9 +83,20 @@ namespace Neptunium.ViewModel
             base.OnNavigatedTo(sender, e);
         }
 
+        private void ServerClient_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(IsConnected))
+            {
+                App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    IsConnected = serverClient.IsConnected;
+                });
+            }
+        }
+
         private void ServerClient_SongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
         {
-            App.Dispatcher.RunAsync(() =>
+            App.Dispatcher.RunWhenIdleAsync(() =>
             {
                 CurrentSong = e.Metadata;
             });
@@ -102,8 +116,13 @@ namespace Neptunium.ViewModel
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-            serverClient.SongChanged -= ServerClient_SongChanged;          
-            serverClient?.Dispose();
+            if (serverClient != null)
+            {
+                serverClient.SongChanged -= ServerClient_SongChanged;
+                serverClient.PropertyChanged -= ServerClient_PropertyChanged;
+                serverClient.Dispose();
+            }
+
             serverFinder?.Dispose();
 
             base.OnNavigatedFrom(sender, e);
