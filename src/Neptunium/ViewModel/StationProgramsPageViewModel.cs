@@ -28,7 +28,7 @@ namespace Neptunium.ViewModel
 
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            if (e.Direction == CrystalNavigationDirection.Forward)
+            if (ScheduleItems == null)
             {
                 IsBusy = true;
 
@@ -45,6 +45,17 @@ namespace Neptunium.ViewModel
             }
 
             base.OnNavigatedTo(sender, e);
+        }
+
+        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
+        {
+            if (SortedScheduleItems != null)
+                SortedScheduleItems.Source = null;
+
+            ScheduleItems?.Clear();
+            ScheduleItems = null;
+
+            base.OnNavigatedFrom(sender, e);
         }
 
         private async Task LoadScheduleAsync()
@@ -90,7 +101,7 @@ namespace Neptunium.ViewModel
         {
             private int GetDayNumber(string day)
             {
-                switch(day.ToLower())
+                switch (day.ToLower())
                 {
                     case "sunday": return 0;
                     case "monday": return 1;
