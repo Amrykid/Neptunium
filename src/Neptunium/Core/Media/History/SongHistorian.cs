@@ -44,6 +44,15 @@ namespace Neptunium.Core.Media.History
 
                         if (coll != null)
                         {
+                            foreach (SongHistoryItem item in coll)
+                            {
+                                //for song entries that came from another device, the metadata's station logo may point to the wrong file location. we're going to update it for this device.
+                                if (!File.Exists(item.Metadata.StationLogo.LocalPath.ToString()))
+                                {
+                                    item.Metadata.StationLogo = new Uri(NepApp.CacheManager.StationImageCacheFolder.Path + "\\" + item.Metadata.StationLogo.Segments.Last());
+                                }
+                            }
+
                             HistoryOfSongs.AddRange(coll);
                         }
                     }
