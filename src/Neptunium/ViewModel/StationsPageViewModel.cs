@@ -25,22 +25,24 @@ namespace Neptunium.ViewModel
 
             DetectNetworkStatus();
 
+            LastPlayedStation = NepApp.Stations.LastPlayedStationName;
+            if (!string.IsNullOrWhiteSpace(LastPlayedStation))
+            {
+                IsBusy = true;
+                var station = await NepApp.Stations.GetStationByNameAsync(LastPlayedStation);
+                if (station != null)
+                {
+                    LastPlayedStationLogoUrl = station.StationLogoUrl;
+                    LastPlayedStationDescription = station.Description;
+                }
+
+                LastPlayedStationDate = NepApp.Stations.LastPlayedStationDate;
+                IsBusy = false;
+            }
+
             if (AvailableStations == null || AvailableStations?.Count == 0)
             {
                 IsBusy = true;
-
-                LastPlayedStation = NepApp.Stations.LastPlayedStationName;
-                if (!string.IsNullOrWhiteSpace(LastPlayedStation))
-                {
-                    var station = await NepApp.Stations.GetStationByNameAsync(LastPlayedStation);
-                    if (station != null)
-                    {
-                        LastPlayedStationLogoUrl = station.StationLogoUrl;
-                        LastPlayedStationDescription = station.Description;
-                    }
-
-                    LastPlayedStationDate = NepApp.Stations.LastPlayedStationDate;
-                }
 
                 AvailableStations = new ObservableCollection<StationItem>();
                 SortedAvailableStations = new AdvancedCollectionView(AvailableStations, false);
@@ -88,6 +90,9 @@ namespace Neptunium.ViewModel
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
             NepApp.Network.IsConnectedChanged -= Network_IsConnectedChanged;
+
+            SortedAvailableStations.Clear();
+            AvailableStations.Clear();
 
             base.OnNavigatedFrom(sender, e);
         }
