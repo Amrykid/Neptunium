@@ -296,7 +296,7 @@ namespace Neptunium.View
 
         private void FeedbackButton_Click(object sender, RoutedEventArgs e)
         {
-
+            NepApp.UI.Notifier.VibrateClick();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -308,22 +308,28 @@ namespace Neptunium.View
 
         private void TogglePaneButton_Checked(object sender, RoutedEventArgs e)
         {
+            NepApp.UI.Notifier.VibrateClick();
             RootSplitView.IsPaneOpen = true;
         }
 
         private void TogglePaneButton_Unchecked(object sender, RoutedEventArgs e)
         {
+            NepApp.UI.Notifier.VibrateClick();
             RootSplitView.IsPaneOpen = false;
         }
 
         private void NowPlayingButton_Click(object sender, RoutedEventArgs e)
         {
+            NepApp.UI.Notifier.VibrateClick();
+
             //todo make a binding
             inlineNavigationService.SafeNavigateTo<NowPlayingPageViewModel>();
         }
 
         private void RadioButton_Click(object sender, RoutedEventArgs e)
         {
+            NepApp.UI.Notifier.VibrateClick();
+
             //dismiss the menu if its open.
             if (RootSplitView.DisplayMode == SplitViewDisplayMode.Overlay)
                 TogglePaneButton.IsChecked = false;
@@ -334,6 +340,8 @@ namespace Neptunium.View
             var btn = sender as ListItemButton;
 
             if (btn.DataContext == null) return;
+
+            NepApp.UI.Notifier.VibrateClick();
 
             this.GetViewModel<AppShellViewModel>()
                 .HandoffFragment

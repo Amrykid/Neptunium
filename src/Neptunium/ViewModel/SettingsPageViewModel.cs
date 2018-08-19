@@ -129,5 +129,11 @@ namespace Neptunium.ViewModel
             get { return (bool)NepApp.Settings.GetSetting(AppSettings.ShowRemoteMenu); }
             set { NepApp.Settings.SetSetting(AppSettings.ShowRemoteMenu, value); }
         }
+
+        public bool UseHapticFeedback
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.UseHapticFeedbackForNavigation); }
+            set { NepApp.Settings.SetSetting(AppSettings.UseHapticFeedbackForNavigation, value); }
+        }
     }
 }

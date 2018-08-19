@@ -31,16 +31,26 @@
                                Text="Notifications"/>
                         <ToggleSwitch Header="Show song change notifications"
                                       x:Name="SongNotificationSwitch"
-                                      XYFocusDown="{Binding ElementName=MetadataSwitch}"
+                                      XYFocusDown="{Binding ElementName=HapticFeedbackSwitch}"
                                       IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                        
+
+                        <MenuFlyoutSeparator />
+
+                        <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
+                               Text="UI"/>
+
+                        <ToggleSwitch Header="Use haptic feedback" 
+                                      x:Name="HapticFeedbackSwitch"
+                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
+                                      IsOn="{Binding UseHapticFeedback, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
                         <MenuFlyoutSeparator />
                         
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Metadata"/>
                         <ToggleSwitch Header="Find song metadata when song changes" 
                                       x:Name="MetadataSwitch"
-                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
+                                      XYFocusUp="{Binding ElementName=HapticFeedbackSwitch}"
                                       IsOn="{Binding FindSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                         <ToggleSwitch Header="Update LockScreen with artwork when available."
                                   x:Name="UpdateLockScreenSwitch"
@@ -126,6 +136,7 @@
                     <VisualState.Setters>
                         <Setter Target="RootPivot.Margin" Value="48 0 48 0" />
                         <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
+                        <Setter Target="HapticFeedbackSwitch.IsEnabled" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="TabletOrHigherVisualState">
@@ -142,6 +153,7 @@
 
                     <VisualState.Setters>
                         <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
+                        <Setter Target="HapticFeedbackSwitch.IsEnabled" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -152,6 +164,7 @@
 
                     <VisualState.Setters>
                         <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="True" />
+                        <Setter Target="HapticFeedbackSwitch.IsEnabled" Value="True" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

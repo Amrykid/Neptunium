@@ -41,6 +41,7 @@ namespace Neptunium.View
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
+            NepApp.UI.Notifier.VibrateClick();
             var item = e.ClickedItem;
 
             this.GetViewModel<StationInfoDialogFragment>().PlayStreamCommand.Execute(item);
@@ -48,6 +49,7 @@ namespace Neptunium.View
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            //NepApp.UI.Notifier.VibrateClick();
             var item = ((Button)sender).DataContext;
             this.GetViewModel<StationInfoDialogFragment>().PlayStreamCommand.Execute(item);
         }
