@@ -111,6 +111,10 @@
     </Compile>
     <Compile Include="ApplicationCommands.cs" />
     <Compile Include="AppSettings.cs" />
+    <Compile Include="Core\Media\Audio\IHeadsetDetector.cs" />
+    <Compile Include="Core\Media\Audio\MobileHeadsetDetector.cs" />
+    <Compile Include="Core\Media\Audio\NepAppAudioManager.cs" />
+    <Compile Include="Core\Media\Audio\XboxHeadsetDetector.cs" />
     <Compile Include="Core\Media\Bluetooth\NepAppMediaBluetoothDeviceCoordinator.cs" />
     <Compile Include="Core\Media\Bluetooth\NepAppMediaBluetoothDeviceCoordinatorIsBluetoothConnectedChangedEventArgs.cs" />
     <Compile Include="Core\Media\Bluetooth\NepAppMediaBluetoothManager.cs" />
