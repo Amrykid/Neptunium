@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Neptunium.Core.Media.Audio
 {
-    interface IHeadsetDetector
+    public interface IHeadsetDetector
     {
         bool IsHeadsetPluggedIn { get; }
         event EventHandler IsHeadsetPluggedInChanged;

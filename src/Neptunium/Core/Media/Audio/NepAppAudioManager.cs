@@ -10,12 +10,12 @@ namespace Neptunium.Core.Media.Audio
     public class NepAppAudioManager
     {
         private NepAppMediaPlayerManager mediaPlayer;
-        private IHeadsetDetector headsetDetector;
+        public IHeadsetDetector HeadsetDetector { get; private set; }
         public NepAppAudioManager(NepAppMediaPlayerManager mediaPlayerManager)
         {
             mediaPlayer = mediaPlayerManager;
 
-            headsetDetector = CreateHeadsetDetectorByPlatform();
+            HeadsetDetector = CreateHeadsetDetectorByPlatform();
         }
 
         private IHeadsetDetector CreateHeadsetDetectorByPlatform()
