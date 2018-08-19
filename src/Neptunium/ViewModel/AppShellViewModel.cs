@@ -62,13 +62,15 @@ namespace Neptunium.ViewModel
             NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");
 
 #if !DEBUG
-                if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowRemoteMenu))
-                {
+            if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowRemoteMenu))
+            {
 #endif
-            NepApp.UI.AddNavigationRoute("Remote", typeof(ServerRemotePageViewModel), "");
+                NepApp.UI.AddNavigationRoute("Remote", typeof(ServerRemotePageViewModel), "");
 #if !DEBUG
-                }
+            }
 #endif
+
+            NepApp.UI.AddNavigationRoute("About", typeof(AboutPageViewModel), "");
 
 
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
