@@ -35,6 +35,8 @@ namespace Neptunium
 
         public static event EventHandler InitializationComplete;
 
+        public static bool IsServerMode { get; private set; }
+
         public static async Task InitializeAsync()
         {
             CookieJar.ApplicationName = "Neptunium";
@@ -64,13 +66,12 @@ namespace Neptunium
             else
             {
                 //specifically for IoT, we start a server
+                IsServerMode = true;
                 ServerFrontEnd = new NepAppServerFrontEndManager();
                 await ServerFrontEnd.InitializeAsync();
             }
 
             InitializationComplete?.Invoke(null, EventArgs.Empty);
-
-            //return Task.CompletedTask;
         }
 
         public static Binding CreateBinding(INepAppFunctionManager source, string propertyPath, Action<Binding> customizerFunction = null)

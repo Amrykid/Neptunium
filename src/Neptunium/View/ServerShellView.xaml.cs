@@ -22,10 +22,10 @@ namespace Neptunium.View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    [Crystal3.Navigation.NavigationViewModel(typeof(Neptunium.ViewModel.AppShellViewModel), Crystal3.Navigation.NavigationViewSupportedPlatform.IoT)]
-    public sealed partial class IoTShellView : Page
+    [Crystal3.Navigation.NavigationViewModel(typeof(Neptunium.ViewModel.Server.ServerShellViewModel), Crystal3.Navigation.NavigationViewSupportedPlatform.IoT)]
+    public sealed partial class ServerShellView : Page
     {
-        public IoTShellView()
+        public ServerShellView()
         {
             this.InitializeComponent();
 

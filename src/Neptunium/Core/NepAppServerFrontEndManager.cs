@@ -164,6 +164,8 @@ namespace Neptunium.Core
                         data += reader.ReadString(available);
 
                         DataReceived?.Invoke(this, new NepAppServerFrontEndManagerDataReceivedEventArgs(data));
+
+                        ParseDataForCommands(data);
                     }
                     else
                     {
@@ -178,6 +180,42 @@ namespace Neptunium.Core
                         }
 
                         return;
+                    }
+                }
+            }
+        }
+
+        private async void ParseDataForCommands(string data)
+        {
+            if (!string.IsNullOrWhiteSpace(data))
+            {
+                data = data.Trim();
+                string[] dataBits = data.Split(NepAppServerFrontEndManager.NepAppServerClient.MessageTypeSeperator);
+
+                if (dataBits.Length > 0)
+                {
+                    switch (dataBits[0].ToUpper())
+                    {
+                        case "PLAY":
+                            if (dataBits.Length > 1)
+                            {
+                                string stationName = dataBits[1];
+                                var station = await NepApp.Stations.GetStationByNameAsync(stationName);
+                                if (station != null)
+                                {
+                                    var stream = station.Streams.First();
+                                    await await App.Dispatcher.RunAsync(async () =>
+                                    {
+                                        await NepApp.MediaPlayer.TryStreamStationAsync(stream);
+                                    });
+
+                                }
+                            }
+
+                            break;
+                        case "STOP":
+                            NepApp.MediaPlayer.Pause();
+                            break;
                     }
                 }
             }

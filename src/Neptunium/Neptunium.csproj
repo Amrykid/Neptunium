@@ -180,6 +180,7 @@
     <Compile Include="ViewModel\Dialog\StationInfoDialogFragment.cs" />
     <Compile Include="ViewModel\NowPlayingPageViewModel.cs" />
     <Compile Include="ViewModel\ServerRemotePageViewModel.cs" />
+    <Compile Include="ViewModel\Server\ServerShellViewModel.cs" />
     <Compile Include="ViewModel\SettingsPageViewModel.cs" />
     <Compile Include="ViewModel\SongHistoryPageViewModel.cs" />
     <Compile Include="ViewModel\StationProgramsPageViewModel.cs" />
@@ -199,8 +200,8 @@
     <Compile Include="View\Dialog\StationInfoDialog.xaml.cs">
       <DependentUpon>StationInfoDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\IoTShellView.xaml.cs">
-      <DependentUpon>IoTShellView.xaml</DependentUpon>
+    <Compile Include="View\ServerShellView.xaml.cs">
+      <DependentUpon>ServerShellView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\NowPlayingPage.xaml.cs">
       <DependentUpon>NowPlayingPage.xaml</DependentUpon>
@@ -374,7 +375,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\IoTShellView.xaml">
+    <Page Include="View\ServerShellView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
