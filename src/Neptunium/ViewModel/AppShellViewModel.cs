@@ -195,21 +195,9 @@ namespace Neptunium.ViewModel
             NepApp.UI.Notifier.UpdateLiveTile((ExtendedSongMetadata)e.Metadata);
         }
 
-        private async void SongManager_PreSongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
+        private void SongManager_PreSongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
         {
-            if (e.Metadata == null) return;
 
-            try
-            {
-                if ((bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsWhenHeadphonesAreConnected) && !e.Metadata.IsUnknownMetadata)
-                {
-                    await VoiceUtility.AnnonceSongMetadataUsingVoiceAsync(e, VoiceMode.Headphones);
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)

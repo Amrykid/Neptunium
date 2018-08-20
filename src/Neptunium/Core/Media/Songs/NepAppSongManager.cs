@@ -59,16 +59,9 @@ namespace Neptunium.Media.Songs
             VoiceUtility.SongAnnouncementFinished += VoiceUtility_SongAnnouncementFinished;
         }
 
-        private async void VoiceUtility_SongAnnouncementFinished(object sender, EventArgs e)
+        private void VoiceUtility_SongAnnouncementFinished(object sender, EventArgs e)
         {
-            if (NepApp.MediaPlayer.IsPlaying && CurrentSong != null)
-            {
-                //sometimes, the media transport controls will drop the metadata when an announcement plays. this here is to help bring it back. what actually works is pausing and then resuming. however, that isn't nice.
 
-                UpdateTransportControls(new SongMetadata() { Artist = "", Track = "", StationPlayedOn = "" });
-                await Task.Delay(1000);
-                UpdateTransportControls(CurrentSong);
-            }
         }
 
         private void DeactivateProgramBlockTimer()
@@ -224,6 +217,14 @@ namespace Neptunium.Media.Songs
                     CurrentSongWithAdditionalMetadata = null;
 
                     PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(songMetadata));
+
+
+
+                    if ((bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsWhenHeadphonesAreConnected) 
+                        && NepApp.MediaPlayer.Audio.HeadsetDetector.IsHeadsetPluggedIn)
+                    {
+                        await VoiceUtility.AnnonceSongMetadataUsingVoiceAsync(songMetadata, VoiceMode.Headphones);
+                    }
 
                     UpdateTransportControls(songMetadata);
 

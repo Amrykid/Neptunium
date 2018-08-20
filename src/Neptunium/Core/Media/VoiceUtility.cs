@@ -1,4 +1,5 @@
 ﻿using Crystal3;
+using Neptunium.Core.Media.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +22,15 @@ namespace Neptunium.Core.Media
 
         public static event EventHandler SongAnnouncementFinished;
 
-        public static async Task AnnonceSongMetadataUsingVoiceAsync(Neptunium.Media.Songs.NepAppSongChangedEventArgs e, VoiceMode voiceMode)
+        public static Task AnnonceSongMetadataUsingVoiceAsync(Neptunium.Media.Songs.NepAppSongChangedEventArgs e, VoiceMode voiceMode)
+        {
+            return AnnonceSongMetadataUsingVoiceAsync(e.Metadata, voiceMode);
+        }
+        public static async Task AnnonceSongMetadataUsingVoiceAsync(SongMetadata songMetadata, VoiceMode voiceMode)
         {
             try
             {
-                if (e.Metadata.IsUnknownMetadata) return;
+                if (songMetadata.IsUnknownMetadata) return;
 
                 if (japaneseFemaleVoice == null)
                 {
@@ -41,24 +46,15 @@ namespace Neptunium.Core.Media
                 //todo make this a utility in its own class.
                 await announcementLock.WaitAsync();
 
-                var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, NepApp.MediaPlayer.CurrentStream.ParentStation.PrimaryLocale);
+                var nowPlayingSsmlData = GenerateSongAnnouncementSsml(songMetadata.Artist, songMetadata.Track, NepApp.MediaPlayer.CurrentStream.ParentStation.PrimaryLocale);
                 var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
 
-                if (voiceMode == VoiceMode.Bluetooth)
-                {
-                    double initialVolume = NepApp.MediaPlayer.Volume;
-                    bool shouldFade = initialVolume >= 0.1;
+                double initialVolume = NepApp.MediaPlayer.Volume;
+                bool shouldFade = initialVolume >= 0.1;
 
-                    if (shouldFade) await NepApp.MediaPlayer.FadeVolumeDownToAsync(0.1);
-                    await PlayAnnouncementAudioStreamAsync(stream, voiceMode);
-                    if (shouldFade) await NepApp.MediaPlayer.FadeVolumeUpToAsync(initialVolume);
-                }
-                else
-                {
-                    NepApp.MediaPlayer.Pause();
-                    await PlayAnnouncementAudioStreamAsync(stream, voiceMode);
-                    NepApp.MediaPlayer.Resume();
-                }
+                if (shouldFade) await NepApp.MediaPlayer.FadeVolumeDownToAsync(0.1);
+                await PlayAnnouncementAudioStreamAsync(stream, voiceMode);
+                if (shouldFade) await NepApp.MediaPlayer.FadeVolumeUpToAsync(initialVolume);
 
                 announcementLock.Release();
 
@@ -100,6 +96,8 @@ namespace Neptunium.Core.Media
                 await mediaOpenTask;
 
                 await Task.Delay((int)media.PlaybackSession.NaturalDuration.TotalMilliseconds);
+
+                media.SystemMediaTransportControls.DisplayUpdater.ClearAll();
 
                 source.Dispose();
 
