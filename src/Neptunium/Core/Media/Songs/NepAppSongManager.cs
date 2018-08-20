@@ -218,14 +218,6 @@ namespace Neptunium.Media.Songs
 
                     PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(songMetadata));
 
-
-
-                    if ((bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsWhenHeadphonesAreConnected) 
-                        && NepApp.MediaPlayer.Audio.HeadsetDetector.IsHeadsetPluggedIn)
-                    {
-                        await VoiceUtility.AnnonceSongMetadataUsingVoiceAsync(songMetadata, VoiceMode.Headphones);
-                    }
-
                     UpdateTransportControls(songMetadata);
 
                     //todo strip out "Feat." artists

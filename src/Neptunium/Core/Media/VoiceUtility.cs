@@ -45,7 +45,6 @@ namespace Neptunium.Core.Media
                         x.Language.ToLower().StartsWith("kr") && x.Gender == VoiceGender.Female);
                 }
 
-                //todo make this a utility in its own class.
                 await announcementLock.WaitAsync();
 
                 var nowPlayingSsmlData = GenerateSongAnnouncementSsml(songMetadata.Artist, songMetadata.Track, NepApp.MediaPlayer.CurrentStream.ParentStation.PrimaryLocale);

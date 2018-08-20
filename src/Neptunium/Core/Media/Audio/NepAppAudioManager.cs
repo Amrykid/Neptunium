@@ -16,11 +16,21 @@ namespace Neptunium.Core.Media.Audio
             mediaPlayer = mediaPlayerManager;
 
             HeadsetDetector = CreateHeadsetDetectorByPlatform();
+
+            NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
+        }
+
+        private async void SongManager_PreSongChanged(object sender, Neptunium.Media.Songs.NepAppSongChangedEventArgs e)
+        {
+            if ((bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsWhenHeadphonesAreConnected) && HeadsetDetector.IsHeadsetPluggedIn)
+            {
+                await VoiceUtility.AnnonceSongMetadataUsingVoiceAsync(e.Metadata, VoiceMode.Headphones);
+            }
         }
 
         private IHeadsetDetector CreateHeadsetDetectorByPlatform()
         {
-            switch(Crystal3.CrystalApplication.GetDevicePlatform())
+            switch (Crystal3.CrystalApplication.GetDevicePlatform())
             {
                 case Crystal3.Core.Platform.Mobile:
                     return new MobileHeadsetDetector();
