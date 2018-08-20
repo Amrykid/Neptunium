@@ -51,6 +51,8 @@ namespace Neptunium.Core.Media.Bluetooth
 
         internal async Task AnnonceSongMetadataUsingVoiceAsync(Neptunium.Media.Songs.NepAppSongChangedEventArgs e)
         {
+            if (e.Metadata.IsUnknownMetadata) return;
+
             //todo make this a utility in its own class.
             await announcementLock.WaitAsync();
 
