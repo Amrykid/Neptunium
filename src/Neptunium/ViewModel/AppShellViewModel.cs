@@ -15,6 +15,7 @@ using Windows.System.UserProfile;
 using Windows.Services.Store;
 using Windows.Foundation;
 using Windows.UI.Xaml;
+using Neptunium.Core.Media.Audio;
 
 namespace Neptunium.ViewModel
 {
@@ -77,12 +78,29 @@ namespace Neptunium.ViewModel
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged += SongManager_SongChanged;
             NepApp.SongManager.StationRadioProgramStarted += SongManager_StationRadioProgramStarted;
+            NepApp.MediaPlayer.Audio.HeadsetDetector.IsHeadsetPluggedInChanged += HeadsetDetector_IsHeadsetPluggedInChanged;
+
+            if (NepApp.MediaPlayer.Audio.HeadsetDetector.IsHeadsetPluggedIn)
+            {
+                ShowOverlayForHeadphonesStatus(true);
+            }
 
             if (UserProfilePersonalizationSettings.IsSupported())
             {
                 NepApp.SongManager.SongArtworkAvailable += SongManager_SongArtworkAvailable;
                 NepApp.SongManager.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
             }
+        }
+
+        private void HeadsetDetector_IsHeadsetPluggedInChanged(object sender, EventArgs e)
+        {
+            bool isPluggedIn = ((IHeadsetDetector)sender).IsHeadsetPluggedIn;
+            ShowOverlayForHeadphonesStatus(isPluggedIn);
+        }
+
+        private static void ShowOverlayForHeadphonesStatus(bool isPluggedIn)
+        {
+            NepApp.UI.Overlay.ShowSnackBarMessageAsync(isPluggedIn ? "Headphones connected." : "Headphones disconnected.");
         }
 
         private async void SongManager_NoSongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
