@@ -106,7 +106,8 @@ namespace Neptunium.View
 
         public void SetTopFocus(UIElement elementAbove)
         {
-            stationsGridView.XYFocusUp = elementAbove;
+            LastPlayedPlayButton.XYFocusUp = elementAbove;
+            stationsGridView.XYFocusUp = LastPlayedPlayButton;
         }
 
         public void SetBottomFocus(UIElement elementBelow)

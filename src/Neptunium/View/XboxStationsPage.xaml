@@ -68,6 +68,7 @@
 
             <StackPanel Orientation="Horizontal">
                 <AppBarButton Icon="Play" Label="Play" Command="{Binding PlayLastPlayedStationCommand}"
+                              x:Name="LastPlayedPlayButton"
                               IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}" />
                 <Grid Height="80" VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
@@ -117,6 +118,7 @@
                   IsItemClickEnabled="True"
                   Style="{StaticResource TitleSafeGridViewStyle}"
                   ItemClick="stationsGridView_ItemClick"
+                  Header="Stations"
                   IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}"
                   Grid.Row="1">
             <GridView.Resources>
