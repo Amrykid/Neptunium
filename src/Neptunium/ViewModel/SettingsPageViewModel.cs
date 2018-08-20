@@ -66,10 +66,16 @@ namespace Neptunium.ViewModel
             set { NepApp.Settings.SetSetting(AppSettings.TryToFindSongMetadata, value); }
         }
 
-        public bool SaySongNotifications
+        public bool SaySongNotificationsInBluetoothMode
         {
             get { return (bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsInBluetoothMode); }
             set { NepApp.Settings.SetSetting(AppSettings.SaySongNotificationsInBluetoothMode, value); }
+        }
+
+        public bool SaySongNotificationsWhenHeadphonesConnected
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsWhenHeadphonesAreConnected); }
+            set { NepApp.Settings.SetSetting(AppSettings.SaySongNotificationsWhenHeadphonesAreConnected, value); }
         }
 
         public bool UpdateLockScreenWithSongArt
