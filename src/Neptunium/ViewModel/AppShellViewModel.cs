@@ -98,9 +98,12 @@ namespace Neptunium.ViewModel
             ShowOverlayForHeadphonesStatus(isPluggedIn);
         }
 
-        private static void ShowOverlayForHeadphonesStatus(bool isPluggedIn)
+        private void ShowOverlayForHeadphonesStatus(bool isPluggedIn)
         {
-            NepApp.UI.Overlay.ShowSnackBarMessageAsync(isPluggedIn ? "Headphones connected." : "Headphones disconnected.");
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                NepApp.UI.Overlay.ShowSnackBarMessageAsync(isPluggedIn ? "Headphones connected." : "Headphones disconnected.");
+            });
         }
 
         private async void SongManager_NoSongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
@@ -191,9 +194,12 @@ namespace Neptunium.ViewModel
             NepApp.UI.Notifier.UpdateLiveTile((ExtendedSongMetadata)e.Metadata);
         }
 
-        private void SongManager_PreSongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
+        private async void SongManager_PreSongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
         {
-
+            if ((bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsWhenHeadphonesAreConnected) && !e.Metadata.IsUnknownMetadata)
+            {
+                await NepApp.MediaPlayer.Bluetooth.AnnonceSongMetadataUsingVoiceAsync(e);
+            }
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)

@@ -44,21 +44,27 @@ namespace Neptunium.Core.Media.Bluetooth
             {
                 if ((bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsInBluetoothMode))
                 {
-                    await announcementLock.WaitAsync();
-
-                    var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, NepApp.MediaPlayer.CurrentStream.ParentStation.PrimaryLocale);
-                    var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
-
-                    double initialVolume = NepApp.MediaPlayer.Volume;
-                    bool shouldFade = initialVolume >= 0.1;
-
-                    if (shouldFade) await NepApp.MediaPlayer.FadeVolumeDownToAsync(0.1);
-                    await PlayAnnouncementAudioStreamAsync(stream);
-                    if (shouldFade) await NepApp.MediaPlayer.FadeVolumeUpToAsync(initialVolume);
-
-                    announcementLock.Release();
+                    await AnnonceSongMetadataUsingVoiceAsync(e);
                 }
             }
+        }
+
+        internal async Task AnnonceSongMetadataUsingVoiceAsync(Neptunium.Media.Songs.NepAppSongChangedEventArgs e)
+        {
+            //todo make this a utility in its own class.
+            await announcementLock.WaitAsync();
+
+            var nowPlayingSsmlData = GenerateSongAnnouncementSsml(e.Metadata.Artist, e.Metadata.Track, NepApp.MediaPlayer.CurrentStream.ParentStation.PrimaryLocale);
+            var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
+
+            double initialVolume = NepApp.MediaPlayer.Volume;
+            bool shouldFade = initialVolume >= 0.1;
+
+            if (shouldFade) await NepApp.MediaPlayer.FadeVolumeDownToAsync(0.1);
+            await PlayAnnouncementAudioStreamAsync(stream);
+            if (shouldFade) await NepApp.MediaPlayer.FadeVolumeUpToAsync(initialVolume);
+
+            announcementLock.Release();
         }
 
         private void DeviceCoordinator_IsBluetoothConnectedChanged(object sender, NepAppMediaBluetoothDeviceCoordinatorIsBluetoothConnectedChangedEventArgs e)
