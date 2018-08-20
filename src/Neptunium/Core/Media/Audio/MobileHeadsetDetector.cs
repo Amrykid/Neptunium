@@ -15,6 +15,7 @@ namespace Neptunium.Core.Media.Audio
             @"\\?\SWD#MMDEVAPI#{0.0.0.00000000}.{af8f0b3f-d3c7-4344-ad0c-d75d24429314}#{e6327cad-dcec-4949-ae8a-991e976a79d2}", //Lumia 950
 
         };
+        private string headPhonesId;
 
         public MobileHeadsetDetector()
         {
@@ -36,9 +37,10 @@ namespace Neptunium.Core.Media.Audio
 
         private void Watcher_Removed(DeviceWatcher sender, DeviceInformationUpdate args)
         {
-            if (args.Kind == DeviceInformationKind.DeviceInterface && IsHeadphones(args.Id, args.Properties))
+            if (args.Kind == DeviceInformationKind.DeviceInterface && args.Id == headPhonesId)
             {
                 SetHeadsetStatus(false);
+                headPhonesId = null;
             }
         }
 
@@ -47,6 +49,7 @@ namespace Neptunium.Core.Media.Audio
             if (args.Kind == DeviceInformationKind.DeviceInterface && IsHeadphones(args.Id, args.Properties))
             {
                 SetHeadsetStatus(true);
+                headPhonesId = args.Id;
             }
         }
 
