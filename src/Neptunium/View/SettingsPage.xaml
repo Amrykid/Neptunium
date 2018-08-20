@@ -34,7 +34,7 @@
                                       XYFocusDown="{Binding ElementName=HeadphonesAnnounceSongsSwitch}"
                                       IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
-                        <ToggleSwitch Header="Announce song when the song playing changes when headphones are connected."
+                        <ToggleSwitch Header="Announce song when the song playing&#x0a;changes when headphones are connected."
                                       x:Name="HeadphonesAnnounceSongsSwitch"
                                       XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
                                       XYFocusDown="{Binding ElementName=HapticFeedbackSwitch}"
@@ -120,7 +120,7 @@
                     <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Options" />
 
-                    <ToggleSwitch Header="Announce song when the song playing changes when connected to Bluetooth."
+                    <ToggleSwitch Header="Announce song when the song playing&#x0a;changes when connected to Bluetooth."
                                   IsOn="{Binding SaySongNotificationsInBluetoothMode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                 </StackPanel>
             </PivotItem>
