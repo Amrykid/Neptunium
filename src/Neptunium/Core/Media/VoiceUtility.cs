@@ -142,7 +142,11 @@ namespace Neptunium.Core.Media
 
             Action<string> speakInEnglish = (text) =>
             {
+                builder.AppendLine("<s>");
+                builder.AppendLine("<prosody volume='x-loud'>");
                 builder.AppendLine(text);
+                builder.AppendLine("</prosody>");
+                builder.AppendLine("</s>");
             };
             Action<string> speakInJapanese = (text) =>
             {
@@ -151,8 +155,9 @@ namespace Neptunium.Core.Media
                 //builder.AppendLine("<voice xml:lang='" + voice.Language + "' name='" + voice.DisplayName + "'>");
                 builder.AppendLine("<s>");
                 builder.AppendLine("<voice" + (japaneseFemaleVoice != null ? " name='" + japaneseFemaleVoice.DisplayName + "'" : " gender='female'") + ">");
-
+                builder.AppendLine("<prosody volume='x-loud'>");
                 builder.AppendLine(text);
+                builder.AppendLine("</prosody>");
                 builder.AppendLine("</voice>");
                 builder.AppendLine("</s>");
             };
@@ -160,8 +165,9 @@ namespace Neptunium.Core.Media
             {
                 builder.AppendLine("<s>");
                 builder.AppendLine("<voice" + (koreanFemaleVoice != null ? " name='" + koreanFemaleVoice.DisplayName + "'" : " gender='female'") + ">");
-
+                builder.AppendLine("<prosody volume='x-loud'>");
                 builder.AppendLine(text);
+                builder.AppendLine("</prosody>");
                 builder.AppendLine("</voice>");
                 builder.AppendLine("</s>");
             };
