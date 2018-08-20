@@ -16,6 +16,7 @@ using Windows.Services.Store;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Neptunium.Core.Media.Audio;
+using Neptunium.Core.Media;
 
 namespace Neptunium.ViewModel
 {
@@ -196,9 +197,18 @@ namespace Neptunium.ViewModel
 
         private async void SongManager_PreSongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
         {
-            if ((bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsWhenHeadphonesAreConnected) && !e.Metadata.IsUnknownMetadata)
+            if (e.Metadata == null) return;
+
+            try
             {
-                await NepApp.MediaPlayer.Bluetooth.AnnonceSongMetadataUsingVoiceAsync(e);
+                if ((bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsWhenHeadphonesAreConnected) && !e.Metadata.IsUnknownMetadata)
+                {
+                    await VoiceUtility.AnnonceSongMetadataUsingVoiceAsync(e, VoiceMode.Headphones);
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
         }
 

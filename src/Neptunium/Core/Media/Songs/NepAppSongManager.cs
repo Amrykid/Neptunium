@@ -1,4 +1,5 @@
-﻿using Neptunium.Core.Media.History;
+﻿using Neptunium.Core.Media;
+using Neptunium.Core.Media.History;
 using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
 using System;
@@ -54,8 +55,21 @@ namespace Neptunium.Media.Songs
 
             History = new SongHistorian();
             History.InitializeAsync();
+
+            VoiceUtility.SongAnnouncementFinished += VoiceUtility_SongAnnouncementFinished;
         }
-        
+
+        private async void VoiceUtility_SongAnnouncementFinished(object sender, EventArgs e)
+        {
+            if (NepApp.MediaPlayer.IsPlaying && CurrentSong != null)
+            {
+                //sometimes, the media transport controls will drop the metadata when an announcement plays. this here is to help bring it back. what actually works is pausing and then resuming. however, that isn't nice.
+
+                UpdateTransportControls(new SongMetadata() { Artist = "", Track = "", StationPlayedOn = "" });
+                await Task.Delay(1000);
+                UpdateTransportControls(CurrentSong);
+            }
+        }
 
         private void DeactivateProgramBlockTimer()
         {
@@ -200,6 +214,8 @@ namespace Neptunium.Media.Songs
                     string originalArtistString = songMetadata.Artist;
                     if (featuredArtistRegex.IsMatch(songMetadata.Artist))
                         songMetadata.Artist = featuredArtistRegex.Replace(songMetadata.Artist, "").Trim();
+
+                    if (CurrentSong.ToString().Equals(songMetadata.ToString())) return;
 
                     CurrentSong = songMetadata;
                     //this is used for the now playing bar via data binding.
@@ -472,7 +488,11 @@ namespace Neptunium.Media.Songs
                 }
                 else
                 {
-                    updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(songMetadata.StationLogo);
+                    if (songMetadata.StationLogo != null)
+                    {
+                        updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(songMetadata.StationLogo);
+                    }
+
                     updater.MusicProperties.AlbumTitle = "";
                     updater.MusicProperties.AlbumArtist = "";
                 }
