@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Media.SpeechSynthesis;
+using Windows.UI.Xaml.Controls;
 
 namespace Neptunium.Core.Media
 {
@@ -19,6 +20,7 @@ namespace Neptunium.Core.Media
         private static SpeechSynthesizer speechSynth = new SpeechSynthesizer();
         private static VoiceInformation japaneseFemaleVoice = null;
         private static VoiceInformation koreanFemaleVoice = null;
+        private static MediaElement announcementMediaElement = new MediaElement();
 
         public static event EventHandler SongAnnouncementFinished;
 
@@ -72,38 +74,34 @@ namespace Neptunium.Core.Media
             {
                 var source = MediaSource.CreateFromStream(stream, stream.ContentType);
 
-                var media = new MediaPlayer();
-
                 //media.AudioCategory = MediaPlayerAudioCategory.Speech;
                 if (voiceMode == VoiceMode.Bluetooth)
                 {
-                    media.AudioCategory = MediaPlayerAudioCategory.Media; //Speech is too low.
+                    announcementMediaElement.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Media; //Speech is too low.
                 }
                 else if (voiceMode == VoiceMode.Headphones)
                 {
-                    media.AudioCategory = MediaPlayerAudioCategory.Alerts;
+                    announcementMediaElement.AudioCategory = Windows.UI.Xaml.Media.AudioCategory.Alerts;
                 }
 
-                media.CommandManager.IsEnabled = false;
-                media.Volume = 1.0;
+                //media.CommandManager.IsEnabled = false;
+                announcementMediaElement.Volume = 1.0;
 
-                media.Source = source;
+                announcementMediaElement.SetPlaybackSource(source);
 
-                Task mediaOpenTask = media.WaitForMediaOpenAsync();
+                Task mediaOpenTask = announcementMediaElement.WaitForMediaOpenAsync();
 
-                media.Play();
+                announcementMediaElement.Play();
 
                 await mediaOpenTask;
 
-                await Task.Delay((int)media.PlaybackSession.NaturalDuration.TotalMilliseconds);
-
-                media.SystemMediaTransportControls.DisplayUpdater.ClearAll();
+                await Task.Delay((int)announcementMediaElement.NaturalDuration.TimeSpan.TotalMilliseconds);
 
                 source.Dispose();
 
                 stream.Dispose();
 
-                media.Dispose();
+                //media.Dispose();
             });
         }
 
