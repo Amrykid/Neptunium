@@ -47,10 +47,9 @@
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
-                
+
                 <ComboBox Header="Pick a station" x:Name="StationsList"
                           Grid.Column="0"
-                          SelectedIndex="0"
                           HorizontalAlignment="Stretch"
                           Margin="0 0 10 0"
                           HorizontalContentAlignment="Stretch"
