@@ -14,7 +14,7 @@ namespace Neptunium.Core.Media.Audio
 
     public abstract class BaseHeadsetDetector : IHeadsetDetector
     {
-        public bool IsHeadsetPluggedIn { get; private set; }
+        public bool IsHeadsetPluggedIn { get; private set; } = false;
 
         public event EventHandler IsHeadsetPluggedInChanged;
 

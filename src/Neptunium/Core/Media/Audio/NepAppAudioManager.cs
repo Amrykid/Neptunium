@@ -34,8 +34,8 @@ namespace Neptunium.Core.Media.Audio
             {
                 case Crystal3.Core.Platform.Mobile:
                     return new MobileHeadsetDetector();
-                case Crystal3.Core.Platform.Xbox:
-                    return new XboxHeadsetDetector();
+                //case Crystal3.Core.Platform.Xbox:
+                //    return new XboxHeadsetDetector();
                 default:
                     return new MockHeadsetDetector();
             }

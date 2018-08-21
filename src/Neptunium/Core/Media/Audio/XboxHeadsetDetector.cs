@@ -7,10 +7,10 @@ namespace Neptunium.Core.Media.Audio
 {
     internal class XboxHeadsetDetector : BaseHeadsetDetector
     {
-        private Gamepad usersConnectedGamePad = null;
+        private RawGameController usersConnectedGamePad = null;
         public XboxHeadsetDetector()
         {
-            usersConnectedGamePad = Gamepad.Gamepads.FirstOrDefault(x => x.User == Crystal3.CrystalApplication.GetCurrentAsCrystalApplication().CurrentUser);
+            usersConnectedGamePad = RawGameController.RawGameControllers.FirstOrDefault(x => x.User == Crystal3.CrystalApplication.GetCurrentAsCrystalApplication().CurrentUser);
             if (usersConnectedGamePad != null)
             {
                 usersConnectedGamePad.HeadsetConnected += UsersConnectedGamePad_HeadsetConnected;
