@@ -160,9 +160,14 @@ namespace Neptunium.Media.Songs
 
         internal async void HandleMetadata(SongMetadata songMetadata, StationStream currentStream)
         {
-            if (songMetadata.IsUnknownMetadata) return;
-
             await metadataLock.WaitAsync();
+
+            if (songMetadata == null || songMetadata.IsUnknownMetadata)
+            {
+                SetCurrentMetadataToUnknown();
+                metadataLock.Release();
+                return;
+            }
 
             try
             {
