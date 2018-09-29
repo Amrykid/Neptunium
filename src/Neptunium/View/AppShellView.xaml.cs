@@ -306,6 +306,18 @@ namespace Neptunium.View
             //FeedbackButton.Visibility = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported() ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        private void TogglePaneButton_Checked(object sender, RoutedEventArgs e)
+        {
+            NepApp.UI.Notifier.VibrateClick();
+            RootSplitView.IsPaneOpen = true;
+        }
+
+        private void TogglePaneButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            NepApp.UI.Notifier.VibrateClick();
+            RootSplitView.IsPaneOpen = false;
+        }
+
         private void NowPlayingButton_Click(object sender, RoutedEventArgs e)
         {
             NepApp.UI.Notifier.VibrateClick();
@@ -354,12 +366,6 @@ namespace Neptunium.View
         public IEnumerable<string> GetSubscriptions()
         {
             return new string[] { "ShowHandoffFlyout" };
-        }
-
-        private void TogglePaneButton_Click(object sender, RoutedEventArgs e)
-        {
-            NepApp.UI.Notifier.VibrateClick();
-            RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
         }
     }
 }
