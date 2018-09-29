@@ -41,12 +41,11 @@
                         Grid.Column="0"
                         x:Name="TogglePaneButton"
                         AutomationProperties.Name="Menu"
-                        Checked="TogglePaneButton_Checked"
+                        Click="TogglePaneButton_Click"
                         Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                         Style="{StaticResource SplitViewTogglePaneButtonStyle}"
                         TabIndex="1"
-                        ToolTipService.ToolTip="Menu"
-                        Unchecked="TogglePaneButton_Unchecked" />
+                        ToolTipService.ToolTip="Menu" />
 
                 <TextBlock Name="PageTitleBlock" Grid.Column="1" VerticalAlignment="Center"
                            Style="{ThemeResource BaseTextBlockStyle}" />
