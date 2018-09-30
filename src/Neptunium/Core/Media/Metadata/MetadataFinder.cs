@@ -27,20 +27,22 @@ namespace Neptunium.Core.Media.Metadata
                 {
                     if ((bool)NepApp.Settings.GetSetting(AppSettings.TryToFindSongMetadata))
                     {
+                        albumData = await metaSrc.TryFindAlbumAsync(originalMetadata.Track, originalMetadata.Artist, station.PrimaryLocale);
+
+                        await Task.Delay(500); //500 ms sleep
+
+                        artistData = await metaSrc.TryFindArtistAsync(originalMetadata.Artist, station.PrimaryLocale);
+
                         try
                         {
-                            albumData = await metaSrc.TryFindAlbumAsync(originalMetadata.Track, originalMetadata.Artist, station.PrimaryLocale);
-
-                            await Task.Delay(250); //250 ms sleep
-
-                            artistData = await metaSrc.TryFindArtistAsync(originalMetadata.Artist, station.PrimaryLocale);
-
-                            await Task.Delay(250); //250 ms sleep
-
                             //await metaSrc.TryFindSongAsync(extendedMetadata, station.PrimaryLocale);
 
                             extendedMetadata.JPopAsiaArtistInfo = await ArtistFetcher.FindArtistDataOnJPopAsiaAsync(originalMetadata.Artist.Trim());
+                        }
+                        catch (Exception) { }
 
+                        try
+                        {
                             extendedMetadata.FanArtTVBackgroundUrl = await FanArtTVFetcher.FetchArtistBackgroundAsync(originalMetadata.Artist.Trim());
                         }
                         catch (Exception) { }
