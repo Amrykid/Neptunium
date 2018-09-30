@@ -297,6 +297,15 @@ namespace Neptunium.Media.Songs
             }
         }
 
+        internal SongMetadata GetCurrentSongOrUnknown()
+        {
+            if (CurrentStation == null) return null;
+
+            if (CurrentSong != null) return CurrentSong;
+
+            return GetUnknownSongMetadata();
+        }
+
         internal void SetCurrentStation(StationItem parentStation)
         {
             CurrentStation = parentStation;
@@ -318,18 +327,25 @@ namespace Neptunium.Media.Songs
             CurrentSongWithAdditionalMetadata = null;
         }
 
-        internal void SetCurrentMetadataToUnknown(string program = null)
+        private SongMetadata GetUnknownSongMetadata(StationItem stationPlaying = null, string radioProgram = null)
         {
-            //todo make a readonly field
             SongMetadata unknown = new SongMetadata()
             {
                 Track = "Unknown Song",
                 Artist = "Unknown Artist",
-                RadioProgram = program,
-                StationPlayedOn = NepApp.MediaPlayer.CurrentStream?.ParentStation?.Name,
-                StationLogo = NepApp.MediaPlayer.CurrentStream?.ParentStation?.StationLogoUrl,
+                RadioProgram = radioProgram,
+                StationPlayedOn = (stationPlaying ?? CurrentStation)?.Name,
+                StationLogo = (stationPlaying ?? CurrentStation)?.StationLogoUrl,
                 IsUnknownMetadata = true
             };
+
+            return unknown;
+        }
+
+        internal void SetCurrentMetadataToUnknown(string program = null)
+        {
+            //todo make a readonly field
+            SongMetadata unknown = GetUnknownSongMetadata();
 
             CurrentSong = unknown;
             //this is used for the now playing bar via data binding.
