@@ -81,14 +81,11 @@ namespace Neptunium.View
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                switch (NepApp.MediaPlayer.IsMediaEngaged)
+                bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+
+                if (NepApp.MediaPlayer.IsMediaEngaged)
                 {
-                    case true:
-                        bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
-                        break;
-                    case false:
-                        bottomAppBar.Visibility = Visibility.Collapsed;
-                        break;
+                    NepApp.SongManager.RefreshMetadata();
                 }
             });
         }

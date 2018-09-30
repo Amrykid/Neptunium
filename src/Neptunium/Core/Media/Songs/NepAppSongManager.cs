@@ -118,6 +118,23 @@ namespace Neptunium.Media.Songs
             blockProgrammingLock.Release();
         }
 
+        internal void RefreshMetadata()
+        {
+            if (CurrentSong == null || CurrentStation == null)
+            {
+                SetCurrentMetadataToUnknown();
+            }
+            else
+            {
+                //this is used for the now playing bar via data binding.
+                RaisePropertyChanged(nameof(CurrentSong));
+
+                PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(CurrentSong));
+
+                UpdateTransportControls(CurrentSong);
+            }
+        }
+
         private bool FilterStationBlockPrograms(StationProgram program)
         {
             if (program.Style != StationProgramStyle.Block)
@@ -262,10 +279,17 @@ namespace Neptunium.Media.Songs
             }
             catch (Exception ex)
             {
-                Dictionary<string, string> properties = new Dictionary<string, string>();
-                properties.Add("Song-Metadata", songMetadata?.ToString());
-                properties.Add("Current-Station", currentStream?.ParentStation?.Name);
-                Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, properties);
+                if (!Debugger.IsAttached)
+                {
+                    Dictionary<string, string> properties = new Dictionary<string, string>();
+                    properties.Add("Song-Metadata", songMetadata?.ToString());
+                    properties.Add("Current-Station", currentStream?.ParentStation?.Name);
+                    Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, properties);
+                }
+                else
+                {
+                    Debugger.Break();
+                }
             }
             finally
             {
