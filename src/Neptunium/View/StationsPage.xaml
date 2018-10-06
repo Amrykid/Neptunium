@@ -165,6 +165,7 @@
                       x:Name="stationsGridView"
                       Visibility="Collapsed"
                       IsItemClickEnabled="True"
+                      x:DeferLoadStrategy="Lazy"
                       IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}"
                       Grid.Row="1">
                 <GridView.HeaderTemplate>

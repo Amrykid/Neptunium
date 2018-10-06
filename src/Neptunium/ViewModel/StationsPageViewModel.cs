@@ -94,6 +94,12 @@ namespace Neptunium.ViewModel
             SortedAvailableStations.Clear();
             AvailableStations.Clear();
 
+            GroupedStations = null;
+            SelectedStation = null;
+            LastPlayedStation = null;
+            LastPlayedStationDescription = null;
+            LastPlayedStationLogoUrl = null;
+
             base.OnNavigatedFrom(sender, e);
         }
 
