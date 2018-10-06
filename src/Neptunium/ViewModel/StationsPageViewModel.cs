@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Crystal3.Navigation;
@@ -10,6 +11,9 @@ using Neptunium.Core.Stations;
 using Crystal3.UI.Commands;
 using Neptunium.ViewModel.Dialog;
 using Windows.System;
+using Windows.UI.Popups;
+using Windows.UI.Xaml.Data;
+using Microsoft.Toolkit.Uwp.UI;
 
 namespace Neptunium.ViewModel
 {
@@ -17,21 +21,98 @@ namespace Neptunium.ViewModel
     {
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            if (AvailableStations == null || AvailableStations?.Count == 0)
+            NepApp.Network.IsConnectedChanged += Network_IsConnectedChanged;
+
+            DetectNetworkStatus();
+
+            LastPlayedStation = NepApp.Stations.LastPlayedStationName;
+            if (!string.IsNullOrWhiteSpace(LastPlayedStation))
             {
                 IsBusy = true;
-                AvailableStations = new ObservableCollection<StationItem>((await NepApp.Stations.GetStationsAsync())?.OrderBy(x => x.Name));
-                //GroupedStations = AvailableStations.GroupBy(x => x.Group ?? "Ungrouped Stations").OrderBy(x => x.Key).Select(x => x);
+                var station = await NepApp.Stations.GetStationByNameAsync(LastPlayedStation);
+                if (station != null)
+                {
+                    LastPlayedStationLogoUrl = station.StationLogoUrl;
+                    LastPlayedStationDescription = station.Description;
+                }
+
+                LastPlayedStationDate = NepApp.Stations.LastPlayedStationDate;
                 IsBusy = false;
             }
 
+            if (AvailableStations == null || AvailableStations?.Count == 0)
+            {
+                IsBusy = true;
+
+                AvailableStations = new ObservableCollection<StationItem>();
+                SortedAvailableStations = new AdvancedCollectionView(AvailableStations, false);
+                SortedAvailableStations.SortDescriptions.Add(new SortDescription("Name", SortDirection.Ascending, null));
+
+                NepApp.Stations.ObserveStationsAsync().Subscribe<StationItem>((StationItem item) =>
+                {
+                    AvailableStations.Add(item);
+                }, async (Exception ex) =>
+                {
+                    IsBusy = false;
+                    await NepApp.UI.ShowInfoDialogAsync("Uh-oh!", "An unexpected error occurred. " + ex.ToString());
+                }, async () =>
+                {
+                    //when done
+                    IsBusy = false;
+                });
+
+                //GroupedStations = AvailableStations.GroupBy(x => x.Group ?? "Ungrouped Stations").OrderBy(x => x.Key).Select(x => x);
+
+            }
+
+
             base.OnNavigatedTo(sender, e);
+        }
+
+        private void Network_IsConnectedChanged(object sender, EventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                DetectNetworkStatus();
+            });
+        }
+
+        private void DetectNetworkStatus()
+        {
+            NetworkAvailable = NepApp.Network.IsConnected;
+
+            if (!NetworkAvailable)
+            {
+                NepApp.UI.Overlay.ShowSnackBarMessageAsync("Network disconnected.");
+            }
+        }
+
+        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
+        {
+            NepApp.Network.IsConnectedChanged -= Network_IsConnectedChanged;
+
+            SortedAvailableStations.Clear();
+            AvailableStations.Clear();
+
+            base.OnNavigatedFrom(sender, e);
+        }
+
+        public bool NetworkAvailable
+        {
+            get { return GetPropertyValue<bool>(); }
+            private set { SetPropertyValue<bool>(value: value); }
         }
 
         public ObservableCollection<StationItem> AvailableStations
         {
             get { return GetPropertyValue<ObservableCollection<StationItem>>(); }
             private set { SetPropertyValue<ObservableCollection<StationItem>>(value: value); }
+        }
+
+        public IAdvancedCollectionView SortedAvailableStations
+        {
+            get { return GetPropertyValue<IAdvancedCollectionView>(); }
+            private set { SetPropertyValue<IAdvancedCollectionView>(value: value); }
         }
 
         public IEnumerable<IGrouping<string, StationItem>> GroupedStations
@@ -45,6 +126,46 @@ namespace Neptunium.ViewModel
             get { return GetPropertyValue<StationItem>(); }
             private set { SetPropertyValue<StationItem>(value: value); }
         }
+
+        public string LastPlayedStation
+        {
+            get { return GetPropertyValue<string>(); }
+            private set { SetPropertyValue<string>(value: value); }
+        }
+
+        public DateTime LastPlayedStationDate
+        {
+            get { return GetPropertyValue<DateTime>(); }
+            private set { SetPropertyValue<DateTime>(value: value); }
+        }
+
+        public Uri LastPlayedStationLogoUrl
+        {
+            get { return GetPropertyValue<Uri>(); }
+            private set { SetPropertyValue<Uri>(value: value); }
+        }
+
+        public string LastPlayedStationDescription
+        {
+            get { return GetPropertyValue<string>(); }
+            private set { SetPropertyValue<string>(value: value); }
+        }
+
+        public RelayCommand PlayLastPlayedStationCommand => new RelayCommand(async x =>
+        {
+            if (!string.IsNullOrWhiteSpace(LastPlayedStation))
+            {
+                var station = await NepApp.Stations.GetStationByNameAsync(LastPlayedStation);
+                if (station != null)
+                {
+                    ShowStationInfoCommand.Execute(station);
+
+                    LastPlayedStation = null;
+                    LastPlayedStationLogoUrl = null;
+                    LastPlayedStationDescription = null;
+                }
+            }
+        });
 
         public RelayCommand OpenStationWebsiteCommand => new RelayCommand(async station =>
         {
@@ -78,14 +199,39 @@ namespace Neptunium.ViewModel
             StationItem stationItem = (StationItem)station;
             if (NepApp.MediaPlayer.CurrentStreamer?.StationPlaying == stationItem) return; //don't show a dialog to play the current station
 
-            if ((await NepApp.UI.Overlay.ShowDialogFragmentAsync<StationInfoDialogFragment>(stationItem)).ResultType == Core.UI.NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive)
+            var result = await NepApp.UI.Overlay.ShowDialogFragmentAsync<StationInfoDialogFragment>(stationItem);
+            if (result.ResultType == Core.UI.NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive)
             {
+                if (NepApp.Network.NetworkUtilizationBehavior == NepAppNetworkManager.NetworkDeterminedAppBehaviorStyle.OptIn)
+                {
+                    if (await NepApp.UI.ShowYesNoDialogAsync("Data usage", "You're either over your data limit or roaming. Do you want to stream this station?") == false)
+                    {
+                        //user answered no
+                        return;
+                    }
+                }
+
                 var controller = await NepApp.UI.Overlay.ShowProgressDialogAsync(string.Format("Connecting to {0}...", stationItem.Name), "Please wait...");
                 controller.SetIndeterminate();
 
                 try
                 {
-                    await NepApp.MediaPlayer.TryStreamStationAsync(stationItem.Streams[0]);
+                    StationStream stream = result.Selection as StationStream;
+                    if (stream == null)
+                    {
+                        //check if we need to automatically choose a lower bitrate.
+                        if ((int)NepApp.Network.NetworkUtilizationBehavior < 2) //check if we're on "conservative" or "opt-in"
+                        {
+                            //grab the stream with the lowest bitrate
+                            stream = stationItem.Streams.OrderBy(x => x.Bitrate).First();
+                        }
+                        else
+                        {
+                            stream = stationItem.Streams.OrderByDescending(x => x.Bitrate).First(); //otherwise, grab a higher bitrate
+                        }
+                    }
+
+                    await NepApp.MediaPlayer.TryStreamStationAsync(stream);
                     await controller.CloseAsync();
                 }
                 catch (Neptunium.Core.NeptuniumException ex)

@@ -99,4 +99,32 @@
   <Artist Name="SISTAR" JPopAsiaUrl="http://www.jpopasia.com/sistar/" FanArtTVUrl="https://fanart.tv/artist/f5bff650-07d0-4f8c-bf48-45497f465b79/sistar/">
     <AltName>씨스타</AltName>
   </Artist>
+  <Artist Name="Aya Hirano" JPopAsiaUrl="http://www.jpopasia.com/ayahirano/" FanArtTVUrl="https://fanart.tv/artist/dfe0486a-d8f7-449a-a1ce-192803b3b537/hirano-aya/">
+    <AltName>Hirano Aya</AltName>
+    <AltName>平野綾</AltName>
+  </Artist>
+  <Artist Name="5dolls" FanArtTVUrl="https://fanart.tv/artist/51af7767-570f-4aea-a9e1-420713a8d9b9/5dolls/">
+  </Artist>
+  <Artist Name="Taeyeon" PartOf="Girls' Generation">
+    <AltName>Taeyeon (Girls' Generation)</AltName>
+  </Artist>
+  <Artist Name="fripSide" JPopAsiaUrl="http://www.jpopasia.com/fripside/">
+  </Artist>
+  <Artist Name="nao" PartOf="fripSide">  
+  </Artist>
+  <Artist Name="Fifteen And" JPopAsiaUrl="http://www.jpopasia.com/15and/">
+    <AltName><![CDATA[15&]]></AltName>
+    <AltName>피프틴앤드</AltName>
+  </Artist>
+  <Artist Name="Park Ji Min" PartOf="Fifteen And">
+    <AltName><![CDATA[Park Ji Min (15&)]]></AltName>
+  </Artist>
+  <Artist Name="2PM" JPopAsiaUrl="http://www.jpopasia.com/2pm/" FanArtTVUrl="https://fanart.tv/artist/9b94ac1a-b997-4414-9385-96178b5ef99c/2pm/">
+    <AltName>투피엠</AltName>
+  </Artist>
+  <Artist Name="Apink" JPopAsiaUrl="http://www.jpopasia.com/apink/" FanArtTVUrl="https://fanart.tv/artist/9102bdf6-b03e-4470-9f78-12127c4995cc/apink/">
+  </Artist>
+  <Artist Name="G.NA" JPopAsiaUrl="http://www.jpopasia.com/gna/">
+    <AltName>Gina Choi</AltName>
+  </Artist>
 </Artists>

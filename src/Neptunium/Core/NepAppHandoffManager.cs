@@ -79,13 +79,26 @@ namespace Neptunium
                 App.Current.EnteredBackground += Current_EnteredBackground;
                 App.Current.LeavingBackground += Current_LeavingBackground;
 
-                remoteSystemWatcher.Start(); //auto runs for 30 seconds. stops when app is suspended - https://docs.microsoft.com/en-us/uwp/api/windows.system.remotesystems.remotesystemwatcher
+
+                if (Windows.System.Power.PowerManager.EnergySaverStatus != Windows.System.Power.EnergySaverStatus.On)
+                {
+                    if ((int)NepApp.Network.ConnectionType > 1) //wifi or ethernet
+                    {
+                        remoteSystemWatcher.Start(); //auto runs for 30 seconds. stops when app is suspended - https://docs.microsoft.com/en-us/uwp/api/windows.system.remotesystems.remotesystemwatcher
+                    }
+                }
             }
         }
 
         private void Current_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
         {
-            remoteSystemWatcher.Start();
+            if (Windows.System.Power.PowerManager.EnergySaverStatus != Windows.System.Power.EnergySaverStatus.On)
+            {
+                if ((int)NepApp.Network.ConnectionType > 1) //wifi or ethernet
+                {
+                    remoteSystemWatcher.Start();
+                }
+            }
         }
 
         private void Current_EnteredBackground(object sender, EnteredBackgroundEventArgs e)
@@ -242,7 +255,13 @@ namespace Neptunium
             if (!IsSupported) return;
             if (RemoteSystemAccess != RemoteSystemAccessStatus.Allowed) return;
 
-            remoteSystemWatcher.Start();
+            if (Windows.System.Power.PowerManager.EnergySaverStatus != Windows.System.Power.EnergySaverStatus.On)
+            {
+                if ((int)NepApp.Network.ConnectionType > 1) //wifi or ethernet
+                {
+                    remoteSystemWatcher.Start();
+                }
+            }
         }
 
         public async Task<List<Tuple<RemoteSystem, StationItem, AppServiceConnection>>> DetectStreamingDevicesAsync()

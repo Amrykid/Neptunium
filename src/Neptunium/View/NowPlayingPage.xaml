@@ -20,7 +20,7 @@
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid x:Name="SongInfoPanel"
-              Visibility="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
+              Visibility="{Binding IsMediaEngaged, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition x:Name="SongInfoRowDef" Height="200" />
@@ -117,7 +117,7 @@
             </StackPanel>
         </Grid>
 
-        <Grid x:Name="NoSongInfoPanel" Visibility="{Binding CurrentSong, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}">
+        <Grid x:Name="NoSongInfoPanel" Visibility="{Binding IsMediaEngaged, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvBoolToVisConv}}">
             <TextBlock Text="Nothing is playing. Go pick a station to stream!"
                        Style="{ThemeResource BaseTextBlockStyle}" 
                        VerticalAlignment="Center" HorizontalAlignment="Center" />

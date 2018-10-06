@@ -89,7 +89,9 @@ namespace Neptunium.Core.Media.Metadata
                 var artistEntry = new BuiltinArtistEntry();
 
                 artistEntry.Name = artistElement.Attribute("Name").Value;
-                artistEntry.JPopAsiaUrl = new Uri(artistElement.Attribute("JPopAsiaUrl").Value);
+
+                if (artistElement.Attribute("JPopAsiaUrl") != null)
+                    artistEntry.JPopAsiaUrl = new Uri(artistElement.Attribute("JPopAsiaUrl").Value);
 
                 if (artistElement.Elements("AltName") != null)
                 {

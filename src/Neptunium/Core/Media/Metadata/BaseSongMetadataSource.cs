@@ -16,6 +16,8 @@ namespace Neptunium.Core.Media.Metadata
 
         public abstract Task<ArtistData> GetArtistAsync(string artistID, string locale = "JP");
 
+        public abstract Task TryFindSongAsync(ExtendedSongMetadata song, string locale = "JP");
+
         protected async Task<bool> CheckIfUrlIsWebAccessibleAsync(Uri url)
         {
             HttpClient http = new HttpClient();

@@ -247,7 +247,6 @@
               Visibility="Collapsed"
               Background="{ThemeResource SystemControlBackgroundAccentBrush}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
@@ -258,7 +257,7 @@
                         Background="Transparent" 
                         x:Name="NowPlayingButton" 
                         Height="65"
-                        Width="280"
+                        HorizontalAlignment="Stretch"
                         Margin="0 0 0 0"
                         Click="NowPlayingButton_Click"
                         HorizontalContentAlignment="Stretch">
@@ -296,15 +295,21 @@
                             <TextBlock Grid.Row="1" Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}"
                                        Style="{ThemeResource BodyTextBlockStyle}"
                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
-                            <TextBlock Grid.Row="2" Text="{Binding StationPlayedOn, UpdateSourceTrigger=PropertyChanged}"
+                            <TextBlock Grid.Row="2"
                                        Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"/>
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
+                                <Span>
+                                    <Run Text="{Binding StationPlayedOn, UpdateSourceTrigger=PropertyChanged}" />
+                                    <Run Text="·" />
+                                    <Run Text="{Binding RadioProgram, UpdateSourceTrigger=PropertyChanged}" />
+                                </Span>
+                            </TextBlock>
                         </Grid>
 
                     </Grid>
                 </Button>
             </Grid>
-            <StackPanel Orientation="Horizontal" Grid.Column="2">
+            <StackPanel Orientation="Horizontal" Grid.Column="1">
                 <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
         </Grid>
@@ -323,7 +328,7 @@
             <VisualStateGroup x:Name="ShellVisualStateGroup">
                 <VisualState x:Name="DesktopVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="1080" />
+                        <wst:AdaptiveTrigger x:Name="DesktopVisualStateTrigger" MinWindowWidth="1080" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
@@ -347,7 +352,7 @@
 
                 <VisualState x:Name="TabletVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="720" />
+                        <wst:AdaptiveTrigger x:Name="TabletVisualStateTrigger" MinWindowWidth="720" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
@@ -371,7 +376,7 @@
 
                 <VisualState x:Name="PhoneVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="0" />
+                        <wst:AdaptiveTrigger x:Name="PhoneVisualStateTrigger" MinWindowWidth="0" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>

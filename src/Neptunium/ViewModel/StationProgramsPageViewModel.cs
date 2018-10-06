@@ -7,48 +7,19 @@ using System.Threading.Tasks;
 using Crystal3.Navigation;
 using System.Collections.ObjectModel;
 using Neptunium.Model;
+using Windows.UI.Xaml.Data;
 
 namespace Neptunium.ViewModel
 {
     public class StationProgramsPageViewModel : UIViewModelBase
     {
-        public ObservableCollection<ScheduleItem> SundayItems
+        public CollectionViewSource SortedScheduleItems
         {
-            get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
-            private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
+            get { return GetPropertyValue<CollectionViewSource>(); }
+            private set { SetPropertyValue<CollectionViewSource>(value: value); }
         }
 
-        public ObservableCollection<ScheduleItem> MondayItems
-        {
-            get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
-            private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
-        }
-
-        public ObservableCollection<ScheduleItem> TuesdayItems
-        {
-            get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
-            private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
-        }
-
-        public ObservableCollection<ScheduleItem> WednesdayItems
-        {
-            get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
-            private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
-        }
-
-        public ObservableCollection<ScheduleItem> ThursdayItems
-        {
-            get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
-            private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
-        }
-
-        public ObservableCollection<ScheduleItem> FridayItems
-        {
-            get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
-            private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
-        }
-
-        public ObservableCollection<ScheduleItem> SaturdayItems
+        public ObservableCollection<ScheduleItem> ScheduleItems
         {
             get { return GetPropertyValue<ObservableCollection<ScheduleItem>>(); }
             private set { SetPropertyValue<ObservableCollection<ScheduleItem>>(value: value); }
@@ -57,7 +28,7 @@ namespace Neptunium.ViewModel
 
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            if (e.Direction == CrystalNavigationDirection.Forward)
+            if (ScheduleItems == null)
             {
                 IsBusy = true;
 
@@ -76,16 +47,20 @@ namespace Neptunium.ViewModel
             base.OnNavigatedTo(sender, e);
         }
 
+        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
+        {
+            if (SortedScheduleItems != null)
+                SortedScheduleItems.Source = null;
+
+            ScheduleItems?.Clear();
+            ScheduleItems = null;
+
+            base.OnNavigatedFrom(sender, e);
+        }
+
         private async Task LoadScheduleAsync()
         {
-            //theres a better way to do this.
-            SundayItems = new ObservableCollection<ScheduleItem>();
-            MondayItems = new ObservableCollection<ScheduleItem>();
-            TuesdayItems = new ObservableCollection<ScheduleItem>();
-            WednesdayItems = new ObservableCollection<ScheduleItem>();
-            ThursdayItems = new ObservableCollection<ScheduleItem>();
-            FridayItems = new ObservableCollection<ScheduleItem>();
-            SaturdayItems = new ObservableCollection<ScheduleItem>();
+            var items = new List<ScheduleItem>();
 
             var stations = await NepApp.Stations.GetStationsAsync();
 
@@ -104,49 +79,47 @@ namespace Neptunium.ViewModel
                         item.TimeLocal = listing.Time;
                         item.Program = program;
 
-                        switch (item.Day.ToLower())
-                        {
-                            case "sunday":
-                                SundayItems.Add(item);
-                                break;
-                            case "monday":
-                                MondayItems.Add(item);
-                                break;
-                            case "tuesday":
-                                TuesdayItems.Add(item);
-                                break;
-                            case "wednesday":
-                                WednesdayItems.Add(item);
-                                break;
-                            case "thursday":
-                                ThursdayItems.Add(item);
-                                break;
-                            case "friday":
-                                FridayItems.Add(item);
-                                break;
-                            case "saturday":
-                                SaturdayItems.Add(item);
-                                break;
-                        }
+                        items.Add(item);
                     }
                 }
             }
 
-            SundayItems = new ObservableCollection<ScheduleItem>(SundayItems.OrderBy(x => x.Time));
-            MondayItems = new ObservableCollection<ScheduleItem>(MondayItems.OrderBy(x => x.Time));
-            TuesdayItems = new ObservableCollection<ScheduleItem>(TuesdayItems.OrderBy(x => x.Time));
-            WednesdayItems = new ObservableCollection<ScheduleItem>(WednesdayItems.OrderBy(x => x.Time));
-            ThursdayItems = new ObservableCollection<ScheduleItem>(ThursdayItems.OrderBy(x => x.Time));
-            FridayItems = new ObservableCollection<ScheduleItem>(FridayItems.OrderBy(x => x.Time));
-            SaturdayItems = new ObservableCollection<ScheduleItem>(SaturdayItems.OrderBy(x => x.Time));
+            ScheduleItems = new ObservableCollection<ScheduleItem>(items);
+            var collectionViewSource = new CollectionViewSource();
+            collectionViewSource.Source = items
+                .OrderBy(x => x.TimeLocal.Hour)
+                .GroupBy(x => x.Day)
+                .OrderBy(x => x.Key, new DayComparer());
+            collectionViewSource.IsSourceGrouped = true;
+            SortedScheduleItems = collectionViewSource;
 
-            RaisePropertyChanged(nameof(SundayItems));
-            RaisePropertyChanged(nameof(MondayItems));
-            RaisePropertyChanged(nameof(TuesdayItems));
-            RaisePropertyChanged(nameof(WednesdayItems));
-            RaisePropertyChanged(nameof(ThursdayItems));
-            RaisePropertyChanged(nameof(FridayItems));
-            RaisePropertyChanged(nameof(SaturdayItems));
+            RaisePropertyChanged(nameof(ScheduleItems));
+            RaisePropertyChanged(nameof(SortedScheduleItems));
+        }
+
+        private class DayComparer : IComparer<string>
+        {
+            private int GetDayNumber(string day)
+            {
+                switch (day.ToLower())
+                {
+                    case "sunday": return 0;
+                    case "monday": return 1;
+                    case "tuesday": return 2;
+                    case "wednesday": return 3;
+                    case "thursday": return 4;
+                    case "friday": return 5;
+                    case "saturday": return 6;
+                }
+
+                return 0;
+            }
+            public int Compare(string x, string y)
+            {
+                if (GetDayNumber(x) > GetDayNumber(y)) return 1;
+                else if (GetDayNumber(x) < GetDayNumber(y)) return -1;
+                else return 0;
+            }
         }
     }
 }

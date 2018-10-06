@@ -1,4 +1,5 @@
-﻿using Neptunium.Core.Media.History;
+﻿using Neptunium.Core.Media;
+using Neptunium.Core.Media.History;
 using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
 using System;
@@ -54,8 +55,14 @@ namespace Neptunium.Media.Songs
 
             History = new SongHistorian();
             History.InitializeAsync();
+
+            VoiceUtility.SongAnnouncementFinished += VoiceUtility_SongAnnouncementFinished;
         }
-        
+
+        private void VoiceUtility_SongAnnouncementFinished(object sender, EventArgs e)
+        {
+
+        }
 
         private void DeactivateProgramBlockTimer()
         {
@@ -111,6 +118,23 @@ namespace Neptunium.Media.Songs
             blockProgrammingLock.Release();
         }
 
+        internal void RefreshMetadata()
+        {
+            if (CurrentSong == null || CurrentStation == null)
+            {
+                SetCurrentMetadataToUnknown();
+            }
+            else
+            {
+                //this is used for the now playing bar via data binding.
+                RaisePropertyChanged(nameof(CurrentSong));
+
+                PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(CurrentSong));
+
+                UpdateTransportControls(CurrentSong);
+            }
+        }
+
         private bool FilterStationBlockPrograms(StationProgram program)
         {
             if (program.Style != StationProgramStyle.Block)
@@ -154,6 +178,13 @@ namespace Neptunium.Media.Songs
         internal async void HandleMetadata(SongMetadata songMetadata, StationStream currentStream)
         {
             await metadataLock.WaitAsync();
+
+            if (songMetadata == null || songMetadata.IsUnknownMetadata)
+            {
+                SetCurrentMetadataToUnknown();
+                metadataLock.Release();
+                return;
+            }
 
             try
             {
@@ -199,6 +230,8 @@ namespace Neptunium.Media.Songs
                     if (featuredArtistRegex.IsMatch(songMetadata.Artist))
                         songMetadata.Artist = featuredArtistRegex.Replace(songMetadata.Artist, "").Trim();
 
+                    if (CurrentSong.ToString().Equals(songMetadata.ToString())) return;
+
                     CurrentSong = songMetadata;
                     //this is used for the now playing bar via data binding.
                     RaisePropertyChanged(nameof(CurrentSong));
@@ -229,6 +262,12 @@ namespace Neptunium.Media.Songs
 
                     CurrentSongWithAdditionalMetadata = newMetadata;
 
+                    if (newMetadata != null)
+                    {
+                        CurrentSong.SongLength = newMetadata.SongLength;
+                        RaisePropertyChanged(nameof(CurrentSong));
+                    }
+
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     History.AddSongAsync(newMetadata);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -240,15 +279,31 @@ namespace Neptunium.Media.Songs
             }
             catch (Exception ex)
             {
-                Dictionary<string, string> properties = new Dictionary<string, string>();
-                properties.Add("Song-Metadata", songMetadata?.ToString());
-                properties.Add("Current-Station", currentStream?.ParentStation?.Name);
-                Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, properties);
+                if (!Debugger.IsAttached)
+                {
+                    Dictionary<string, string> properties = new Dictionary<string, string>();
+                    properties.Add("Song-Metadata", songMetadata?.ToString());
+                    properties.Add("Current-Station", currentStream?.ParentStation?.Name);
+                    Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, properties);
+                }
+                else
+                {
+                    Debugger.Break();
+                }
             }
             finally
             {
                 metadataLock.Release();
             }
+        }
+
+        internal SongMetadata GetCurrentSongOrUnknown()
+        {
+            if (CurrentStation == null) return null;
+
+            if (CurrentSong != null) return CurrentSong;
+
+            return GetUnknownSongMetadata();
         }
 
         internal void SetCurrentStation(StationItem parentStation)
@@ -272,18 +327,25 @@ namespace Neptunium.Media.Songs
             CurrentSongWithAdditionalMetadata = null;
         }
 
-        internal void SetCurrentMetadataToUnknown(string program = null)
+        private SongMetadata GetUnknownSongMetadata(StationItem stationPlaying = null, string radioProgram = null)
         {
-            //todo make a readonly field
             SongMetadata unknown = new SongMetadata()
             {
                 Track = "Unknown Song",
                 Artist = "Unknown Artist",
-                RadioProgram = program,
-                StationPlayedOn = NepApp.MediaPlayer.CurrentStream?.ParentStation?.Name,
-                StationLogo = NepApp.MediaPlayer.CurrentStream?.ParentStation?.StationLogoUrl,
+                RadioProgram = radioProgram,
+                StationPlayedOn = (stationPlaying ?? CurrentStation)?.Name,
+                StationLogo = (stationPlaying ?? CurrentStation)?.StationLogoUrl,
                 IsUnknownMetadata = true
             };
+
+            return unknown;
+        }
+
+        internal void SetCurrentMetadataToUnknown(string program = null)
+        {
+            //todo make a readonly field
+            SongMetadata unknown = GetUnknownSongMetadata();
 
             CurrentSong = unknown;
             //this is used for the now playing bar via data binding.
@@ -392,7 +454,12 @@ namespace Neptunium.Media.Songs
                 Func<StationProgram, bool> getStationProgram = x =>
                 {
                     if (x.Style != StationProgramStyle.Hosted) return false;
-                    if (x.Host.ToLower().Equals(songMetadata.Artist.Trim().ToLower())) return true;
+
+                    if (!string.IsNullOrWhiteSpace(x.Host))
+                    {
+                        if (x.Host.ToLower().Equals(songMetadata.Artist.Trim().ToLower())) return true;
+                    }
+
                     if (!string.IsNullOrWhiteSpace(x.HostRegexExpression))
                     {
                         if (Regex.IsMatch(songMetadata.Artist, x.HostRegexExpression))
@@ -459,7 +526,11 @@ namespace Neptunium.Media.Songs
                 }
                 else
                 {
-                    updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(songMetadata.StationLogo);
+                    if (songMetadata.StationLogo != null)
+                    {
+                        updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(songMetadata.StationLogo);
+                    }
+
                     updater.MusicProperties.AlbumTitle = "";
                     updater.MusicProperties.AlbumArtist = "";
                 }

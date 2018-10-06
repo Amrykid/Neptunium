@@ -21,35 +21,33 @@ namespace Neptunium.Core.Media.Metadata
 
             //todo strip out "feat." artists
 
-            if ((bool)NepApp.Settings.GetSetting(AppSettings.TryToFindSongMetadata))
+            if (Windows.System.Power.PowerManager.EnergySaverStatus != Windows.System.Power.EnergySaverStatus.On)
             {
-                try
+                if (NepApp.Network.NetworkUtilizationBehavior == NepAppNetworkManager.NetworkDeterminedAppBehaviorStyle.Normal)
                 {
-                    albumData = await metaSrc.TryFindAlbumAsync(originalMetadata.Track, originalMetadata.Artist, station.PrimaryLocale);
-                }
-                catch (Exception)
-                { }
+                    if ((bool)NepApp.Settings.GetSetting(AppSettings.TryToFindSongMetadata))
+                    {
+                        albumData = await metaSrc.TryFindAlbumAsync(originalMetadata.Track, originalMetadata.Artist, station.PrimaryLocale);
 
-                await Task.Delay(250); //250 ms sleep
+                        await Task.Delay(500); //500 ms sleep
 
-                try
-                {
-                    artistData = await metaSrc.TryFindArtistAsync(originalMetadata.Artist, station.PrimaryLocale);
-                }
-                catch (Exception)
-                { }
+                        artistData = await metaSrc.TryFindArtistAsync(originalMetadata.Artist, station.PrimaryLocale);
 
-                try
-                {
-                    extendedMetadata.JPopAsiaArtistInfo = await ArtistFetcher.FindArtistDataOnJPopAsiaAsync(originalMetadata.Artist.Trim());
-                }
-                catch (Exception) { }
+                        try
+                        {
+                            //await metaSrc.TryFindSongAsync(extendedMetadata, station.PrimaryLocale);
 
-                try
-                {
-                    extendedMetadata.FanArtTVBackgroundUrl = await FanArtTVFetcher.FetchArtistBackgroundAsync(originalMetadata.Artist.Trim());
+                            extendedMetadata.JPopAsiaArtistInfo = await ArtistFetcher.FindArtistDataOnJPopAsiaAsync(originalMetadata.Artist.Trim());
+                        }
+                        catch (Exception) { }
+
+                        try
+                        {
+                            extendedMetadata.FanArtTVBackgroundUrl = await FanArtTVFetcher.FetchArtistBackgroundAsync(originalMetadata.Artist.Trim());
+                        }
+                        catch (Exception) { }
+                    }
                 }
-                catch (Exception) { }
             }
 
             //todo cache

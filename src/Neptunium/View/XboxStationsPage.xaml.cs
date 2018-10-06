@@ -106,12 +106,21 @@ namespace Neptunium.View
 
         public void SetTopFocus(UIElement elementAbove)
         {
-            stationsGridView.XYFocusUp = elementAbove;
+            LastPlayedPlayButton.XYFocusUp = elementAbove;
+            stationsGridView.XYFocusUp = LastPlayedPlayButton;
         }
 
         public void SetBottomFocus(UIElement elementBelow)
         {
 
+        }
+
+        private void LastPlayedPanel_LayoutUpdated(object sender, object e)
+        {
+            if (LastPlayedPanel.Visibility == Visibility.Visible)
+                LastPlayedPanelRowDef.Height = GridLength.Auto;
+            else
+                LastPlayedPanelRowDef.Height = new GridLength(0);
         }
     }
 }

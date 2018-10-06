@@ -23,7 +23,7 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Pivot x:Name="RootPivot" Pivot.IsHeaderItemsCarouselEnabled="False">
+        <Pivot x:Name="RootPivot" Pivot.IsHeaderItemsCarouselEnabled="True">
             <PivotItem Header="General">
                 <ScrollViewer>
                     <StackPanel Margin="10 0">
@@ -31,16 +31,35 @@
                                Text="Notifications"/>
                         <ToggleSwitch Header="Show song change notifications"
                                       x:Name="SongNotificationSwitch"
-                                      XYFocusDown="{Binding ElementName=MetadataSwitch}"
+                                      XYFocusDown="{Binding ElementName=HeadphonesAnnounceSongsSwitch}"
                                       IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                        <ToggleSwitch Header="Announce song when the song playing&#x0a;changes when headphones are connected."
+                                      x:Name="HeadphonesAnnounceSongsSwitch"
+                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
+                                      XYFocusDown="{Binding ElementName=HapticFeedbackSwitch}"
+                                      IsOn="{Binding SaySongNotificationsWhenHeadphonesConnected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+
                         <MenuFlyoutSeparator />
+
+                        <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
+                               Text="UI"/>
+
+                        <ToggleSwitch Header="Use haptic feedback" 
+                                      x:Name="HapticFeedbackSwitch"
+                                      XYFocusUp="{Binding ElementName=HeadphonesAnnounceSongsSwitch}"
+                                      XYFocusDown="{Binding ElementName=MetadataSwitch}"
+                                      IsOn="{Binding UseHapticFeedback, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                        <MenuFlyoutSeparator />
+                        
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Metadata"/>
                         <ToggleSwitch Header="Find song metadata when song changes" 
                                       x:Name="MetadataSwitch"
-                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
+                                      XYFocusUp="{Binding ElementName=HapticFeedbackSwitch}"
                                       IsOn="{Binding FindSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                        <ToggleSwitch Header="Update LockScreen with artwork when available"
+                        <ToggleSwitch Header="Update LockScreen with artwork when available."
                                   x:Name="UpdateLockScreenSwitch"
                                   Visibility="Collapsed"
                                   IsOn="{Binding UpdateLockScreenWithSongArt, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
@@ -53,6 +72,26 @@
 
                             <Button Content="Set Fallback Lockscreen" x:Name="SetFallBackLockScreenBtn" Click="SetFallBackLockScreenBtn_Click" />
                         </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+            <PivotItem Header="Network">
+                <ScrollViewer>
+                    <StackPanel Margin="10 0">
+                        <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
+                               Text="Data"/>
+                        <ToggleSwitch Header="Conserve data on metered connections."
+                                      x:Name="ConserveDataSwitch"
+                                      XYFocusDown="{Binding ElementName=ChooseBitrateSwitch}"
+                                      IsOn="{Binding ConserveData, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                        <ToggleSwitch Header="Automatically choose appropriate&#10;bitrate based on connection." 
+                                      x:Name="ChooseBitrateSwitch"
+                                      XYFocusUp="{Binding ElementName=ConserveDataSwitch}"
+                                      IsEnabled="{Binding ElementName=ConserveDataSwitch, Path=IsOn, UpdateSourceTrigger=PropertyChanged}"
+                                      IsOn="{Binding ChooseBitrate, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+
+                        <!--<MenuFlyoutSeparator />-->
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
@@ -75,13 +114,23 @@
                         <Button x:Name="SelectBluetoothButton" Click="SelectBluetoothButton_Click" Content="Select Device" />
                         <Button Content="Clear Device" Margin="5 0" Command="{Binding ClearBluetoothDeviceCommand}" />
                     </StackPanel>
+                    
                     <MenuFlyoutSeparator />
 
                     <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Options" />
 
-                    <ToggleSwitch Header="Announce song when the song playing changes."
-                                  IsOn="{Binding SaySongNotifications, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                    <ToggleSwitch Header="Announce song when the song playing&#x0a;changes when connected to Bluetooth."
+                                  IsOn="{Binding SaySongNotificationsInBluetoothMode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                </StackPanel>
+            </PivotItem>
+            <PivotItem Header="Experimental">
+                <StackPanel Margin="10 0">
+                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
+                               Text="Miscellaneous"/>
+                    <ToggleSwitch Header="Show Remote menu"
+                                      x:Name="ShowRemoteSwitch"
+                                      IsOn="{Binding ShowRemote, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </PivotItem>
         </Pivot>
@@ -95,6 +144,7 @@
                     <VisualState.Setters>
                         <Setter Target="RootPivot.Margin" Value="48 0 48 0" />
                         <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
+                        <Setter Target="HapticFeedbackSwitch.IsEnabled" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="TabletOrHigherVisualState">
@@ -111,6 +161,7 @@
 
                     <VisualState.Setters>
                         <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
+                        <Setter Target="HapticFeedbackSwitch.IsEnabled" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -121,6 +172,7 @@
 
                     <VisualState.Setters>
                         <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="True" />
+                        <Setter Target="HapticFeedbackSwitch.IsEnabled" Value="True" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

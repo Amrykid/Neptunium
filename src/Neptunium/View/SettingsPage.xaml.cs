@@ -56,6 +56,8 @@ namespace Neptunium.View
             {
                 //force focus on Xbox.
                 RootPivot.Focus(FocusState.Keyboard);
+
+                RootPivot.Items.Remove(bluetoothPivot);
             }
         }
 

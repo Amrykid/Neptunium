@@ -26,24 +26,35 @@ namespace Neptunium.ViewModel.Dialog
             if (dialogAnswered) return;
             ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined);
             dialogAnswered = true;
+            NepApp.UI.Notifier.VibrateClick();
         });
         public RelayCommand PlayCommand => new RelayCommand(x =>
         {
             if (dialogAnswered) return;
             ResultTaskCompletionSource.SetResult(new NepAppUIManagerDialogResult() { ResultType = NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive });
             dialogAnswered = true;
+            NepApp.UI.Notifier.VibrateClick();
         });
+        public RelayCommand PlayStreamCommand => new RelayCommand(x =>
+        {
+            if (dialogAnswered) return;
+            ResultTaskCompletionSource.SetResult(new NepAppUIManagerDialogResult() { ResultType = NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive, Selection = x });
+            dialogAnswered = true;
+        });
+
 
         public RelayCommand OpenStationWebsiteCommand => new RelayCommand(async x =>
         {
             if (!string.IsNullOrWhiteSpace(Station.Site))
             {
+                NepApp.UI.Notifier.VibrateClick();
                 await Launcher.LaunchUriAsync(new Uri(Station.Site));
             }
         });
 
         public RelayCommand PinStationCommand => new RelayCommand(async x =>
         {
+            NepApp.UI.Notifier.VibrateClick();
             if (!NepApp.UI.Notifier.CheckIfStationTilePinned(Station))
             {
                 try

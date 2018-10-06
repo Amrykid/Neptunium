@@ -8,6 +8,7 @@ using Neptunium.View;
 using Neptunium.View.Dialog;
 using Neptunium.ViewModel;
 using Neptunium.ViewModel.Dialog;
+using Neptunium.ViewModel.Server;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -107,24 +108,11 @@ namespace Neptunium
                     if (await GetIfPrimaryWindowVisibleAsync())
                         await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Something went wrong!", e.Message);
                 }
-                else
-                {
-                    Dictionary<string, string> dictionary = new Dictionary<string, string>();
-                    dictionary.Add("Original-Message", e.Message);
-                    HockeyClient.Current.TrackException(exception, dictionary);
-                    HockeyClient.Current.Flush();
 
-                    try
-                    {
-                        if (await GetIfPrimaryWindowVisibleAsync())
-                            await NepApp.UI.ShowInfoDialogAsync("Uh-oh! That's not supposed to happen.", e.Message);
-                    }
-                    catch (Exception ex)
-                    {
-                        HockeyClient.Current.TrackException(ex);
-                        HockeyClient.Current.Flush();
-                    }
-                }
+                Dictionary<string, string> dictionary = new Dictionary<string, string>();
+                dictionary.Add("Original-Message", e.Message);
+                HockeyClient.Current.TrackException(exception, dictionary);
+                HockeyClient.Current.Flush();
             }
             else
             {
@@ -246,8 +234,16 @@ namespace Neptunium
 
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
-            WindowManager.GetNavigationManagerForCurrentWindow()
-                .RootNavigationService.NavigateTo<AppShellViewModel>();
+            if (!NepApp.IsServerMode)
+            {
+                WindowManager.GetNavigationManagerForCurrentWindow()
+                    .RootNavigationService.NavigateTo<AppShellViewModel>();
+            }
+            else
+            {
+                WindowManager.GetNavigationManagerForCurrentWindow()
+                    .RootNavigationService.NavigateTo<ServerShellViewModel>();
+            }
 
             await PostUIInitAsync();
         }
@@ -256,8 +252,16 @@ namespace Neptunium
         {
             if (args.PreviousExecutionState != ApplicationExecutionState.Running)
             {
-                WindowManager.GetNavigationManagerForCurrentWindow()
-                     .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
+                if (!NepApp.IsServerMode)
+                {
+                    WindowManager.GetNavigationManagerForCurrentWindow()
+                        .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
+                }
+                else
+                {
+                    WindowManager.GetNavigationManagerForCurrentWindow()
+                        .RootNavigationService.SafeNavigateTo<ServerShellViewModel>();
+                }
             }
 
             if (args.Kind == ActivationKind.Protocol)
@@ -359,12 +363,19 @@ namespace Neptunium
 
         protected override Task OnSuspendingAsync()
         {
-            //clears the tile if we're suspending.
-            TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-            if (!NepApp.MediaPlayer.IsPlaying)
+            if (!NepApp.IsServerMode)
             {
-                //removes the now playing notification from the action center.
-                ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
+                if (App.GetDevicePlatform() == Crystal3.Core.Platform.Desktop || App.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                {
+                    //clears the tile if we're suspending.
+                    TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+                }
+
+                if (!NepApp.MediaPlayer.IsPlaying)
+                {
+                    //removes the now playing notification from the action center.
+                    ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
+                }
             }
 
             return Task.CompletedTask;

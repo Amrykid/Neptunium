@@ -16,157 +16,163 @@
     <Page.Resources>
         <nui:StripDateFromDateTimeConverter x:Key="StripDateFromDateTimeConverter" />
         <cconv:InverseCollectionNullOrEmptyToVisibilityConverter x:Key="CollEmptyConv" />
-    </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Pivot x:Name="RootPivot" Pivot.IsHeaderItemsCarouselEnabled="False">
-            <Pivot.Resources>
-                <DataTemplate x:Key="NoProgramsScheduledTemplate">
-                    <TextBlock Text="It doesn't look like we have any station programming scheduled on this day of the week."
+        <DataTemplate x:Key="NoProgramsScheduledTemplate">
+            <TextBlock Text="It doesn't look like we have any station programming scheduled on this day of the week."
                                Style="{ThemeResource BaseTextBlockStyle}" />
-                </DataTemplate>
+        </DataTemplate>
 
-                <Style TargetType="ContentControl" x:Key="NoProgramsScheduledContentControlStyle">
-                    <Setter Property="ContentTemplate" Value="{StaticResource NoProgramsScheduledTemplate}" />
-                    <Setter Property="HorizontalAlignment" Value="Center" />
-                    <Setter Property="VerticalAlignment" Value="Center" />
-                </Style>
+        <Style TargetType="ContentControl" x:Key="NoProgramsScheduledContentControlStyle">
+            <Setter Property="ContentTemplate" Value="{StaticResource NoProgramsScheduledTemplate}" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
 
-                <DataTemplate x:Key="ScheduleListItemTemplate">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="Auto" MaxWidth="250" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="200" />
-                        </Grid.ColumnDefinitions>
+        <DataTemplate x:Key="ScheduleListItemTemplate">
+            <Grid Margin="0 0 0 5" Padding="10 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="200" />
+                </Grid.ColumnDefinitions>
 
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30" />
-                            <RowDefinition Height="30" />
-                        </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
 
-                        <uwp:ImageEx Grid.Column="0"
+                <uwp:ImageEx Grid.Column="0"
                                      Grid.Row="0"
                                      Grid.RowSpan="2"
                                      Stretch="Fill"
-                                     Width="75"
-                                     Height="75"
-                                     Margin="-10"
-                                     VerticalAlignment="Top"
+                                     Width="45"
+                                     Height="45"
+                                     VerticalAlignment="Center"
                                      IsCacheEnabled="True">
-                            <uwp:ImageEx.Source>
-                                <BitmapImage UriSource="{Binding Station.StationLogoUrl, Mode=OneTime}" />
-                            </uwp:ImageEx.Source>
-                        </uwp:ImageEx>
+                    <uwp:ImageEx.Source>
+                        <BitmapImage UriSource="{Binding Station.StationLogoUrl, Mode=OneTime}" />
+                    </uwp:ImageEx.Source>
+                </uwp:ImageEx>
 
 
-                        <TextBlock Style="{ThemeResource BaseTextBlockStyle}"
-                                   Text="{Binding Program.Name}"
-                                   Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                   Grid.Column="1"
-                                   VerticalAlignment="Bottom"
-                                   Grid.Row="0" />
+                <TextBlock Style="{ThemeResource BaseTextBlockStyle}"
+                           Text="{Binding Program.Name}"
+                           Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                           Grid.Column="1"
+                           TextTrimming="WordEllipsis"
+                           MaxWidth="200"
+                           HorizontalAlignment="Left"
+                           ToolTipService.ToolTip="{Binding Program.Name}"
+                           VerticalAlignment="Bottom"
+                           Grid.Row="0" />
 
-                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
+                <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
                                    Text="{Binding Station.Name}"
                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                    Grid.Column="1"
                                    Grid.Row="1" />
 
-                        <TextBlock Style="{ThemeResource BaseTextBlockStyle}"
-                                   Text="{Binding Day}"
-                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-                                   Grid.Column="3"
-                                   VerticalAlignment="Bottom"
-                                   HorizontalAlignment="Right"
-                                   Grid.Row="0" />
+                <TextBlock Style="{ThemeResource BaseTextBlockStyle}"
+                           Text="{Binding Day}"
+                           Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+                           Grid.Column="2"
+                           VerticalAlignment="Bottom"
+                           HorizontalAlignment="Right"
+                           Margin="0 0 15 0"
+                           Grid.Row="0" />
 
-                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
-                                   Text="{Binding TimeLocal, Converter={StaticResource StripDateFromDateTimeConverter}}"
-                                   Foreground="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                   Grid.Column="3"
-                                   HorizontalAlignment="Right"
-                                   Grid.Row="1" />
+                <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
+                           Text="{Binding TimeLocal, Converter={StaticResource StripDateFromDateTimeConverter}}"
+                           Foreground="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                           Grid.Column="2"
+                           HorizontalAlignment="Right"
+                           Margin="0 0 15 0"
+                           Grid.Row="1" />
 
-                    </Grid>
-                </DataTemplate>
-                <Style x:Key="ScheduleListStyle" TargetType="ListBox">
-                    <Setter Property="ItemTemplate" Value="{StaticResource ScheduleListItemTemplate}" />
-                    <Setter Property="Background" Value="Transparent" />
-                    <Setter Property="ItemContainerStyle">
-                        <Setter.Value>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            </Style>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </Pivot.Resources>
-            <PivotItem Header="Sunday" x:Name="SundayPivotItem">
-                <Grid>
-                    <ListBox ItemsSource="{Binding SundayItems, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource ScheduleListStyle}" />
+            </Grid>
+        </DataTemplate>
 
-                    <ContentControl Style="{StaticResource NoProgramsScheduledContentControlStyle}"
-                                    Visibility="{Binding SundayItems, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource CollEmptyConv}}" />
-                </Grid>
-            </PivotItem>
-            <PivotItem Header="Monday">
-                <Grid>
-                    <ListBox ItemsSource="{Binding MondayItems, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource ScheduleListStyle}" />
+        <DataTemplate x:Key="ModileScheduleListItemTemplate">
+            <Grid Margin="0 0 0 5" Padding="10 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="62" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-                    <ContentControl Style="{StaticResource NoProgramsScheduledContentControlStyle}"
-                                    Visibility="{Binding MondayItems, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource CollEmptyConv}}" />
-                </Grid>
-            </PivotItem>
-            <PivotItem Header="Tuesday">
-                <Grid>
-                    <ListBox ItemsSource="{Binding TuesdayItems, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource ScheduleListStyle}" />
+                <uwp:ImageEx Grid.Column="0"
+                            Grid.Row="0"
+                            Grid.RowSpan="3"
+                            Stretch="Fill"
+                            Width="45"
+                            Height="45"
+                            VerticalAlignment="Center"
+                            Margin="0 -5 0 0"
+                            IsCacheEnabled="True">
+                    <uwp:ImageEx.Source>
+                        <BitmapImage UriSource="{Binding Station.StationLogoUrl, Mode=OneTime}" />
+                    </uwp:ImageEx.Source>
+                </uwp:ImageEx>
 
-                    <ContentControl Style="{StaticResource NoProgramsScheduledContentControlStyle}"
-                                    Visibility="{Binding TuesdayItems, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource CollEmptyConv}}" />
-                </Grid>
-            </PivotItem>
-            <PivotItem Header="Wednesday">
-                <Grid>
-                    <ListBox ItemsSource="{Binding WednesdayItems, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource ScheduleListStyle}" />
+                <TextBlock Style="{ThemeResource BaseTextBlockStyle}"
+                           Text="{Binding Program.Name}"
+                           Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                           TextTrimming="WordEllipsis"
+                           HorizontalAlignment="Left"
+                           ToolTipService.ToolTip="{Binding Program.Name}"
+                           VerticalAlignment="Bottom"
+                           Grid.Row="0"
+                           Grid.Column="1"/>
 
-                    <ContentControl Style="{StaticResource NoProgramsScheduledContentControlStyle}"
-                                    Visibility="{Binding WednesdayItems, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource CollEmptyConv}}" />
-                </Grid>
-            </PivotItem>
-            <PivotItem Header="Thursday">
-                <Grid>
-                    <ListBox ItemsSource="{Binding ThursdayItems, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource ScheduleListStyle}" />
+                <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
+                           Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                           Grid.Row="1"
+                           Grid.Column="1"
+                           Text="{Binding TimeLocal, Converter={StaticResource StripDateFromDateTimeConverter}}" />
 
-                    <ContentControl Style="{StaticResource NoProgramsScheduledContentControlStyle}"
-                                    Visibility="{Binding ThursdayItems, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource CollEmptyConv}}" />
-                </Grid>
-            </PivotItem>
-            <PivotItem Header="Friday">
-                <Grid>
-                    <ListBox ItemsSource="{Binding FridayItems, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource ScheduleListStyle}" />
+                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                           Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                           Grid.Row="2" 
+                           Grid.Column="1"
+                           Text="{Binding Station.Name}"  />
 
-                    <ContentControl Style="{StaticResource NoProgramsScheduledContentControlStyle}"
-                                    Visibility="{Binding FridayItems, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource CollEmptyConv}}" />
-                </Grid>
-            </PivotItem>
-            <PivotItem Header="Saturday">
-                <Grid>
-                    <ListBox ItemsSource="{Binding SaturdayItems, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource ScheduleListStyle}" />
+            </Grid>
+        </DataTemplate>
+        <Style x:Key="ScheduleListStyle" TargetType="ListView">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
-                    <ContentControl Style="{StaticResource NoProgramsScheduledContentControlStyle}"
-                                    Visibility="{Binding SaturdayItems, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource CollEmptyConv}}" />
-                </Grid>
-            </PivotItem>
-        </Pivot>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ListView x:Name="ScheduleListView"
+                  ItemsSource="{Binding SortedScheduleItems.View, UpdateSourceTrigger=PropertyChanged}"
+                  ItemTemplate="{StaticResource ModileScheduleListItemTemplate}"
+                  Style="{StaticResource ScheduleListStyle}">
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Key}" Style="{ThemeResource BaseTextBlockStyle}"/>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListView.GroupStyle>
+        </ListView>
+
+
+        <ProgressRing Height="60" Width="60" VerticalAlignment="Center" HorizontalAlignment="Center"
+                      IsActive="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged}" />
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
@@ -175,8 +181,7 @@
                         <wst:DeviceFamilyStateTrigger DeviceFamily="Xbox" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="RootPivot.Margin" Value="48 0 48 0" />
-                        <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
+                        <Setter Target="ScheduleListView.ItemTemplate" Value="{StaticResource ScheduleListItemTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="TabletOrHigherVisualState">
@@ -193,7 +198,7 @@
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
+                        <Setter Target="ScheduleListView.ItemTemplate" Value="{StaticResource ScheduleListItemTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -203,7 +208,7 @@
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="True" />
+                        <Setter Target="ScheduleListView.ItemTemplate" Value="{StaticResource ModileScheduleListItemTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

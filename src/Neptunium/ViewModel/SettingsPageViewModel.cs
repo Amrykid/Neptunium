@@ -46,7 +46,7 @@ namespace Neptunium.ViewModel
 
         private void Settings_SettingChanged(object sender, Core.Settings.NepAppSettingChangedEventArgs e)
         {
-            switch(e.ChangedSetting)
+            switch (e.ChangedSetting)
             {
                 case AppSettings.FallBackLockScreenImageUri:
                     RaisePropertyChanged(nameof(FallBackLockScreenArtworkUri));
@@ -66,10 +66,16 @@ namespace Neptunium.ViewModel
             set { NepApp.Settings.SetSetting(AppSettings.TryToFindSongMetadata, value); }
         }
 
-        public bool SaySongNotifications
+        public bool SaySongNotificationsInBluetoothMode
         {
             get { return (bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsInBluetoothMode); }
             set { NepApp.Settings.SetSetting(AppSettings.SaySongNotificationsInBluetoothMode, value); }
+        }
+
+        public bool SaySongNotificationsWhenHeadphonesConnected
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsWhenHeadphonesAreConnected); }
+            set { NepApp.Settings.SetSetting(AppSettings.SaySongNotificationsWhenHeadphonesAreConnected, value); }
         }
 
         public bool UpdateLockScreenWithSongArt
@@ -100,6 +106,40 @@ namespace Neptunium.ViewModel
         {
             get { return GetPropertyValue<string>(); }
             set { SetPropertyValue<string>(value: value); }
+        }
+
+        public bool ConserveData
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.AutomaticallyConserveDataWhenOnMeteredConnections); }
+            set
+            {
+                NepApp.Settings.SetSetting(AppSettings.AutomaticallyConserveDataWhenOnMeteredConnections, value);
+
+                if (!value)
+                {
+                    //automatically set Choose Bitrate to false if "Conserve Data" is turned off.
+                    ChooseBitrate = false;
+                    RaisePropertyChanged(nameof(ChooseBitrate));
+                }
+            }
+        }
+
+        public bool ChooseBitrate
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection); }
+            set { NepApp.Settings.SetSetting(AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection, value); }
+        }
+
+        public bool ShowRemote
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.ShowRemoteMenu); }
+            set { NepApp.Settings.SetSetting(AppSettings.ShowRemoteMenu, value); }
+        }
+
+        public bool UseHapticFeedback
+        {
+            get { return (bool)NepApp.Settings.GetSetting(AppSettings.UseHapticFeedbackForNavigation); }
+            set { NepApp.Settings.SetSetting(AppSettings.UseHapticFeedbackForNavigation, value); }
         }
     }
 }

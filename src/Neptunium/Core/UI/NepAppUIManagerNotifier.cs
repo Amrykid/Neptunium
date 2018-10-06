@@ -6,6 +6,7 @@ using Neptunium.Core.Stations;
 using Windows.UI.StartScreen;
 using System.Threading.Tasks;
 using Windows.UI;
+using Windows.Phone.Devices.Notification;
 
 namespace Neptunium.Core.UI
 {
@@ -13,12 +14,28 @@ namespace Neptunium.Core.UI
     {
         private ToastNotifier toastNotifier = null;
         private TileUpdater tileUpdater = null;
+        private VibrationDevice vibrationDevice = null;
         public const string SongNotificationTag = "song-notif";
 
         internal NepAppUIManagerNotifier()
         {
             toastNotifier = ToastNotificationManager.CreateToastNotifier();
             tileUpdater = TileUpdateManager.CreateTileUpdaterForApplication();
+
+            
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                vibrationDevice = VibrationDevice.GetDefault();
+        }
+
+        public void VibrateClick()
+        {
+            if ((bool)NepApp.Settings.GetSetting(AppSettings.UseHapticFeedbackForNavigation))
+            {
+                if (vibrationDevice != null)
+                {
+                    vibrationDevice?.Vibrate(TimeSpan.FromMilliseconds(32));
+                }
+            }
         }
 
         public void ShowGenericToastNotification(string title, string message, string tag)
@@ -156,6 +173,8 @@ namespace Neptunium.Core.UI
 
         public bool CheckIfStationTilePinned(StationItem stationItem)
         {
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return false; //not supported
+
             return SecondaryTile.Exists(GetStationItemTileId(stationItem));
         }
 
@@ -284,6 +303,8 @@ namespace Neptunium.Core.UI
 
         public void UpdateLiveTile(ExtendedSongMetadata nowPlaying)
         {
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //not supported
+
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
 
             TileBindingContentAdaptive largeBindingContent = new TileBindingContentAdaptive()

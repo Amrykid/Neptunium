@@ -68,26 +68,29 @@
 
                         <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="30" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Text="{Binding Metadata.Track}" Grid.Row="0" 
-                                       Style="{ThemeResource BaseTextBlockStyle}"
-                                       x:Name="TrackTextBlock"
+
+                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}"
+                                       Text="{Binding Metadata.Track}"
                                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                       VerticalAlignment="Bottom"/>
-                            <TextBlock Grid.Row="1"
-                                       VerticalAlignment="Top"
-                                       x:Name="ArtistTextBlock"
+                                       TextTrimming="WordEllipsis"
+                                       HorizontalAlignment="Left"
+                                       ToolTipService.ToolTip="{Binding Metadata.Track}"
+                                       VerticalAlignment="Bottom"
+                                       Grid.Row="0" />  
+
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                       Style="{ThemeResource BodyTextBlockStyle}">
-                            <Span>
-                                <Run Text="{Binding Metadata.Artist}" />
-                                <Run Text="·" FontWeight="ExtraBold" />
-                                <Run Text="{Binding Metadata.StationPlayedOn}" />
-                            </Span>
-                            </TextBlock>
+                                       Grid.Row="1"
+                                       Text="{Binding Metadata.Artist}" />
+
+                            <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                       Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                       Grid.Row="2" Text="{Binding Metadata.StationPlayedOn}"  />
                         </Grid>
                     </Grid>
                     <wrt:ListItemButton.ContextFlyout>

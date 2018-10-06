@@ -36,7 +36,7 @@ namespace Neptunium.View
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [Crystal3.Navigation.NavigationViewModel(typeof(AppShellViewModel),
-        NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile | NavigationViewSupportedPlatform.IoT)]
+        NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile)]
     public sealed partial class AppShellView : Page, Crystal3.Messaging.IMessagingTarget
     {
         private FrameNavigationService inlineNavigationService = null;
@@ -81,14 +81,11 @@ namespace Neptunium.View
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                switch (NepApp.MediaPlayer.IsMediaEngaged)
+                bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+
+                if (NepApp.MediaPlayer.IsMediaEngaged)
                 {
-                    case true:
-                        bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
-                        break;
-                    case false:
-                        bottomAppBar.Visibility = Visibility.Collapsed;
-                        break;
+                    NepApp.SongManager.RefreshMetadata();
                 }
             });
         }
@@ -103,6 +100,7 @@ namespace Neptunium.View
             WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
 
             bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+            topAppBar.Visibility = Visibility.Visible;
         }
 
         private void Media_IsCastingChanged(object sender, EventArgs e)
@@ -185,7 +183,6 @@ namespace Neptunium.View
             }
         }
 
-        private VisualStateChangedEventHandler noChromeHandler = null;
         private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
         {
             WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
@@ -194,37 +191,25 @@ namespace Neptunium.View
             {
                 //no chrome mode
 
-                Action noChrome = () =>
+                topAppBar.Visibility = Visibility.Collapsed;
+                bottomAppBar.Visibility = Visibility.Collapsed;
+
+                RootSplitView.IsPaneOpen = false;
+                RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
+
+                SetMobileStatusBarToTransparent();
+
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+
+                if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
                 {
-                    topAppBar.Visibility = Visibility.Collapsed;
-                    bottomAppBar.Visibility = Visibility.Collapsed;
+                    RootGrid.Margin = new Thickness(0, -25, 0, 0);
+                }
 
-                    RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
 
-                    RootSplitView.IsPaneOpen = false;
-
-                    SetMobileStatusBarToTransparent();
-
-                    CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-
-                    if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-                    {
-                        RootGrid.Margin = new Thickness(0, -25, 0, 0);
-                    }
-                };
-
-                noChrome();
-
-                noChromeHandler = new VisualStateChangedEventHandler((o, args) =>
-                {
-                    //this is to "fix" the splitview opening when extending the window in no chrome mode. it doesn't work very well
-                    RootSplitView.Visibility = Visibility.Collapsed;
-                    noChrome();
-                    RootSplitView.Visibility = Visibility.Visible;
-                });
-
-                ShellVisualStateGroup.CurrentStateChanged += noChromeHandler;
-                ShellVisualStateGroup.CurrentStateChanging += noChromeHandler;
+                ShellVisualStateGroup.States.Remove(DesktopVisualState);
+                ShellVisualStateGroup.States.Remove(TabletVisualState);
+                ShellVisualStateGroup.States.Remove(PhoneVisualState);
 
                 isInNoChromeMode = true;
             }
@@ -260,12 +245,14 @@ namespace Neptunium.View
                     RootGrid.Margin = new Thickness(0);
                 }
 
-                if (noChromeHandler != null)
-                {
-                    ShellVisualStateGroup.CurrentStateChanged -= noChromeHandler;
-                    ShellVisualStateGroup.CurrentStateChanging -= noChromeHandler;
-                    noChromeHandler = null;
-                }
+                if (!ShellVisualStateGroup.States.Contains(DesktopVisualState))
+                    ShellVisualStateGroup.States.Add(DesktopVisualState);
+
+                if (!ShellVisualStateGroup.States.Contains(TabletVisualState))
+                    ShellVisualStateGroup.States.Add(TabletVisualState);
+
+                if (!ShellVisualStateGroup.States.Contains(PhoneVisualState))
+                    ShellVisualStateGroup.States.Add(PhoneVisualState);
 
                 isInNoChromeMode = false;
             }
@@ -306,7 +293,7 @@ namespace Neptunium.View
 
         private void FeedbackButton_Click(object sender, RoutedEventArgs e)
         {
-
+            NepApp.UI.Notifier.VibrateClick();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -318,22 +305,28 @@ namespace Neptunium.View
 
         private void TogglePaneButton_Checked(object sender, RoutedEventArgs e)
         {
+            NepApp.UI.Notifier.VibrateClick();
             RootSplitView.IsPaneOpen = true;
         }
 
         private void TogglePaneButton_Unchecked(object sender, RoutedEventArgs e)
         {
+            NepApp.UI.Notifier.VibrateClick();
             RootSplitView.IsPaneOpen = false;
         }
 
         private void NowPlayingButton_Click(object sender, RoutedEventArgs e)
         {
+            NepApp.UI.Notifier.VibrateClick();
+
             //todo make a binding
             inlineNavigationService.SafeNavigateTo<NowPlayingPageViewModel>();
         }
 
         private void RadioButton_Click(object sender, RoutedEventArgs e)
         {
+            NepApp.UI.Notifier.VibrateClick();
+
             //dismiss the menu if its open.
             if (RootSplitView.DisplayMode == SplitViewDisplayMode.Overlay)
                 TogglePaneButton.IsChecked = false;
@@ -344,6 +337,8 @@ namespace Neptunium.View
             var btn = sender as ListItemButton;
 
             if (btn.DataContext == null) return;
+
+            NepApp.UI.Notifier.VibrateClick();
 
             this.GetViewModel<AppShellViewModel>()
                 .HandoffFragment

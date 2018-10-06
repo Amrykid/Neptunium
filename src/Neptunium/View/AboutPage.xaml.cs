@@ -42,6 +42,11 @@ namespace Neptunium.View
         {
             Launcher.LaunchUriAsync(new Uri("https://www.microsoft.com/en-us/store/p/neptunium/9nblggh1r9cq"));
         }
+
+        private void AppBarButton_Click_2(System.Object sender, RoutedEventArgs e)
+        {
+            Launcher.LaunchUriAsync(new Uri("https://github.com/Amrykid/Neptunium/wiki/Privacy-Policy"));
+        }
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
     }
 }

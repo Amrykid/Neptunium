@@ -1,6 +1,4 @@
-﻿using Crystal3;
-using Neptunium.ViewModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,21 +20,13 @@ namespace Neptunium.View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    [Crystal3.Navigation.NavigationViewModel(typeof(StationProgramsPageViewModel))]
-    public sealed partial class StationProgramsPage : Page
+    [Crystal3.Navigation.NavigationViewModel(typeof(Neptunium.ViewModel.ServerRemotePageViewModel), 
+        Crystal3.Navigation.NavigationViewSupportedPlatform.Desktop | Crystal3.Navigation.NavigationViewSupportedPlatform.Mobile)]
+    public sealed partial class ServerRemotePage : Page
     {
-        public StationProgramsPage()
+        public ServerRemotePage()
         {
             this.InitializeComponent();
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
-            {
-                //force focus on Xbox.
-                ScheduleListView.Focus(FocusState.Keyboard);
-            }
         }
     }
 }

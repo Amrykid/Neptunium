@@ -1,4 +1,5 @@
 ﻿using Neptunium.Core;
+using Neptunium.Core.Media.Audio;
 using Neptunium.Core.Media.Bluetooth;
 using Neptunium.Core.Media.History;
 using Neptunium.Core.Media.Metadata;
@@ -28,6 +29,7 @@ namespace Neptunium.Media
         public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
         internal StationStream CurrentStream { get; private set; }
         public NepAppMediaBluetoothManager Bluetooth { get; private set; }
+        public NepAppAudioManager Audio { get; private set; }
         private MediaPlayer CurrentPlayer { get; set; }
         public SystemMediaTransportControls MediaTransportControls { get; private set; }
         private MediaPlaybackSession CurrentPlayerSession { get; set; }
@@ -59,6 +61,7 @@ namespace Neptunium.Media
         {
             playLock = new SemaphoreSlim(1);
             Bluetooth = new NepAppMediaBluetoothManager(this);
+            Audio = new NepAppAudioManager(this);
 
             sleepTimer.Tick += SleepTimer_Tick;
         }
@@ -237,13 +240,10 @@ namespace Neptunium.Media
 
             SetMediaEngagement(true);
 
-            NepApp.Stations.SetLastPlayedStationName(stream.ParentStation.Name);
+            NepApp.Stations.SetLastPlayedStation(stream.ParentStation.Name, DateTime.Now);
+            NepApp.SongManager.SetCurrentMetadataToUnknown();
 
-            if (streamer.SongMetadata == null)
-            {
-                NepApp.SongManager.SetCurrentMetadataToUnknown();
-            }
-            else
+            if (streamer.SongMetadata != null)
             {
                 NepApp.SongManager.HandleMetadata(streamer.SongMetadata, stream);
             }
