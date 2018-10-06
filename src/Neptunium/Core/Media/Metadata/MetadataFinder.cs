@@ -1,8 +1,5 @@
 ﻿using Neptunium.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -13,6 +10,9 @@ namespace Neptunium.Core.Media.Metadata
         public static StorageFile BuiltInArtistsFile = null;
         public static async Task<ExtendedSongMetadata> FindMetadataAsync(SongMetadata originalMetadata)
         {
+            if (originalMetadata == null) throw new ArgumentNullException(nameof(originalMetadata));
+            if (originalMetadata.IsUnknownMetadata) throw new ArgumentException("Unknown metadata was passed.", nameof(originalMetadata));
+
             var metaSrc = new MusicBrainzMetadataSource();
             AlbumData albumData = null;
             ArtistData artistData = null;
@@ -33,19 +33,9 @@ namespace Neptunium.Core.Media.Metadata
 
                         artistData = await metaSrc.TryFindArtistAsync(originalMetadata.Artist, station.PrimaryLocale);
 
-                        try
-                        {
-                            //await metaSrc.TryFindSongAsync(extendedMetadata, station.PrimaryLocale);
+                        extendedMetadata.JPopAsiaArtistInfo = await ArtistFetcher.FindArtistDataOnJPopAsiaAsync(originalMetadata.Artist.Trim(), station.PrimaryLocale);
 
-                            extendedMetadata.JPopAsiaArtistInfo = await ArtistFetcher.FindArtistDataOnJPopAsiaAsync(originalMetadata.Artist.Trim());
-                        }
-                        catch (Exception) { }
-
-                        try
-                        {
-                            extendedMetadata.FanArtTVBackgroundUrl = await FanArtTVFetcher.FetchArtistBackgroundAsync(originalMetadata.Artist.Trim());
-                        }
-                        catch (Exception) { }
+                        extendedMetadata.FanArtTVBackgroundUrl = await FanArtTVFetcher.FetchArtistBackgroundAsync(originalMetadata.Artist.Trim());
                     }
                 }
             }

@@ -23,13 +23,14 @@ namespace Neptunium.Core.Media.Metadata
                 data.Gender = artistData.Gender;
 
                 data.ArtistID = artistData.Id;
+                data.Country = artistData.Country;
 
                 data.ArtistLinkUrl = "https://musicbrainz.org/artist/" + artistData.Id;
 
 
                 if (artistData.RelationLists != null)
                 {
-                    var imageRel = artistData.RelationLists.Items.FirstOrDefault(x => x.Type == "image");
+                    var imageRel = artistData.RelationLists.Items?.FirstOrDefault(x => x.Type == "image");
 
                     if (imageRel != null)
                     {
@@ -40,7 +41,7 @@ namespace Neptunium.Core.Media.Metadata
                         }
                     }
 
-                    var wikipediaRel = artistData.RelationLists.Items.FirstOrDefault(x => x.Type == "wikipedia");
+                    var wikipediaRel = artistData.RelationLists.Items?.FirstOrDefault(x => x.Type == "wikipedia");
 
                     if (wikipediaRel != null)
                     {

@@ -127,4 +127,22 @@
   <Artist Name="G.NA" JPopAsiaUrl="http://www.jpopasia.com/gna/">
     <AltName>Gina Choi</AltName>
   </Artist>
+  <Artist Name="Rainbow" JPopAsiaUrl="http://www.jpopasia.com/rainbow/" FanArtTVUrl="https://fanart.tv/artist/64af8439-3319-4ad5-847c-79f828603427/rainbow/">
+    <AltName>레인보우</AltName>
+  </Artist>
+  <Artist Name="Tahiti" JPopAsiaUrl="http://www.jpopasia.com/tahiti/" FanArtTVUrl="https://fanart.tv/artist/d8ea971d-7933-4bad-b188-ebbf4293dc1b/tahiti/">
+    <AltName>TAHITI</AltName>
+    <AltName>타히티</AltName>
+  </Artist>
+  <Artist Name="Speed" JPopAsiaUrl="http://www.jpopasia.com/speed/" FanArtTVUrl="https://fanart.tv/artist/dee1f6b1-4459-49c5-aef3-0f98d15c122f/speed/" OriginCountry="JP">
+  </Artist>
+  <Artist Name="Speed" JPopAsiaUrl="http://www.jpopasia.com/speedkpop/" FanArtTVUrl="https://fanart.tv/artist/36c785b6-4ff1-443e-941d-26106932d6d5/speed/" OriginCountry="KR">
+  </Artist>
+  <Artist Name="INFINITE" JPopAsiaUrl="http://www.jpopasia.com/infinite/" FanArtTVUrl="https://fanart.tv/artist/c175f8b3-47f8-46d4-a4cf-cb92fe7a37ae/infinite/" OriginCountry="KR">
+    <AltName>Infinite</AltName>
+    <AltName>인피니트</AltName>
+  </Artist>
+  <Artist Name="As One" JPopAsiaUrl="http://www.jpopasia.com/asone/" FanArtTVUrl="https://fanart.tv/artist/64a6d8d7-ffff-42c2-8afb-1f672481b15d/as-one/" OriginCountry="KR">
+    <AltName>애즈 원</AltName>
+  </Artist>
 </Artists>

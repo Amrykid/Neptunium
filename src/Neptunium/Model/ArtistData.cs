@@ -25,5 +25,7 @@ namespace Neptunium.Model
         public string ArtistLinkUrl { get; set; }
         [DataMember]
         public string WikipediaUrl { get; internal set; }
+        [DataMember]
+        public string Country { get; internal set; }
     }
 }

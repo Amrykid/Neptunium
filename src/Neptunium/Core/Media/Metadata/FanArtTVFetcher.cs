@@ -17,6 +17,8 @@ namespace Neptunium.Core.Media.Metadata
             if (artist == null) return null;
             if (artist.FanArtTVUrl == null) return null;
 
+            if (!NepApp.Network.IsConnected) return null;
+
             HttpClient http = new HttpClient();
             HttpResponseMessage httpResponse = null;
 
@@ -38,14 +40,16 @@ namespace Neptunium.Core.Media.Metadata
                     if (images.Count > 0)
                     {
                         var groups = images[0].Groups;
-                        var imgSrc = groups[groups.Count - 1].Value;
 
-                        return new Uri("https://fanart.tv" + imgSrc);
+                        if (groups.Count > 0)
+                        {
+                            var imgSrc = groups[groups.Count - 1].Value;
+
+                            return new Uri("https://fanart.tv" + imgSrc);
+                        }
                     }
                 }
             }
-            catch (Exception)
-            { }
             finally
             {
                 httpResponse.Dispose();

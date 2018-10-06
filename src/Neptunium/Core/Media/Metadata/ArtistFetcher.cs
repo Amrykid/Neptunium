@@ -15,7 +15,7 @@ namespace Neptunium.Core.Media.Metadata
     /// </summary>
     public static class ArtistFetcher
     {
-        public static async Task<JPopAsiaArtistData> FindArtistDataOnJPopAsiaAsync(string artistName)
+        public static async Task<JPopAsiaArtistData> FindArtistDataOnJPopAsiaAsync(string artistName, string stationLocale)
         {
             HttpClient http = new HttpClient();
             HttpResponseMessage httpResponse = null;
@@ -28,50 +28,66 @@ namespace Neptunium.Core.Media.Metadata
                         .Replace("-", "")
                         .Replace("*", "")))); //try and use a direct url. this works for artists like "Superfly" or "Perfume"
 
-            httpResponse = await http.GetAsync(directUri);
-            if (httpResponse.IsSuccessStatusCode)
+            try
             {
-                return await ParseArtistPageForDataAsync(artistName, httpResponse);
-            }
-            else
-            {
-                //we're gonna have to search
-
-                //pull up our pre-cached list of artists and search there.
-                var builtInList = await GetBuiltinArtistEntriesAsync();
-                BuiltinArtistEntry builtInMatch = builtInList.FirstOrDefault(x => x.Name.ToLower().Equals(artistName.ToLower()));
-
-                if (builtInMatch == null)
+                httpResponse = await http.GetAsync(directUri);
+                if (httpResponse.IsSuccessStatusCode)
                 {
-                    builtInMatch = builtInList.FirstOrDefault(x =>
-                    {
-                        if (x.Name.ToLower().FuzzyEquals(artistName.ToLower(), .9)) return true;
+                    return await ParseArtistPageForDataAsync(artistName, httpResponse);
+                }
+                else
+                {
+                    //we're gonna have to search
 
-                        if (artistName.Contains(" ")) //e.g. "Ayumi Hamasaki" vs. "Hamasaki Ayumi"
+                    //pull up our pre-cached list of artists and search there.
+                    var builtInList = await GetBuiltinArtistEntriesAsync();
+                    BuiltinArtistEntry builtInMatch = builtInList.FirstOrDefault(x => x.Name.ToLower().Equals(artistName.ToLower()));
+
+                    if (builtInMatch == null)
+                    {
+                        builtInMatch = builtInList.FirstOrDefault(x =>
                         {
-                            //string lastNameFirstNameSwappedName = string.Join(" ", artistName.Split(' ').Reverse()); //splices, reverses and joins: "Ayumi Hamasaki" -> ["Ayumi","Hamasaki"] -> ["Hamasaki", "Ayumi"] -> "Hamasaki Ayumi"
+                            bool countryLocaleMatches = (!string.IsNullOrWhiteSpace(x.CountryOfOrigin) && !string.IsNullOrWhiteSpace(stationLocale) ? x.CountryOfOrigin.Equals(stationLocale) : true);
 
-                            return x.AltNames.Any(str => str.FuzzyEquals(artistName.ToLower(), .9));
-                        }
+                            if (x.Name.ToLower().FuzzyEquals(artistName.ToLower(), .9) && countryLocaleMatches) return true;
 
-                        return false;
-                    });
-                }
+                            if (artistName.Contains(" ")) //e.g. "Ayumi Hamasaki" vs. "Hamasaki Ayumi"
+                            {
+                                //string lastNameFirstNameSwappedName = string.Join(" ", artistName.Split(' ').Reverse()); //splices, reverses and joins: "Ayumi Hamasaki" -> ["Ayumi","Hamasaki"] -> ["Hamasaki", "Ayumi"] -> "Hamasaki Ayumi"
 
-                if (builtInMatch != null)
-                {
-                    httpResponse = await http.GetAsync(directUri);
-                    if (httpResponse.IsSuccessStatusCode)
-                    {
-                        return await ParseArtistPageForDataAsync(artistName, httpResponse);
+                                return x.AltNames.Any(str => str.FuzzyEquals(artistName.ToLower(), .9)) && countryLocaleMatches;
+                            }
+
+                            return false;
+                        });
                     }
+
+                    if (builtInMatch != null)
+                    {
+                        httpResponse = await http.GetAsync(directUri);
+                        if (httpResponse.IsSuccessStatusCode)
+                        {
+                            return await ParseArtistPageForDataAsync(artistName, httpResponse);
+                        }
+                    }
+
+                    //manually search if we reach this point.
+                    //todo manually search.
                 }
-
-                //manually search if we reach this point.
-                //todo manually search.
             }
-
-            http.Dispose();
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                if (httpResponse != null)
+                {
+                    httpResponse.Dispose();
+                    httpResponse = null;
+                }
+                http.Dispose();
+            }
 
             return null;
         }
@@ -99,7 +115,14 @@ namespace Neptunium.Core.Media.Metadata
                 }
 
                 if (artistElement.Attribute("FanArtTVUrl") != null)
+                {
                     artistEntry.FanArtTVUrl = new Uri(artistElement.Attribute("FanArtTVUrl").Value);
+                }
+
+                if (artistElement.Attribute("OriginCountry") != null)
+                {
+                    artistEntry.CountryOfOrigin = artistElement.Attribute("OriginCountry").Value;
+                }
 
                 artists.Add(artistEntry);
             }
@@ -138,7 +161,11 @@ namespace Neptunium.Core.Media.Metadata
             { }
             finally
             {
-                httpResponse.Dispose();
+                if (httpResponse != null)
+                {
+                    httpResponse.Dispose();
+                    httpResponse = null;
+                }
             }
 
             //todo cache
@@ -153,6 +180,7 @@ namespace Neptunium.Core.Media.Metadata
         public Uri JPopAsiaUrl { get; set; }
         public string[] AltNames { get; set; }
         public Uri FanArtTVUrl { get; set; }
+        public string CountryOfOrigin { get; internal set; }
     }
 
     public class JPopAsiaArtistData
