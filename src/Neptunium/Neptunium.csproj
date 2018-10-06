@@ -128,6 +128,7 @@
     <Compile Include="Core\Media\Metadata\MetadataFinder.cs" />
     <Compile Include="Core\Media\Metadata\MusicBrainzMetadataSource.cs" />
     <Compile Include="Core\Media\Metadata\SongMetadata.cs" />
+    <Compile Include="Core\Media\NepAppMediaSleepTimer.cs" />
     <Compile Include="Core\Media\Songs\NepAppSongChangedEventArgs.cs" />
     <Compile Include="Core\Media\Songs\NepAppSongManager.cs" />
     <Compile Include="Core\Media\ShoutcastStationMediaStreamer.cs" />

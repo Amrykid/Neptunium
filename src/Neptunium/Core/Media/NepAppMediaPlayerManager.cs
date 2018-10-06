@@ -24,17 +24,16 @@ namespace Neptunium.Media
     public class NepAppMediaPlayerManager : INepAppFunctionManager, INotifyPropertyChanged
     {
         private SemaphoreSlim playLock = null;
-        private DispatcherTimer sleepTimer = new DispatcherTimer();
 
         public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
         internal StationStream CurrentStream { get; private set; }
         public NepAppMediaBluetoothManager Bluetooth { get; private set; }
         public NepAppAudioManager Audio { get; private set; }
+        public NepAppMediaSleepTimer SleepTimer { get; private set; }
         private MediaPlayer CurrentPlayer { get; set; }
         public SystemMediaTransportControls MediaTransportControls { get; private set; }
         private MediaPlaybackSession CurrentPlayerSession { get; set; }
         public CastingConnection MediaCastingConnection { get; private set; }
-        internal bool IsSleepTimerRunning { get { return sleepTimer.IsEnabled; } }
         public event PropertyChangedEventHandler PropertyChanged;
         public double Volume
         {
@@ -62,8 +61,7 @@ namespace Neptunium.Media
             playLock = new SemaphoreSlim(1);
             Bluetooth = new NepAppMediaBluetoothManager(this);
             Audio = new NepAppAudioManager(this);
-
-            sleepTimer.Tick += SleepTimer_Tick;
+            SleepTimer = new NepAppMediaSleepTimer(this);
         }
 
         internal void Pause()
@@ -144,38 +142,6 @@ namespace Neptunium.Media
             }
 
             return null;
-        }
-
-        internal void SetSleepTimer(TimeSpan timeToWait)
-        {
-            if (sleepTimer.IsEnabled)
-            {
-                sleepTimer.Stop();
-            }
-
-            sleepTimer.Interval = timeToWait;
-
-            sleepTimer.Start();
-        }
-
-        internal void ClearSleepTimer()
-        {
-            if (sleepTimer.IsEnabled) sleepTimer.Stop();
-        }
-
-        private async void SleepTimer_Tick(object sender, object e)
-        {
-            if (IsPlaying)
-            {
-                Pause();
-
-                if (!await App.GetIfPrimaryWindowVisibleAsync())
-                {
-                    NepApp.UI.Notifier.ShowGenericToastNotification("Sleep Timer", "Media paused.", "sleep-timer");
-                }
-            }
-
-            sleepTimer.Stop();
         }
 
         public async Task TryStreamStationAsync(StationStream stream)

@@ -77,7 +77,7 @@ namespace Neptunium
                     if (NepApp.MediaPlayer.CurrentStream != null) reportBuilder.AppendLine("Station Stream: " + NepApp.MediaPlayer.CurrentStream.ToString());
 
                     reportBuilder.AppendLine("Is Casting?: " + NepApp.MediaPlayer.IsCasting);
-                    reportBuilder.AppendLine("Is Sleep Timer Running?: " + NepApp.MediaPlayer.IsSleepTimerRunning);
+                    reportBuilder.AppendLine("Is Sleep Timer Running?: " + NepApp.MediaPlayer.SleepTimer.IsSleepTimerRunning);
 
 
                     return reportBuilder.ToString();
