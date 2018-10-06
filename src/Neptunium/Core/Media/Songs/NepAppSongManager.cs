@@ -34,6 +34,7 @@ namespace Neptunium.Media.Songs
         public ExtendedSongMetadata CurrentSongWithAdditionalMetadata { get; private set; }
 
         public SongHistorian History { get; private set; }
+        public NepAppSongManagerMediaTransportUpdater MediaTransportUpdater { get; private set; }
 
         public event EventHandler<NepAppSongChangedEventArgs> PreSongChanged;
         public event EventHandler<NepAppSongChangedEventArgs> SongChanged;
@@ -55,6 +56,8 @@ namespace Neptunium.Media.Songs
 
             History = new SongHistorian();
             History.InitializeAsync();
+
+            MediaTransportUpdater = new NepAppSongManagerMediaTransportUpdater(this);
 
             VoiceUtility.SongAnnouncementFinished += VoiceUtility_SongAnnouncementFinished;
         }
@@ -130,8 +133,6 @@ namespace Neptunium.Media.Songs
                 RaisePropertyChanged(nameof(CurrentSong));
 
                 PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(CurrentSong));
-
-                UpdateTransportControls(CurrentSong);
             }
         }
 
@@ -239,8 +240,6 @@ namespace Neptunium.Media.Songs
                     CurrentSongWithAdditionalMetadata = null;
 
                     PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(songMetadata));
-
-                    UpdateTransportControls(songMetadata);
 
                     //todo strip out "Feat." artists
 
@@ -352,9 +351,6 @@ namespace Neptunium.Media.Songs
             RaisePropertyChanged(nameof(CurrentSong));
 
             PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(unknown));
-            //SongChanged?.Invoke(this, new NepAppSongChangedEventArgs(unknown));
-
-            UpdateTransportControls(unknown);
 
             UpdateArtworkMetadata();
         }
@@ -395,11 +391,11 @@ namespace Neptunium.Media.Songs
                 artworkUriDictionary[NepAppSongMetadataBackground.Album] = albumArtUri;
                 if (albumArtUri != null)
                 {
-                    SongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, albumArtUri));
+                    SongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, albumArtUri, CurrentSong));
                 }
                 else
                 {
-                    NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, null));
+                    NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, null, CurrentSong));
                 }
 
 
@@ -420,11 +416,11 @@ namespace Neptunium.Media.Songs
                 artworkUriDictionary[NepAppSongMetadataBackground.Artist] = artistArtUri;
                 if (artistArtUri != null)
                 {
-                    SongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, artistArtUri));
+                    SongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, artistArtUri, CurrentSong));
                 }
                 else
                 {
-                    NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, null));
+                    NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, null, CurrentSong));
                 }
             }
             else
@@ -433,16 +429,11 @@ namespace Neptunium.Media.Songs
                 artworkUriDictionary[NepAppSongMetadataBackground.Album] = null;
                 artworkUriDictionary[NepAppSongMetadataBackground.Artist] = null;
 
-                NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, null));
-                NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, null));
+                NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, null, CurrentSong));
+                NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, null, CurrentSong));
             }
 
             SongArtworkProcessingComplete?.Invoke(this, EventArgs.Empty);
-
-            if (artworkUriDictionary[NepAppSongMetadataBackground.Album] != null)
-            {
-                UpdateTransportControls(CurrentSongWithAdditionalMetadata);
-            }
         }
 
 
@@ -498,50 +489,6 @@ namespace Neptunium.Media.Songs
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             });
-        }
-
-        private void UpdateTransportControls(SongMetadata songMetadata)
-        {
-            if (songMetadata == null) return;
-
-            try
-            {
-                var updater = NepApp.MediaPlayer.MediaTransportControls.DisplayUpdater;
-                updater.Type = MediaPlaybackType.Music;
-                updater.MusicProperties.Title = songMetadata.Track;
-                updater.MusicProperties.Artist = songMetadata.Artist;
-                updater.AppMediaId = songMetadata.StationPlayedOn.GetHashCode().ToString();
-
-
-                if (songMetadata is ExtendedSongMetadata)
-                {
-                    var extended = (ExtendedSongMetadata)songMetadata;
-                    updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(artworkUriDictionary[NepAppSongMetadataBackground.Album] ?? songMetadata.StationLogo);
-
-                    if (extended.Album != null)
-                    {
-                        updater.MusicProperties.AlbumTitle = extended.Album?.Album ?? "";
-                        updater.MusicProperties.AlbumArtist = extended.Album?.Artist ?? "";
-                    }
-                }
-                else
-                {
-                    if (songMetadata.StationLogo != null)
-                    {
-                        updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(songMetadata.StationLogo);
-                    }
-
-                    updater.MusicProperties.AlbumTitle = "";
-                    updater.MusicProperties.AlbumArtist = "";
-                }
-
-                updater.Update();
-            }
-            catch (COMException) { }
-            catch (Exception ex)
-            {
-
-            }
         }
     }
 }
