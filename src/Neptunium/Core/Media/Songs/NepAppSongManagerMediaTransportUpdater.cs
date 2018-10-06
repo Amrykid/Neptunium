@@ -12,8 +12,8 @@ namespace Neptunium.Media.Songs
         {
             songManager.PreSongChanged += SongManager_PreSongChanged;
             songManager.SongChanged += SongManager_SongChanged;
-            songManager.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
-            songManager.SongArtworkAvailable += SongManager_SongArtworkAvailable;
+            songManager.ArtworkProcessor.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
+            songManager.ArtworkProcessor.SongArtworkAvailable += SongManager_SongArtworkAvailable;
         }
 
         private void SongManager_SongArtworkAvailable(object sender, NepAppSongMetadataArtworkEventArgs e)
@@ -24,9 +24,9 @@ namespace Neptunium.Media.Songs
             //update artwork for song metadata
             RandomAccessStreamReference uriStream = null;
             NepAppSongMetadataBackground artworkType = NepAppSongMetadataBackground.Artist;
-            if (NepApp.SongManager.IsSongArtworkAvailable(out artworkType) && artworkType == NepAppSongMetadataBackground.Album)
+            if (NepApp.SongManager.ArtworkProcessor.IsSongArtworkAvailable(out artworkType) && artworkType == NepAppSongMetadataBackground.Album)
             {
-                uriStream = RandomAccessStreamReference.CreateFromUri(NepApp.SongManager.GetSongArtworkUri(NepAppSongMetadataBackground.Album));
+                uriStream = RandomAccessStreamReference.CreateFromUri(NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(NepAppSongMetadataBackground.Album));
             }
             else
             {

@@ -7,15 +7,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
-using Windows.Media;
-using Windows.Storage.Streams;
 using Windows.System.Threading;
-using Windows.UI.Xaml;
 using static Neptunium.NepApp;
 
 namespace Neptunium.Media.Songs
@@ -25,7 +19,6 @@ namespace Neptunium.Media.Songs
         private SemaphoreSlim metadataLock = null;
         private SemaphoreSlim blockProgrammingLock = null;
         private Regex featuredArtistRegex = new Regex(@"(?:(?:f|F)(?:ea)*t(?:uring)*\.?\s*(.+)(?:\n|$))");
-        private Dictionary<NepAppSongMetadataBackground, Uri> artworkUriDictionary = null;
         private ThreadPoolTimer blockStationProgramTimer = null;
 
         public SongMetadata CurrentSong { get; private set; }
@@ -35,14 +28,11 @@ namespace Neptunium.Media.Songs
 
         public SongHistorian History { get; private set; }
         public NepAppSongManagerMediaTransportUpdater MediaTransportUpdater { get; private set; }
+        public NepAppSongManagerArtworkProcessor ArtworkProcessor { get; private set; }
 
         public event EventHandler<NepAppSongChangedEventArgs> PreSongChanged;
         public event EventHandler<NepAppSongChangedEventArgs> SongChanged;
         public event EventHandler<NepAppStationProgramStartedEventArgs> StationRadioProgramStarted;
-
-        public event EventHandler<NepAppSongMetadataArtworkEventArgs> SongArtworkAvailable;
-        public event EventHandler<NepAppSongMetadataArtworkEventArgs> NoSongArtworkAvailable;
-        public event EventHandler SongArtworkProcessingComplete;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -50,9 +40,7 @@ namespace Neptunium.Media.Songs
         {
             metadataLock = new SemaphoreSlim(1);
             blockProgrammingLock = new SemaphoreSlim(1);
-            artworkUriDictionary = new Dictionary<NepAppSongMetadataBackground, Uri>();
-            artworkUriDictionary.Add(NepAppSongMetadataBackground.Album, null);
-            artworkUriDictionary.Add(NepAppSongMetadataBackground.Artist, null);
+            ArtworkProcessor = new NepAppSongManagerArtworkProcessor(this);
 
             History = new SongHistorian();
             History.InitializeAsync();
@@ -149,44 +137,15 @@ namespace Neptunium.Media.Songs
             });
         }
 
-        public Uri GetSongArtworkUri(NepAppSongMetadataBackground nepAppSongMetadataBackground)
-        {
-            return artworkUriDictionary[nepAppSongMetadataBackground];
-        }
-
-        public bool IsSongArtworkAvailable()
-        {
-            NepAppSongMetadataBackground type;
-            return IsSongArtworkAvailable(out type);
-        }
-        public bool IsSongArtworkAvailable(out NepAppSongMetadataBackground nepAppSongMetadataBackgroundType)
-        {
-            if (artworkUriDictionary[NepAppSongMetadataBackground.Album] != null)
-            {
-                nepAppSongMetadataBackgroundType = NepAppSongMetadataBackground.Album;
-                return true;
-            }
-            else if (artworkUriDictionary[NepAppSongMetadataBackground.Artist] != null)
-            {
-                nepAppSongMetadataBackgroundType = NepAppSongMetadataBackground.Artist;
-                return true;
-            }
-
-            nepAppSongMetadataBackgroundType = NepAppSongMetadataBackground.None;
-            return false;
-        }
-
         internal async void HandleMetadata(SongMetadata songMetadata, StationStream currentStream)
         {
-            await metadataLock.WaitAsync();
-
             if (songMetadata == null || songMetadata.IsUnknownMetadata)
             {
                 SetCurrentMetadataToUnknown();
-                metadataLock.Release();
                 return;
             }
 
+            await metadataLock.WaitAsync();
             try
             {
                 CurrentStation = currentStream.ParentStation;
@@ -273,7 +232,7 @@ namespace Neptunium.Media.Songs
 
                     SongChanged.Invoke(this, new NepAppSongChangedEventArgs(CurrentSongWithAdditionalMetadata));
 
-                    UpdateArtworkMetadata();
+                    ArtworkProcessor.UpdateArtworkMetadata();
                 }
             }
             catch (Exception ex)
@@ -341,8 +300,9 @@ namespace Neptunium.Media.Songs
             return unknown;
         }
 
-        internal void SetCurrentMetadataToUnknown(string program = null)
+        internal async void SetCurrentMetadataToUnknown(string program = null)
         {
+            await metadataLock.WaitAsync();
             //todo make a readonly field
             SongMetadata unknown = GetUnknownSongMetadata();
 
@@ -352,7 +312,8 @@ namespace Neptunium.Media.Songs
 
             PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(unknown));
 
-            UpdateArtworkMetadata();
+            ArtworkProcessor.UpdateArtworkMetadata();
+            metadataLock.Release();
         }
 
 
@@ -368,73 +329,7 @@ namespace Neptunium.Media.Songs
             PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(null));
         }
 
-        private void UpdateArtworkMetadata()
-        {
-            //Handle backgrounds
-            if (CurrentSongWithAdditionalMetadata != null)
-            {
-                //album artwork
-                Uri albumArtUri = null;
 
-                if (CurrentSongWithAdditionalMetadata.FanArtTVBackgroundUrl != null)
-                {
-                    albumArtUri = CurrentSongWithAdditionalMetadata.FanArtTVBackgroundUrl;
-                }
-                if (CurrentSongWithAdditionalMetadata.Album != null && albumArtUri == null)
-                {
-                    if (!string.IsNullOrWhiteSpace(CurrentSongWithAdditionalMetadata.Album?.AlbumCoverUrl))
-                    {
-                        albumArtUri = new Uri(CurrentSongWithAdditionalMetadata.Album?.AlbumCoverUrl);
-                    }
-                }
-
-                artworkUriDictionary[NepAppSongMetadataBackground.Album] = albumArtUri;
-                if (albumArtUri != null)
-                {
-                    SongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, albumArtUri, CurrentSong));
-                }
-                else
-                {
-                    NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, null, CurrentSong));
-                }
-
-
-                //artist artwork
-                Uri artistArtUri = null;
-                if (!string.IsNullOrWhiteSpace(CurrentSongWithAdditionalMetadata.ArtistInfo?.ArtistImage))
-                {
-                    artistArtUri = new Uri(CurrentSongWithAdditionalMetadata.ArtistInfo?.ArtistImage);
-                }
-                else if (CurrentSongWithAdditionalMetadata.JPopAsiaArtistInfo != null)
-                {
-                    //from JPopAsia
-                    if (CurrentSongWithAdditionalMetadata.JPopAsiaArtistInfo.ArtistImageUrl != null)
-                    {
-                        artistArtUri = CurrentSongWithAdditionalMetadata.JPopAsiaArtistInfo.ArtistImageUrl;
-                    }
-                }
-                artworkUriDictionary[NepAppSongMetadataBackground.Artist] = artistArtUri;
-                if (artistArtUri != null)
-                {
-                    SongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, artistArtUri, CurrentSong));
-                }
-                else
-                {
-                    NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, null, CurrentSong));
-                }
-            }
-            else
-            {
-                //reset all artwork
-                artworkUriDictionary[NepAppSongMetadataBackground.Album] = null;
-                artworkUriDictionary[NepAppSongMetadataBackground.Artist] = null;
-
-                NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, null, CurrentSong));
-                NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, null, CurrentSong));
-            }
-
-            SongArtworkProcessingComplete?.Invoke(this, EventArgs.Empty);
-        }
 
 
         private bool IsHostedStationProgramBeginning(SongMetadata songMetadata, StationStream currentStream, out StationProgram stationProgram)
@@ -471,7 +366,7 @@ namespace Neptunium.Media.Songs
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 #if DEBUG
                 if (Debugger.IsAttached)

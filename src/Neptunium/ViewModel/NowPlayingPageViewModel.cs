@@ -78,7 +78,7 @@ namespace Neptunium.ViewModel
             NepApp.MediaPlayer.MediaEngagementChanged += MediaPlayer_MediaEngagementChanged;
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged += SongManager_SongChanged;
-            NepApp.SongManager.SongArtworkProcessingComplete += SongManager_SongArtworkProcessingComplete;
+            NepApp.SongManager.ArtworkProcessor.SongArtworkProcessingComplete += SongManager_SongArtworkProcessingComplete;
 
             IsPlaying = NepApp.MediaPlayer.IsPlaying;
             IsMediaEngaged = NepApp.MediaPlayer.IsMediaEngaged;
@@ -117,7 +117,7 @@ namespace Neptunium.ViewModel
 
         private async void UpdateArtwork()
         {
-            var albumArt = NepApp.SongManager.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Album);
+            var albumArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Album);
             if (albumArt != null)
             {
                 CoverImage = albumArt;
@@ -128,10 +128,10 @@ namespace Neptunium.ViewModel
             }
 
             Neptunium.Media.Songs.NepAppSongMetadataBackground backgroundType;
-            if (NepApp.SongManager.IsSongArtworkAvailable(out backgroundType))
+            if (NepApp.SongManager.ArtworkProcessor.IsSongArtworkAvailable(out backgroundType))
             {
                 //update the background
-                Background = NepApp.SongManager.GetSongArtworkUri(backgroundType);
+                Background = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(backgroundType);
             }
             else
             {
@@ -178,7 +178,7 @@ namespace Neptunium.ViewModel
             NepApp.MediaPlayer.IsPlayingChanged -= MediaPlayer_IsPlayingChanged;
             NepApp.SongManager.PreSongChanged -= SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged -= SongManager_SongChanged;
-            NepApp.SongManager.SongArtworkProcessingComplete -= SongManager_SongArtworkProcessingComplete;
+            NepApp.SongManager.ArtworkProcessor.SongArtworkProcessingComplete -= SongManager_SongArtworkProcessingComplete;
 
             base.OnNavigatedFrom(sender, e);
         }

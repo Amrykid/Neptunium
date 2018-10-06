@@ -88,8 +88,8 @@ namespace Neptunium.ViewModel
 
             if (UserProfilePersonalizationSettings.IsSupported())
             {
-                NepApp.SongManager.SongArtworkAvailable += SongManager_SongArtworkAvailable;
-                NepApp.SongManager.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
+                NepApp.SongManager.ArtworkProcessor.SongArtworkAvailable += SongManager_SongArtworkAvailable;
+                NepApp.SongManager.ArtworkProcessor.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
             }
         }
 
