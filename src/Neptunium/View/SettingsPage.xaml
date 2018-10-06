@@ -144,7 +144,6 @@
                     <VisualState.Setters>
                         <Setter Target="RootPivot.Margin" Value="48 0 48 0" />
                         <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
-                        <Setter Target="HapticFeedbackSwitch.IsEnabled" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="TabletOrHigherVisualState">
@@ -161,7 +160,6 @@
 
                     <VisualState.Setters>
                         <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
-                        <Setter Target="HapticFeedbackSwitch.IsEnabled" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -172,7 +170,6 @@
 
                     <VisualState.Setters>
                         <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="True" />
-                        <Setter Target="HapticFeedbackSwitch.IsEnabled" Value="True" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

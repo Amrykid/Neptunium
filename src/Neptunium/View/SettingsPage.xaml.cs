@@ -30,6 +30,18 @@ namespace Neptunium.View
         public SettingsPage()
         {
             this.InitializeComponent();
+
+            switch(CrystalApplication.GetDevicePlatform())
+            {
+                case Crystal3.Core.Platform.Mobile:
+                    HapticFeedbackSwitch.IsEnabled = true;
+                    HeadphonesAnnounceSongsSwitch.IsEnabled = true;
+                    break;
+                default:
+                    HapticFeedbackSwitch.IsEnabled = false;
+                    HeadphonesAnnounceSongsSwitch.IsEnabled = false;
+                    break;
+            }
         }
 
         private async void SelectBluetoothButton_Click(object sender, RoutedEventArgs e)
