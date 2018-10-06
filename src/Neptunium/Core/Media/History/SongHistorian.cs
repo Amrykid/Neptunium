@@ -72,7 +72,7 @@ namespace Neptunium.Core.Media.History
 
         public ObservableCollection<SongHistoryItem> HistoryOfSongs { get; private set; }
 
-        public async Task AddSongAsync(ExtendedSongMetadata newMetadata)
+        public async Task AddSongAsync(SongMetadata newMetadata)
         {
             if (newMetadata.IsUnknownMetadata) return;
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Neptunium.Core.Media.Metadata;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -51,7 +52,7 @@ namespace Neptunium.Media.Songs
         internal void UpdateArtworkMetadata()
         {
             var currentSong = NepApp.SongManager.CurrentSong;
-            var currentSongWithMetadata = NepApp.SongManager.CurrentSongWithAdditionalMetadata;
+            var currentSongWithMetadata = currentSong as ExtendedSongMetadata;
 
             //Handle backgrounds
             if (currentSongWithMetadata != null)

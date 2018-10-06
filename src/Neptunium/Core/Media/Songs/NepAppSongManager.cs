@@ -24,7 +24,6 @@ namespace Neptunium.Media.Songs
         public SongMetadata CurrentSong { get; private set; }
         public StationItem CurrentStation { get; set; }
         private StationProgram CurrentProgram { get; set; }
-        public ExtendedSongMetadata CurrentSongWithAdditionalMetadata { get; private set; }
 
         public SongHistorian History { get; private set; }
         public NepAppSongManagerMediaTransportUpdater MediaTransportUpdater { get; private set; }
@@ -163,76 +162,7 @@ namespace Neptunium.Media.Songs
                 {
                     //we're tuned into regular programming/music
 
-                    if (CurrentProgram != null)
-                    {
-                        if (CurrentProgram.Style == StationProgramStyle.Hosted)
-                        {
-                            CurrentProgram = null; //hosted program ended.
-                        }
-                    }
-
-                    //filter out station messages
-                    if (currentStream.ParentStation != null)
-                    {
-                        if (currentStream.ParentStation.StationMessages != null)
-                        {
-                            if (currentStream.ParentStation.StationMessages.Contains(songMetadata.Track) ||
-                                currentStream.ParentStation.StationMessages.Contains(songMetadata.Artist))
-                            {
-                                metadataLock.Release();
-                                return;
-                            }
-                        }
-                    }
-
-
-                    string originalArtistString = songMetadata.Artist;
-                    if (featuredArtistRegex.IsMatch(songMetadata.Artist))
-                        songMetadata.Artist = featuredArtistRegex.Replace(songMetadata.Artist, "").Trim();
-
-                    if (CurrentSong.ToString().Equals(songMetadata.ToString())) return;
-
-                    CurrentSong = songMetadata;
-                    //this is used for the now playing bar via data binding.
-                    RaisePropertyChanged(nameof(CurrentSong));
-
-                    CurrentSongWithAdditionalMetadata = null;
-
-                    PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(songMetadata));
-
-                    //todo strip out "Feat." artists
-
-                    ExtendedSongMetadata newMetadata = await MetadataFinder.FindMetadataAsync(songMetadata); //todo: cache
-
-                    if (featuredArtistRegex.IsMatch(originalArtistString))
-                    {
-                        try
-                        {
-                            var artistsMatch = featuredArtistRegex.Match(originalArtistString);
-                            var artists = artistsMatch.Groups[1].Value.Split(',').Select(x => x.Trim());
-                            newMetadata.FeaturedArtists = artists.ToArray();
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-                    }
-
-                    CurrentSongWithAdditionalMetadata = newMetadata;
-
-                    if (newMetadata != null)
-                    {
-                        CurrentSong.SongLength = newMetadata.SongLength;
-                        RaisePropertyChanged(nameof(CurrentSong));
-                    }
-
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    History.AddSongAsync(newMetadata);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-
-                    SongChanged.Invoke(this, new NepAppSongChangedEventArgs(CurrentSongWithAdditionalMetadata));
-
-                    ArtworkProcessor.UpdateArtworkMetadata();
+                    HandleStationSongMetadata(songMetadata, currentStream);
                 }
             }
             catch (Exception ex)
@@ -253,6 +183,77 @@ namespace Neptunium.Media.Songs
             {
                 metadataLock.Release();
             }
+        }
+
+        private async void HandleStationSongMetadata(SongMetadata songMetadata, StationStream currentStream)
+        {
+            if (CurrentProgram != null)
+            {
+                if (CurrentProgram.Style == StationProgramStyle.Hosted)
+                {
+                    CurrentProgram = null; //hosted program ended.
+                }
+            }
+
+            //filter out station messages
+            if (currentStream.ParentStation != null)
+            {
+                if (currentStream.ParentStation.StationMessages != null)
+                {
+                    if (currentStream.ParentStation.StationMessages.Contains(songMetadata.Track) ||
+                        currentStream.ParentStation.StationMessages.Contains(songMetadata.Artist))
+                    {
+                        metadataLock.Release();
+                        return;
+                    }
+                }
+            }
+
+
+            string originalArtistString = songMetadata.Artist;
+            if (featuredArtistRegex.IsMatch(songMetadata.Artist))
+                songMetadata.Artist = featuredArtistRegex.Replace(songMetadata.Artist, "").Trim();
+
+            if (CurrentSong.ToString().Equals(songMetadata.ToString())) return;
+
+            CurrentSong = songMetadata;
+            //this is used for the now playing bar via data binding.
+            RaisePropertyChanged(nameof(CurrentSong));
+
+            PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(songMetadata));
+
+            ExtendedSongMetadata newMetadata = await MetadataFinder.FindMetadataAsync(songMetadata); //todo: cache
+
+            if (newMetadata != null)
+            {
+
+                //todo strip out "Feat." artists
+                if (featuredArtistRegex.IsMatch(originalArtistString))
+                {
+                    try
+                    {
+                        var artistsMatch = featuredArtistRegex.Match(originalArtistString);
+                        var artists = artistsMatch.Groups[1].Value.Split(',').Select(x => x.Trim());
+                        newMetadata.FeaturedArtists = artists.ToArray();
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+
+                CurrentSong = newMetadata;
+                CurrentSong.SongLength = newMetadata.SongLength;
+                RaisePropertyChanged(nameof(CurrentSong));
+            }
+
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            History.AddSongAsync(CurrentSong);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
+            SongChanged.Invoke(this, new NepAppSongChangedEventArgs(CurrentSong));
+
+            ArtworkProcessor.UpdateArtworkMetadata();
         }
 
         internal SongMetadata GetCurrentSongOrUnknown()
@@ -282,7 +283,6 @@ namespace Neptunium.Media.Songs
 
             CurrentProgram = currentProgram;
             SetCurrentMetadataToUnknown(currentProgram.Name);
-            CurrentSongWithAdditionalMetadata = null;
         }
 
         private SongMetadata GetUnknownSongMetadata(StationItem stationPlaying = null, string radioProgram = null)
@@ -322,7 +322,6 @@ namespace Neptunium.Media.Songs
             DeactivateProgramBlockTimer();
 
             CurrentSong = null;
-            CurrentSongWithAdditionalMetadata = null;
             CurrentStation = null;
 
             RaisePropertyChanged(nameof(CurrentSong));
