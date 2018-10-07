@@ -48,6 +48,7 @@ namespace Neptunium.Media
         public event EventHandler<NepAppMediaPlayerManagerIsPlayingEventArgs> IsPlayingChanged;
         public event EventHandler<EventArgs> IsCastingChanged;
         public event EventHandler MediaEngagementChanged;
+        public event EventHandler<MediaPlayerFailedEventArgs> FatalMediaErrorOccurred;
 
         public class NepAppMediaPlayerManagerIsPlayingEventArgs : EventArgs
         {
@@ -252,17 +253,12 @@ namespace Neptunium.Media
             IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(IsPlaying));
         }
 
-        private async void CurrentPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
+        private void CurrentPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
         {
             var stream = CurrentStream;
             ShutdownPreviousPlaybackSession();
 
-            await NepApp.UI.ShowInfoDialogAsync("Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
-
-            if (!await App.GetIfPrimaryWindowVisibleAsync())
-            {
-                NepApp.UI.Notifier.ShowErrorToastNotification(stream, "Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
-            }
+            FatalMediaErrorOccurred?.Invoke(this, args);
         }
 
 

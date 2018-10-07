@@ -76,6 +76,7 @@ namespace Neptunium.ViewModel
 
 
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
+            NepApp.MediaPlayer.FatalMediaErrorOccurred += MediaPlayer_FatalMediaErrorOccurred;
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged += SongManager_SongChanged;
             NepApp.SongManager.StationRadioProgramStarted += SongManager_StationRadioProgramStarted;
@@ -90,6 +91,16 @@ namespace Neptunium.ViewModel
             {
                 NepApp.SongManager.ArtworkProcessor.SongArtworkAvailable += SongManager_SongArtworkAvailable;
                 NepApp.SongManager.ArtworkProcessor.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
+            }
+        }
+
+        private async void MediaPlayer_FatalMediaErrorOccurred(object sender, Windows.Media.Playback.MediaPlayerFailedEventArgs e)
+        {
+            await NepApp.UI.ShowInfoDialogAsync("Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
+
+            if (!await App.GetIfPrimaryWindowVisibleAsync())
+            {
+                NepApp.UI.Notifier.ShowErrorToastNotification(null, "Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
             }
         }
 

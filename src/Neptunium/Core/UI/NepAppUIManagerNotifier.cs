@@ -1,20 +1,20 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
-using Windows.UI.Notifications;
 using Neptunium.Core.Media.Metadata;
-using System;
 using Neptunium.Core.Stations;
-using Windows.UI.StartScreen;
+using System;
 using System.Threading.Tasks;
-using Windows.UI;
 using Windows.Phone.Devices.Notification;
+using Windows.UI;
+using Windows.UI.Notifications;
+using Windows.UI.StartScreen;
 
 namespace Neptunium.Core.UI
 {
     public class NepAppUIManagerNotifier
     {
         private ToastNotifier toastNotifier = null;
-        private TileUpdater tileUpdater = null;
-        private VibrationDevice vibrationDevice = null;
+        private readonly TileUpdater tileUpdater = null;
+        private readonly VibrationDevice vibrationDevice = null;
         public const string SongNotificationTag = "song-notif";
 
         internal NepAppUIManagerNotifier()
@@ -22,7 +22,7 @@ namespace Neptunium.Core.UI
             toastNotifier = ToastNotificationManager.CreateToastNotifier();
             tileUpdater = TileUpdateManager.CreateTileUpdaterForApplication();
 
-            
+
             if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
                 vibrationDevice = VibrationDevice.GetDefault();
         }
@@ -156,14 +156,18 @@ namespace Neptunium.Core.UI
                                 Text = message,
                                 HintStyle = AdaptiveTextStyle.Subtitle
                             },
-                        },
-                        AppLogoOverride = new ToastGenericAppLogo()
-                        {
-                            Source = stream.ParentStation?.StationLogoUrl.ToString(),
                         }
                     }
                 }
             };
+
+            if (stream != null)
+            {
+                content.Visual.BindingGeneric.AppLogoOverride = new ToastGenericAppLogo()
+                {
+                    Source = stream.ParentStation?.StationLogoUrl.ToString(),
+                };
+            }
 
             var notification = new ToastNotification(content.GetXml());
             notification.Tag = "error";
