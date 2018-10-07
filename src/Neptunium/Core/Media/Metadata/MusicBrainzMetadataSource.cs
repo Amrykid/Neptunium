@@ -23,42 +23,47 @@ namespace Neptunium.Core.Media.Metadata
         {
             ArtistData data = new ArtistData();
 
+            //Trys to grab an for artist on musicbrainz via their ID.
             var artistData = await Artist.GetAsync(artistID, "url-rels", "aliases", "artist-rels");
 
             if (artistData != null)
             {
+                //If there is an artist with that ID, we start grabbing their data and putting it into an ArtistData object.
                 data.Name = artistData.Name;
-
                 data.Gender = artistData.Gender;
-
                 data.ArtistID = artistData.Id;
                 data.Country = artistData.Country;
-
                 data.ArtistLinkUrl = "https://musicbrainz.org/artist/" + artistData.Id;
 
 
+                //Next, we check to see if they have any external links listed on their page.
                 if (artistData.RelationLists != null)
                 {
+                    //If they have an image listed, we can use this as their artist image.
                     var imageRel = artistData.RelationLists.Items?.FirstOrDefault(x => x.Type == "image");
 
                     if (imageRel != null)
                     {
+                        //If there is an image, make sure the actual url isn't null.
                         if (!string.IsNullOrWhiteSpace(imageRel.Target))
                         {
+                            //Check if the URL is accessible.
                             if (await CheckIfUrlIsWebAccessibleAsync(new Uri(imageRel.Target)))
-                                data.ArtistImage = imageRel.Target;
+                                data.ArtistImage = imageRel.Target; //Its accessible, set the url as the artist image.
                         }
                     }
 
+                    //Check if the artist has a wikipedia article referenced.
                     var wikipediaRel = artistData.RelationLists.Items?.FirstOrDefault(x => x.Type == "wikipedia");
 
                     if (wikipediaRel != null)
                     {
+                        //Looks like they do have a wikipedia article. Set it as the WikipediaUrl.
                         data.WikipediaUrl = wikipediaRel.Target;
                     }
                 }
 
-                return data;
+                return data; //Return the data we've found.
             }
 
             return null;
