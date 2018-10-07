@@ -8,8 +8,17 @@ using System.Threading.Tasks;
 
 namespace Neptunium.Core.Media.Metadata
 {
+    /// <summary>
+    /// Defines the metadata source for MusicBrainz.
+    /// </summary>
     public class MusicBrainzMetadataSource : BaseSongMetadataSource
     {
+        /// <summary>
+        /// Gets an artist using a previously retrieved ID.
+        /// </summary>
+        /// <param name="artistID">The ID of the artist to retrieve.</param>
+        /// <param name="locale">The locale of the artist which the ID corresponds to.</param>
+        /// <returns>ArtistData or null</returns>
         public async override Task<ArtistData> GetArtistAsync(string artistID, string locale = "JP")
         {
             ArtistData data = new ArtistData();
@@ -55,6 +64,13 @@ namespace Neptunium.Core.Media.Metadata
             return null;
         }
 
+        /// <summary>
+        /// Tries to find an album corresponding to a particular track, artist and locale.
+        /// </summary>
+        /// <param name="track">The track or song that is contained on the album.</param>
+        /// <param name="artist">The artist who released the album.</param>
+        /// <param name="locale">The locale of the artist when they released the album.</param>
+        /// <returns>AlbumData or null</returns>
         public async override Task<AlbumData> TryFindAlbumAsync(string track, string artist, string locale = "JP")
         {
             AlbumData data = new AlbumData();
@@ -131,6 +147,12 @@ namespace Neptunium.Core.Media.Metadata
             return null;
         }
 
+        /// <summary>
+        /// Tries to find an artist by their name and locale.
+        /// </summary>
+        /// <param name="artistName">The artist's name.</param>
+        /// <param name="locale">The locale of the artist which is used to narrow the search.</param>
+        /// <returns>ArtistData or null</returns>
         public async override Task<ArtistData> TryFindArtistAsync(string artistName, string locale = "JP")
         {
             ArtistData data = new ArtistData();
@@ -184,6 +206,12 @@ namespace Neptunium.Core.Media.Metadata
             return null;
         }
 
+        /// <summary>
+        /// Tries to find information on a particular song.
+        /// </summary>
+        /// <param name="song">The song to search for.</param>
+        /// <param name="locale">The locale for narrowing the search.</param>
+        /// <returns></returns>
         public async override Task TryFindSongAsync(ExtendedSongMetadata song, string locale = "JP")
         {
             var recordingQuery = new Hqub.MusicBrainz.API.QueryParameters<Hqub.MusicBrainz.API.Entities.Recording>();
