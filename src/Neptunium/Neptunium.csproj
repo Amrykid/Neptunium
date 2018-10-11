@@ -155,6 +155,7 @@
     <Compile Include="Core\Stations\StationProgram.cs" />
     <Compile Include="Core\Stations\StationSupplementaryDataManager.cs" />
     <Compile Include="Core\UI\NepAppUIDialogFragment.cs" />
+    <Compile Include="Core\UI\NepAppUILiveTileHandler.cs" />
     <Compile Include="Core\UI\NepAppUILockScreenManager.cs" />
     <Compile Include="Core\UI\NepAppUIManager.cs" />
     <Compile Include="Core\NeptuniumException.cs" />
@@ -167,6 +168,7 @@
     <Compile Include="Core\UI\NepAppUIManagerNotifier.cs" />
     <Compile Include="Core\UI\NepAppUINavigationItem.cs" />
     <Compile Include="Core\UI\NepAppUINoChromePageAttribute.cs" />
+    <Compile Include="Core\UI\NepAppUIToastNotificationHandler.cs" />
     <Compile Include="Glue\IXboxInputPage.cs" />
     <Compile Include="JapaneseTextUtilities.cs" />
     <Compile Include="Core\NepApp.cs" />

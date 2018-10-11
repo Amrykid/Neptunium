@@ -35,6 +35,8 @@ namespace Neptunium.Core.UI
         public NepAppUIManagerNotifier Notifier { get; private set; }
         public NepAppUIManagerDialogCoordinator Overlay { get; private set; }
         public NepAppUILockScreenManager LockScreen { get; private set; }
+        public NepAppUILiveTileHandler LiveTileHandler { get; private set; }
+        public NepAppUIToastNotificationHandler ToastHandler { get; private set; }
 
         internal NepAppUIManager()
         {
@@ -42,6 +44,8 @@ namespace Neptunium.Core.UI
             NavigationItems = new ReadOnlyObservableCollection<NepAppUINavigationItem>(navigationItems);
             Notifier = new NepAppUIManagerNotifier();
             LockScreen = new NepAppUILockScreenManager();
+            LiveTileHandler = new NepAppUILiveTileHandler();
+            ToastHandler = new NepAppUIToastNotificationHandler();
             windowService = WindowManager.GetWindowServiceForCurrentWindow();
         }
 

@@ -305,17 +305,23 @@ namespace Neptunium.Core.UI
             return stationItem.Name.GetHashCode().ToString();
         }
 
-        public void UpdateLiveTile(ExtendedSongMetadata nowPlaying)
+        public void UpdateLiveTile(SongMetadata nowPlaying)
         {
             if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //not supported
 
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
 
+            string imgUrl = null;
+            if (nowPlaying is ExtendedSongMetadata)
+                imgUrl = ((ExtendedSongMetadata)nowPlaying).Album?.AlbumCoverUrl?.ToString();
+            if (string.IsNullOrWhiteSpace(imgUrl))
+                imgUrl = nowPlaying.StationLogo.ToString();
+
             TileBindingContentAdaptive largeBindingContent = new TileBindingContentAdaptive()
             {
                 PeekImage = new TilePeekImage()
                 {
-                    Source = nowPlaying.Album?.AlbumCoverUrl?.ToString() ?? nowPlaying.StationLogo.ToString(),
+                    Source = imgUrl,
                     AlternateText = nowPlaying.StationPlayedOn,
                     HintCrop = TilePeekImageCrop.None
                 },
@@ -340,7 +346,7 @@ namespace Neptunium.Core.UI
             {
                 BackgroundImage = new TileBackgroundImage()
                 {
-                    Source = nowPlaying.Album?.AlbumCoverUrl?.ToString() ?? nowPlaying.StationLogo.ToString(),
+                    Source = imgUrl,
                 },
                 Children =
                     {
@@ -363,7 +369,7 @@ namespace Neptunium.Core.UI
             {
                 BackgroundImage = new TileBackgroundImage()
                 {
-                    Source = nowPlaying.Album?.AlbumCoverUrl?.ToString() ?? nowPlaying.StationLogo.ToString(),
+                    Source = imgUrl,
                 }
             };
 
