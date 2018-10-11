@@ -262,6 +262,11 @@ namespace Neptunium.View
         private void Media_ConnectingEnd(object sender, EventArgs e)
         {
             statusControl?.Dispose();
+
+            if (NepApp.MediaPlayer.CurrentStream != null)
+            {
+                NepApp.UI.Overlay.ShowSnackBarMessageAsync("Now Streaming - " + NepApp.MediaPlayer.CurrentStream.ParentStation.Name);
+            }
         }
 
         private void Media_ConnectingBegin(object sender, EventArgs e)

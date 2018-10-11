@@ -83,12 +83,6 @@ namespace Neptunium.ViewModel
             {
                 ShowOverlayForHeadphonesStatus(true);
             }
-
-            if (UserProfilePersonalizationSettings.IsSupported())
-            {
-                NepApp.SongManager.ArtworkProcessor.SongArtworkAvailable += SongManager_SongArtworkAvailable;
-                NepApp.SongManager.ArtworkProcessor.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
-            }
         }
 
         private async void MediaPlayer_FatalMediaErrorOccurred(object sender, Windows.Media.Playback.MediaPlayerFailedEventArgs e)
@@ -108,51 +102,6 @@ namespace Neptunium.ViewModel
             {
                 NepApp.UI.Overlay.ShowSnackBarMessageAsync(isPluggedIn ? "Headphones connected." : "Headphones disconnected.");
             });
-        }
-
-        private async void SongManager_NoSongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
-        {
-            if ((bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt))
-            {
-                //sets the fallback lockscreen image when we don't have any artwork available.
-                if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Artist)
-                {
-                    try
-                    {
-                        await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-                }
-            }
-        }
-
-        private async void SongManager_SongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
-        {
-            if ((bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt))
-            {
-                if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Artist)
-                {
-                    try
-                    {
-                        bool result = await NepApp.UI.LockScreen.TrySetLockScreenImageFromUriAsync(e.ArtworkUri);
-
-                        if (!result)
-                        {
-                            await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        //todo make and set an image that represents the lack of artwork. maybe a dark image with the app logo?
-                        //maybe allow the user to set an image to use in this case.
-
-                        await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
-                    }
-                }
-            }
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
