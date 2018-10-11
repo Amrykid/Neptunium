@@ -229,7 +229,7 @@
                     </Frame>
 
                     <!--defined second so that it has a higher z-index-->
-                    <Grid x:Name="snackBarGrid" Grid.Row="0" Grid.RowSpan="1">
+                    <Grid x:Name="snackBarGrid" Grid.Row="1" Grid.RowSpan="1" VerticalAlignment="Bottom">
                         <Grid.Transitions>
                             <TransitionCollection>
                                 <RepositionThemeTransition />
@@ -385,11 +385,11 @@
 
                         <Setter Target="InlineFrame.(Grid.Row)" Value="1" />
                         <Setter Target="InlineFrame.(Grid.RowSpan)" Value="1" />
-                        <Setter Target="snackBarGrid.(Grid.Row)" Value="0" />
+                        <Setter Target="snackBarGrid.(Grid.Row)" Value="1" />
                         <Setter Target="snackBarGrid.(Grid.RowSpan)" Value="1" />
                         <Setter Target="snackBarGrid.Margin" Value="0" />
                         <Setter Target="snackBarGrid.HorizontalAlignment" Value="Stretch" />
-                        <Setter Target="snackBarGrid.VerticalAlignment" Value="Stretch" />
+                        <Setter Target="snackBarGrid.VerticalAlignment" Value="Bottom" />
 
                         <Setter Target="NowPlayingImage.Visibility" Value="Collapsed" />
                     </VisualState.Setters>

@@ -226,7 +226,6 @@ namespace Neptunium.ViewModel
 
             RaisePropertyChanged(nameof(ResumePlaybackCommand));
 
-
             //CheckForReverseHandoffOpportunitiesIfSupported();
 
 #if RELEASE
