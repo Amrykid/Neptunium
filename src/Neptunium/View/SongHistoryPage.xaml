@@ -59,12 +59,16 @@
                 <wrt:ListItemButton>
                     <Grid Height="90">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="45" />
+                            <ColumnDefinition Width="Auto" MaxWidth="45" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationLogo}" Grid.Column="0"
-                                     Width="45" Height="45" Stretch="UniformToFill" />
+                        <!--<Image Grid.Column="0"
+                               Width="45" Height="45" Stretch="UniformToFill">
+                            <Image.Source>
+                                <BitmapImage UriSource="{Binding Metadata.StationLogo}" DecodePixelHeight="45" DecodePixelWidth="45" />
+                            </Image.Source>
+                        </Image>-->
 
                         <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
                             <Grid.RowDefinitions>
@@ -107,12 +111,16 @@
                 <wrt:ListItemButton>
                     <Grid Height="100" Margin="0 0 0 5">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="Auto" MaxWidth="100" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationLogo}" Grid.Column="0"
-                                     Width="85" Height="85" Stretch="UniformToFill" />
+                        <!--<Image Grid.Column="0"
+                               Width="85" Height="85" Stretch="UniformToFill">
+                            <Image.Source>
+                                <BitmapImage UriSource="{Binding Metadata.StationLogo}" DecodePixelHeight="85" DecodePixelWidth="85" />
+                            </Image.Source>
+                        </Image>-->
 
                         <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
                             <Grid.RowDefinitions>
@@ -149,7 +157,8 @@
             </DataTemplate>
         </Grid.Resources>
 
-        <ListView x:Name="SongHistoryListView" ItemsSource="{Binding Source={StaticResource GroupedSongItems}}"
+        <ListView x:Name="SongHistoryListView" 
+                  ItemsSource="{Binding Source={StaticResource GroupedSongItems}}"
                   Style="{StaticResource TitleSafeListViewStyle}">
             <ListView.GroupStyle>
                 <GroupStyle>

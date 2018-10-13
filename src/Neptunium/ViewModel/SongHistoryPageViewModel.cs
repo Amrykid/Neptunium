@@ -16,28 +16,29 @@ namespace Neptunium.ViewModel
     {
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.SongManager.History.HistoryOfSongs.CollectionChanged += HistoryOfSongs_CollectionChanged;
+            NepApp.SongManager.History.SongAdded += History_SongAdded;
             UpdateHistory(NepApp.SongManager.History.HistoryOfSongs);
 
             base.OnNavigatedTo(sender, e);
         }
 
+        private void History_SongAdded(object sender, SongHistorianSongUpdatedEventArgs e)
+        {
+            App.Dispatcher.RunAsync(() =>
+            {
+                UpdateHistory(sender as List<SongHistoryItem>);
+            });
+        }
+
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.SongManager.History.HistoryOfSongs.CollectionChanged -= HistoryOfSongs_CollectionChanged;
+            History = null;
 
             base.OnNavigatedFrom(sender, e);
         }
 
-        private void HistoryOfSongs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            App.Dispatcher.RunAsync(() =>
-            {
-                UpdateHistory(sender as ObservableCollection<SongHistoryItem>);
-            });
-        }
 
-        private void UpdateHistory(ObservableCollection<SongHistoryItem> collection)
+        private void UpdateHistory(List<SongHistoryItem> collection)
         {
             History = collection.GroupBy(x => x.PlayedDate.Date).OrderByDescending(x => x.Key).Select(x => x);
         }

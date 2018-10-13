@@ -105,21 +105,23 @@
                                             CommandParameter="{Binding}">
                             <Grid Height="80" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="75" />
+                                    <ColumnDefinition Width="Auto" MaxWidth="75" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
-                                <uwp:ImageEx Grid.Column="0"
+                                <Image Grid.Column="0"
                                          Stretch="Fill"
                                          Width="75"
                                          Height="75"
                                          Margin="0 5 0 0"
-                                         VerticalAlignment="Top"
-                                         IsCacheEnabled="True">
-                                    <uwp:ImageEx.Source>
-                                        <BitmapImage UriSource="{Binding StationLogoUrl, Mode=OneTime}" />
-                                    </uwp:ImageEx.Source>
-                                </uwp:ImageEx>
+                                         Visibility="Collapsed"
+                                         VerticalAlignment="Top">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="{Binding StationLogoUrl, Mode=OneTime}"
+                                                     DecodePixelWidth="75"
+                                                     DecodePixelHeight="75" />
+                                    </Image.Source>
+                                </Image>
 
                                 <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
                                     <Grid.RowDefinitions>
@@ -195,11 +197,13 @@
                                     <RowDefinition Height="25" />
                                 </Grid.RowDefinitions>
 
-                                <uwp:ImageEx Height="125" Width="125" Grid.Row="0" Stretch="Fill" VerticalAlignment="Top" IsCacheEnabled="True">
-                                    <uwp:ImageEx.Source>
-                                        <BitmapImage UriSource="{Binding StationLogoUrl, Mode=OneTime}" />
-                                    </uwp:ImageEx.Source>
-                                </uwp:ImageEx>
+                                <Image Height="125" Width="125" Grid.Row="0" Stretch="Fill" VerticalAlignment="Top">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="{Binding StationLogoUrl, Mode=OneTime}"
+                                                     DecodePixelHeight="125"
+                                                     DecodePixelWidth="125" />
+                                    </Image.Source>
+                                </Image>
 
                                 <TextBlock TextAlignment="Left"
                                            Grid.Row="1" TextWrapping="WrapWholeWords"
@@ -248,6 +252,8 @@
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
+                        <Setter Target="stationsListView.ItemsSource" Value="{x:Null}" />
+                        <Setter Target="stationsGridView.ItemsSource" Value="{Binding SortedAvailableStations, UpdateSourceTrigger=PropertyChanged}" />
                         <Setter Target="stationsListView.Visibility" Value="Collapsed" />
                         <Setter Target="stationsGridView.Visibility" Value="Visible" />
                     </VisualState.Setters>
@@ -259,6 +265,8 @@
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
+                        <Setter Target="stationsListView.ItemsSource" Value="{x:Null}" />
+                        <Setter Target="stationsGridView.ItemsSource" Value="{Binding SortedAvailableStations, UpdateSourceTrigger=PropertyChanged}" />
                         <Setter Target="stationsListView.Visibility" Value="Collapsed" />
                         <Setter Target="stationsGridView.Visibility" Value="Visible" />
                     </VisualState.Setters>
@@ -270,6 +278,8 @@
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
+                        <Setter Target="stationsListView.ItemsSource" Value="{Binding SortedAvailableStations, UpdateSourceTrigger=PropertyChanged}" />
+                        <Setter Target="stationsGridView.ItemsSource" Value="{x:Null}" />
                         <Setter Target="stationsListView.Visibility" Value="Visible" />
                         <Setter Target="stationsGridView.Visibility" Value="Collapsed" />
                     </VisualState.Setters>

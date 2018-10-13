@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 namespace Neptunium.Core.Media.History
 {
     [DataContract]
-    public class SongHistoryItem: ModelBase
+    public class SongHistoryItem
     {
         [DataMember]
-        public SongMetadata Metadata { get { return GetPropertyValue<SongMetadata>(); } set { SetPropertyValue<SongMetadata>(value: value); } }
+        public SongMetadata Metadata { get; set; }
         [DataMember]
-        public DateTime PlayedDate { get { return GetPropertyValue<DateTime>(); } set { SetPropertyValue<DateTime>(value: value); } }
+        public DateTime PlayedDate { get; set; }
     }
 }

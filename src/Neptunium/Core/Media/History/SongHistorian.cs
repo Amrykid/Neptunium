@@ -16,9 +16,12 @@ namespace Neptunium.Core.Media.History
     {
         private JsonSerializer serializer = null;
         private StorageFolder dataFolder = null;
+
+        public event EventHandler<SongHistorianSongUpdatedEventArgs> SongAdded;
+
         internal SongHistorian()
         {
-            HistoryOfSongs = new ObservableCollection<SongHistoryItem>();
+            HistoryOfSongs = new List<SongHistoryItem>();
 
             serializer = new JsonSerializer();
         }
@@ -40,7 +43,7 @@ namespace Neptunium.Core.Media.History
                 {
                     using (JsonTextReader jtr = new JsonTextReader(sr))
                     {
-                        var coll = serializer.Deserialize<ObservableCollection<SongHistoryItem>>(jtr);
+                        var coll = serializer.Deserialize<List<SongHistoryItem>>(jtr);
 
                         if (coll != null)
                         {
@@ -70,7 +73,7 @@ namespace Neptunium.Core.Media.History
             //}
         }
 
-        public ObservableCollection<SongHistoryItem> HistoryOfSongs { get; private set; }
+        public List<SongHistoryItem> HistoryOfSongs { get; private set; }
 
         public async Task AddSongAsync(SongMetadata newMetadata)
         {
@@ -81,8 +84,17 @@ namespace Neptunium.Core.Media.History
                 HistoryOfSongs.RemoveAt(HistoryOfSongs.Count - 1); //remove the latest item from the end since we're inserting at the beginning.
             }
 
-            HistoryOfSongs.Insert(0, new SongHistoryItem() { Metadata = newMetadata, PlayedDate = DateTime.Now });
+            var item = new SongHistoryItem() { Metadata = newMetadata, PlayedDate = DateTime.Now };
 
+            HistoryOfSongs.Insert(0, item);
+
+            SongAdded?.Invoke(this, new SongHistorianSongUpdatedEventArgs(item));
+
+            await SaveHistoryFileAsync();
+        }
+
+        private async Task SaveHistoryFileAsync()
+        {
             StorageFile historyFile = null;
             if ((historyFile = await dataFolder.CreateFileAsync("History.json", CreationCollisionOption.OpenIfExists)) != null)
             {

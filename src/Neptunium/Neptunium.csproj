@@ -120,6 +120,7 @@
     <Compile Include="Core\Media\Bluetooth\NepAppMediaBluetoothManager.cs" />
     <Compile Include="Core\Media\DirectStationMediaStreamer.cs" />
     <Compile Include="Core\Media\History\SongHistorian.cs" />
+    <Compile Include="Core\Media\History\SongHistorianSongUpdatedEventArgs.cs" />
     <Compile Include="Core\Media\History\SongHistoryItem.cs" />
     <Compile Include="Core\Media\INepAppMediaStreamer.cs" />
     <Compile Include="Core\Media\Metadata\BaseSongMetadataSource.cs" />
