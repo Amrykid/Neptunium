@@ -43,17 +43,18 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <uwp:ImageEx Grid.Column="0"
+                        <Image Grid.Column="0"
                                          Stretch="Fill"
                                          Width="75"
                                          Height="75"
                                          Margin="0 5 0 0"
-                                         VerticalAlignment="Top"
-                                         IsCacheEnabled="True">
-                            <uwp:ImageEx.Source>
-                                <BitmapImage UriSource="{Binding LastPlayedStationLogoUrl, UpdateSourceTrigger=PropertyChanged}" />
-                            </uwp:ImageEx.Source>
-                        </uwp:ImageEx>
+                                         VerticalAlignment="Top">
+                            <Image.Source>
+                                <BitmapImage UriSource="{Binding LastPlayedStationLogoUrl, UpdateSourceTrigger=PropertyChanged}"
+                                             DecodePixelHeight="75"
+                                             DecodePixelWidth="75" />
+                            </Image.Source>
+                        </Image>
 
                         <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
                             <Grid.RowDefinitions>

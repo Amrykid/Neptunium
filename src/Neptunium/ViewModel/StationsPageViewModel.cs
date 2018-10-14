@@ -19,31 +19,16 @@ namespace Neptunium.ViewModel
 {
     public class StationsPageViewModel : UIViewModelBase
     {
-        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             NepApp.Network.IsConnectedChanged += Network_IsConnectedChanged;
 
+            IsBusy = true;
+
             DetectNetworkStatus();
-
-            LastPlayedStation = NepApp.Stations.LastPlayedStationName;
-            if (!string.IsNullOrWhiteSpace(LastPlayedStation))
-            {
-                IsBusy = true;
-                var station = await NepApp.Stations.GetStationByNameAsync(LastPlayedStation);
-                if (station != null)
-                {
-                    LastPlayedStationLogoUrl = station.StationLogoUrl;
-                    LastPlayedStationDescription = station.Description;
-                }
-
-                LastPlayedStationDate = NepApp.Stations.LastPlayedStationDate;
-                IsBusy = false;
-            }
 
             if (AvailableStations == null || AvailableStations?.Count == 0)
             {
-                IsBusy = true;
-
                 AvailableStations = new ObservableCollection<StationItem>();
                 SortedAvailableStations = new AdvancedCollectionView(AvailableStations, false);
                 SortedAvailableStations.SortDescriptions.Add(new SortDescription("Name", SortDirection.Ascending, null));
@@ -58,15 +43,37 @@ namespace Neptunium.ViewModel
                 }, async () =>
                 {
                     //when done
+                    LoadLastPlayedStation();
                     IsBusy = false;
                 });
 
                 //GroupedStations = AvailableStations.GroupBy(x => x.Group ?? "Ungrouped Stations").OrderBy(x => x.Key).Select(x => x);
 
             }
-
+            else
+            {
+                LoadLastPlayedStation();
+                IsBusy = false;
+            }
 
             base.OnNavigatedTo(sender, e);
+        }
+
+        private void LoadLastPlayedStation()
+        {
+            LastPlayedStation = NepApp.Stations.LastPlayedStationName;
+            if (!string.IsNullOrWhiteSpace(LastPlayedStation))
+            {
+                IsBusy = true;
+                var station = AvailableStations.FirstOrDefault(x=> x.Name == LastPlayedStation);
+                if (station != null)
+                {
+                    LastPlayedStationLogoUrl = station.StationLogoUrl;
+                    LastPlayedStationDescription = station.Description;
+                }
+
+                LastPlayedStationDate = NepApp.Stations.LastPlayedStationDate;
+            }
         }
 
         private void Network_IsConnectedChanged(object sender, EventArgs e)

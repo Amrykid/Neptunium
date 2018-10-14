@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Neptunium.Core.Stations
 {
-    public class StationItem : ModelBase
+    public class StationItem
     {
         public StationItem(string name, string description, Uri stationLogo, StationStream[] streams)
         {
