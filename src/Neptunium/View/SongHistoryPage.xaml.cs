@@ -1,18 +1,12 @@
-﻿using Neptunium.ViewModel;
+﻿using Crystal3.Navigation;
+using Crystal3.UI.Converters;
+using Neptunium.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -78,7 +72,7 @@ namespace Neptunium.View
 
         public void SetBottomFocus(UIElement elementBelow)
         {
-            
+
         }
 
         public void SetLeftFocus(UIElement elementToTheLeft)
@@ -88,12 +82,12 @@ namespace Neptunium.View
 
         public void SetRightFocus(UIElement elementToTheRight)
         {
-            
+
         }
 
         public void SetTopFocus(UIElement elementAbove)
         {
-            
+
         }
     }
 }

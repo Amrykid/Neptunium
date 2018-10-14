@@ -13,6 +13,10 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
         <Grid.Resources>
             <Style x:Key="TitleSafeListViewStyle" TargetType="ListView">
@@ -52,7 +56,7 @@
                 </Setter>
             </Style>
 
-            <CollectionViewSource x:Key="GroupedSongItems" IsSourceGrouped="True" Source="{Binding History, UpdateSourceTrigger=PropertyChanged}" />
+            <!--<CollectionViewSource x:Key="GroupedSongItems" IsSourceGrouped="True" Source="{Binding History, UpdateSourceTrigger=PropertyChanged}" />-->
             <cconv:RelativeTimeConverter TimeMode="Past" x:Key="TimeConv" HourFormatString="Today" MinuteFormatString="Today" SecondFormatString="Today" />
 
             <DataTemplate x:Key="MobileSongHistoryItemTemplate">
@@ -80,15 +84,15 @@
 
                             <TextBlock Style="{ThemeResource BaseTextBlockStyle}"
                                        Text="{Binding Metadata.Track}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                        TextTrimming="WordEllipsis"
                                        HorizontalAlignment="Left"
                                        ToolTipService.ToolTip="{Binding Metadata.Track}"
                                        VerticalAlignment="Bottom"
-                                       Grid.Row="0" />  
+                                       Grid.Row="0" />
 
                             <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
                                        Grid.Row="1"
                                        Text="{Binding Metadata.Artist}" />
 
@@ -131,12 +135,12 @@
                             <TextBlock Text="{Binding Metadata.Track}" Grid.Row="0" 
                                        Style="{ThemeResource TitleTextBlockStyle}"
                                        x:Name="TrackTextBlock"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                        VerticalAlignment="Bottom"/>
                             <TextBlock Grid.Row="1"
                                     VerticalAlignment="Top"
                                     x:Name="ArtistTextBlock"
-                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
                                     Style="{ThemeResource BodyTextBlockStyle}">
                             <Span>
                                 <Run Text="{Binding Metadata.Artist}" />
@@ -157,18 +161,23 @@
             </DataTemplate>
         </Grid.Resources>
 
+        <ComboBox x:Name="HistorySelectionBox" 
+                  Header="Time Frame Selection"
+                  PlaceholderText="Select a time frame."
+                  Margin="10"
+                  ItemsSource="{Binding History, UpdateSourceTrigger=PropertyChanged}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Key.Date, Converter={StaticResource TimeConv}}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
         <ListView x:Name="SongHistoryListView" 
-                  ItemsSource="{Binding Source={StaticResource GroupedSongItems}}"
-                  Style="{StaticResource TitleSafeListViewStyle}">
-            <ListView.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Key.Date, Converter={StaticResource TimeConv}}"/>
-                        </DataTemplate>
-                    </GroupStyle.HeaderTemplate>
-                </GroupStyle>
-            </ListView.GroupStyle>
+                Grid.Row="1"
+                ScrollViewer.IsVerticalScrollChainingEnabled="True"
+                ItemsSource="{Binding ElementName=HistorySelectionBox, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"
+                Style="{StaticResource TitleSafeListViewStyle}">
             <ListView.Transitions>
                 <TransitionCollection>
                     <AddDeleteThemeTransition />
