@@ -187,7 +187,6 @@ namespace Neptunium
             }
 
             this.Options.HandleSystemBackNavigation = true;
-            this.Options.EnableViewModelCaching = true;
         }
 
         protected override async Task OnApplicationInitializedAsync()
