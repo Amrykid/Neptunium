@@ -266,10 +266,14 @@ namespace Neptunium.Core.Stations
 
                                     listings.Add(listing);
                                 }
+#if !DEBUG
                                 catch (Exception ex)
                                 {
-#if !DEBUG
-                                            Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex);
+
+                                    Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex);
+#else
+                                catch (Exception)
+                                {
 #endif
                                 }
                             }
