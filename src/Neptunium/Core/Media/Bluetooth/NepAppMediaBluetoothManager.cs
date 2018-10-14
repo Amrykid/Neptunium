@@ -25,7 +25,9 @@ namespace Neptunium.Core.Media.Bluetooth
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
 
             DeviceCoordinator.IsBluetoothConnectedChanged += DeviceCoordinator_IsBluetoothConnectedChanged;
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             DeviceCoordinator.InitializeAsync();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
         private async void SongManager_PreSongChanged(object sender, Neptunium.Media.Songs.NepAppSongChangedEventArgs e)

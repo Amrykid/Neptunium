@@ -106,7 +106,7 @@ namespace Neptunium.Core.Stations
                 stationBgStream = await streamRef.OpenReadAsync();
                 color = await ColorUtilities.GetDominantColorAsync(stationBgStream);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //Dictionary<string, string> data = new Dictionary<string, string>();
                 //data.Add("BackgroundURI", uri.ToString());

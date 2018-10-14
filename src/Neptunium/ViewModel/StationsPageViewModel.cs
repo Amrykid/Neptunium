@@ -40,7 +40,7 @@ namespace Neptunium.ViewModel
                 {
                     IsBusy = false;
                     await NepApp.UI.ShowInfoDialogAsync("Uh-oh!", "An unexpected error occurred. " + ex.ToString());
-                }, async () =>
+                }, () =>
                 {
                     //when done
                     LoadLastPlayedStation();

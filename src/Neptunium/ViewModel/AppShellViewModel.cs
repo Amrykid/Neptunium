@@ -47,7 +47,7 @@ namespace Neptunium.ViewModel
             }
         });
 
-        public RelayCommand GoToRemoteCommand => new RelayCommand(async x =>
+        public RelayCommand GoToRemoteCommand => new RelayCommand(x =>
         {
             var remotePage = NepApp.UI.NavigationItems.FirstOrDefault(X => X.NavigationViewModelType == typeof(ServerRemotePageViewModel));
             if (remotePage == null) throw new Exception("Remote page not found.");
@@ -108,8 +108,11 @@ namespace Neptunium.ViewModel
         {
 
         }
-
+#if RELEASE
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+#else
+        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+#endif
         {
             base.OnNavigatedTo(sender, e);
 

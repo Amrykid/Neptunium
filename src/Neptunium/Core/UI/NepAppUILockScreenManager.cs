@@ -16,7 +16,7 @@ namespace Neptunium.Core.UI
     public class NepAppUILockScreenManager
     {
         private Rect screenBounds = default(Rect);
-        private object originalLockScreen; //currently, there is no universal way to get the original lock screen. this api ( https://docs.microsoft.com/en-us/uwp/api/Windows.System.UserProfile.LockScreen ) only exists on the desktop sku.
+        //private object originalLockScreen; //currently, there is no universal way to get the original lock screen. this api ( https://docs.microsoft.com/en-us/uwp/api/Windows.System.UserProfile.LockScreen ) only exists on the desktop sku.
         private Uri fallBackLockScreenImage = null;
         private StorageFolder lockScreenFolder = null;
         internal NepAppUILockScreenManager()

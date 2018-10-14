@@ -61,7 +61,7 @@ namespace Neptunium.Core.Media
 
                 SongAnnouncementFinished?.Invoke(null, EventArgs.Empty);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }

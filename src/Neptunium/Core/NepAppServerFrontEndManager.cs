@@ -292,7 +292,7 @@ namespace Neptunium.Core
 
                         ParseDataCommand(data);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         return;
                     }

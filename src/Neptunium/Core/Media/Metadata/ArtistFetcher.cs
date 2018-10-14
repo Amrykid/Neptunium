@@ -93,7 +93,7 @@ namespace Neptunium.Core.Media.Metadata
                     //TODO manually search.
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //Upon an error, return null.
                 return null;

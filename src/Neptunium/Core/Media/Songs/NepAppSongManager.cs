@@ -42,7 +42,9 @@ namespace Neptunium.Media.Songs
             ArtworkProcessor = new NepAppSongManagerArtworkProcessor(this);
 
             History = new SongHistorian();
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             History.InitializeAsync();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
             MediaTransportUpdater = new NepAppSongManagerMediaTransportUpdater(this);
 
