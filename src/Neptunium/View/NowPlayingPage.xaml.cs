@@ -79,6 +79,7 @@ namespace Neptunium.View
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            NepApp.UI.ActivateNoChromeMode();
             base.OnNavigatedTo(e);
         }
 
@@ -86,6 +87,7 @@ namespace Neptunium.View
         {
             NepApp.MediaPlayer.IsPlayingChanged -= Media_IsPlayingChanged;
 
+            NepApp.UI.DeactivateNoChromeMode();
             base.OnNavigatingFrom(e);
         }
 

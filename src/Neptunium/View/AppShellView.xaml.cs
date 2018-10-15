@@ -59,6 +59,8 @@ namespace Neptunium.View
             App.RegisterUIDialogs();
             SetTitleBarAndMobileStatusBarToMatchAppBar();
 
+            NepApp.UI.NoChromeStatusChanged += UI_NoChromeStatusChanged;
+
             PageTitleBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
             //PageTitleBlock.SetValue(TextBlock.TextProperty, NepApp.UI.ViewTitle);
 
@@ -75,6 +77,18 @@ namespace Neptunium.View
             NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
 
             Messenger.AddTarget(this);
+        }
+
+        private void UI_NoChromeStatusChanged(object sender, NepAppUIManagerNoChromeStatusChangedEventArgs e)
+        {
+            if (e.ShouldBeInNoChromeMode)
+            {
+                ActivateNoChromeMode();
+            }
+            else
+            {
+                DeactivateNoChromeMode();
+            }
         }
 
         private void MediaPlayer_MediaEngagementChanged(object sender, EventArgs e)
@@ -186,76 +200,77 @@ namespace Neptunium.View
         private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
         {
             WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
+        }
 
-            if (inlineNavigationService.NavigationFrame.Content?.GetType().GetTypeInfo().GetCustomAttribute<NepAppUINoChromePageAttribute>() != null)
+        private void DeactivateNoChromeMode()
+        {
+            //reactivate chrome
+
+            topAppBar.Visibility = Visibility.Visible;
+            bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+
+            //todo remember splitview state instead of trying to guess below.
+            if (Window.Current.Bounds.Width >= 720)
             {
-                //no chrome mode
-
-                topAppBar.Visibility = Visibility.Collapsed;
-                bottomAppBar.Visibility = Visibility.Collapsed;
-
-                RootSplitView.IsPaneOpen = false;
-                RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
-
-                SetMobileStatusBarToTransparent();
-
-                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-
-                if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                if (Window.Current.Bounds.Width >= 1080)
                 {
-                    RootGrid.Margin = new Thickness(0, -25, 0, 0);
+                    RootSplitView.DisplayMode = SplitViewDisplayMode.Inline;
+                    RootSplitView.IsPaneOpen = true;
                 }
-
-
-                ShellVisualStateGroup.States.Remove(DesktopVisualState);
-                ShellVisualStateGroup.States.Remove(TabletVisualState);
-                ShellVisualStateGroup.States.Remove(PhoneVisualState);
-
-                isInNoChromeMode = true;
+                else
+                {
+                    RootSplitView.DisplayMode = SplitViewDisplayMode.CompactInline;
+                }
             }
-            else
+
+            UpdateCastingUI();
+
+            SetTitleBarAndMobileStatusBarToMatchAppBar();
+
+            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
-                //reactivate chrome
-
-                topAppBar.Visibility = Visibility.Visible;
-                bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
-
-                //todo remember splitview state instead of trying to guess below.
-                if (Window.Current.Bounds.Width >= 720)
-                {
-                    if (Window.Current.Bounds.Width >= 1080)
-                    {
-                        RootSplitView.DisplayMode = SplitViewDisplayMode.Inline;
-                        RootSplitView.IsPaneOpen = true;
-                    }
-                    else
-                    {
-                        RootSplitView.DisplayMode = SplitViewDisplayMode.CompactInline;
-                    }
-                }
-
-                UpdateCastingUI();
-
-                SetTitleBarAndMobileStatusBarToMatchAppBar();
-
-                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
-
-                if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-                {
-                    RootGrid.Margin = new Thickness(0);
-                }
-
-                if (!ShellVisualStateGroup.States.Contains(DesktopVisualState))
-                    ShellVisualStateGroup.States.Add(DesktopVisualState);
-
-                if (!ShellVisualStateGroup.States.Contains(TabletVisualState))
-                    ShellVisualStateGroup.States.Add(TabletVisualState);
-
-                if (!ShellVisualStateGroup.States.Contains(PhoneVisualState))
-                    ShellVisualStateGroup.States.Add(PhoneVisualState);
-
-                isInNoChromeMode = false;
+                RootGrid.Margin = new Thickness(0);
             }
+
+            if (!ShellVisualStateGroup.States.Contains(DesktopVisualState))
+                ShellVisualStateGroup.States.Add(DesktopVisualState);
+
+            if (!ShellVisualStateGroup.States.Contains(TabletVisualState))
+                ShellVisualStateGroup.States.Add(TabletVisualState);
+
+            if (!ShellVisualStateGroup.States.Contains(PhoneVisualState))
+                ShellVisualStateGroup.States.Add(PhoneVisualState);
+
+            isInNoChromeMode = false;
+        }
+
+        private void ActivateNoChromeMode()
+        {
+            //no chrome mode
+
+            topAppBar.Visibility = Visibility.Collapsed;
+            bottomAppBar.Visibility = Visibility.Collapsed;
+
+            RootSplitView.IsPaneOpen = false;
+            RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
+
+            SetMobileStatusBarToTransparent();
+
+            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+
+            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            {
+                RootGrid.Margin = new Thickness(0, -25, 0, 0);
+            }
+
+
+            ShellVisualStateGroup.States.Remove(DesktopVisualState);
+            ShellVisualStateGroup.States.Remove(TabletVisualState);
+            ShellVisualStateGroup.States.Remove(PhoneVisualState);
+
+            isInNoChromeMode = true;
         }
 
         IndefiniteWorkStatusManagerControl statusControl = null;

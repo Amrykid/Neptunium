@@ -187,5 +187,35 @@ namespace Neptunium.Core.UI
 
             ViewTitle = navItem.DisplayText;
         }
+
+        #region No-Chrome Mode
+        public event EventHandler<NepAppUIManagerNoChromeStatusChangedEventArgs> NoChromeStatusChanged;
+
+        public bool IsInNoChromeMode { get; private set; }
+
+        public void ActivateNoChromeMode()
+        {
+            if (IsInNoChromeMode) return;
+
+            IsInNoChromeMode = true;
+
+            NoChromeStatusChanged?.Invoke(this, new NepAppUIManagerNoChromeStatusChangedEventArgs()
+            {
+                ShouldBeInNoChromeMode = IsInNoChromeMode
+            });
+        }
+
+        public void DeactivateNoChromeMode()
+        {
+            if (!IsInNoChromeMode) return;
+
+            IsInNoChromeMode = false;
+
+            NoChromeStatusChanged?.Invoke(this, new NepAppUIManagerNoChromeStatusChangedEventArgs()
+            {
+                ShouldBeInNoChromeMode = IsInNoChromeMode
+            });
+        }
+        #endregion
     }
 }
