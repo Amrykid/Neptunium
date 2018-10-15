@@ -80,7 +80,7 @@
                 </StackPanel>
             </StackPanel>
 
-            <ListView ItemsSource="{Binding SortedAvailableStations, UpdateSourceTrigger=PropertyChanged}"
+            <ListView ItemsSource="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}"
                       SelectionMode="Single"
                       Margin="5 5 5 15"
                       x:Name="stationsListView"
@@ -105,7 +105,7 @@
                         <wrt:ListItemButton Command="{Binding ElementName=thisPage, Path=DataContext.ShowStationInfoCommand}"
                                             CommandParameter="{Binding}">
                             <Grid Height="80" VerticalAlignment="Center">
-                                <Grid.ColumnDefinitions>
+                                <!--<Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" MaxWidth="75" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
@@ -122,9 +122,9 @@
                                                      DecodePixelWidth="75"
                                                      DecodePixelHeight="75" />
                                     </Image.Source>
-                                </Image>
+                                </Image>-->
 
-                                <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
+                                <Grid Margin="15 0" VerticalAlignment="Center">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="*" />
@@ -162,7 +162,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <GridView ItemsSource="{Binding SortedAvailableStations, UpdateSourceTrigger=PropertyChanged}"
+            <GridView ItemsSource="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}"
                       SelectionMode="Single"
                       Margin="5"
                       x:Name="stationsGridView"
@@ -254,7 +254,7 @@
 
                     <VisualState.Setters>
                         <Setter Target="stationsListView.ItemsSource" Value="{x:Null}" />
-                        <Setter Target="stationsGridView.ItemsSource" Value="{Binding SortedAvailableStations, UpdateSourceTrigger=PropertyChanged}" />
+                        <Setter Target="stationsGridView.ItemsSource" Value="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}" />
                         <Setter Target="stationsListView.Visibility" Value="Collapsed" />
                         <Setter Target="stationsGridView.Visibility" Value="Visible" />
                     </VisualState.Setters>
@@ -267,7 +267,7 @@
 
                     <VisualState.Setters>
                         <Setter Target="stationsListView.ItemsSource" Value="{x:Null}" />
-                        <Setter Target="stationsGridView.ItemsSource" Value="{Binding SortedAvailableStations, UpdateSourceTrigger=PropertyChanged}" />
+                        <Setter Target="stationsGridView.ItemsSource" Value="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}" />
                         <Setter Target="stationsListView.Visibility" Value="Collapsed" />
                         <Setter Target="stationsGridView.Visibility" Value="Visible" />
                     </VisualState.Setters>
@@ -279,7 +279,7 @@
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="stationsListView.ItemsSource" Value="{Binding SortedAvailableStations, UpdateSourceTrigger=PropertyChanged}" />
+                        <Setter Target="stationsListView.ItemsSource" Value="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}" />
                         <Setter Target="stationsGridView.ItemsSource" Value="{x:Null}" />
                         <Setter Target="stationsListView.Visibility" Value="Visible" />
                         <Setter Target="stationsGridView.Visibility" Value="Collapsed" />

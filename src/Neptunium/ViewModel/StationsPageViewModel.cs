@@ -19,7 +19,7 @@ namespace Neptunium.ViewModel
 {
     public class StationsPageViewModel : UIViewModelBase
     {
-        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             NepApp.Network.IsConnectedChanged += Network_IsConnectedChanged;
 
@@ -29,23 +29,36 @@ namespace Neptunium.ViewModel
 
             if (AvailableStations == null || AvailableStations?.Count == 0)
             {
-                AvailableStations = new ObservableCollection<StationItem>();
-                SortedAvailableStations = new AdvancedCollectionView(AvailableStations, false);
-                SortedAvailableStations.SortDescriptions.Add(new SortDescription("Name", SortDirection.Ascending, null));
+                try
+                {
+                    AvailableStations = new ObservableCollection<StationItem>((await NepApp.Stations.GetStationsAsync()).OrderBy(x => x.Name));
 
-                NepApp.Stations.ObserveStationsAsync().Subscribe<StationItem>((StationItem item) =>
-                {
-                    AvailableStations.Add(item);
-                }, async (Exception ex) =>
-                {
-                    IsBusy = false;
-                    await NepApp.UI.ShowInfoDialogAsync("Uh-oh!", "An unexpected error occurred. " + ex.ToString());
-                }, () =>
-                {
-                    //when done
                     LoadLastPlayedStation();
+                }
+                catch (Exception ex)
+                {
+                    await NepApp.UI.ShowInfoDialogAsync("Uh-oh!", "An unexpected error occurred. " + ex.ToString());
+                }
+                finally {
                     IsBusy = false;
-                });
+                }
+
+                //SortedAvailableStations = new AdvancedCollectionView(AvailableStations, false);
+                //SortedAvailableStations.SortDescriptions.Add(new SortDescription("Name", SortDirection.Ascending, null));
+
+                //NepApp.Stations.ObserveStationsAsync().Subscribe<StationItem>((StationItem item) =>
+                //{
+                //    AvailableStations.Add(item);
+                //}, async (Exception ex) =>
+                //{
+                //    IsBusy = false;
+                //    await NepApp.UI.ShowInfoDialogAsync("Uh-oh!", "An unexpected error occurred. " + ex.ToString());
+                //}, () =>
+                //{
+                //    //when done
+                //    LoadLastPlayedStation();
+                //    IsBusy = false;
+                //});
 
                 //GroupedStations = AvailableStations.GroupBy(x => x.Group ?? "Ungrouped Stations").OrderBy(x => x.Key).Select(x => x);
 
@@ -98,7 +111,7 @@ namespace Neptunium.ViewModel
         {
             NepApp.Network.IsConnectedChanged -= Network_IsConnectedChanged;
 
-            SortedAvailableStations.Clear();
+            //SortedAvailableStations.Clear();
             AvailableStations.Clear();
 
             GroupedStations = null;

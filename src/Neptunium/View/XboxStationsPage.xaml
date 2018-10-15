@@ -111,7 +111,7 @@
             </StackPanel>
         </StackPanel>
 
-        <GridView ItemsSource="{Binding SortedAvailableStations, UpdateSourceTrigger=PropertyChanged}"
+        <GridView ItemsSource="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}"
                   SelectionMode="Single"
                   Margin="5"
                   x:Name="stationsGridView"
