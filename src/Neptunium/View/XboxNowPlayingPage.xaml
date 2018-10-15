@@ -24,7 +24,7 @@
                 <RowDefinition Height="100" />
             </Grid.RowDefinitions>
             <Grid Grid.RowSpan="3">
-                <uwp:ImageEx HorizontalAlignment="Stretch"
+                <Image HorizontalAlignment="Stretch"
                        Source="{Binding Background, UpdateSourceTrigger=PropertyChanged}"
                        Visibility="{Binding Background, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
                        Stretch="UniformToFill"

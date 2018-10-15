@@ -145,4 +145,11 @@
   <Artist Name="As One" JPopAsiaUrl="http://www.jpopasia.com/asone/" FanArtTVUrl="https://fanart.tv/artist/64a6d8d7-ffff-42c2-8afb-1f672481b15d/as-one/" OriginCountry="KR">
     <AltName>애즈 원</AltName>
   </Artist>
+  <Artist Name="Kahi" JPopAsiaUrl="https://www.jpopasia.com/parkkahi/" FanArtTVUrl="https://fanart.tv/artist/74946c61-4659-47df-93fc-7d3f0ef7525c/kahi/" OriginCountry="KR">
+    <AltName>가희</AltName>
+    <AltName>Park Ji Young</AltName>
+  </Artist>
+  <Artist Name="2NE1" JPopAsiaUrl="https://www.jpopasia.com/2ne1/" FanArtTVUrl="https://fanart.tv/artist/e119e5ff-0de0-421c-a630-0516c6acede8/2ne1/" OriginCountry="KR">
+    <AltName>투애니원</AltName>
+  </Artist>
 </Artists>

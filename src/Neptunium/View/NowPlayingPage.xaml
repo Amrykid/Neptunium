@@ -38,10 +38,8 @@
                        Source="{Binding Background, UpdateSourceTrigger=PropertyChanged}"
                        Stretch="UniformToFill"
                        Visibility="{Binding Background, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
-                       Opacity=".4"
+                       Opacity="1"
                        VerticalAlignment="Stretch" />
-
-                <controls:GlassPanel x:Name="GlassPanel" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
             </Grid>
 
             <Image x:Name="LargeStationImage"
@@ -60,6 +58,14 @@
                     <ColumnDefinition x:Name="SmallStationImageColumn" Width="135" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+
+                <Grid Background="{ThemeResource SystemControlBackgroundAltHighBrush}"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Grid.ColumnSpan="2"
+                      Visibility="{Binding Background, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
+                      Margin="-20 30"
+                      Opacity=".5" />
 
                 <Image Source="{Binding CurrentSong.StationLogo, UpdateSourceTrigger=PropertyChanged}" 
                        x:Name="SmallStationImage"
@@ -82,12 +88,20 @@
                                x:Name="ArtistTrackBlock"
                                Style="{ThemeResource SubtitleTextBlockStyle}"
                                Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
-
                     <TextBlock Grid.Row="2" Text="{Binding CurrentSong.StationPlayedOn, UpdateSourceTrigger=PropertyChanged}"
                                Style="{ThemeResource CaptionTextBlockStyle}"
                                Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
                 </Grid>
             </Grid>
+
+            <Grid Background="{ThemeResource SystemControlBackgroundAltHighBrush}"
+                  HorizontalAlignment="{Binding ElementName=CommandPanel, Path=HorizontalAlignment, UpdateSourceTrigger=PropertyChanged}"
+                  VerticalAlignment="Stretch"
+                  Grid.ColumnSpan="3"
+                  Grid.Row="2"
+                  Visibility="{Binding Background, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
+                  Width="{Binding ElementName=CommandPanel, Path=ActualWidth, UpdateSourceTrigger=PropertyChanged}"
+                  Opacity=".5" />
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" 
                         Grid.Row="2" Grid.ColumnSpan="3" Margin="0" x:Name="CommandPanel">
@@ -140,7 +154,6 @@
                         <Setter Target="CommandPanel.HorizontalAlignment" Value="Left" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
                         <Setter Target="MetadataPanel.HorizontalAlignment" Value="Left" />
-                        <Setter Target="GlassPanel.IsGlassOn" Value="False" />
                         <Setter Target="BottomRowDef.Height" Value="50" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
@@ -161,7 +174,6 @@
                         <Setter Target="CommandPanel.HorizontalAlignment" Value="Left" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
                         <Setter Target="MetadataPanel.HorizontalAlignment" Value="Left" />
-                        <Setter Target="GlassPanel.IsGlassOn" Value="True" />
                         <Setter Target="BottomRowDef.Height" Value="50" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
                     </VisualState.Setters>
@@ -185,7 +197,6 @@
                         <Setter Target="CommandPanel.HorizontalAlignment" Value="Center" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
                         <Setter Target="MetadataPanel.HorizontalAlignment" Value="Center" />
-                        <Setter Target="GlassPanel.IsGlassOn" Value="True" />
                         <Setter Target="BottomRowDef.Height" Value="50" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
                     </VisualState.Setters>
@@ -209,7 +220,6 @@
                         <Setter Target="CommandPanel.HorizontalAlignment" Value="Center" />
                         <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
                         <Setter Target="MetadataPanel.HorizontalAlignment" Value="Center" />
-                        <Setter Target="GlassPanel.IsGlassOn" Value="True" />
                         <Setter Target="BottomRowDef.Height" Value="0" />
                         <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
                     </VisualState.Setters>

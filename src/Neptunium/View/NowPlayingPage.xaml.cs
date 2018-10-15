@@ -30,7 +30,7 @@ namespace Neptunium.View
     [Crystal3.Navigation.NavigationViewModel(typeof(Neptunium.ViewModel.NowPlayingPageViewModel),
         Crystal3.Navigation.NavigationViewSupportedPlatform.Desktop | Crystal3.Navigation.NavigationViewSupportedPlatform.Mobile | NavigationViewSupportedPlatform.IoT)]
     [Neptunium.Core.UI.NepAppUINoChromePage()]
-    public sealed partial class NowPlayingPage : Page, IMessagingTarget
+    public sealed partial class NowPlayingPage : Page
     {
         private FrameNavigationService inlineNavigationService = null;
         public NowPlayingPage()
@@ -51,8 +51,6 @@ namespace Neptunium.View
             //{
             //    fullScreenButton.Visibility = Visibility.Visible;
             //}
-
-            Messenger.AddTarget(this);
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
@@ -81,11 +79,6 @@ namespace Neptunium.View
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (!Messenger.IsTarget(this))
-            {
-                Messenger.AddTarget(this);
-            }
-
             base.OnNavigatedTo(e);
         }
 
@@ -93,23 +86,12 @@ namespace Neptunium.View
         {
             NepApp.MediaPlayer.IsPlayingChanged -= Media_IsPlayingChanged;
 
-            if (Messenger.IsTarget(this))
-            {
-                Messenger.RemoveTarget(this);
-            }
-
             base.OnNavigatingFrom(e);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             UpdatePlaybackStatus(NepApp.MediaPlayer.IsPlaying);
-
-            if (Window.Current.Bounds.Width < 720)
-            {
-                //ensure the glass is on when we navigate to this page with a small size.
-                GlassPanel.IsGlassOn = true;
-            }
         }
 
         private async void compactViewButton_Click(object sender, RoutedEventArgs e)
@@ -137,29 +119,6 @@ namespace Neptunium.View
 #if DEBUG
             System.Diagnostics.Debug.WriteLine("NowPlayingPage: " + e.OldState?.Name + " -> " + e.NewState?.Name);
 #endif
-        }
-
-        public void OnReceivedMessage(Message message, Action<object> resultCallback)
-        {
-            if (message.Name == "NowPlayingBgColor")
-            {
-                App.Dispatcher.RunWhenIdleAsync(() =>
-                {
-                    if (GlassPanel.IsGlassOn)
-                    {
-                        GlassPanel.ChangeBlurColor((Color)message.Value);
-                    }
-                    else
-                    {
-                        GlassPanel.SetBlurColor((Color)message.Value);
-                    }
-                });
-            }
-        }
-
-        public IEnumerable<string> GetSubscriptions()
-        {
-            return new string[] { "NowPlayingBgColor" };
         }
     }
 }

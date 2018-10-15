@@ -48,12 +48,6 @@ namespace Neptunium.ViewModel
             private set { SetPropertyValue<Uri>(value: value); }
         }
 
-        public Color BackgroundColor
-        {
-            get { return GetPropertyValue<Color>(); }
-            private set { SetPropertyValue<Color>(value: value); }
-        }
-
         public Uri CoverImage
         {
             get { return GetPropertyValue<Uri>(); }
@@ -115,7 +109,7 @@ namespace Neptunium.ViewModel
             });
         }
 
-        private async void UpdateArtwork()
+        private void UpdateArtwork()
         {
             var albumArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Album);
             if (albumArt != null)
@@ -146,16 +140,6 @@ namespace Neptunium.ViewModel
                     {
                         Background = null;
                     }
-                }
-            }
-
-            if (Background != null)
-            {
-                var backgroundColor = await StationSupplementaryDataManager.GetDominantColorAsync(Background);
-                if (backgroundColor != BackgroundColor)
-                {
-                    BackgroundColor = backgroundColor;
-                    await Messenger.SendMessageAsync("NowPlayingBgColor", backgroundColor);
                 }
             }
         }
