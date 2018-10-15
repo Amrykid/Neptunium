@@ -77,8 +77,7 @@ namespace Neptunium.ViewModel
             IsPlaying = NepApp.MediaPlayer.IsPlaying;
             IsMediaEngaged = NepApp.MediaPlayer.IsMediaEngaged;
 
-            UpdateMetadata();
-            UpdateArtwork();
+            UpdateMetadataFollowedByArtwork();
 
             base.OnNavigatedTo(sender, e);
         }
@@ -97,7 +96,7 @@ namespace Neptunium.ViewModel
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
                 IsPlaying = NepApp.MediaPlayer.IsPlaying;
-                UpdateMetadata();
+                UpdateMetadataFollowedByArtwork();
             });
         }
 
@@ -118,7 +117,7 @@ namespace Neptunium.ViewModel
             }
             else
             {
-                CoverImage = NepApp.MediaPlayer.CurrentStream?.ParentStation?.StationLogoUrl;
+                CoverImage = CurrentStation?.StationLogoUrl;
             }
 
             Neptunium.Media.Songs.NepAppSongMetadataBackground backgroundType;
@@ -131,10 +130,10 @@ namespace Neptunium.ViewModel
             {
                 if (NepApp.MediaPlayer.IsPlaying && NepApp.MediaPlayer.CurrentStream != null)
                 {
-                    if (!string.IsNullOrWhiteSpace(NepApp.MediaPlayer.CurrentStream.ParentStation.Background))
+                    if (!string.IsNullOrWhiteSpace(CurrentStation?.Background))
                     {
                         //update the background
-                        Background = new Uri(NepApp.MediaPlayer.CurrentStream.ParentStation.Background);
+                        Background = new Uri(CurrentStation?.Background);
                     }
                     else
                     {
@@ -152,7 +151,7 @@ namespace Neptunium.ViewModel
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                UpdateMetadata();
+                UpdateMetadataFollowedByArtwork();
             });
         }
 
@@ -167,10 +166,10 @@ namespace Neptunium.ViewModel
             base.OnNavigatedFrom(sender, e);
         }
 
-        private void UpdateMetadata()
+        private async void UpdateMetadataFollowedByArtwork()
         {
             CurrentSong = NepApp.SongManager.GetCurrentSongOrUnknown();
-            CurrentStation = NepApp.MediaPlayer.CurrentStream?.ParentStation;
+            CurrentStation = await NepApp.Stations.GetStationByNameAsync(NepApp.MediaPlayer.CurrentStream?.ParentStation);
 
             UpdateArtwork();
         }

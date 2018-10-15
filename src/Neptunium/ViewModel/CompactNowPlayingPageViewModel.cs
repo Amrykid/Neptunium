@@ -36,10 +36,11 @@ namespace Neptunium.ViewModel
             base.OnNavigatedFrom(sender, e);
         }
 
-        private void UpdateMetadata()
+        private async void UpdateMetadata()
         {
             CurrentSong = NepApp.SongManager.CurrentSong;
-            CurrentStation = NepApp.MediaPlayer.CurrentStream?.ParentStation;
+            //todo null check
+            CurrentStation = await NepApp.Stations.GetStationByNameAsync(NepApp.MediaPlayer.CurrentStream?.ParentStation);
         }
 
 

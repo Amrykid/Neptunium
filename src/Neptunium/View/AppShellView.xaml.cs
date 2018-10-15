@@ -265,7 +265,7 @@ namespace Neptunium.View
 
             if (NepApp.MediaPlayer.CurrentStream != null)
             {
-                NepApp.UI.Overlay.ShowSnackBarMessageAsync("Now Streaming - " + NepApp.MediaPlayer.CurrentStream.ParentStation.Name);
+                NepApp.UI.Overlay.ShowSnackBarMessageAsync("Now Streaming - " + NepApp.MediaPlayer.CurrentStream.ParentStation);
             }
         }
 

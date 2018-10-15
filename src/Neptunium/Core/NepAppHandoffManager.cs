@@ -219,15 +219,15 @@ namespace Neptunium
             return await RemoteLauncher.LaunchUriAsync(request, new Uri("nep:" + args));
         }
 
-        public async Task<bool> HandoffStationToRemoteDeviceAsync(RemoteSystem device, StationItem station)
+        public async Task<bool> HandoffStationToRemoteDeviceAsync(RemoteSystem device, string stationName)
         {
             if (!IsSupported) return false;
 
             var data = new ValueSet();
             data.Add("Command", "Play-Station");
-            data.Add("Station", station.Name);
+            data.Add("Station", stationName);
 
-            var status = await LaunchAppOnDeviceAsync(device, "play-station?station=" + station.Name);
+            var status = await LaunchAppOnDeviceAsync(device, "play-station?station=" + stationName);
 
             if (status == RemoteLaunchUriStatus.Success)
             {
@@ -349,7 +349,7 @@ namespace Neptunium
                         response.Add("IsPlaying", NepApp.MediaPlayer.IsPlaying);
 
                         if (NepApp.MediaPlayer.IsPlaying && NepApp.MediaPlayer.CurrentStream != null)
-                            response.Add("CurrentStation", NepApp.MediaPlayer.CurrentStream.ParentStation.Name);
+                            response.Add("CurrentStation", NepApp.MediaPlayer.CurrentStream.ParentStation);
 
                         break;
                     }

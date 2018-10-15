@@ -201,13 +201,13 @@ namespace Neptunium.Media
             CurrentStreamer = streamer;
             CurrentStream = stream;
 
-            NepApp.SongManager.SetCurrentStation(CurrentStream.ParentStation);
+            NepApp.SongManager.SetCurrentStation(await NepApp.Stations.GetStationByNameAsync(CurrentStream.ParentStation));
 
             streamer.Play();
 
             SetMediaEngagement(true);
 
-            NepApp.Stations.SetLastPlayedStation(stream.ParentStation.Name, DateTime.Now);
+            NepApp.Stations.SetLastPlayedStation(stream.ParentStation, DateTime.Now);
             NepApp.SongManager.SetCurrentMetadataToUnknown();
 
             if (streamer.SongMetadata != null)
@@ -379,7 +379,8 @@ namespace Neptunium.Media
 
                 if (!await App.GetIfPrimaryWindowVisibleAsync())
                 {
-                    NepApp.UI.Notifier.ShowErrorToastNotification(CurrentStream, "Uh-Oh!", "An error occurred while casting: " + args.Message);
+                    var currentStation = await NepApp.Stations.GetStationByNameAsync(CurrentStream.ParentStation);
+                    NepApp.UI.Notifier.ShowErrorToastNotification(currentStation, "Uh-Oh!", "An error occurred while casting: " + args.Message);
                 }
             }
         }

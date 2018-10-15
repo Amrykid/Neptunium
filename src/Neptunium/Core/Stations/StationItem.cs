@@ -20,7 +20,7 @@ namespace Neptunium.Core.Stations
 
             foreach (var stream in streams)
             {
-                stream.ParentStation = this;
+                stream.ParentStation = this.Name;
 
                 if (stream.StreamUrl == null) throw new Exception(string.Format("{0} stream doesn't have a url.", stream.ToString()));
             }

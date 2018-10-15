@@ -135,7 +135,7 @@ namespace Neptunium.Core.UI
             toastNotifier.Show(notification);
         }
 
-        internal void ShowErrorToastNotification(StationStream stream, string title, string message)
+        internal void ShowErrorToastNotification(StationItem currentStation, string title, string message)
         {
             ToastContent content = new ToastContent()
             {
@@ -161,11 +161,11 @@ namespace Neptunium.Core.UI
                 }
             };
 
-            if (stream != null)
+            if (currentStation != null)
             {
                 content.Visual.BindingGeneric.AppLogoOverride = new ToastGenericAppLogo()
                 {
-                    Source = stream.ParentStation?.StationLogoUrl.ToString(),
+                    Source = currentStation.StationLogoUrl.ToString(),
                 };
             }
 
@@ -468,7 +468,7 @@ namespace Neptunium.Core.UI
 
                             new AdaptiveText()
                             {
-                                Text = program.Station.Name,
+                                Text = program.Name,
                                 HintStyle = AdaptiveTextStyle.Caption
                             },
                         },

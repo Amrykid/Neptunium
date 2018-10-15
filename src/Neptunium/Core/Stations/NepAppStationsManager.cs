@@ -220,7 +220,7 @@ namespace Neptunium.Core.Stations
 
                     var program = new StationProgram();
                     program.Name = x.Attribute("Name")?.Value;
-                    program.Station = station;
+                    program.Station = station.Name;
 
                     if (x.Attribute("Style") != null)
                     {

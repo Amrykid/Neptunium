@@ -32,7 +32,7 @@ namespace Neptunium.Media
                 streamSource.MetadataChanged += ShoutcastStream_MetadataChanged;
                 StreamMediaSource = MediaSource.CreateFromMediaStreamSource(streamSource.MediaStreamSource);
                 StreamMediaSource.StateChanged += StreamMediaSource_StateChanged;
-                this.StationPlaying = stream.ParentStation;
+                this.StationPlaying = await NepApp.Stations.GetStationByNameAsync(stream.ParentStation);
             }
             catch (Exception ex)
             {

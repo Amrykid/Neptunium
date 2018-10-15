@@ -149,10 +149,10 @@ namespace Neptunium.Media.Songs
             await metadataLock.WaitAsync();
             try
             {
-                CurrentStation = currentStream.ParentStation;
+                CurrentStation = await NepApp.Stations.GetStationByNameAsync(currentStream.ParentStation);
 
                 StationProgram currentProgram = null;
-                if (IsHostedStationProgramBeginning(songMetadata, currentStream, out currentProgram))
+                if (IsHostedStationProgramBeginning(songMetadata, CurrentStation, out currentProgram))
                 {
                     //we're tuning into a hosted radio program. this may be a DJ playing remixes, for example.
 
@@ -164,7 +164,7 @@ namespace Neptunium.Media.Songs
                 {
                     //we're tuned into regular programming/music
 
-                    HandleStationSongMetadata(songMetadata, currentStream);
+                    HandleStationSongMetadata(songMetadata, currentStream, CurrentStation);
                 }
             }
             catch (Exception ex)
@@ -173,7 +173,7 @@ namespace Neptunium.Media.Songs
                 {
                     Dictionary<string, string> properties = new Dictionary<string, string>();
                     properties.Add("Song-Metadata", songMetadata?.ToString());
-                    properties.Add("Current-Station", currentStream?.ParentStation?.Name);
+                    properties.Add("Current-Station", currentStream?.ParentStation);
                     Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, properties);
                 }
                 else
@@ -187,7 +187,7 @@ namespace Neptunium.Media.Songs
             }
         }
 
-        private async void HandleStationSongMetadata(SongMetadata songMetadata, StationStream currentStream)
+        private async void HandleStationSongMetadata(SongMetadata songMetadata, StationStream currentStream, StationItem currentStation)
         {
             if (CurrentProgram != null)
             {
@@ -198,12 +198,12 @@ namespace Neptunium.Media.Songs
             }
 
             //filter out station messages
-            if (currentStream.ParentStation != null)
+            if (!string.IsNullOrWhiteSpace(currentStream.ParentStation))
             {
-                if (currentStream.ParentStation.StationMessages != null)
+                if (currentStation.StationMessages != null)
                 {
-                    if (currentStream.ParentStation.StationMessages.Contains(songMetadata.Track) ||
-                        currentStream.ParentStation.StationMessages.Contains(songMetadata.Artist))
+                    if (currentStation.StationMessages.Contains(songMetadata.Track) ||
+                        currentStation.StationMessages.Contains(songMetadata.Artist))
                     {
                         metadataLock.Release();
                         return;
@@ -280,7 +280,7 @@ namespace Neptunium.Media.Songs
             {
                 RadioProgram = currentProgram,
                 Metadata = songMetadata,
-                Station = currentStream?.ParentStation?.Name
+                Station = currentStream?.ParentStation
             });
 
             CurrentProgram = currentProgram;
@@ -333,7 +333,7 @@ namespace Neptunium.Media.Songs
 
 
 
-        private bool IsHostedStationProgramBeginning(SongMetadata songMetadata, StationStream currentStream, out StationProgram stationProgram)
+        private bool IsHostedStationProgramBeginning(SongMetadata songMetadata, StationItem currentStation, out StationProgram stationProgram)
         {
             try
             {
@@ -356,12 +356,12 @@ namespace Neptunium.Media.Songs
                     return false;
                 };
 
-                if (currentStream.ParentStation?.Programs != null)
+                if (currentStation?.Programs != null)
                 {
-                    if (currentStream.ParentStation.Programs.Any(getStationProgram))
+                    if (currentStation.Programs.Any(getStationProgram))
                     {
                         //we're tuning into a special radio program. this may be a DJ playing remixes, for exmaple.
-                        stationProgram = currentStream.ParentStation.Programs?.First(getStationProgram);
+                        stationProgram = currentStation.Programs?.First(getStationProgram);
 
                         return true;
                     }

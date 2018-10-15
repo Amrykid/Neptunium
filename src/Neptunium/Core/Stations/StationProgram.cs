@@ -10,7 +10,7 @@ namespace Neptunium.Core.Stations
         public string HostRegexExpression { get; set; }
         public string Name { get; set; }
         public StationProgramTimeListing[] TimeListings { get; internal set; }
-        public StationItem Station { get; internal set; }
+        public string Station { get; internal set; }
     }
 
     public class StationProgramTimeListing

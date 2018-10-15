@@ -47,7 +47,8 @@ namespace Neptunium.Core.Media
 
                 await announcementLock.WaitAsync();
 
-                var nowPlayingSsmlData = GenerateSongAnnouncementSsml(songMetadata.Artist, songMetadata.Track, NepApp.MediaPlayer.CurrentStream.ParentStation.PrimaryLocale);
+                var currentStation = await NepApp.Stations.GetStationByNameAsync(NepApp.MediaPlayer.CurrentStream.ParentStation);
+                var nowPlayingSsmlData = GenerateSongAnnouncementSsml(songMetadata.Artist, songMetadata.Track, currentStation?.PrimaryLocale ?? "JP");
                 var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
 
                 double initialVolume = NepApp.MediaPlayer.Volume;
