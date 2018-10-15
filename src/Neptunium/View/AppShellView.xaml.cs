@@ -305,6 +305,8 @@ namespace Neptunium.View
         {
             sleepTimerBtn.Visibility = NepApp.MediaPlayer.IsPlaying ? Visibility.Visible : Visibility.Collapsed;
 
+            NepApp.UI.UpdateSelectedNavigationItems();
+
             //FeedbackButton.Visibility = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported() ? Visibility.Visible : Visibility.Collapsed;
         }
 

@@ -78,7 +78,7 @@ namespace Neptunium.Core.UI
             Overlay = new NepAppUIManagerDialogCoordinator(this, parentControl, snackBarContainer);
         }
 
-        private void UpdateSelectedNavigationItems()
+        internal void UpdateSelectedNavigationItems()
         {
             var pageType = ((FrameNavigationService)inlineNavigationService).NavigationFrame.CurrentSourcePageType;
 
@@ -87,11 +87,13 @@ namespace Neptunium.Core.UI
                 navItem.IsSelected = false;
             }
 
+            var navigationManager = WindowManager.GetNavigationManagerForCurrentWindow();
+
             NepAppUINavigationItem item = null;
             item = navigationItems.FirstOrDefault(x =>
             {
-                var navAttr = pageType.GetTypeInfo().GetCustomAttribute<Crystal3.Navigation.NavigationViewModelAttribute>();
-                return navAttr.ViewModel == x.NavigationViewModelType;
+                var navInfo = navigationManager.GetViewModelInfo(x.NavigationViewModelType);
+                return pageType == navInfo.ViewType;
             });
 
             if (item != null)
