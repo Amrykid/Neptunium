@@ -26,7 +26,7 @@ namespace Neptunium.ViewModel
         {
             App.Dispatcher.RunAsync(() =>
             {
-                UpdateHistory(sender as List<SongHistoryItem>);
+                UpdateHistory(NepApp.SongManager.History.HistoryOfSongs as List<SongHistoryItem>);
             });
         }
 
