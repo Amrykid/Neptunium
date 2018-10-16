@@ -14,6 +14,7 @@ using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Data;
 using Microsoft.Toolkit.Uwp.UI;
+using Windows.Foundation;
 
 namespace Neptunium.ViewModel
 {
@@ -32,6 +33,7 @@ namespace Neptunium.ViewModel
                 try
                 {
                     AvailableStations = new ObservableCollection<StationItem>((await NepApp.Stations.GetStationsAsync()).OrderBy(x => x.Name));
+                    //AvailableStations = new StationsPageObservableVirtualizingCollection((await NepApp.Stations.GetStationsAsync()).Take(5));
 
                     LoadLastPlayedStation();
                 }
@@ -267,5 +269,28 @@ namespace Neptunium.ViewModel
                 }
             }
         });
+
+        //public class StationsPageObservableVirtualizingCollection: ObservableCollection<StationItem>, ISupportIncrementalLoading
+        //{
+        //    public StationsPageObservableVirtualizingCollection(IEnumerable<StationItem> stationItems): base(stationItems)
+        //    {
+
+        //    }
+        //    public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        //    {
+        //        return Task.Run(async () =>
+        //        {
+        //            var items = await NepApp.Stations.GetStationsAsync();
+        //            var newItems = items.Skip(this.Count).Take((int)count);
+        //            await App.Dispatcher.RunAsync(() =>
+        //            {
+        //                foreach (var item in newItems) Add(item);
+        //            });
+        //            return new LoadMoreItemsResult() { Count = (uint)newItems.Count() };
+        //        }).AsAsyncOperation<LoadMoreItemsResult>();
+        //    }
+
+        //    public bool HasMoreItems => this.Count < NepApp.Stations.StationsCount;
+        //}
     }
 }

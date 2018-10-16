@@ -64,6 +64,10 @@ namespace Neptunium.Core.Stations
         public string LastPlayedStationName { get; private set; }
         public DateTime LastPlayedStationDate { get; private set; }
 
+
+        //may or may not be accurate.
+        public int StationsCount { get { return stationItems.Count; } }
+
         private List<Stations.StationItem> stationItems = new List<StationItem>();
 
         internal async Task<StationItem[]> GetStationsAsync()
