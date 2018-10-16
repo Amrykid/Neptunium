@@ -44,6 +44,7 @@ namespace Neptunium.View
 
             NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
             NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
+            NepApp.UI.NoChromeStatusChanged += UI_NoChromeStatusChanged;
 
             NowPlayingTrackTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
             NowPlayingArtistTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
@@ -61,6 +62,18 @@ namespace Neptunium.View
             Messenger.AddTarget(this);
         }
 
+        private void UI_NoChromeStatusChanged(object sender, NepAppUIManagerNoChromeStatusChangedEventArgs e)
+        {
+            if (e.ShouldBeInNoChromeMode)
+            {
+                ActivateNoChromeMode();
+            }
+            else
+            {
+                DeactivateNoChromeMode();
+            }
+        }
+
         private void InlineNavigationService_PreBackRequested(object sender, NavigationManagerPreBackRequestedEventArgs e)
         {
             if (transportGridVisible)
@@ -73,42 +86,45 @@ namespace Neptunium.View
         private bool isInNoChromeMode = false;
         private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
         {
-            if (inlineNavigationService.NavigationFrame.Content?.GetType().GetTypeInfo().GetCustomAttribute<NepAppUINoChromePageAttribute>() != null)
+            
+        }
+
+        private void DeactivateNoChromeMode()
+        {
+            //reactivate chrome
+
+            HeaderGrid.Visibility = Visibility.Visible;
+
+            isInNoChromeMode = false;
+
+            TransportControlGrid.Opacity = 0.1;
+            transportGridVisible = false;
+
+            SplitViewOpenButton.Focus(FocusState.Pointer); //reduces the amount of times that the splitview open button has the focus rectangle when that is used to open the menu.
+
+            if (InlineFrame.Content is IXboxInputPage)
             {
-                //no chrome mode
-                RootSplitView.IsPaneOpen = false;
-                HeaderGrid.Visibility = Visibility.Collapsed;
-                isInNoChromeMode = true;
+                var page = ((IXboxInputPage)InlineFrame.Content);
+                //makes sure that if we go left from the inline frame, we end up selecting the current page's item in the nav list.
+                IEnumerable<NepAppUINavigationItem> items = (IEnumerable<NepAppUINavigationItem>)SplitViewNavigationList.ItemsSource;
+                var selectedItem = items.First(x => x.IsSelected);
+                var container = SplitViewNavigationList.ContainerFromItem(selectedItem);
+                page.SetLeftFocus((UIElement)container);
 
-                TransportControlGrid.Opacity = 0;
-                transportGridVisible = false;
+                //set the upper focus to the hamburger menu
+                page.SetTopFocus(SplitViewOpenButton);
             }
-            else
-            {
-                //reactivate chrome
+        }
 
-                HeaderGrid.Visibility = Visibility.Visible;
+        private void ActivateNoChromeMode()
+        {
+            //no chrome mode
+            RootSplitView.IsPaneOpen = false;
+            HeaderGrid.Visibility = Visibility.Collapsed;
+            isInNoChromeMode = true;
 
-                isInNoChromeMode = false;
-
-                TransportControlGrid.Opacity = 0.1;
-                transportGridVisible = false;
-
-                SplitViewOpenButton.Focus(FocusState.Pointer); //reduces the amount of times that the splitview open button has the focus rectangle when that is used to open the menu.
-
-                if (InlineFrame.Content is IXboxInputPage)
-                {
-                    var page = ((IXboxInputPage)InlineFrame.Content);
-                    //makes sure that if we go left from the inline frame, we end up selecting the current page's item in the nav list.
-                    IEnumerable<NepAppUINavigationItem> items = (IEnumerable<NepAppUINavigationItem>)SplitViewNavigationList.ItemsSource;
-                    var selectedItem = items.First(x => x.IsSelected);
-                    var container = SplitViewNavigationList.ContainerFromItem(selectedItem);
-                    page.SetLeftFocus((UIElement)container);
-
-                    //set the upper focus to the hamburger menu
-                    page.SetTopFocus(SplitViewOpenButton);
-                }
-            }
+            TransportControlGrid.Opacity = 0;
+            transportGridVisible = false;
         }
 
         private void Overlay_DialogShown(object sender, EventArgs e)

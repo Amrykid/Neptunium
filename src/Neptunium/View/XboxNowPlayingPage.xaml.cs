@@ -118,5 +118,16 @@ namespace Neptunium.View
         {
             Messenger.SendMessageAsync("ShowHandoffFlyout", "");
         }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            NepApp.UI.ActivateNoChromeMode();
+            base.OnNavigatedTo(e);
+        }
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            NepApp.UI.DeactivateNoChromeMode();
+            base.OnNavigatingFrom(e);
+        }
     }
 }
