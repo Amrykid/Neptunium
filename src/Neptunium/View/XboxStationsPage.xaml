@@ -48,69 +48,8 @@
             </Setter>
         </Style>
     </Page.Resources>
-    
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="48,0,48,0">
-        <Grid.RowDefinitions>
-            <RowDefinition x:Name="LastPlayedPanelRowDef" Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="0"
-                        Margin="0 0 0 0"
-                        Orientation="Vertical"
-                        x:Name="LastPlayedPanel"
-                        LayoutUpdated="LastPlayedPanel_LayoutUpdated"
-                        Visibility="{Binding LastPlayedStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
-
-            <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
-                           Margin="10 0"
-                           Text="Last Played" />
-
-            <StackPanel Orientation="Horizontal">
-                <AppBarButton Icon="Play" Label="Play" Command="{Binding PlayLastPlayedStationCommand}"
-                              x:Name="LastPlayedPlayButton"
-                              IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}" />
-                <Grid Height="80" VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="75" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <uwp:ImageEx Grid.Column="0"
-                                         Stretch="Fill"
-                                         Width="75"
-                                         Height="75"
-                                         Margin="0 5 0 0"
-                                         VerticalAlignment="Top"
-                                         IsCacheEnabled="True">
-                        <uwp:ImageEx.Source>
-                            <BitmapImage UriSource="{Binding LastPlayedStationLogoUrl, UpdateSourceTrigger=PropertyChanged}" />
-                        </uwp:ImageEx.Source>
-                    </uwp:ImageEx>
-
-                    <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Text="{Binding LastPlayedStation, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" 
-                                            Style="{ThemeResource BaseTextBlockStyle}"
-                                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                            VerticalAlignment="Bottom"/>
-                        <TextBlock Grid.Row="1"
-                                            VerticalAlignment="Top"
-                                            Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                            Style="{ThemeResource BodyTextBlockStyle}">
-                                        <Span>
-                                            <Run Text="{Binding LastPlayedStationDate, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RelTimeConv}}" />
-                                        </Span>
-                        </TextBlock>
-                    </Grid>
-                </Grid>
-            </StackPanel>
-        </StackPanel>
-
         <GridView ItemsSource="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}"
                   SelectionMode="Single"
                   Margin="5"
@@ -118,8 +57,7 @@
                   IsItemClickEnabled="True"
                   Style="{StaticResource TitleSafeGridViewStyle}"
                   ItemClick="stationsGridView_ItemClick"
-                  IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}"
-                  Grid.Row="1">
+                  IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}">
             <GridView.Resources>
                 <Style TargetType="GridViewItemPresenter">
                     <Setter Property="SelectedBackground" Value="{x:Null}" />

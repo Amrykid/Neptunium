@@ -17,6 +17,7 @@ using Windows.Foundation;
 using Windows.UI.Xaml;
 using Neptunium.Core.Media.Audio;
 using Neptunium.Core.Media;
+using Neptunium.Core.Stations;
 
 namespace Neptunium.ViewModel
 {
@@ -67,7 +68,7 @@ namespace Neptunium.ViewModel
             if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowRemoteMenu))
             {
 #endif
-                NepApp.UI.AddNavigationRoute("Remote", typeof(ServerRemotePageViewModel), "");
+            NepApp.UI.AddNavigationRoute("Remote", typeof(ServerRemotePageViewModel), "");
 #if !DEBUG
             }
 #endif
@@ -127,6 +128,61 @@ namespace Neptunium.ViewModel
 #if RELEASE
             await CheckForUpdatesAsync();
 #endif
+
+            AskToStreamLastPlayedStation();
+        }
+
+        private static void AskToStreamLastPlayedStation()
+        {
+            if (!string.IsNullOrWhiteSpace(NepApp.Stations.LastPlayedStationName))
+            {
+                NepApp.UI.Overlay.ShowSnackBarMessageWithCallbackAsync(
+                    string.Format("Continue streaming {0}?", NepApp.Stations.LastPlayedStationName),
+                    "Yes",
+                    TimeSpan.FromSeconds(30),
+                    async msg =>
+                    {
+                        await StreamLastPlayedStationAsync();
+                    });
+            }
+        }
+
+        private static async Task StreamLastPlayedStationAsync()
+        {
+            var station = await NepApp.Stations.GetStationByNameAsync(NepApp.Stations.LastPlayedStationName);
+            if (station != null)
+            {
+                var controller = await NepApp.UI.Overlay.ShowProgressDialogAsync(string.Format("Connecting to {0}...", station.Name), "Please wait...");
+                controller.SetIndeterminate();
+
+                try
+                {
+                    StationStream stream = null;
+                    if (stream == null)
+                    {
+                        //check if we need to automatically choose a lower bitrate.
+                        if ((int)NepApp.Network.NetworkUtilizationBehavior < 2) //check if we're on "conservative" or "opt-in"
+                        {
+                            //grab the stream with the lowest bitrate
+                            stream = station.Streams.OrderBy(x => x.Bitrate).First();
+                        }
+                        else
+                        {
+                            stream = station.Streams.OrderByDescending(x => x.Bitrate).First(); //otherwise, grab a higher bitrate
+                        }
+                    }
+
+                    await NepApp.MediaPlayer.TryStreamStationAsync(stream);
+                }
+                catch (Exception ex)
+                {
+                    await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Couldn't do that!", ex.Message);
+                }
+                finally
+                {
+                    await controller.CloseAsync();
+                }
+            }
         }
 
         private static async Task CheckForUpdatesAsync()

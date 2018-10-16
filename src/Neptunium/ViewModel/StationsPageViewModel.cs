@@ -34,8 +34,6 @@ namespace Neptunium.ViewModel
                 {
                     AvailableStations = new ObservableCollection<StationItem>((await NepApp.Stations.GetStationsAsync()).OrderBy(x => x.Name));
                     //AvailableStations = new StationsPageObservableVirtualizingCollection((await NepApp.Stations.GetStationsAsync()).Take(5));
-
-                    LoadLastPlayedStation();
                 }
                 catch (Exception ex)
                 {
@@ -67,28 +65,10 @@ namespace Neptunium.ViewModel
             }
             else
             {
-                LoadLastPlayedStation();
                 IsBusy = false;
             }
 
             base.OnNavigatedTo(sender, e);
-        }
-
-        private void LoadLastPlayedStation()
-        {
-            LastPlayedStation = NepApp.Stations.LastPlayedStationName;
-            if (!string.IsNullOrWhiteSpace(LastPlayedStation))
-            {
-                IsBusy = true;
-                var station = AvailableStations.FirstOrDefault(x=> x.Name == LastPlayedStation);
-                if (station != null)
-                {
-                    LastPlayedStationLogoUrl = station.StationLogoUrl;
-                    LastPlayedStationDescription = station.Description;
-                }
-
-                LastPlayedStationDate = NepApp.Stations.LastPlayedStationDate;
-            }
         }
 
         private void Network_IsConnectedChanged(object sender, EventArgs e)
@@ -116,11 +96,7 @@ namespace Neptunium.ViewModel
             //SortedAvailableStations.Clear();
             AvailableStations.Clear();
 
-            GroupedStations = null;
             SelectedStation = null;
-            LastPlayedStation = null;
-            LastPlayedStationDescription = null;
-            LastPlayedStationLogoUrl = null;
 
             base.OnNavigatedFrom(sender, e);
         }
@@ -143,57 +119,11 @@ namespace Neptunium.ViewModel
             private set { SetPropertyValue<IAdvancedCollectionView>(value: value); }
         }
 
-        public IEnumerable<IGrouping<string, StationItem>> GroupedStations
-        {
-            get { return GetPropertyValue<IEnumerable<IGrouping<string, StationItem>>>(); }
-            private set { SetPropertyValue<IEnumerable<IGrouping<string, StationItem>>>(value: value); }
-        }
-
         public StationItem SelectedStation
         {
             get { return GetPropertyValue<StationItem>(); }
             private set { SetPropertyValue<StationItem>(value: value); }
         }
-
-        public string LastPlayedStation
-        {
-            get { return GetPropertyValue<string>(); }
-            private set { SetPropertyValue<string>(value: value); }
-        }
-
-        public DateTime LastPlayedStationDate
-        {
-            get { return GetPropertyValue<DateTime>(); }
-            private set { SetPropertyValue<DateTime>(value: value); }
-        }
-
-        public Uri LastPlayedStationLogoUrl
-        {
-            get { return GetPropertyValue<Uri>(); }
-            private set { SetPropertyValue<Uri>(value: value); }
-        }
-
-        public string LastPlayedStationDescription
-        {
-            get { return GetPropertyValue<string>(); }
-            private set { SetPropertyValue<string>(value: value); }
-        }
-
-        public RelayCommand PlayLastPlayedStationCommand => new RelayCommand(async x =>
-        {
-            if (!string.IsNullOrWhiteSpace(LastPlayedStation))
-            {
-                var station = await NepApp.Stations.GetStationByNameAsync(LastPlayedStation);
-                if (station != null)
-                {
-                    ShowStationInfoCommand.Execute(station);
-
-                    LastPlayedStation = null;
-                    LastPlayedStationLogoUrl = null;
-                    LastPlayedStationDescription = null;
-                }
-            }
-        });
 
         public RelayCommand OpenStationWebsiteCommand => new RelayCommand(async station =>
         {

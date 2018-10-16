@@ -308,6 +308,10 @@ namespace Neptunium.Core.UI
         {
             return snackManager.ShowMessageAsync(message, (int)duration.TotalMilliseconds);  
         }
+        public Task ShowSnackBarMessageWithCallbackAsync(string message, string buttonText, TimeSpan duration, Action<SnackBarMessage> callback)
+        {
+            return snackManager.ShowMessageWithCallbackAsync(message, buttonText, callback, (int)duration.TotalMilliseconds);
+        }
 
         public void RegisterDialogFragment<T, V>() where T : NepAppUIDialogFragment where V : Control
         {

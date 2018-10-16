@@ -16,77 +16,13 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition x:Name="LastPlayedPanelRowDef" Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="0"
-                        Margin="0 10 0 10"
-                        Orientation="Vertical"
-                        x:Name="LastPlayedPanel"
-                        LayoutUpdated="LastPlayedPanel_LayoutUpdated"
-                        Visibility="{Binding LastPlayedStation, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}">
-
-            <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
-                           Margin="10 0"
-                           Text="Last Played" />
-
-            <StackPanel Orientation="Horizontal">
-                <AppBarButton Icon="Play" Label="Play" Command="{Binding PlayLastPlayedStationCommand}" 
-                                  VerticalAlignment="Center"
-                                  IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}" />
-                <Grid Height="80" VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="75" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <Image Grid.Column="0"
-                                         Stretch="Fill"
-                                         Width="75"
-                                         Height="75"
-                                         Margin="0 5 0 0"
-                                         VerticalAlignment="Top">
-                        <Image.Source>
-                            <BitmapImage UriSource="{Binding LastPlayedStationLogoUrl, UpdateSourceTrigger=PropertyChanged}"
-                                             DecodePixelHeight="75"
-                                             DecodePixelWidth="75" />
-                        </Image.Source>
-                    </Image>
-
-                    <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
-                        <TextBlock Text="{Binding LastPlayedStation, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" 
-                                            Style="{ThemeResource BaseTextBlockStyle}"
-                                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                            VerticalAlignment="Bottom"/>
-                        <TextBlock Grid.Row="1"
-                                       VerticalAlignment="Top"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                       Style="{ThemeResource BodyTextBlockStyle}"
-                                       TextWrapping="WrapWholeWords">
-                                        <Span>
-                                            <Run Text="{Binding LastPlayedStationDate, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource RelTimeConv}}" />
-                                        </Span>
-                        </TextBlock>
-                    </Grid>
-                </Grid>
-            </StackPanel>
-        </StackPanel>
-
         <ListView ItemsSource="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}"
                       SelectionMode="Single"
                       Margin="5 5 5 15"
                       x:Name="stationsListView"
                       Visibility="Visible"
                       IsItemClickEnabled="True"
-                      IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}"
-                      Grid.Row="1">
+                      IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}">
             <ListView.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="Station Library"
@@ -161,6 +97,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        
         <GridView ItemsSource="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}"
                       SelectionMode="Single"
                       Margin="5"
@@ -168,8 +105,7 @@
                       Visibility="Collapsed"
                       IsItemClickEnabled="True"
                       x:DeferLoadStrategy="Lazy"
-                      IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}"
-                      Grid.Row="1">
+                      IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}">
             <GridView.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="Station Library"
