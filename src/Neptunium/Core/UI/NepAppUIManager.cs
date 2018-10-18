@@ -164,6 +164,8 @@ namespace Neptunium.Core.UI
 
         public void AddNavigationRoute(string displayText, Type navigationViewModel, string symbol = "")
         {
+            if (navigationItems.Any(x => x.DisplayText.Equals(displayText))) return;
+
             NepAppUINavigationItem navItem = new NepAppUINavigationItem();
             navItem.DisplayText = displayText;
             navItem.Symbol = symbol;
