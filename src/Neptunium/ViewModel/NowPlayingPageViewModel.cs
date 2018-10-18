@@ -141,6 +141,12 @@ namespace Neptunium.ViewModel
                     }
                 }
             }
+
+            if (CoverImage == Background && CoverImage != null)
+            {
+                //Sets the cover image to the station logo in the event that the cover image and background image are the same.
+                CoverImage = CurrentStation?.StationLogoUrl;
+            }
         }
 
         private void SongManager_SongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
