@@ -163,7 +163,7 @@
             <ListView.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="Play History"
-                                   Margin="5 0"
+                                   Margin="10 0"
                                    Style="{ThemeResource TitleTextBlockStyle}" />
                 </DataTemplate>
             </ListView.HeaderTemplate>
