@@ -9,8 +9,17 @@ using System.Threading.Tasks;
 
 namespace Neptunium.Core.Media.History
 {
+    public struct SongHistoryItem
+    {
+        public string Track { get; set; }
+        public string Artist { get; set; }
+        public string StationPlayedOn { get; set; }
+
+        public DateTime PlayedDate { get; set; }
+    }
+
     [DataContract]
-    public class SongHistoryItem
+    public class OldSongHistoryItem
     {
         [DataMember]
         public SongMetadata Metadata { get; set; }

@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System.IO;
 using Windows.Storage;
 using Crystal3.Utilities;
+using System.Reactive.Linq;
 
 namespace Neptunium.Core.Media.History
 {
@@ -16,23 +17,30 @@ namespace Neptunium.Core.Media.History
     {
         private JsonSerializer serializer = null;
         private StorageFolder dataFolder = null;
+        private StorageFile historyFile = null;
 
+        public bool IsInitialized { get; private set; }
         public event EventHandler<SongHistorianSongUpdatedEventArgs> SongAdded;
 
         internal SongHistorian()
         {
-            HistoryOfSongs = new List<SongHistoryItem>();
-
             serializer = new JsonSerializer();
         }
         internal async Task InitializeAsync()
         {
-            dataFolder = NepApp.CacheManager.RoamingDataFilesFolder;
+            if (IsInitialized) return;
 
-            StorageFile historyFile = null;
-            if ((historyFile = await dataFolder.CreateFileAsync("History.json", CreationCollisionOption.OpenIfExists)) != null)
+            dataFolder = NepApp.CacheManager.RoamingDataFilesFolder;
+            historyFile = await dataFolder.CreateFileAsync("History.tsv", CreationCollisionOption.OpenIfExists);
+
+            StorageFile oldHistoryFile = await dataFolder.TryGetItemAsync("History.json") as StorageFile;
+            if (oldHistoryFile != null) 
             {
-                var accessStream = await historyFile.OpenReadAsync();
+                var historyOfSongs = new List<SongHistoryItem>();
+
+                //upgrade to the new history format
+
+                var accessStream = await oldHistoryFile.OpenReadAsync();
                 byte[] data = null;
                 using (Stream stream = accessStream.AsStreamForRead())
                 {
@@ -43,76 +51,95 @@ namespace Neptunium.Core.Media.History
                 {
                     using (JsonTextReader jtr = new JsonTextReader(sr))
                     {
-                        var coll = serializer.Deserialize<List<SongHistoryItem>>(jtr);
+                        var coll = serializer.Deserialize<List<OldSongHistoryItem>>(jtr);
 
                         if (coll != null)
                         {
-                            foreach (SongHistoryItem item in coll)
+                            foreach (OldSongHistoryItem oldSongHistoryItem in coll)
                             {
-                                //for song entries that came from another device, the metadata's station logo may point to the wrong file location. we're going to update it for this device.
-                                if (!File.Exists(item.Metadata.StationLogo.LocalPath.ToString()))
-                                {
-                                    item.Metadata.StationLogo = new Uri(NepApp.CacheManager.StationImageCacheFolder.Path + "\\" + item.Metadata.StationLogo.Segments.Last());
-                                }
+                                var newHistoryItem = new SongHistoryItem();
+                                newHistoryItem.Artist = oldSongHistoryItem.Metadata.Artist;
+                                newHistoryItem.Track = oldSongHistoryItem.Metadata.Track;
+                                newHistoryItem.StationPlayedOn = oldSongHistoryItem.Metadata.StationPlayedOn;
+                                newHistoryItem.PlayedDate = oldSongHistoryItem.PlayedDate;
+                                historyOfSongs.Add(newHistoryItem);
                             }
-
-                            HistoryOfSongs.AddRange(coll);
                         }
                     }
                 }
+
+                accessStream.Dispose();
+
+                await oldHistoryFile.DeleteAsync();
+
+                string tsvText = string.Empty;
+                foreach(var item in historyOfSongs)
+                {
+                    tsvText += FormatSongHistoryItemToTSV(item);
+                }
+
+                await FileIO.AppendTextAsync(historyFile, tsvText);
             }
 
-            //todo plug into new caching model
-            //foreach (SongHistoryItem item in HistoryOfSongs)
-            //{
-            //    if (item.Metadata.StationLogo != null)
-            //    {
-            //        if (item.Metadata.StationLogo.Scheme.ToLower().StartsWith("http"))
-            //            item.Metadata.StationLogo = await NepApp.Stations.CacheStationLogoUriAsync(item.Metadata.StationLogo);
-            //    }
-            //}
+            IsInitialized = true;
         }
 
-        public List<SongHistoryItem> HistoryOfSongs { get; private set; }
+        private string FormatSongHistoryItemToTSV(SongHistoryItem item)
+        {
+            return string.Format("{0}\t{1}\t{2}\t{3}\n", item.Track, item.Artist, item.StationPlayedOn, item.PlayedDate);
+        }
+
+
+        private SongHistoryItem ParseSongHistoryItemFromTSVLine(string line)
+        {
+            string strippedLine = line.Trim();
+            string[] splice = strippedLine.Split('\t');
+
+            var result = new SongHistoryItem();
+            result.Track = splice[0].Trim();
+            result.Artist = splice[1].Trim();
+            result.StationPlayedOn = splice[2].Trim();
+            result.PlayedDate = DateTime.Parse(splice[3].Trim());
+
+            return result;
+        }
+
+        public IObservable<SongHistoryItem> GetHistoryOfSongsAsync()
+        {
+            if (!IsInitialized) Observable.Empty<SongHistoryItem>();
+            return Observable.Create<SongHistoryItem>(async o =>
+            {
+                try
+                {
+                    var lines = await FileIO.ReadLinesAsync(historyFile);
+
+                    foreach (var line in lines.Reverse())
+                    {
+                        SongHistoryItem item = ParseSongHistoryItemFromTSVLine(line);
+
+                        o.OnNext(item);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    o.OnError(ex);
+                }
+
+                o.OnCompleted();
+            });
+        }
 
         public async Task AddSongAsync(SongMetadata newMetadata)
         {
+            if (!IsInitialized) return;
+
             if (newMetadata.IsUnknownMetadata) return;
 
-            if (HistoryOfSongs.Count == 100)
-            {
-                HistoryOfSongs.RemoveAt(HistoryOfSongs.Count - 1); //remove the latest item from the end since we're inserting at the beginning.
-            }
-
-            var item = new SongHistoryItem() { Metadata = newMetadata, PlayedDate = DateTime.Now };
-
-            HistoryOfSongs.Insert(0, item);
+            var item = new SongHistoryItem() { Track = newMetadata.Track, Artist = newMetadata.Artist, StationPlayedOn = newMetadata.StationPlayedOn, PlayedDate = DateTime.Now };
 
             SongAdded?.Invoke(this, new SongHistorianSongUpdatedEventArgs(item));
 
-            await SaveHistoryFileAsync();
-        }
-
-        private async Task SaveHistoryFileAsync()
-        {
-            StorageFile historyFile = null;
-            if ((historyFile = await dataFolder.CreateFileAsync("History.json", CreationCollisionOption.OpenIfExists)) != null)
-            {
-                string json = null;
-                var stream = await historyFile.OpenStreamForWriteAsync();
-                using (StringWriter sw = new StringWriter())
-                {
-                    using (JsonTextWriter jtw = new JsonTextWriter(sw))
-                    {
-                        serializer.Serialize(jtw, HistoryOfSongs);
-                    }
-                    json = sw.ToString();
-                }
-                byte[] data = System.Text.UTF8Encoding.UTF8.GetBytes(json);
-                await stream.WriteAsync(data, 0, data.Length);
-                await stream.FlushAsync();
-                stream.Dispose();
-            }
+            await FileIO.AppendTextAsync(historyFile, FormatSongHistoryItemToTSV(item));
         }
     }
 }

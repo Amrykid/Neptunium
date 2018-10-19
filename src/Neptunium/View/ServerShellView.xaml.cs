@@ -46,7 +46,7 @@ namespace Neptunium.View
                     NowPlayingImage.Source = new BitmapImage(NepApp.SongManager.CurrentStation.StationLogoUrlOnline);
                 }
 
-                SongHistoryListView.DataContext = NepApp.SongManager.History.HistoryOfSongs;
+                //SongHistoryListView.DataContext = NepApp.SongManager.History.GetHistoryOfSongsAsync();
             });
         }
     }

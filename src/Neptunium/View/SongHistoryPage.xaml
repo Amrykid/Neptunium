@@ -13,11 +13,6 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
         <Grid.Resources>
             <Style x:Key="TitleSafeListViewStyle" TargetType="ListView">
                 <!-- modified version of the style from here: https://docs.microsoft.com/en-us/windows/uwp/design/devices/designing-for-tv#tv-safe-area -->
@@ -83,22 +78,22 @@
 
 
                             <TextBlock Style="{ThemeResource BaseTextBlockStyle}"
-                                       Text="{Binding Metadata.Track}"
+                                       Text="{Binding Track, Mode=OneTime}"
                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                        TextTrimming="WordEllipsis"
                                        HorizontalAlignment="Left"
-                                       ToolTipService.ToolTip="{Binding Metadata.Track}"
+                                       ToolTipService.ToolTip="{Binding Track, Mode=OneTime}"
                                        VerticalAlignment="Bottom"
                                        Grid.Row="0" />
 
                             <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
                                        Grid.Row="1"
-                                       Text="{Binding Metadata.Artist}" />
+                                       Text="{Binding Artist, Mode=OneTime}" />
 
                             <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
                                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                       Grid.Row="2" Text="{Binding Metadata.StationPlayedOn}"  />
+                                       Grid.Row="2" Text="{Binding StationPlayedOn, Mode=OneTime}"  />
                         </Grid>
                     </Grid>
                     <wrt:ListItemButton.ContextFlyout>
@@ -132,7 +127,7 @@
                                 <RowDefinition Height="1*" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Text="{Binding Metadata.Track}" Grid.Row="0" 
+                            <TextBlock Text="{Binding Track, Mode=OneTime}" Grid.Row="0" 
                                        Style="{ThemeResource TitleTextBlockStyle}"
                                        x:Name="TrackTextBlock"
                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
@@ -143,9 +138,9 @@
                                     Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
                                     Style="{ThemeResource BodyTextBlockStyle}">
                             <Span>
-                                <Run Text="{Binding Metadata.Artist}" />
+                                <Run Text="{Binding Artist, Mode=OneTime}" />
                                 <Run Text="·" FontWeight="ExtraBold" />
-                                <Run Text="{Binding Metadata.StationPlayedOn}" />
+                                <Run Text="{Binding StationPlayedOn, Mode=OneTime}" />
                             </Span>
                             </TextBlock>
                         </Grid>
@@ -161,23 +156,17 @@
             </DataTemplate>
         </Grid.Resources>
 
-        <ComboBox x:Name="HistorySelectionBox" 
-                  Header="Time Frame Selection"
-                  PlaceholderText="Select a time frame."
-                  Margin="10"
-                  ItemsSource="{Binding History, UpdateSourceTrigger=PropertyChanged}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Key.Date, Converter={StaticResource TimeConv}}" />
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-
-        <ListView x:Name="SongHistoryListView" 
-                Grid.Row="1"
+        <ListView x:Name="SongHistoryListView"
                 ScrollViewer.IsVerticalScrollChainingEnabled="True"
-                ItemsSource="{Binding ElementName=HistorySelectionBox, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding History, UpdateSourceTrigger=PropertyChanged}"
                 Style="{StaticResource TitleSafeListViewStyle}">
+            <ListView.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="Play History"
+                                   Margin="5 0"
+                                   Style="{ThemeResource TitleTextBlockStyle}" />
+                </DataTemplate>
+            </ListView.HeaderTemplate>
             <ListView.Transitions>
                 <TransitionCollection>
                     <AddDeleteThemeTransition />

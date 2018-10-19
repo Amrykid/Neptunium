@@ -16,8 +16,14 @@ namespace Neptunium.ViewModel
     {
         protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
+            History = new ObservableCollection<SongHistoryItem>();
+
             NepApp.SongManager.History.SongAdded += History_SongAdded;
-            UpdateHistory(NepApp.SongManager.History.HistoryOfSongs);
+
+            NepApp.SongManager.History.GetHistoryOfSongsAsync().Subscribe(item =>
+            {
+                History.Add(item);
+            });
 
             base.OnNavigatedTo(sender, e);
         }
@@ -26,27 +32,23 @@ namespace Neptunium.ViewModel
         {
             App.Dispatcher.RunAsync(() =>
             {
-                UpdateHistory(NepApp.SongManager.History.HistoryOfSongs as List<SongHistoryItem>);
+                History.Insert(0, e.Item);
             });
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
+            NepApp.SongManager.History.SongAdded -= History_SongAdded;
             History = null;
 
             base.OnNavigatedFrom(sender, e);
         }
+        
 
-
-        private void UpdateHistory(List<SongHistoryItem> collection)
+        public ObservableCollection<SongHistoryItem> History
         {
-            History = collection.GroupBy(x => x.PlayedDate.Date).OrderByDescending(x => x.Key).Select(x => x);
-        }
-
-        public IEnumerable<IGrouping<DateTime, SongHistoryItem>> History
-        {
-            get { return GetPropertyValue<IEnumerable<IGrouping<DateTime, SongHistoryItem>>>(); }
-            private set { SetPropertyValue<IEnumerable<IGrouping<DateTime, SongHistoryItem>>>(value: value); }
+            get { return GetPropertyValue<ObservableCollection<SongHistoryItem>>(); }
+            private set { SetPropertyValue<ObservableCollection<SongHistoryItem>>(value: value); }
         }
 
         public RelayCommand CopyMetadataCommand => new RelayCommand(x =>
@@ -58,9 +60,9 @@ namespace Neptunium.ViewModel
 
                 DataPackage package = new DataPackage();
                 package.Properties.Description = "Song Metadata";
-                package.Properties.Title = item.Metadata.Track;
+                package.Properties.Title = item.Track;
                 package.Properties.ApplicationName = "Neptunium";
-                package.SetText(item.Metadata.ToString());
+                package.SetText(item.ToString());
                 Clipboard.SetContent(package);
 
                 NepApp.UI.Overlay.ShowSnackBarMessageAsync("Copied");
