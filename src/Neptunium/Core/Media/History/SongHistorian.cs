@@ -104,7 +104,31 @@ namespace Neptunium.Core.Media.History
             return result;
         }
 
-        public IObservable<SongHistoryItem> GetHistoryOfSongsAsync()
+        public async Task<IEnumerable<SongHistoryItem>> GetHistoryOfSongsAsync()
+        {
+            if (!IsInitialized) return null;
+
+            List<SongHistoryItem> results = new List<SongHistoryItem>();
+            try
+            {
+                var lines = await FileIO.ReadLinesAsync(historyFile).AsTask().ConfigureAwait(false);
+
+                foreach (var line in lines.Reverse())
+                {
+                    SongHistoryItem item = ParseSongHistoryItemFromTSVLine(line);
+
+                    results.Add(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return results.AsEnumerable();
+        }
+
+        public IObservable<SongHistoryItem> ObserveHistoryOfSongsAsync()
         {
             if (!IsInitialized) Observable.Empty<SongHistoryItem>();
             return Observable.Create<SongHistoryItem>(async o =>

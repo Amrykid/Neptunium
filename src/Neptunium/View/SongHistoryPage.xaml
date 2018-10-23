@@ -120,7 +120,6 @@
         </Grid.Resources>
 
         <ListView x:Name="SongHistoryListView"
-                  ScrollViewer.IsVerticalScrollChainingEnabled="True"
                   ItemTemplate="{StaticResource MobileSongHistoryItemTemplate}"
                   ItemsSource="{Binding History, UpdateSourceTrigger=PropertyChanged}">
             <ListView.HeaderTemplate>
@@ -146,14 +145,7 @@
             <VisualStateGroup>
                 <VisualState x:Name="TabletOrHigherVisualState">
                     <VisualState.StateTriggers>
-                        <wst:CompositeStateTrigger Operator="And">
-                            <wst:CompositeStateTrigger Operator="Or">
-                                <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
-                                <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
-                            </wst:CompositeStateTrigger>
-
-                            <wst:AdaptiveTrigger MinWindowWidth="720" />
-                        </wst:CompositeStateTrigger>
+                        <AdaptiveTrigger MinWindowWidth="720" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
@@ -163,7 +155,7 @@
 
                 <VisualState x:Name="PhoneVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="0" />
+                        <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>

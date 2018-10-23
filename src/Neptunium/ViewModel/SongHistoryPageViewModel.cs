@@ -9,23 +9,46 @@ using Neptunium.Core.Media.History;
 using System.Collections.ObjectModel;
 using Crystal3.UI.Commands;
 using Windows.ApplicationModel.DataTransfer;
+using System.Reactive.Linq;
+using System.Reactive;
 
 namespace Neptunium.ViewModel
 {
-    public class SongHistoryPageViewModel : ViewModelBase
+    public class SongHistoryPageViewModel : UIViewModelBase
     {
-        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            History = new ObservableCollection<SongHistoryItem>();
+            IsBusy = true;
 
-            NepApp.SongManager.History.SongAdded += History_SongAdded;
-
-            NepApp.SongManager.History.GetHistoryOfSongsAsync().Subscribe(item =>
+            try
             {
-                History.Add(item);
-            });
+                //await UI.WaitForUILoadAsync();
 
-            base.OnNavigatedTo(sender, e);
+                NepApp.SongManager.History.SongAdded += History_SongAdded;
+
+                var items = await NepApp.SongManager.History.GetHistoryOfSongsAsync();
+                await App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    if (items == null)
+                    {
+                        History = new ObservableCollection<SongHistoryItem>();
+                    }
+                    else
+                    {
+                        History = new ObservableCollection<SongHistoryItem>(items);
+                    }
+                });
+
+                base.OnNavigatedTo(sender, e);
+            }
+            catch (Exception)
+            {
+                //todo handle exception
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private void History_SongAdded(object sender, SongHistorianSongUpdatedEventArgs e)
