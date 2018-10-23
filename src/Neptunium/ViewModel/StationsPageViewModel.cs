@@ -22,9 +22,9 @@ namespace Neptunium.ViewModel
     {
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.Network.IsConnectedChanged += Network_IsConnectedChanged;
-
             IsBusy = true;
+
+            NepApp.Network.IsConnectedChanged += Network_IsConnectedChanged;
 
             DetectNetworkStatus();
 
@@ -32,7 +32,12 @@ namespace Neptunium.ViewModel
             {
                 try
                 {
-                    AvailableStations = new ObservableCollection<StationItem>((await NepApp.Stations.GetStationsAsync()).OrderBy(x => x.Name));
+                    var items = (await NepApp.Stations.GetStationsAsync().ConfigureAwait(false)).OrderBy(x => x.Name);
+                    await App.Dispatcher.RunWhenIdleAsync(() =>
+                    {
+                        AvailableStations = new ObservableCollection<StationItem>(items);
+                    });
+
                     //AvailableStations = new StationsPageObservableVirtualizingCollection((await NepApp.Stations.GetStationsAsync()).Take(5));
                 }
                 catch (Exception ex)
