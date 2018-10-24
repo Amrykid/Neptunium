@@ -155,4 +155,17 @@
   <Artist Name="Hyolyn" JPopAsiaUrl="https://www.jpopasia.com/hyorin/" FanArtTVUrl="https://fanart.tv/artist/75aff57c-d397-4e6c-b5fc-1f32d7761512/hyolyn/" OriginCountry="KR" PartOf="SISTAR">
     <AltName>효린</AltName>
   </Artist>
+  <Artist Name="Big Bang" JPopAsiaUrl="https://www.jpopasia.com/bigbang/" FanArtTVUrl="https://fanart.tv/artist/ec2bcb77-b9a1-49e2-bfe7-419586bbef48/bigbang/" OriginCountry="KR">
+    <AltName>BIGBANG</AltName>
+    <AltName>빅뱅</AltName>
+  </Artist>
+  <Artist Name="Byul" JPopAsiaUrl="https://www.jpopasia.com/byul/" FanArtTVUrl="https://fanart.tv/artist/7c13311c-5235-4022-b2f1-6860d0c70873/byul/" OriginCountry="KR">
+    <AltName>별</AltName>
+    <AltName>Kim Go-Eun</AltName>
+    <AltName>김고은</AltName>
+  </Artist>
+  <Artist Name="SHINee" JPopAsiaUrl="https://www.jpopasia.com/shinee/" FanArtTVUrl="https://fanart.tv/artist/70e5098b-c4ae-4cd7-9799-3c1b9b57c753/shinee/" OriginCountry="KR">
+    <AltName>Shinee</AltName>
+    <AltName>샤이니</AltName>
+  </Artist>
 </Artists>

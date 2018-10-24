@@ -110,42 +110,18 @@ namespace Neptunium.ViewModel
 
         private void UpdateArtwork()
         {
-            var albumArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Album);
-            if (albumArt != null)
+            if (NepApp.MediaPlayer.IsPlaying && NepApp.MediaPlayer.CurrentStream != null && CurrentStation != null)
             {
-                CoverImage = albumArt;
+                var albumArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Album);
+                var artistArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Artist);
+
+                CoverImage = artistArt ?? CurrentStation.StationLogoUrl;
+                Background = albumArt ?? (!string.IsNullOrWhiteSpace(CurrentStation.Background) ? new Uri(CurrentStation.Background) : null);
             }
             else
             {
-                CoverImage = CurrentStation?.StationLogoUrl;
-            }
-
-            Neptunium.Media.Songs.NepAppSongMetadataBackground backgroundType;
-            if (NepApp.SongManager.ArtworkProcessor.IsSongArtworkAvailable(out backgroundType))
-            {
-                //update the background
-                Background = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(backgroundType);
-            }
-            else
-            {
-                if (NepApp.MediaPlayer.IsPlaying && NepApp.MediaPlayer.CurrentStream != null)
-                {
-                    if (!string.IsNullOrWhiteSpace(CurrentStation?.Background))
-                    {
-                        //update the background
-                        Background = new Uri(CurrentStation?.Background);
-                    }
-                    else
-                    {
-                        Background = null;
-                    }
-                }
-            }
-
-            if (CoverImage == Background && CoverImage != null)
-            {
-                //Sets the cover image to the station logo in the event that the cover image and background image are the same.
-                CoverImage = CurrentStation?.StationLogoUrl;
+                CoverImage = null;
+                Background = null;
             }
         }
 
