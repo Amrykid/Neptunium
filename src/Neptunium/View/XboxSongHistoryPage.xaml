@@ -102,7 +102,6 @@
         </Grid.Resources>
 
         <ListView x:Name="SongHistoryListView"
-                  ScrollViewer.IsVerticalScrollChainingEnabled="True"
                   ItemsSource="{Binding History, UpdateSourceTrigger=PropertyChanged}"
                   Style="{StaticResource TitleSafeListViewStyle}"
                   Margin="48 0 48 0"
