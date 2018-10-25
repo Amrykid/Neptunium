@@ -328,13 +328,13 @@ namespace Neptunium.View
         private void TogglePaneButton_Checked(object sender, RoutedEventArgs e)
         {
             NepApp.UI.Notifier.VibrateClick();
-            RootSplitView.IsPaneOpen = true;
+            RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
         }
 
         private void TogglePaneButton_Unchecked(object sender, RoutedEventArgs e)
         {
             NepApp.UI.Notifier.VibrateClick();
-            RootSplitView.IsPaneOpen = false;
+            RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
         }
 
         private void NowPlayingButton_Click(object sender, RoutedEventArgs e)
