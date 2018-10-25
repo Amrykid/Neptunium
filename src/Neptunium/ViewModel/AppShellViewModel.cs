@@ -134,16 +134,23 @@ namespace Neptunium.ViewModel
 
         private static void AskToStreamLastPlayedStation()
         {
-            if (!string.IsNullOrWhiteSpace(NepApp.Stations.LastPlayedStationName))
+            if (Crystal3.CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
             {
-                NepApp.UI.Overlay.ShowSnackBarMessageWithCallbackAsync(
-                    string.Format("Continue streaming {0}?", NepApp.Stations.LastPlayedStationName),
-                    "Yes",
-                    TimeSpan.FromSeconds(30),
-                    async msg =>
-                    {
-                        await StreamLastPlayedStationAsync();
-                    });
+                if (!string.IsNullOrWhiteSpace(NepApp.Stations.LastPlayedStationName))
+                {
+                    NepApp.UI.Overlay.ShowSnackBarMessageWithCallbackAsync(
+                        string.Format("Continue streaming {0}?", NepApp.Stations.LastPlayedStationName),
+                        "Yes",
+                        TimeSpan.FromSeconds(30),
+                        async msg =>
+                        {
+                            await StreamLastPlayedStationAsync();
+                        });
+                }
+            }
+            else
+            {
+                //for xbox, we'll do something different.
             }
         }
 
