@@ -46,6 +46,9 @@ namespace Neptunium.Core.Media.Bluetooth
         private void DeviceCoordinator_IsBluetoothConnectedChanged(object sender, NepAppMediaBluetoothDeviceCoordinatorIsBluetoothConnectedChangedEventArgs e)
         {
             IsBluetoothModeActive = e.IsConnected;
+
+            //Sets the media volume to be lower so that the song notifications voice sounds louder by comparison.
+            NepApp.MediaPlayer.SetVolume(NepApp.MediaPlayer.IsMediaEngaged ? 0.5 : 1.0);
         }
     }
 }

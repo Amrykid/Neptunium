@@ -24,6 +24,7 @@ namespace Neptunium.Media
     public class NepAppMediaPlayerManager : INepAppFunctionManager, INotifyPropertyChanged
     {
         private SemaphoreSlim playLock = null;
+        private double playerVolume = 1.0;
 
         public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
         internal StationStream CurrentStream { get; private set; }
@@ -37,7 +38,7 @@ namespace Neptunium.Media
         public event PropertyChangedEventHandler PropertyChanged;
         public double Volume
         {
-            get { return (double)CurrentPlayer?.Volume; }
+            get { return playerVolume; }
         }
         public bool IsPlaying { get; private set; }
         public bool IsCasting { get; private set; }
@@ -63,6 +64,16 @@ namespace Neptunium.Media
             Bluetooth = new NepAppMediaBluetoothManager(this);
             Audio = new NepAppAudioManager(this);
             SleepTimer = new NepAppMediaSleepTimer(this);
+        }
+
+        internal void SetVolume(double value)
+        {
+            if (value > 1.0 || value < 0.0) throw new ArgumentOutOfRangeException(nameof(value));
+
+            playerVolume = value;
+
+            if (CurrentPlayer != null)
+                CurrentPlayer.Volume = playerVolume;
         }
 
         internal void Pause()
@@ -189,6 +200,7 @@ namespace Neptunium.Media
             CurrentPlayer.AudioCategory = MediaPlayerAudioCategory.Media;
             CurrentPlayer.CommandManager.IsEnabled = true;
             CurrentPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Multimedia;
+            CurrentPlayer.Volume = playerVolume;
             CurrentPlayer.MediaFailed += CurrentPlayer_MediaFailed;
             CurrentPlayerSession = CurrentPlayer.PlaybackSession;
             CurrentPlayerSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
