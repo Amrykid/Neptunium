@@ -83,7 +83,6 @@ namespace Neptunium.View
             }
         }
 
-        private bool isInNoChromeMode = false;
         private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
         {
             
@@ -94,8 +93,6 @@ namespace Neptunium.View
             //reactivate chrome
 
             HeaderGrid.Visibility = Visibility.Visible;
-
-            isInNoChromeMode = false;
 
             TransportControlGrid.Opacity = 0.1;
             transportGridVisible = false;
@@ -121,7 +118,6 @@ namespace Neptunium.View
             //no chrome mode
             RootSplitView.IsPaneOpen = false;
             HeaderGrid.Visibility = Visibility.Collapsed;
-            isInNoChromeMode = true;
 
             TransportControlGrid.Opacity = 0;
             transportGridVisible = false;
@@ -227,7 +223,7 @@ namespace Neptunium.View
             if (e.Key == Windows.System.VirtualKey.GamepadY)
             {
                 if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
-                if (isInNoChromeMode) return;
+                if (NepApp.UI.IsInNoChromeMode) return;
                 if (transportGridAnimating) return;
 
                 if (!transportGridVisible)

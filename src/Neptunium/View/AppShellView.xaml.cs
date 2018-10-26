@@ -40,7 +40,6 @@ namespace Neptunium.View
     public sealed partial class AppShellView : Page, Crystal3.Messaging.IMessagingTarget
     {
         private FrameNavigationService inlineNavigationService = null;
-        private volatile bool isInNoChromeMode = false;
         public AppShellView()
         {
             this.InitializeComponent();
@@ -95,7 +94,10 @@ namespace Neptunium.View
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+                if (!NepApp.UI.IsInNoChromeMode)
+                {
+                    bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+                }
 
                 if (NepApp.MediaPlayer.IsMediaEngaged)
                 {
@@ -113,8 +115,11 @@ namespace Neptunium.View
         {
             WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
 
-            bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
-            topAppBar.Visibility = Visibility.Visible;
+            if (!NepApp.UI.IsInNoChromeMode)
+            {
+                bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+                topAppBar.Visibility = Visibility.Visible;
+            }
         }
 
         private void Media_IsCastingChanged(object sender, EventArgs e)
@@ -123,7 +128,7 @@ namespace Neptunium.View
             {
                 UpdateCastingUI();
 
-                if (!isInNoChromeMode)
+                if (!NepApp.UI.IsInNoChromeMode)
                     SetTitleBarAndMobileStatusBarToMatchAppBar();
             });
         }
@@ -181,7 +186,7 @@ namespace Neptunium.View
 
         private void CollapseBottomAppBarBasedOnSize()
         {
-            if (NepApp.UI.Overlay.IsOverlayedDialogVisible)
+            if (NepApp.UI.Overlay.IsOverlayedDialogVisible && !NepApp.UI.IsInNoChromeMode)
             {
                 //only collapse the app bars on smaller screens.
                 if (Window.Current.Bounds.Width < 720)
@@ -242,8 +247,6 @@ namespace Neptunium.View
 
             if (!ShellVisualStateGroup.States.Contains(PhoneVisualState))
                 ShellVisualStateGroup.States.Add(PhoneVisualState);
-
-            isInNoChromeMode = false;
         }
 
         private void ActivateNoChromeMode()
@@ -269,8 +272,6 @@ namespace Neptunium.View
             ShellVisualStateGroup.States.Remove(DesktopVisualState);
             ShellVisualStateGroup.States.Remove(TabletVisualState);
             ShellVisualStateGroup.States.Remove(PhoneVisualState);
-
-            isInNoChromeMode = true;
         }
 
         IndefiniteWorkStatusManagerControl statusControl = null;
