@@ -96,7 +96,7 @@ namespace Neptunium.Core.Media
                 }
             }
 
-            //if not native language names are available, check if theres a specific way to pronounce their name.
+            //if no native language names are available, check if theres a specific way to pronounce their name.
 
             if (!string.IsNullOrWhiteSpace(builtInArtist.NameSayAs))
                 return builtInArtist.NameSayAs;
