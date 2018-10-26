@@ -110,7 +110,7 @@ namespace Neptunium.ViewModel
 
         private void UpdateArtwork()
         {
-            if (NepApp.MediaPlayer.IsPlaying && NepApp.MediaPlayer.CurrentStream != null && CurrentStation != null)
+            if (NepApp.MediaPlayer.CurrentStream != null && CurrentStation != null && IsMediaEngaged)
             {
                 var albumArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Album);
                 var artistArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Artist);
