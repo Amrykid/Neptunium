@@ -16,6 +16,11 @@ namespace Neptunium.Core.Media.History
         public string StationPlayedOn { get; set; }
 
         public DateTime PlayedDate { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("{0} - {1}", Track, Artist);
+        }
     }
 
     [DataContract]
