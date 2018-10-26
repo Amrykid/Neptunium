@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -139,7 +138,21 @@ namespace Neptunium.Core.Media.Metadata
 
                 if (artistElement.Elements("AltName") != null)
                 {
-                    artistEntry.AltNames = artistElement.Elements("AltName").Select(x => x.Value).ToArray();
+
+                    artistEntry.AltNames = artistElement.Elements("AltName").Select(altNameElement =>
+                    {
+                        string name = altNameElement.Value;
+                        string lang = "en";
+                        string sayAs = null;
+
+                        if (altNameElement.Attribute("Lang") != null)
+                            lang = altNameElement.Attribute("Lang").Value;
+
+                        if (altNameElement.Attribute("SayAs") != null)
+                            sayAs = altNameElement.Attribute("SayAs").Value;
+
+                        return new BuiltinArtistEntryAltName(name, lang, sayAs);
+                    }).ToArray();
                 }
 
                 if (artistElement.Attribute("FanArtTVUrl") != null)
@@ -150,6 +163,20 @@ namespace Neptunium.Core.Media.Metadata
                 if (artistElement.Attribute("OriginCountry") != null)
                 {
                     artistEntry.CountryOfOrigin = artistElement.Attribute("OriginCountry").Value;
+                }
+
+                if (artistElement.Attribute("NameLanguage") != null)
+                {
+                    artistEntry.NameLanguage = artistElement.Attribute("NameLanguage").Value;
+                }
+                else
+                {
+                    artistEntry.NameLanguage = "en";
+                }
+
+                if (artistElement.Attribute("SayAs") != null)
+                {
+                    artistEntry.NameSayAs = artistElement.Attribute("SayAs").Value;
                 }
 
                 //Adds the artist entry to the list.
@@ -225,7 +252,7 @@ namespace Neptunium.Core.Media.Metadata
         /// <summary>
         /// The name of the artist.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; internal set; }
         /// <summary>
         /// The URL of their JPopAsiaUrl page, if they have one.
         /// </summary>
@@ -233,7 +260,7 @@ namespace Neptunium.Core.Media.Metadata
         /// <summary>
         /// A list of alternative names that the artist has.
         /// </summary>
-        public string[] AltNames { get; set; }
+        public BuiltinArtistEntryAltName[] AltNames { get; set; }
         /// <summary>
         /// The URL of their FanArtTVUrl page, if they have one.
         /// </summary>
@@ -242,6 +269,40 @@ namespace Neptunium.Core.Media.Metadata
         /// The country of origin for the artist.
         /// </summary>
         public string CountryOfOrigin { get; internal set; }
+        /// <summary>
+        /// The language the artist's name is in.
+        /// </summary>
+        public string NameLanguage { get; internal set; } = "en";
+        /// <summary>
+        /// How to pronounce the artist's name, if applicable.
+        /// </summary>
+        public string NameSayAs { get; internal set; }
+    }
+
+    /// <summary>
+    /// An object representing an alternative way to refer to an artist.
+    /// </summary>
+    public struct BuiltinArtistEntryAltName
+    {
+        public BuiltinArtistEntryAltName(string name, string lang = "en", string sayAs = null)
+        {
+            NameLanguage = lang;
+            Name = name;
+            NameSayAs = sayAs;
+        }
+
+        /// <summary>
+        /// The alternative name
+        /// </summary>
+        public string Name { get; private set; }
+        /// <summary>
+        /// The language the name is in.
+        /// </summary>
+        public string NameLanguage { get; private set; }
+        /// <summary>
+        /// How to pronounce the name, if applicable.
+        /// </summary>
+        public string NameSayAs { get; private set; }
     }
 
     /// <summary>

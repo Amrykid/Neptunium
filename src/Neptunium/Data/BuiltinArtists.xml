@@ -2,27 +2,27 @@
 <!--Pre-configured artist links for JPopAsia. These are unlikely to change. This list is for some artists that (I've discovered while testing that) have harder to guess urls on JPopAsia.com along with some of my personal favorites.-->
 <Artists>
   <Artist Name="BONNIE PINK" JPopAsiaUrl="http://www.jpopasia.com/bonniepink/">
-    <AltName>浅田 香織 </AltName>
+    <AltName Lang="jp">浅田 香織 </AltName>
   </Artist>
   <Artist Name="Superfly" JPopAsiaUrl="http://www.jpopasia.com/superfly/" FanArtTVUrl="https://fanart.tv/artist/8b55db74-4717-44e1-b799-35f6e1b8fa10/superfly/" />
   <Artist Name="BoA" JPopAsiaUrl="http://www.jpopasia.com/boa/" FanArtTVUrl="https://fanart.tv/artist/a16d1433-ba89-4f72-a47b-a370add0bb55/boa/" />
   <Artist Name="Girls' Generation" JPopAsiaUrl="http://www.jpopasia.com/girlsgeneration/" FanArtTVUrl="https://fanart.tv/artist/b7442f18-d9be-4185-8b51-482510046156/girls-generation/">
-    <AltName>소녀시대</AltName>
-    <AltName>少女時代</AltName>
+    <AltName Lang="kr">소녀시대</AltName>
+    <AltName Lang="jp">少女時代</AltName>
   </Artist>
   <Artist Name="May J" JPopAsiaUrl="http://www.jpopasia.com/mayj/">
     <AltName>May J.</AltName>
   </Artist>
   <Artist Name="Kana Nishino" JPopAsiaUrl="http://www.jpopasia.com/kananishino/" FanArtTVUrl="https://fanart.tv/artist/04da690e-d317-428a-b231-43fc4b59ef83/nishino-kana/">
     <AltName>Nishino Kana</AltName>
-    <AltName>西野カナ</AltName>
+    <AltName Lang="jp">西野カナ</AltName>
   </Artist>
   <Artist Name="Utada Hikaru" JPopAsiaUrl="http://www.jpopasia.com/hikaruutada/" FanArtTVUrl="https://fanart.tv/artist/b539e453-c4fe-47e3-8a07-8517eac74429/utada-hikaru/">
     <AltName>Hikaru Utada</AltName>
-    <AltName>宇多田 ヒカル</AltName>
+    <AltName Lang="jp">宇多田 ヒカル</AltName>
   </Artist>
   <Artist Name="PUFFY" JPopAsiaUrl="http://www.jpopasia.com/puffy/" FanArtTVUrl="https://fanart.tv/artist/ed8e205b-2b03-48f8-b068-37b7a553fdad/puffy/">
-    <AltName>パフィー</AltName>
+    <AltName Lang="jp">パフィー</AltName>
     <AltName>Puffy AmiYumi</AltName>
   </Artist>
   <Artist Name="Kis-My-Ft2" JPopAsiaUrl="http://www.jpopasia.com/kismyft2/" />
@@ -31,77 +31,77 @@
   <Artist Name="FLOW" JPopAsiaUrl="http://www.jpopasia.com/flow/" FanArtTVUrl="https://fanart.tv/artist/a0387b9b-236d-475f-8846-b2dea4af1112/flow/" />
   <Artist Name="Perfume" JPopAsiaUrl="http://www.jpopasia.com/perfume/" FanArtTVUrl="https://fanart.tv/artist/486067ad-56d6-48b5-957b-d6cfe3e1af73/perfume/" />
   <Artist Name="Ayumi Hamasaki" JPopAsiaUrl="http://www.jpopasia.com/ayumihamasaki/" FanArtTVUrl="https://fanart.tv/artist/2b615bcf-baa0-4657-b9a5-1a5f34c386c4/hamasaki-ayumi/">
-    <AltName>浜崎 あゆみ</AltName>
+    <AltName Lang="jp">浜崎 あゆみ</AltName>
     <AltName>Hamasaki Ayumi</AltName>
     <AltName>Ayu</AltName>
   </Artist>
   <Artist Name="Megumi Hayashibara" JPopAsiaUrl="http://www.jpopasia.com/megumihayashibara/">
-    <AltName>林原 めぐみ</AltName>
+    <AltName Lang="jp">林原 めぐみ</AltName>
   </Artist>
   <Artist Name="B.A.P" JPopAsiaUrl="http://www.jpopasia.com/bap/" />
   <Artist Name="Ailee" JPopAsiaUrl="http://www.jpopasia.com/ailee/" FanArtTVUrl="https://fanart.tv/artist/cecc42fb-9657-4b54-ad2f-7b73eefaef12/ailee/">
-    <AltName>에일리</AltName>
+    <AltName Lang="kr">에일리</AltName>
   </Artist>
   <Artist Name="f(x)" JPopAsiaUrl="http://www.jpopasia.com/fx/">
-    <AltName>에프엑스</AltName>
+    <AltName Lang="kr">에프엑스</AltName>
   </Artist>
   <Artist Name="A9" JPopAsiaUrl="http://www.jpopasia.com/alicenine/">
-    <AltName>アリス九號</AltName>
+    <AltName Lang="jp">アリス九號</AltName>
     <AltName>Alice Nine</AltName>
   </Artist>
   <Artist Name="Koda Kumi" JPopAsiaUrl="http://www.jpopasia.com/kumikoda/" FanArtTVUrl="https://fanart.tv/artist/455641ea-fff4-49f6-8fb4-49f961d8f1ac/koda-kumi/">
-    <AltName>倖田來未</AltName>
+    <AltName Lang="jp">倖田來未</AltName>
     <AltName>Kumi Koda</AltName>
   </Artist>
   <Artist Name="school food punishment" JPopAsiaUrl="http://www.jpopasia.com/schoolfoodpunishment/" />
   <Artist Name="GARNiDELiA" JPopAsiaUrl="http://www.jpopasia.com/garnidelia/" FanArtTVUrl="https://fanart.tv/artist/9bdb5e93-32e4-4dbb-9fac-b8771e1c1551/garnidelia/" />
   <Artist Name="LiSA" JPopAsiaUrl="http://www.jpopasia.com/lisa/">
-    <AltName>織部里沙</AltName>
+    <AltName Lang="jp">織部里沙</AltName>
   </Artist>
   <!--Fun Fact: These two entries below are the same person (in case it wasn't obvious from the name).-->
   <Artist Name="Tommy heavenly6" JPopAsiaUrl="http://www.jpopasia.com/tommyheavenly6/">
-    <AltName>川瀬 智子</AltName>
+    <AltName Lang="jp">川瀬 智子</AltName>
   </Artist>
   <Artist Name="Tommy february6" JPopAsiaUrl="http://www.jpopasia.com/tommyfebruary6/">
-    <AltName>川瀬 智子</AltName>
+    <AltName Lang="jp">川瀬 智子</AltName>
   </Artist>
   <!--End fun fact-->
   <Artist Name="Eir Aoi" JPopAsiaUrl="http://www.jpopasia.com/aoieir/" FanArtTVUrl="https://fanart.tv/artist/9e190e5d-3612-43c6-9381-d4972efca5c3/aoi-eir/">
-    <AltName>藍井エイル</AltName>
+    <AltName Lang="jp">藍井エイル</AltName>
     <AltName>Aoi Eir</AltName>
   </Artist>
   <Artist Name="Nissy" JPopAsiaUrl="http://www.jpopasia.com/takahironishijima/">
-    <AltName>西島隆弘</AltName>
+    <AltName Lang="jp">西島隆弘</AltName>
   </Artist>
   <Artist Name="ONE OK ROCK" JPopAsiaUrl="http://www.jpopasia.com/oneokrock/" FanArtTVUrl="https://fanart.tv/artist/6ef00829-fa94-4fee-a5a6-b28e1208e96a/one-ok-rock/">
-    <AltName>ワンオクロック</AltName>
+    <AltName Lang="jp">ワンオクロック</AltName>
   </Artist>
   <Artist Name="May'n" JPopAsiaUrl="http://www.jpopasia.com/mayn/">
-    <AltName>中林 芽依</AltName>
+    <AltName Lang="jp">中林 芽依</AltName>
     <AltName>May Nakabayashi</AltName>
     <AltName>Nakabayashi Mei</AltName>
   </Artist>
   <Artist Name="Ikimonogakari" JPopAsiaUrl="http://www.jpopasia.com/ikimonogakari/" FanArtTVUrl="https://fanart.tv/artist/18191eea-369f-42e8-96ab-c1c24e4d0011/ikimono-gakari/">
     <AltName>Ikimono-gakari</AltName>
-    <AltName>いきものがかり</AltName>
+    <AltName Lang="jp">いきものがかり</AltName>
   </Artist>
   <Artist Name="Miku Hatsune" JPopAsiaUrl="http://www.jpopasia.com/mikuhatsune/">
     <AltName>Hatsune Miku</AltName>
-    <AltName>初音ミク</AltName>
+    <AltName Lang="jp">初音ミク</AltName>
   </Artist>
   <Artist Name="BABYMETAL" JPopAsiaUrl="http://www.jpopasia.com/babymetal/" FanArtTVUrl="https://fanart.tv/artist/27e2997f-f7a1-4353-bcc4-57b9274fa9a4/babymetal/">
   </Artist>
   <Artist Name="Namie Amuro" JPopAsiaUrl="http://www.jpopasia.com/namieamuro/" FanArtTVUrl="https://fanart.tv/artist/888994e5-6f53-4f53-bced-b20482aea42a/amuro-namie/">
     <AltName>Amura</AltName>
     <AltName>Amuro Namie</AltName>
-    <AltName>安室奈美恵</AltName>
+    <AltName Lang="jp">安室奈美恵</AltName>
   </Artist>
   <Artist Name="SISTAR" JPopAsiaUrl="http://www.jpopasia.com/sistar/" FanArtTVUrl="https://fanart.tv/artist/f5bff650-07d0-4f8c-bf48-45497f465b79/sistar/">
-    <AltName>씨스타</AltName>
+    <AltName Lang="kr">씨스타</AltName>
   </Artist>
   <Artist Name="Aya Hirano" JPopAsiaUrl="http://www.jpopasia.com/ayahirano/" FanArtTVUrl="https://fanart.tv/artist/dfe0486a-d8f7-449a-a1ce-192803b3b537/hirano-aya/">
     <AltName>Hirano Aya</AltName>
-    <AltName>平野綾</AltName>
+    <AltName Lang="jp">平野綾</AltName>
   </Artist>
   <Artist Name="5dolls" FanArtTVUrl="https://fanart.tv/artist/51af7767-570f-4aea-a9e1-420713a8d9b9/5dolls/">
   </Artist>
@@ -114,13 +114,13 @@
   </Artist>
   <Artist Name="Fifteen And" JPopAsiaUrl="http://www.jpopasia.com/15and/">
     <AltName><![CDATA[15&]]></AltName>
-    <AltName>피프틴앤드</AltName>
+    <AltName Lang="kr">피프틴앤드</AltName>
   </Artist>
   <Artist Name="Park Ji Min" PartOf="Fifteen And">
     <AltName><![CDATA[Park Ji Min (15&)]]></AltName>
   </Artist>
   <Artist Name="2PM" JPopAsiaUrl="http://www.jpopasia.com/2pm/" FanArtTVUrl="https://fanart.tv/artist/9b94ac1a-b997-4414-9385-96178b5ef99c/2pm/">
-    <AltName>투피엠</AltName>
+    <AltName Lang="kr">투피엠</AltName>
   </Artist>
   <Artist Name="Apink" JPopAsiaUrl="http://www.jpopasia.com/apink/" FanArtTVUrl="https://fanart.tv/artist/9102bdf6-b03e-4470-9f78-12127c4995cc/apink/">
   </Artist>
@@ -128,11 +128,11 @@
     <AltName>Gina Choi</AltName>
   </Artist>
   <Artist Name="Rainbow" JPopAsiaUrl="http://www.jpopasia.com/rainbow/" FanArtTVUrl="https://fanart.tv/artist/64af8439-3319-4ad5-847c-79f828603427/rainbow/">
-    <AltName>레인보우</AltName>
+    <AltName Lang="kr">레인보우</AltName>
   </Artist>
   <Artist Name="Tahiti" JPopAsiaUrl="http://www.jpopasia.com/tahiti/" FanArtTVUrl="https://fanart.tv/artist/d8ea971d-7933-4bad-b188-ebbf4293dc1b/tahiti/">
     <AltName>TAHITI</AltName>
-    <AltName>타히티</AltName>
+    <AltName Lang="kr">타히티</AltName>
   </Artist>
   <Artist Name="Speed" JPopAsiaUrl="http://www.jpopasia.com/speed/" FanArtTVUrl="https://fanart.tv/artist/dee1f6b1-4459-49c5-aef3-0f98d15c122f/speed/" OriginCountry="JP">
   </Artist>
@@ -140,32 +140,32 @@
   </Artist>
   <Artist Name="INFINITE" JPopAsiaUrl="http://www.jpopasia.com/infinite/" FanArtTVUrl="https://fanart.tv/artist/c175f8b3-47f8-46d4-a4cf-cb92fe7a37ae/infinite/" OriginCountry="KR">
     <AltName>Infinite</AltName>
-    <AltName>인피니트</AltName>
+    <AltName Lang="kr">인피니트</AltName>
   </Artist>
   <Artist Name="As One" JPopAsiaUrl="http://www.jpopasia.com/asone/" FanArtTVUrl="https://fanart.tv/artist/64a6d8d7-ffff-42c2-8afb-1f672481b15d/as-one/" OriginCountry="KR">
-    <AltName>애즈 원</AltName>
+    <AltName Lang="kr">애즈 원</AltName>
   </Artist>
   <Artist Name="Kahi" JPopAsiaUrl="https://www.jpopasia.com/parkkahi/" FanArtTVUrl="https://fanart.tv/artist/74946c61-4659-47df-93fc-7d3f0ef7525c/kahi/" OriginCountry="KR">
-    <AltName>가희</AltName>
+    <AltName Lang="kr">가희</AltName>
     <AltName>Park Ji Young</AltName>
   </Artist>
   <Artist Name="2NE1" JPopAsiaUrl="https://www.jpopasia.com/2ne1/" FanArtTVUrl="https://fanart.tv/artist/e119e5ff-0de0-421c-a630-0516c6acede8/2ne1/" OriginCountry="KR">
-    <AltName>투애니원</AltName>
+    <AltName Lang="kr">투애니원</AltName>
   </Artist>
   <Artist Name="Hyolyn" JPopAsiaUrl="https://www.jpopasia.com/hyorin/" FanArtTVUrl="https://fanart.tv/artist/75aff57c-d397-4e6c-b5fc-1f32d7761512/hyolyn/" OriginCountry="KR" PartOf="SISTAR">
-    <AltName>효린</AltName>
+    <AltName Lang="kr">효린</AltName>
   </Artist>
   <Artist Name="Big Bang" JPopAsiaUrl="https://www.jpopasia.com/bigbang/" FanArtTVUrl="https://fanart.tv/artist/ec2bcb77-b9a1-49e2-bfe7-419586bbef48/bigbang/" OriginCountry="KR">
     <AltName>BIGBANG</AltName>
-    <AltName>빅뱅</AltName>
+    <AltName Lang="kr">빅뱅</AltName>
   </Artist>
   <Artist Name="Byul" JPopAsiaUrl="https://www.jpopasia.com/byul/" FanArtTVUrl="https://fanart.tv/artist/7c13311c-5235-4022-b2f1-6860d0c70873/byul/" OriginCountry="KR">
     <AltName>별</AltName>
     <AltName>Kim Go-Eun</AltName>
-    <AltName>김고은</AltName>
+    <AltName Lang="kr">김고은</AltName>
   </Artist>
-  <Artist Name="SHINee" JPopAsiaUrl="https://www.jpopasia.com/shinee/" FanArtTVUrl="https://fanart.tv/artist/70e5098b-c4ae-4cd7-9799-3c1b9b57c753/shinee/" OriginCountry="KR">
-    <AltName>Shinee</AltName>
-    <AltName>샤이니</AltName>
+  <Artist Name="SHINee" JPopAsiaUrl="https://www.jpopasia.com/shinee/" FanArtTVUrl="https://fanart.tv/artist/70e5098b-c4ae-4cd7-9799-3c1b9b57c753/shinee/" OriginCountry="KR" SayAs="Shiny">
+    <AltName Lang="en" SayAs="Shiny">Shinee</AltName>
+    <AltName Lang="kr">샤이니</AltName>
   </Artist>
 </Artists>
