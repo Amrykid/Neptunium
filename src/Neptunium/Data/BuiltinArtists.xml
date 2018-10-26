@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <!--Pre-configured artist links for JPopAsia. These are unlikely to change. This list is for some artists that (I've discovered while testing that) have harder to guess urls on JPopAsia.com along with some of my personal favorites.-->
 <Artists>
-  <Artist Name="BONNIE PINK" JPopAsiaUrl="http://www.jpopasia.com/bonniepink/">
-    <AltName Lang="jp">浅田 香織 </AltName>
+  <Artist Name="BONNIE PINK" JPopAsiaUrl="http://www.jpopasia.com/bonniepink/" MusicBrainzUrl="https://musicbrainz.org/artist/ffa25bb8-a082-4b47-aa4c-9ef48df98dc6">
+    <AltName Lang="jp">浅田 香織</AltName>
   </Artist>
-  <Artist Name="Superfly" JPopAsiaUrl="http://www.jpopasia.com/superfly/" FanArtTVUrl="https://fanart.tv/artist/8b55db74-4717-44e1-b799-35f6e1b8fa10/superfly/" />
-  <Artist Name="BoA" JPopAsiaUrl="http://www.jpopasia.com/boa/" FanArtTVUrl="https://fanart.tv/artist/a16d1433-ba89-4f72-a47b-a370add0bb55/boa/" />
-  <Artist Name="Girls' Generation" JPopAsiaUrl="http://www.jpopasia.com/girlsgeneration/" FanArtTVUrl="https://fanart.tv/artist/b7442f18-d9be-4185-8b51-482510046156/girls-generation/">
+  <Artist Name="Superfly" JPopAsiaUrl="http://www.jpopasia.com/superfly/" FanArtTVUrl="https://fanart.tv/artist/8b55db74-4717-44e1-b799-35f6e1b8fa10/superfly/" MusicBrainzUrl="https://musicbrainz.org/artist/8b55db74-4717-44e1-b799-35f6e1b8fa10" />
+  <Artist Name="BoA" JPopAsiaUrl="http://www.jpopasia.com/boa/" FanArtTVUrl="https://fanart.tv/artist/a16d1433-ba89-4f72-a47b-a370add0bb55/boa/" MusicBrainzUrl="https://musicbrainz.org/artist/a16d1433-ba89-4f72-a47b-a370add0bb55">
+    <AltName Lang="kr">권보아</AltName>
+  </Artist>
+  <Artist Name="Girls' Generation" JPopAsiaUrl="http://www.jpopasia.com/girlsgeneration/" FanArtTVUrl="https://fanart.tv/artist/b7442f18-d9be-4185-8b51-482510046156/girls-generation/"
+          MusicBrainzUrl="https://musicbrainz.org/artist/b7442f18-d9be-4185-8b51-482510046156">
     <AltName Lang="kr">소녀시대</AltName>
     <AltName Lang="jp">少女時代</AltName>
   </Artist>
@@ -167,5 +170,11 @@
   <Artist Name="SHINee" JPopAsiaUrl="https://www.jpopasia.com/shinee/" FanArtTVUrl="https://fanart.tv/artist/70e5098b-c4ae-4cd7-9799-3c1b9b57c753/shinee/" OriginCountry="KR" SayAs="Shiny">
     <AltName Lang="en" SayAs="Shiny">Shinee</AltName>
     <AltName Lang="kr">샤이니</AltName>
+  </Artist>
+  <Artist Name="T-ara" JPopAsiaUrl="https://www.jpopasia.com/tara/" FanArtTVUrl="https://fanart.tv/artist/4103d05e-da2a-4744-81ae-f8dc3e81728c/t-ara/" OriginCountry="KR" SayAs="T-Air-ah">
+    <AltName Lang="kr">티아라</AltName>
+  </Artist>
+  <Artist Name="PSY" JPopAsiaUrl="https://www.jpopasia.com/psy/" FanArtTVUrl="https://fanart.tv/artist/f99b7d67-4e63-4678-aa66-4c6ac0f7d24a/psy/" 
+          MusicBrainzUrl="https://musicbrainz.org/artist/f99b7d67-4e63-4678-aa66-4c6ac0f7d24a" OriginCountry="KR" SayAs="PSY">
   </Artist>
 </Artists>

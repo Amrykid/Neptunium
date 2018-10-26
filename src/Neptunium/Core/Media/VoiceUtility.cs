@@ -1,5 +1,6 @@
 ﻿using Crystal3;
 using Neptunium.Core.Media.Metadata;
+using Neptunium.Core.Stations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,8 @@ namespace Neptunium.Core.Media
 
                 if (japaneseFemaleVoice == null)
                 {
-                    japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x => x.Language.ToLower().StartsWith("ja") && x.Gender == VoiceGender.Female && x.DisplayName.Contains("Haruka"));
+                    japaneseFemaleVoice = SpeechSynthesizer.AllVoices.FirstOrDefault(x => x.Language.ToLower().StartsWith("ja") 
+                        && x.Gender == VoiceGender.Female && x.DisplayName.Contains("Haruka"));
                 }
 
                 if (koreanFemaleVoice == null)
@@ -48,7 +50,12 @@ namespace Neptunium.Core.Media
                 await announcementLock.WaitAsync();
 
                 var currentStation = await NepApp.Stations.GetStationByNameAsync(NepApp.MediaPlayer.CurrentStream.ParentStation);
-                var nowPlayingSsmlData = GenerateSongAnnouncementSsml(songMetadata.Artist, songMetadata.Track, currentStation?.PrimaryLocale ?? "JP");
+
+
+                string artistName = await FindAppropriateArtistNameAsync(songMetadata, currentStation);
+                var nowPlayingSsmlData = GenerateSongAnnouncementSsml(artistName, songMetadata.Track, currentStation?.PrimaryLocale ?? "JP");
+
+
                 var stream = await speechSynth.SynthesizeSsmlToStreamAsync(nowPlayingSsmlData);
 
                 double initialVolume = NepApp.MediaPlayer.Volume;
@@ -66,6 +73,35 @@ namespace Neptunium.Core.Media
             {
 
             }
+        }
+
+        private static async Task<string> FindAppropriateArtistNameAsync(SongMetadata songMetadata, StationItem stationItem)
+        {
+            //This method tries to find a localized name for the artist, if applicable. This makes speech sound more natural.
+
+            var builtInArtist = await ArtistFetcher.FindBuiltInArtistAsync(songMetadata.Artist, stationItem.PrimaryLocale ?? "jp");
+
+            if (builtInArtist == null) return songMetadata.Artist;
+
+            //prefer native language over english name, if possible.
+
+            if (builtInArtist.AltNames?.Length > 0)
+            {
+                foreach(var name in builtInArtist.AltNames.Where(x => x.NameLanguage.ToLower() != "en"))
+                {
+                    if (CheckIfLocaleVoiceIsAvailable(name.NameLanguage) && name.NameLanguage.ToLower().Equals(stationItem.PrimaryLocale.ToLower() ?? "jp"))
+                    {
+                        return name.Name;
+                    }
+                }
+            }
+
+            //if not native language names are available, check if theres a specific way to pronounce their name.
+
+            if (!string.IsNullOrWhiteSpace(builtInArtist.NameSayAs))
+                return builtInArtist.NameSayAs;
+
+            return songMetadata.Artist; //fallback
         }
 
         private static async Task PlayAnnouncementAudioStreamAsync(SpeechSynthesisStream stream, VoiceMode voiceMode)
@@ -123,16 +159,7 @@ namespace Neptunium.Core.Media
 
             var phrase = phrases[index];
 
-            bool nativeVoiceAvailable = false;
-            switch (locale.ToLower().Trim())
-            {
-                case "ja":
-                    nativeVoiceAvailable = japaneseFemaleVoice != null;
-                    break;
-                case "kr":
-                    nativeVoiceAvailable = koreanFemaleVoice != null;
-                    break;
-            }
+            bool nativeVoiceAvailable = CheckIfLocaleVoiceIsAvailable(locale);
 
             if (index == 3 && nativeVoiceAvailable)
                 index = 1;
@@ -218,6 +245,23 @@ namespace Neptunium.Core.Media
             builder.AppendLine("</voice>");
             builder.AppendLine("</speak>");
             return builder.ToString();
+        }
+
+        private static bool CheckIfLocaleVoiceIsAvailable(string locale)
+        {
+            bool nativeVoiceAvailable = false;
+            switch (locale.ToLower().Trim())
+            {
+                case "jp":
+                case "ja":
+                    nativeVoiceAvailable = japaneseFemaleVoice != null;
+                    break;
+                case "kr":
+                    nativeVoiceAvailable = koreanFemaleVoice != null;
+                    break;
+            }
+
+            return nativeVoiceAvailable;
         }
     }
 

@@ -48,6 +48,7 @@ namespace Neptunium.Core.Media.Metadata
                         await Task.Delay(500); //500 ms sleep
 
                         //Next, try and grab artist data from musicbrainz.
+                        //todo take advantage of built-in artists who have musicbrainz urls defined.
                         artistData = await metaSrc.TryFindArtistAsync(originalMetadata.Artist, station.PrimaryLocale);
 
                         //Grab information about the artist from JPopAsia.com

@@ -48,33 +48,7 @@ namespace Neptunium.Core.Media.Metadata
                 {
                     //We couldn't get to the artist from a direct url here, We're gonna have to search
 
-                    //Pull up our pre-cached list of artists and search there. See: BuiltinArtists.xml
-                    var builtInList = await GetBuiltinArtistEntriesAsync();
-                    //Try and find an entry with the same name as the artist.
-                    BuiltinArtistEntry builtInMatch = builtInList.FirstOrDefault(x => x.Name.ToLower().Equals(artistName.ToLower()));
-
-                    if (builtInMatch == null) //If we don't find a direct match, we'll need to do some digging.
-                    {
-                        builtInMatch = builtInList.FirstOrDefault(x =>
-                        {
-                            //Figure out if we should check using locale as an additional test case. If the country of origin (on the artist) or station locale (on the station) isn't defined, we just return true.
-                            bool countryLocaleMatches = (!string.IsNullOrWhiteSpace(x.CountryOfOrigin) && !string.IsNullOrWhiteSpace(stationLocale) ? x.CountryOfOrigin.Equals(stationLocale) : true);
-
-                            //Try and find an approximate match.
-                            if (x.Name.ToLower().FuzzyEquals(artistName.ToLower(), .9) && countryLocaleMatches) return true;
-
-                            //Last resort, we split the name via a space and try the reverse order. Japanese names are sometimes sent over in "Family-Name First-Name" order instead of "First-Name Family-Name"
-                            if (artistName.Contains(" ")) //e.g. "Ayumi Hamasaki" vs. "Hamasaki Ayumi"
-                            {
-                                //string lastNameFirstNameSwappedName = string.Join(" ", artistName.Split(' ').Reverse()); //splices, reverses and joins: "Ayumi Hamasaki" -> ["Ayumi","Hamasaki"] -> ["Hamasaki", "Ayumi"] -> "Hamasaki Ayumi"
-
-                                //Checks all alternative names listed for the artist to see if they roughly match.
-                                return x.AltNames.Any(str => str.FuzzyEquals(artistName.ToLower(), .9)) && countryLocaleMatches;
-                            }
-
-                            return false;
-                        });
-                    }
+                    BuiltinArtistEntry builtInMatch = await FindBuiltInArtistAsync(artistName, stationLocale);
 
                     //If we found a match, access it here.
                     if (builtInMatch != null)
@@ -110,6 +84,39 @@ namespace Neptunium.Core.Media.Metadata
 
             //If all else fails, return null.
             return null;
+        }
+
+        internal static async Task<BuiltinArtistEntry> FindBuiltInArtistAsync(string artistName, string stationLocale)
+        {
+            //Pull up our pre-cached list of artists and search there. See: BuiltinArtists.xml
+            var builtInList = await GetBuiltinArtistEntriesAsync();
+            //Try and find an entry with the same name as the artist.
+            BuiltinArtistEntry builtInMatch = builtInList.FirstOrDefault(x => x.Name.ToLower().Equals(artistName.ToLower()));
+
+            if (builtInMatch == null) //If we don't find a direct match, we'll need to do some digging.
+            {
+                builtInMatch = builtInList.FirstOrDefault(x =>
+                {
+                    //Figure out if we should check using locale as an additional test case. If the country of origin (on the artist) or station locale (on the station) isn't defined, we just return true.
+                    bool countryLocaleMatches = (!string.IsNullOrWhiteSpace(x.CountryOfOrigin) && !string.IsNullOrWhiteSpace(stationLocale) ? x.CountryOfOrigin.Equals(stationLocale) : true);
+
+                    //Try and find an approximate match.
+                    if (x.Name.ToLower().FuzzyEquals(artistName.ToLower(), .9) && countryLocaleMatches) return true;
+
+                    //Last resort, we split the name via a space and try the reverse order. Japanese names are sometimes sent over in "Family-Name First-Name" order instead of "First-Name Family-Name"
+                    if (artistName.Contains(" ")) //e.g. "Ayumi Hamasaki" vs. "Hamasaki Ayumi"
+                    {
+                        //string lastNameFirstNameSwappedName = string.Join(" ", artistName.Split(' ').Reverse()); //splices, reverses and joins: "Ayumi Hamasaki" -> ["Ayumi","Hamasaki"] -> ["Hamasaki", "Ayumi"] -> "Hamasaki Ayumi"
+
+                        //Checks all alternative names listed for the artist to see if they roughly match.
+                        return x.AltNames.Any(y => y.Name.FuzzyEquals(artistName.ToLower(), .9)) && countryLocaleMatches;
+                    }
+
+                    return false;
+                });
+            }
+
+            return builtInMatch;
         }
 
         /// <summary>
@@ -158,6 +165,11 @@ namespace Neptunium.Core.Media.Metadata
                 if (artistElement.Attribute("FanArtTVUrl") != null)
                 {
                     artistEntry.FanArtTVUrl = new Uri(artistElement.Attribute("FanArtTVUrl").Value);
+                }
+
+                if (artistElement.Attribute("MusicBrainzUrl") != null)
+                {
+                    artistEntry.MusicBrainzUrl = new Uri(artistElement.Attribute("MusicBrainzUrl").Value);
                 }
 
                 if (artistElement.Attribute("OriginCountry") != null)
@@ -277,6 +289,7 @@ namespace Neptunium.Core.Media.Metadata
         /// How to pronounce the artist's name, if applicable.
         /// </summary>
         public string NameSayAs { get; internal set; }
+        public Uri MusicBrainzUrl { get; internal set; }
     }
 
     /// <summary>
