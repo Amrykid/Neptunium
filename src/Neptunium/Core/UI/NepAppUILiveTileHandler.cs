@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Neptunium.Core.Media.Metadata;
 using Neptunium.Media.Songs;
+using Windows.UI.Core;
+using Windows.UI.Notifications;
 
 namespace Neptunium.Core.UI
 {
@@ -15,6 +17,24 @@ namespace Neptunium.Core.UI
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged += SongManager_SongChanged;
             NepApp.SongManager.StationRadioProgramStarted += SongManager_StationRadioProgramStarted;
+        }
+
+        internal void ClearLiveTileAndMediaNotifcation()
+        {
+            if (!NepApp.IsServerMode)
+            {
+                if (App.GetDevicePlatform() == Crystal3.Core.Platform.Desktop || App.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                {
+                    //clears the tile if we're suspending.
+                    TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+                }
+
+                if (!NepApp.MediaPlayer.IsPlaying)
+                {
+                    //removes the now playing notification from the action center.
+                    ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
+                }
+            }
         }
 
         private void SongManager_StationRadioProgramStarted(object sender, NepAppStationProgramStartedEventArgs e)

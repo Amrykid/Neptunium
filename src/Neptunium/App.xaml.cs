@@ -363,20 +363,7 @@ namespace Neptunium
 
         protected override Task OnSuspendingAsync()
         {
-            if (!NepApp.IsServerMode)
-            {
-                if (App.GetDevicePlatform() == Crystal3.Core.Platform.Desktop || App.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-                {
-                    //clears the tile if we're suspending.
-                    TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-                }
-
-                if (!NepApp.MediaPlayer.IsPlaying)
-                {
-                    //removes the now playing notification from the action center.
-                    ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
-                }
-            }
+            NepApp.UI.LiveTileHandler.ClearLiveTileAndMediaNotifcation();
 
             return Task.CompletedTask;
         }
