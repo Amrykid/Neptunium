@@ -71,7 +71,11 @@ namespace Neptunium
 
             if (RemoteSystemAccess == RemoteSystemAccessStatus.Allowed)
             {
-                remoteSystemWatcher = RemoteSystem.CreateWatcher(new IRemoteSystemFilter[] { new RemoteSystemDiscoveryTypeFilter(RemoteSystemDiscoveryType.SpatiallyProximal) });
+                remoteSystemWatcher = RemoteSystem.CreateWatcher(new IRemoteSystemFilter[] {
+                    new RemoteSystemDiscoveryTypeFilter(RemoteSystemDiscoveryType.Proximal),
+                    new RemoteSystemAuthorizationKindFilter(RemoteSystemAuthorizationKind.SameUser),
+                    new RemoteSystemStatusTypeFilter(RemoteSystemStatusType.Available)
+                });
                 remoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcher_RemoteSystemAdded;
                 remoteSystemWatcher.RemoteSystemRemoved += RemoteSystemWatcher_RemoteSystemRemoved;
                 remoteSystemWatcher.RemoteSystemUpdated += RemoteSystemWatcher_RemoteSystemUpdated;
