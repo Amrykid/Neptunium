@@ -60,10 +60,6 @@ namespace Neptunium.Media.Songs
                 //album artwork
                 Uri albumArtUri = null;
 
-                if (currentSongWithMetadata.FanArtTVBackgroundUrl != null)
-                {
-                    albumArtUri = currentSongWithMetadata.FanArtTVBackgroundUrl;
-                }
                 if (currentSongWithMetadata.Album != null && albumArtUri == null)
                 {
                     if (!string.IsNullOrWhiteSpace(currentSongWithMetadata.Album?.AlbumCoverUrl))
@@ -88,6 +84,11 @@ namespace Neptunium.Media.Songs
                 if (!string.IsNullOrWhiteSpace(currentSongWithMetadata.ArtistInfo?.ArtistImage))
                 {
                     artistArtUri = new Uri(currentSongWithMetadata.ArtistInfo?.ArtistImage);
+                }
+                else if (currentSongWithMetadata.FanArtTVBackgroundUrl != null)
+                {
+                    //from FanArt.TV
+                    artistArtUri = currentSongWithMetadata.FanArtTVBackgroundUrl;
                 }
                 else if (currentSongWithMetadata.JPopAsiaArtistInfo != null)
                 {

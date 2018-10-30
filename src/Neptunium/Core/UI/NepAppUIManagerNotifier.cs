@@ -312,8 +312,19 @@ namespace Neptunium.Core.UI
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
 
             string imgUrl = null;
-            if (nowPlaying is ExtendedSongMetadata)
-                imgUrl = ((ExtendedSongMetadata)nowPlaying).Album?.AlbumCoverUrl?.ToString();
+            if (nowPlaying is ExtendedSongMetadata && NepApp.SongManager.CurrentSong == nowPlaying)
+            {
+                var albumArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Neptunium.Media.Songs.NepAppSongMetadataBackground.Album);
+                var artistArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Neptunium.Media.Songs.NepAppSongMetadataBackground.Artist);
+
+                imgUrl = albumArt?.ToString();
+
+                if (string.IsNullOrWhiteSpace(imgUrl))
+                {
+                    imgUrl = artistArt?.ToString() ?? nowPlaying.StationLogo.ToString();
+                }
+            }
+
             if (string.IsNullOrWhiteSpace(imgUrl))
                 imgUrl = nowPlaying.StationLogo.ToString();
 
