@@ -177,4 +177,8 @@
   <Artist Name="PSY" JPopAsiaUrl="https://www.jpopasia.com/psy/" FanArtTVUrl="https://fanart.tv/artist/f99b7d67-4e63-4678-aa66-4c6ac0f7d24a/psy/" 
           MusicBrainzUrl="https://musicbrainz.org/artist/f99b7d67-4e63-4678-aa66-4c6ac0f7d24a" OriginCountry="KR" SayAs="PSY">
   </Artist>
+  <Artist Name="F.Cuz" JPopAsiaUrl="https://www.jpopasia.com/fcuz/" FanArtTVUrl="https://fanart.tv/artist/57f9b89b-4840-4c3a-9792-0e591670a8fa/fcuz/" 
+          MusicBrainzUrl="https://musicbrainz.org/artist/57f9b89b-4840-4c3a-9792-0e591670a8fa" OriginCountry="KR" SayAs="Focus">
+    <AltName Lang="kr">포커즈</AltName>
+  </Artist>
 </Artists>
