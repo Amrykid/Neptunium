@@ -40,13 +40,17 @@ namespace Neptunium.View
     public sealed partial class AppShellView : Page, Crystal3.Messaging.IMessagingTarget
     {
         private FrameNavigationService inlineNavigationService = null;
+        private ApplicationView applicationView = null;
+        private CoreApplicationView coreApplicationView = null;
         public AppShellView()
         {
             this.InitializeComponent();
 
-            CoreApplicationView view = CoreApplication.GetCurrentView();
-            if (view != null)
-                view.TitleBar.ExtendViewIntoTitleBar = false;
+            coreApplicationView = CoreApplication.GetCurrentView();
+            if (coreApplicationView != null)
+                coreApplicationView.TitleBar.ExtendViewIntoTitleBar = false;
+
+            applicationView = ApplicationView.GetForCurrentView();
 
             SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
 
@@ -160,11 +164,12 @@ namespace Neptunium.View
             }
 
 
-            ApplicationView.GetForCurrentView().TitleBar.BackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
-            ApplicationView.GetForCurrentView().TitleBar.ButtonBackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
+            applicationView.TitleBar.BackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
+            applicationView.TitleBar.ButtonBackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
+            applicationView.TitleBar.ButtonForegroundColor = null;
         }
 
-        private void SetMobileStatusBarToTransparent()
+        private void SetMobileStatusBarAndDesktopTitlebarToTransparent()
         {
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
@@ -174,9 +179,11 @@ namespace Neptunium.View
                 statusBar.BackgroundOpacity = 0.0;
             }
 
-            ApplicationView.GetForCurrentView().TitleBar.BackgroundColor = Colors.Transparent;
-            ApplicationView.GetForCurrentView().TitleBar.ButtonBackgroundColor = Colors.Transparent;
+            applicationView.TitleBar.BackgroundColor = Colors.Transparent;
+            applicationView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
 
+            var uiSettings = new Windows.UI.ViewManagement.UISettings();
+            applicationView.TitleBar.ButtonForegroundColor = uiSettings.GetColorValue(UIColorType.AccentLight3);
         }
 
         private void Current_SizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
@@ -210,6 +217,7 @@ namespace Neptunium.View
         private void DeactivateNoChromeMode()
         {
             //reactivate chrome
+            coreApplicationView.TitleBar.ExtendViewIntoTitleBar = false;
 
             topAppBar.Visibility = Visibility.Visible;
             bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
@@ -232,7 +240,7 @@ namespace Neptunium.View
 
             SetTitleBarAndMobileStatusBarToMatchAppBar();
 
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+            
 
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
@@ -252,6 +260,7 @@ namespace Neptunium.View
         private void ActivateNoChromeMode()
         {
             //no chrome mode
+            coreApplicationView.TitleBar.ExtendViewIntoTitleBar = true;
 
             topAppBar.Visibility = Visibility.Collapsed;
             bottomAppBar.Visibility = Visibility.Collapsed;
@@ -259,9 +268,9 @@ namespace Neptunium.View
             RootSplitView.IsPaneOpen = false;
             RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
 
-            SetMobileStatusBarToTransparent();
+            SetMobileStatusBarAndDesktopTitlebarToTransparent();
 
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+
 
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
