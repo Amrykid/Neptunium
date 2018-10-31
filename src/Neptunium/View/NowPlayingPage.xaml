@@ -19,116 +19,93 @@
     </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Image x:Name="LargeImageBackground"
+            Source="{Binding Background, UpdateSourceTrigger=PropertyChanged}"
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Stretch="UniformToFill"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch" />
+
         <Grid x:Name="SongInfoPanel"
               Visibility="{Binding IsMediaEngaged, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVisConv}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition x:Name="SongInfoRowDef" Height="200" />
-                <RowDefinition Height="75" />
-                <RowDefinition x:Name="BottomRowDef" Height="50" />
+                <RowDefinition Height="200" />
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width=".33*" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width=".33*" />
-            </Grid.ColumnDefinitions>
-            <Grid Grid.RowSpan="4" Grid.ColumnSpan="3">
-                <uwp:ImageEx HorizontalAlignment="Center"
-                       x:Name="BackgroundImage"
-                       Source="{Binding Background, UpdateSourceTrigger=PropertyChanged}"
-                       Stretch="UniformToFill"
-                       Visibility="{Binding Background, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
-                       Opacity="1"
-                       VerticalAlignment="Stretch" />
-            </Grid>
 
-            <Image x:Name="LargeStationImage"
-                   Grid.Column="1"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   MaxHeight="300"
-                   MaxWidth="300"
-                   MinHeight="100"
-                   MinWidth="100"                   
-                   Source="{Binding CoverImage, UpdateSourceTrigger=PropertyChanged}"
-                   Visibility="Collapsed" />
+            <Image Source="{Binding CoverImage, UpdateSourceTrigger=PropertyChanged}" 
+                   x:Name="StationImage"
+                   Visibility="{Binding Background, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvNullToVisConv}}"
+                   Width="200" Height="200" />
 
-            <Grid Grid.Row="1" Grid.ColumnSpan="3" x:Name="MetadataPanel" HorizontalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition x:Name="SmallStationImageColumn" Width="135" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+
+            <Grid Grid.Row="1" x:Name="MediaPanel" HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100" />
+                    <RowDefinition Height="100" />
+                </Grid.RowDefinitions>
+
 
                 <Grid Background="{ThemeResource SystemControlBackgroundAltHighBrush}"
-                      HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
-                      Grid.ColumnSpan="2"
+                      Grid.RowSpan="2"
                       Visibility="{Binding Background, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
-                      Margin="-20 30"
                       Opacity=".5" />
 
-                <Image Source="{Binding CurrentSong.StationLogo, UpdateSourceTrigger=PropertyChanged}" 
-                       x:Name="SmallStationImage"
-                       Grid.Column="0" Width="100" Height="100" />
-                <Grid Grid.Column="1" VerticalAlignment="Center" x:Name="TrackArtistPanel" Margin="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" MaxHeight="125" />
-                        <RowDefinition Height="30" />
-                        <RowDefinition Height="20" />
-                    </Grid.RowDefinitions>
+                <Grid Grid.Row="0" x:Name="MetadataPanel" HorizontalAlignment="Stretch" Margin="20 0">
+                    <Grid Grid.Column="1" VerticalAlignment="Center" x:Name="TrackArtistPanel" Margin="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" MaxHeight="125" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="0" Text="{Binding CurrentSong.Track, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBlock Grid.Row="0" Text="{Binding CurrentSong.Track, UpdateSourceTrigger=PropertyChanged}"
                                x:Name="TrackTextBlock"
                                VerticalAlignment="Bottom"
                                MaxLines="2"
                                Style="{ThemeResource TitleTextBlockStyle}"
                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" />
 
-                    <TextBlock Grid.Row="1" Text="{Binding CurrentSong.Artist, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBlock Grid.Row="1" Text="{Binding CurrentSong.Artist, UpdateSourceTrigger=PropertyChanged}"
                                x:Name="ArtistTrackBlock"
                                Style="{ThemeResource SubtitleTextBlockStyle}"
                                Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
-                    <TextBlock Grid.Row="2" Text="{Binding CurrentSong.StationPlayedOn, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBlock Grid.Row="2" Text="{Binding CurrentSong.StationPlayedOn, UpdateSourceTrigger=PropertyChanged}"
                                Style="{ThemeResource CaptionTextBlockStyle}"
                                Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
+                    </Grid>
                 </Grid>
-            </Grid>
 
-            <Grid Background="{ThemeResource SystemControlBackgroundAltHighBrush}"
-                  HorizontalAlignment="{Binding ElementName=CommandPanel, Path=HorizontalAlignment, UpdateSourceTrigger=PropertyChanged}"
-                  VerticalAlignment="Stretch"
-                  Grid.ColumnSpan="3"
-                  Grid.Row="2"
-                  Visibility="{Binding Background, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource NullToVisConv}}"
-                  Width="{Binding ElementName=CommandPanel, Path=ActualWidth, UpdateSourceTrigger=PropertyChanged}"
-                  Opacity=".5" />
-
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" 
-                        Grid.Row="2" Grid.ColumnSpan="3" Margin="0" x:Name="CommandPanel">
-                <StackPanel.Resources>
-                    <Style TargetType="Button">
-                        <Setter Property="Margin" Value="5 0" />
-                        <Setter Property="Height" Value="75" />
-                        <Setter Property="Width" Value="75" />
-                        <Setter Property="Background" Value="Transparent" />
-                    </Style>
-                </StackPanel.Resources>
-                <!--todo add a play button, a full screen button and some casting buttons -->
-                <Button x:Name="playPauseButton" ToolTipService.ToolTip="Play/Pause">
-                    <SymbolIcon Symbol="Play" />
-                </Button>
-                <Button ToolTipService.ToolTip="Cast" Command="{Binding MediaCastingCommand}">
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE952;" />
-                </Button>
-                <Button ToolTipService.ToolTip="Handoff" x:Name="HandoffButton" Click="HandoffButton_Click">
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
-                </Button>
-                <!--<AppBarToggleButton Icon="FullScreen" Label="Fullscreen" x:Name="fullScreenButton" Visibility="Collapsed" />-->
-                <Button  ToolTipService.ToolTip="Mini Player" x:Name="compactViewButton" 
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" 
+                        Grid.Row="2" Margin="0" x:Name="CommandPanel">
+                    <StackPanel.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="Margin" Value="5 0" />
+                            <Setter Property="Height" Value="75" />
+                            <Setter Property="Width" Value="75" />
+                            <Setter Property="Background" Value="Transparent" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <!--todo add a play button, a full screen button and some casting buttons -->
+                    <Button x:Name="playPauseButton" ToolTipService.ToolTip="Play/Pause">
+                        <SymbolIcon Symbol="Play" />
+                    </Button>
+                    <Button ToolTipService.ToolTip="Cast" Command="{Binding MediaCastingCommand}">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE952;" />
+                    </Button>
+                    <Button ToolTipService.ToolTip="Handoff" x:Name="HandoffButton" Click="HandoffButton_Click">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
+                    </Button>
+                    <!--<AppBarToggleButton Icon="FullScreen" Label="Fullscreen" x:Name="fullScreenButton" Visibility="Collapsed" />-->
+                    <Button  ToolTipService.ToolTip="Mini Player" x:Name="compactViewButton" 
                                     Visibility="Collapsed" Click="compactViewButton_Click">
-                    <SymbolIcon Symbol="Attach" />
-                </Button>
-            </StackPanel>
+                        <SymbolIcon Symbol="NewWindow" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+          
         </Grid>
 
         <Grid x:Name="NoSongInfoPanel" Visibility="{Binding IsMediaEngaged, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InvBoolToVisConv}}">
@@ -145,17 +122,10 @@
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="SmallStationImageColumn.Width" Value="135" />
-                        <Setter Target="SmallStationImage.Visibility" Value="Visible" />
-                        <Setter Target="LargeStationImage.Visibility" Value="Collapsed" />
-                        <Setter Target="SongInfoRowDef.Height" Value="200" />
-                        <Setter Target="TrackArtistPanel.Margin" Value="0" />
-                        <Setter Target="CommandPanel.Margin" Value="0" />
-                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Left" />
-                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
-                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Left" />
-                        <Setter Target="BottomRowDef.Height" Value="50" />
-                        <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
+                        <Setter Target="MediaPanel.HorizontalAlignment" Value="Left" />
+
+                        <Setter Target="StationImage.Width" Value="400" />
+                        <Setter Target="StationImage.Height" Value="400" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -165,63 +135,23 @@
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="SmallStationImageColumn.Width" Value="135" />
-                        <Setter Target="SmallStationImage.Visibility" Value="Visible" />
-                        <Setter Target="LargeStationImage.Visibility" Value="Collapsed" />
-                        <Setter Target="SongInfoRowDef.Height" Value="200" />
-                        <Setter Target="TrackArtistPanel.Margin" Value="0" />
-                        <Setter Target="CommandPanel.Margin" Value="0" />
-                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Left" />
-                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Stretch" />
-                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Left" />
-                        <Setter Target="BottomRowDef.Height" Value="50" />
-                        <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />-->
+                        <Setter Target="MediaPanel.HorizontalAlignment" Value="Left" />
+
+                        <Setter Target="StationImage.Width" Value="400" />
+                        <Setter Target="StationImage.Height" Value="400" />
                     </VisualState.Setters>
                 </VisualState>
 
-                <VisualState x:Name="PhonePortraitVisualState">
+                <VisualState x:Name="PhoneVisualState">
                     <VisualState.StateTriggers>
-                        <wst:CompositeStateTrigger Operator="And">
-                            <wst:OrientationStateTrigger Orientation="Portrait" />
-                            <wst:AdaptiveTrigger MinWindowWidth="320" />
-                        </wst:CompositeStateTrigger>
+                        <wst:AdaptiveTrigger MinWindowWidth="320" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="SmallStationImageColumn.Width" Value="0" />
-                        <Setter Target="SmallStationImage.Visibility" Value="Collapsed" />
-                        <Setter Target="LargeStationImage.Visibility" Value="Visible" />
-                        <Setter Target="SongInfoRowDef.Height" Value="150" />
-                        <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
-                        <Setter Target="CommandPanel.Margin" Value="20 0" />
-                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Center" />
-                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
-                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Center" />
-                        <Setter Target="BottomRowDef.Height" Value="50" />
-                        <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="PhoneLandscapeVisualState">
-                    <VisualState.StateTriggers>
-                        <wst:CompositeStateTrigger Operator="And">
-                            <wst:OrientationStateTrigger Orientation="Landscape" />
-                            <wst:AdaptiveTrigger MinWindowWidth="240" />
-                            <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
-                        </wst:CompositeStateTrigger>
-                    </VisualState.StateTriggers>
+                        <Setter Target="MediaPanel.HorizontalAlignment" Value="Stretch" />
 
-                    <VisualState.Setters>
-                        <Setter Target="SmallStationImageColumn.Width" Value="135" />
-                        <Setter Target="SmallStationImage.Visibility" Value="Visible" />
-                        <Setter Target="LargeStationImage.Visibility" Value="Collapsed" />
-                        <Setter Target="SongInfoRowDef.Height" Value="150" />
-                        <Setter Target="TrackArtistPanel.Margin" Value="20 0" />
-                        <Setter Target="CommandPanel.Margin" Value="20 0" />
-                        <Setter Target="CommandPanel.HorizontalAlignment" Value="Center" />
-                        <Setter Target="BackgroundImage.HorizontalAlignment" Value="Center" />
-                        <Setter Target="MetadataPanel.HorizontalAlignment" Value="Center" />
-                        <Setter Target="BottomRowDef.Height" Value="0" />
-                        <!--<Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />-->
+                        <Setter Target="StationImage.Width" Value="200" />
+                        <Setter Target="StationImage.Height" Value="200" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

@@ -45,7 +45,8 @@
   <Artist Name="Ailee" JPopAsiaUrl="http://www.jpopasia.com/ailee/" FanArtTVUrl="https://fanart.tv/artist/cecc42fb-9657-4b54-ad2f-7b73eefaef12/ailee/">
     <AltName Lang="kr">에일리</AltName>
   </Artist>
-  <Artist Name="f(x)" JPopAsiaUrl="http://www.jpopasia.com/fx/">
+  <Artist Name="f(x)" JPopAsiaUrl="http://www.jpopasia.com/fx/"
+          MusicBrainzUrl="https://musicbrainz.org/artist/37fa0bfd-8bf7-422c-a97a-f8deda49b3a4" FanArtTVUrl="https://fanart.tv/artist/37fa0bfd-8bf7-422c-a97a-f8deda49b3a4/fx/">
     <AltName Lang="kr">에프엑스</AltName>
   </Artist>
   <Artist Name="A9" JPopAsiaUrl="http://www.jpopasia.com/alicenine/">
@@ -180,5 +181,19 @@
   <Artist Name="F.Cuz" JPopAsiaUrl="https://www.jpopasia.com/fcuz/" FanArtTVUrl="https://fanart.tv/artist/57f9b89b-4840-4c3a-9792-0e591670a8fa/fcuz/" 
           MusicBrainzUrl="https://musicbrainz.org/artist/57f9b89b-4840-4c3a-9792-0e591670a8fa" OriginCountry="KR" SayAs="Focus">
     <AltName Lang="kr">포커즈</AltName>
+  </Artist>
+  <Artist Name="2AM" JPopAsiaUrl="https://www.jpopasia.com/2am/" FanArtTVUrl="https://fanart.tv/artist/c104e154-63d7-4baf-9347-b53cb01923f2/2am/" 
+          MusicBrainzUrl="https://musicbrainz.org/artist/c104e154-63d7-4baf-9347-b53cb01923f2" OriginCountry="KR">
+    <AltName Lang="kr">투에이엠</AltName>
+  </Artist>
+  <Artist Name="Sunmi" JPopAsiaUrl="https://www.jpopasia.com/sumni/" FanArtTVUrl="https://fanart.tv/artist/716a8be4-6f58-4e64-a1e6-fb3017f21bf6/sunmi/" 
+          MusicBrainzUrl="https://musicbrainz.org/artist/716a8be4-6f58-4e64-a1e6-fb3017f21bf6" OriginCountry="KR">
+    <AltName Lang="kr">선미</AltName>
+    <AltName Lang="en">Lee Sun-mi</AltName>
+  </Artist>
+  <Artist Name="U-KISS" JPopAsiaUrl="https://www.jpopasia.com/ukiss/" FanArtTVUrl="https://fanart.tv/artist/7de0221e-e572-46ad-942b-64a70fc49b5c/u-kiss/" 
+          MusicBrainzUrl="https://musicbrainz.org/artist/7de0221e-e572-46ad-942b-64a70fc49b5c" OriginCountry="KR">
+    <AltName Lang="kr">유키스</AltName>
+    <AltName Lang="jp">ユーキス</AltName>
   </Artist>
 </Artists>

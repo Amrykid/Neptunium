@@ -115,11 +115,11 @@ namespace Neptunium.ViewModel
                 var albumArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Album);
                 var artistArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Artist);
 
-                Background = albumArt ?? (!string.IsNullOrWhiteSpace(CurrentStation.Background) ? new Uri(CurrentStation.Background) : null);
+                Background = artistArt ?? (!string.IsNullOrWhiteSpace(CurrentStation.Background) ? new Uri(CurrentStation.Background) : null);
 
                 if (Background == null)
                 {
-                    CoverImage = artistArt ?? CurrentStation.StationLogoUrl;
+                    CoverImage = albumArt ?? CurrentStation.StationLogoUrl;
                 }
                 else
                 {
