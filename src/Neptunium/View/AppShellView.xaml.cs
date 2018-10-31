@@ -240,8 +240,6 @@ namespace Neptunium.View
 
             SetTitleBarAndMobileStatusBarToMatchAppBar();
 
-            
-
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
                 RootGrid.Margin = new Thickness(0);
@@ -270,13 +268,10 @@ namespace Neptunium.View
 
             SetMobileStatusBarAndDesktopTitlebarToTransparent();
 
-
-
             if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
                 RootGrid.Margin = new Thickness(0, -25, 0, 0);
             }
-
 
             ShellVisualStateGroup.States.Remove(DesktopVisualState);
             ShellVisualStateGroup.States.Remove(TabletVisualState);

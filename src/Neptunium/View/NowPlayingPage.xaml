@@ -24,7 +24,7 @@
             Grid.Row="0"
             Grid.RowSpan="3"
             Stretch="UniformToFill"
-            HorizontalAlignment="Stretch"
+            HorizontalAlignment="Center"
             VerticalAlignment="Stretch" />
 
         <Grid x:Name="SongInfoPanel"
@@ -79,7 +79,7 @@
                 </Grid>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" 
-                        Grid.Row="2" Margin="0" x:Name="CommandPanel">
+                        Grid.Row="2" Margin="0 0 0 20" x:Name="CommandPanel">
                     <StackPanel.Resources>
                         <Style TargetType="Button">
                             <Setter Property="Margin" Value="5 0" />
@@ -123,6 +123,7 @@
 
                     <VisualState.Setters>
                         <Setter Target="MediaPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="LargeImageBackground.HorizontalAlignment" Value="Stretch" />
 
                         <Setter Target="StationImage.Width" Value="400" />
                         <Setter Target="StationImage.Height" Value="400" />
@@ -136,6 +137,7 @@
 
                     <VisualState.Setters>
                         <Setter Target="MediaPanel.HorizontalAlignment" Value="Left" />
+                        <Setter Target="LargeImageBackground.HorizontalAlignment" Value="Stretch" />
 
                         <Setter Target="StationImage.Width" Value="400" />
                         <Setter Target="StationImage.Height" Value="400" />
@@ -149,7 +151,7 @@
 
                     <VisualState.Setters>
                         <Setter Target="MediaPanel.HorizontalAlignment" Value="Stretch" />
-
+                        <Setter Target="LargeImageBackground.HorizontalAlignment" Value="Center" />
                         <Setter Target="StationImage.Width" Value="200" />
                         <Setter Target="StationImage.Height" Value="200" />
                     </VisualState.Setters>
