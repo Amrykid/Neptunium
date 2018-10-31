@@ -216,7 +216,7 @@ namespace Neptunium.Media.Songs
             if (featuredArtistRegex.IsMatch(songMetadata.Artist))
                 songMetadata.Artist = featuredArtistRegex.Replace(songMetadata.Artist, "").Trim();
 
-            if (CurrentSong.ToString().Equals(songMetadata.ToString())) return;
+            if (CurrentSong != null) if (CurrentSong.ToString().Equals(songMetadata.ToString())) return;
 
             CurrentSong = songMetadata;
             //this is used for the now playing bar via data binding.
