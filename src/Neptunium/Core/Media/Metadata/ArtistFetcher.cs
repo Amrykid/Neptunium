@@ -26,6 +26,23 @@ namespace Neptunium.Core.Media.Metadata
             HttpClient http = new HttpClient();
             HttpResponseMessage httpResponse = null;
 
+            BuiltinArtistEntry builtInMatch = await FindBuiltInArtistAsync(artistName, stationLocale);
+
+            //If we found a match, access it here.
+            if (builtInMatch != null)
+            {
+                if (builtInMatch.JPopAsiaUrl != null)
+                {
+                    //Sends the request to the match.
+                    httpResponse = await http.GetAsync(builtInMatch.JPopAsiaUrl);
+                    if (httpResponse.IsSuccessStatusCode)
+                    {
+                        //The request was successful as noted by the response. Try and scrape the page here.
+                        return await ParseArtistPageForDataAsync(artistName, httpResponse);
+                    }
+                }
+            }
+
             //Some artists are available directly by putting their name into the url. We create a URL for that here.
             Uri directUri = new Uri(
                 string.Format("http://www.jpopasia.com/{0}/",
@@ -47,20 +64,6 @@ namespace Neptunium.Core.Media.Metadata
                 else
                 {
                     //We couldn't get to the artist from a direct url here, We're gonna have to search
-
-                    BuiltinArtistEntry builtInMatch = await FindBuiltInArtistAsync(artistName, stationLocale);
-
-                    //If we found a match, access it here.
-                    if (builtInMatch != null)
-                    {
-                        //Sends the request to the match.
-                        httpResponse = await http.GetAsync(directUri);
-                        if (httpResponse.IsSuccessStatusCode)
-                        {
-                            //The request was successful as noted by the response. Try and scrape the page here.
-                            return await ParseArtistPageForDataAsync(artistName, httpResponse);
-                        }
-                    }
 
                     //Manually search if we reach this point.
                     //TODO manually search.
