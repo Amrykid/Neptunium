@@ -26,3 +26,6 @@ url=https://github.com/Amrykid/MusicBrainz.git
 	path = src/Neptunium/Data/Stations/Data
 	url = https://github.com/Amrykid/Neptunium-Stations.git
 
+[submodule "src/Neptunium/Data/Artists/Neptunium-ArtistsDB"]
+	path = src/Neptunium/Data/Artists/Neptunium-ArtistsDB
+	url = ../Neptunium-ArtistsDB.git

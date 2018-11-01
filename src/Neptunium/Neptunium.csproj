@@ -306,9 +306,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\WideLogo.scale-100.png" />
     <None Include="Package.StoreAssociation.xml" />
-    <Content Include="Data\BuiltinArtists.xml">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="Data\Artists\Neptunium-ArtistsDB\BuiltinArtists.xml" />
     <Content Include="Data\Stations\Data\Stations.xml">
       <SubType>Designer</SubType>
     </Content>

@@ -40,7 +40,7 @@ namespace Neptunium
         public static async Task InitializeAsync()
         {
             CookieJar.ApplicationName = "Neptunium";
-            MetadataFinder.BuiltInArtistsFile = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(@"Data\BuiltinArtists.xml");
+            MetadataFinder.BuiltInArtistsFile = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(@"Data\Artists\Neptunium-ArtistsDB\BuiltinArtists.xml");
 
             //Hqub.MusicBrainz.API.MyHttpClient.UserAgent = 
             //    "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Minor + " ( amrykid@gmail.com )";
