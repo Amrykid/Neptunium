@@ -103,16 +103,13 @@ namespace Neptunium.Core.Media.Metadata
                     //Figure out if we should check using locale as an additional test case. If the country of origin (on the artist) or station locale (on the station) isn't defined, we just return true.
                     bool countryLocaleMatches = (!string.IsNullOrWhiteSpace(x.CountryOfOrigin) && !string.IsNullOrWhiteSpace(stationLocale) ? x.CountryOfOrigin.Equals(stationLocale) : true);
 
-                    //Try and find an approximate match.
-                    if (x.Name.ToLower().FuzzyEquals(artistName.ToLower(), .9) && countryLocaleMatches) return true;
-
                     //Last resort, we split the name via a space and try the reverse order. Japanese names are sometimes sent over in "Family-Name First-Name" order instead of "First-Name Family-Name"
                     if (artistName.Contains(" ")) //e.g. "Ayumi Hamasaki" vs. "Hamasaki Ayumi"
                     {
                         //string lastNameFirstNameSwappedName = string.Join(" ", artistName.Split(' ').Reverse()); //splices, reverses and joins: "Ayumi Hamasaki" -> ["Ayumi","Hamasaki"] -> ["Hamasaki", "Ayumi"] -> "Hamasaki Ayumi"
 
                         //Checks all alternative names listed for the artist to see if they roughly match.
-                        return x.AltNames.Any(y => y.Name.FuzzyEquals(artistName.ToLower(), .9)) && countryLocaleMatches;
+                        return x.AltNames.Any(y => y.Name.ToLower().Equals(artistName.ToLower())) && countryLocaleMatches;
                     }
 
                     return false;

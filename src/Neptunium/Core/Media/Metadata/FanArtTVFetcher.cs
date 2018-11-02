@@ -10,10 +10,9 @@ namespace Neptunium.Core.Media.Metadata
 {
     public static class FanArtTVFetcher
     {
-        public static async Task<Uri> FetchArtistBackgroundAsync(string name)
+        public static async Task<Uri> FetchArtistBackgroundAsync(string name, string stationLcale)
         {
-            var builtinArtists = await ArtistFetcher.GetBuiltinArtistEntriesAsync();
-            var artist = builtinArtists.FirstOrDefault(x => x.Name.ToLower() == name.ToLower() || x.AltNames.Any(str => str.Name.ToLower() == name.ToLower()));
+            var artist = await ArtistFetcher.FindBuiltInArtistAsync(name, stationLcale);
             if (artist == null) return null;
             if (artist.FanArtTVUrl == null) return null;
 
