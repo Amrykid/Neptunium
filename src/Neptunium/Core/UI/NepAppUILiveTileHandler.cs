@@ -17,6 +17,8 @@ namespace Neptunium.Core.UI
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged += SongManager_SongChanged;
             NepApp.SongManager.StationRadioProgramStarted += SongManager_StationRadioProgramStarted;
+
+            if (!NepApp.MediaPlayer.IsPlaying) ClearLiveTileAndMediaNotifcation();
         }
 
         internal void ClearLiveTileAndMediaNotifcation()
