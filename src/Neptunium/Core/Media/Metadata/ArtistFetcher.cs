@@ -26,7 +26,7 @@ namespace Neptunium.Core.Media.Metadata
             HttpClient http = new HttpClient();
             HttpResponseMessage httpResponse = null;
 
-            BuiltinArtistEntry builtInMatch = await FindBuiltInArtistAsync(artistName, stationLocale);
+            BuiltinArtistEntry builtInMatch = NepApp.MetadataManager.FindBuiltInArtist(artistName, stationLocale);
 
             //If we found a match, access it here.
             if (builtInMatch != null)
@@ -87,119 +87,6 @@ namespace Neptunium.Core.Media.Metadata
 
             //If all else fails, return null.
             return null;
-        }
-
-        internal static async Task<BuiltinArtistEntry> FindBuiltInArtistAsync(string artistName, string stationLocale)
-        {
-            //Pull up our pre-cached list of artists and search there. See: BuiltinArtists.xml
-            var builtInList = await GetBuiltinArtistEntriesAsync();
-            //Try and find an entry with the same name as the artist.
-            BuiltinArtistEntry builtInMatch = builtInList.FirstOrDefault(x => x.Name.ToLower().Equals(artistName.ToLower()));
-
-            if (builtInMatch == null) //If we don't find a direct match, we'll need to do some digging.
-            {
-                builtInMatch = builtInList.FirstOrDefault(x =>
-                {
-                    //Figure out if we should check using locale as an additional test case. If the country of origin (on the artist) or station locale (on the station) isn't defined, we just return true.
-                    bool countryLocaleMatches = (!string.IsNullOrWhiteSpace(x.CountryOfOrigin) && !string.IsNullOrWhiteSpace(stationLocale) ? x.CountryOfOrigin.Equals(stationLocale) : true);
-
-                    //Last resort, we split the name via a space and try the reverse order. Japanese names are sometimes sent over in "Family-Name First-Name" order instead of "First-Name Family-Name"
-                    if (artistName.Contains(" ")) //e.g. "Ayumi Hamasaki" vs. "Hamasaki Ayumi"
-                    {
-                        //string lastNameFirstNameSwappedName = string.Join(" ", artistName.Split(' ').Reverse()); //splices, reverses and joins: "Ayumi Hamasaki" -> ["Ayumi","Hamasaki"] -> ["Hamasaki", "Ayumi"] -> "Hamasaki Ayumi"
-
-                        //Checks all alternative names listed for the artist to see if they roughly match.
-                        return x.AltNames.Any(y => y.Name.ToLower().Equals(artistName.ToLower())) && countryLocaleMatches;
-                    }
-
-                    return false;
-                });
-            }
-
-            return builtInMatch;
-        }
-
-        /// <summary>
-        /// Retrieves a list of artists from BuiltinArtists.xml
-        /// </summary>
-        /// <returns>A list of artists.</returns>
-        public static async Task<IEnumerable<BuiltinArtistEntry>> GetBuiltinArtistEntriesAsync()
-        {
-            //Opens up an XDocument for reading the xml file.
-            var file = MetadataFinder.BuiltInArtistsFile;
-            var reader = await file.OpenReadAsync();
-            XDocument xmlDoc = XDocument.Load(reader.AsStream());
-
-            //Creates a list to hold the artists.
-            List<BuiltinArtistEntry> artists = new List<BuiltinArtistEntry>();
-
-            //Looks through the <Artist> elements in the file, creating a BuiltinArtistEntry for each one.
-            foreach (var artistElement in xmlDoc.Element("Artists").Elements("Artist"))
-            {
-                var artistEntry = new BuiltinArtistEntry();
-
-                artistEntry.Name = artistElement.Attribute("Name").Value;
-
-                if (artistElement.Attribute("JPopAsiaUrl") != null)
-                    artistEntry.JPopAsiaUrl = new Uri(artistElement.Attribute("JPopAsiaUrl").Value);
-
-                if (artistElement.Elements("AltName") != null)
-                {
-
-                    artistEntry.AltNames = artistElement.Elements("AltName").Select(altNameElement =>
-                    {
-                        string name = altNameElement.Value;
-                        string lang = "en";
-                        string sayAs = null;
-
-                        if (altNameElement.Attribute("Lang") != null)
-                            lang = altNameElement.Attribute("Lang").Value;
-
-                        if (altNameElement.Attribute("SayAs") != null)
-                            sayAs = altNameElement.Attribute("SayAs").Value;
-
-                        return new BuiltinArtistEntryAltName(name, lang, sayAs);
-                    }).ToArray();
-                }
-
-                if (artistElement.Attribute("FanArtTVUrl") != null)
-                {
-                    artistEntry.FanArtTVUrl = new Uri(artistElement.Attribute("FanArtTVUrl").Value);
-                }
-
-                if (artistElement.Attribute("MusicBrainzUrl") != null)
-                {
-                    artistEntry.MusicBrainzUrl = new Uri(artistElement.Attribute("MusicBrainzUrl").Value);
-                }
-
-                if (artistElement.Attribute("OriginCountry") != null)
-                {
-                    artistEntry.CountryOfOrigin = artistElement.Attribute("OriginCountry").Value;
-                }
-
-                if (artistElement.Attribute("NameLanguage") != null)
-                {
-                    artistEntry.NameLanguage = artistElement.Attribute("NameLanguage").Value;
-                }
-                else
-                {
-                    artistEntry.NameLanguage = "en";
-                }
-
-                if (artistElement.Attribute("SayAs") != null)
-                {
-                    artistEntry.NameSayAs = artistElement.Attribute("SayAs").Value;
-                }
-
-                //Adds the artist entry to the list.
-                artists.Add(artistEntry);
-            }
-
-            //Clean up.
-            xmlDoc = null;
-            reader.Dispose();
-
-            return artists;
         }
 
         /// <summary>

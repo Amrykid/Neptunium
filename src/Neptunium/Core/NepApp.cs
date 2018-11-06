@@ -7,13 +7,7 @@ using Neptunium.Core.UI;
 using Neptunium.Media;
 using Neptunium.Media.Songs;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.Media.Playback;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
@@ -27,11 +21,12 @@ namespace Neptunium
         public static NepAppHandoffManager Handoff { get; private set; }
         public static NepAppMediaPlayerManager MediaPlayer { get; private set; }
         public static NepAppSongManager SongManager { get; private set; }
+        public static NepAppMetadataManager MetadataManager { get; private set; }
         public static NepAppNetworkManager Network { get; private set; }
         public static NepAppSettingsManager Settings { get; private set; }
         public static NepAppStationsManager Stations { get; private set; }
         public static NepAppUIManager UI { get; private set; }
-        public static NepAppServerFrontEndManager ServerFrontEnd {get;private set;}
+        public static NepAppServerFrontEndManager ServerFrontEnd { get; private set; }
 
         public static event EventHandler InitializationComplete;
 
@@ -40,7 +35,6 @@ namespace Neptunium
         public static async Task InitializeAsync()
         {
             CookieJar.ApplicationName = "Neptunium";
-            MetadataFinder.BuiltInArtistsFile = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync(@"Data\Artists\Neptunium-ArtistsDB\BuiltinArtists.xml");
 
             //Hqub.MusicBrainz.API.MyHttpClient.UserAgent = 
             //    "Neptunium/" + Package.Current.Id.Version.Major + "." + Package.Current.Id.Version.Minor + " ( amrykid@gmail.com )";
@@ -52,6 +46,10 @@ namespace Neptunium
 
             Settings = new NepAppSettingsManager();
             Stations = new NepAppStationsManager();
+            MetadataManager = new NepAppMetadataManager();
+
+            await MetadataManager.InitializeAsync();
+
             SongManager = new NepAppSongManager();
             MediaPlayer = new NepAppMediaPlayerManager();
             Network = new NepAppNetworkManager();

@@ -18,7 +18,6 @@ namespace Neptunium.Media.Songs
     {
         private SemaphoreSlim metadataLock = null;
         private SemaphoreSlim blockProgrammingLock = null;
-        private Regex featuredArtistRegex = new Regex(@"(?:(?:f|F)(?:ea)*t(?:uring)*\.?\s*(.+)(?:\n|$))");
         private ThreadPoolTimer blockStationProgramTimer = null;
 
         public SongMetadata CurrentSong { get; private set; }
@@ -211,11 +210,6 @@ namespace Neptunium.Media.Songs
                 }
             }
 
-
-            string originalArtistString = songMetadata.Artist;
-            if (featuredArtistRegex.IsMatch(songMetadata.Artist))
-                songMetadata.Artist = featuredArtistRegex.Replace(songMetadata.Artist, "").Trim();
-
             if (CurrentSong != null) if (CurrentSong.ToString().Equals(songMetadata.ToString())) return;
 
             CurrentSong = songMetadata;
@@ -224,34 +218,16 @@ namespace Neptunium.Media.Songs
 
             PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(songMetadata));
 
-            ExtendedSongMetadata newMetadata = await MetadataFinder.FindMetadataAsync(songMetadata); //todo: cache
+            ExtendedSongMetadata newMetadata = new ExtendedSongMetadata(songMetadata);
 
-            if (newMetadata != null)
+            if (await NepApp.MetadataManager.FindAdditionalMetadataAsync(newMetadata))
             {
-
-                //todo strip out "Feat." artists
-                if (featuredArtistRegex.IsMatch(originalArtistString))
-                {
-                    try
-                    {
-                        var artistsMatch = featuredArtistRegex.Match(originalArtistString);
-                        var artists = artistsMatch.Groups[1].Value.Split(',').Select(x => x.Trim());
-                        newMetadata.FeaturedArtists = artists.ToArray();
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-                }
-
                 CurrentSong = newMetadata;
                 CurrentSong.SongLength = newMetadata.SongLength;
                 RaisePropertyChanged(nameof(CurrentSong));
             }
-
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            History.AddSongAsync(CurrentSong);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            
+            await History.AddSongAsync(CurrentSong);
 
             SongChanged.Invoke(this, new NepAppSongChangedEventArgs(CurrentSong));
 

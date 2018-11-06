@@ -52,7 +52,7 @@ namespace Neptunium.Core.Media
                 var currentStation = await NepApp.Stations.GetStationByNameAsync(NepApp.MediaPlayer.CurrentStream.ParentStation);
 
 
-                string artistName = await FindAppropriateArtistNameAsync(songMetadata, currentStation);
+                string artistName = FindAppropriateArtistName(songMetadata, currentStation);
                 var nowPlayingSsmlData = GenerateSongAnnouncementSsml(artistName, songMetadata.Track, currentStation?.PrimaryLocale ?? "JP");
 
 
@@ -75,11 +75,11 @@ namespace Neptunium.Core.Media
             }
         }
 
-        private static async Task<string> FindAppropriateArtistNameAsync(SongMetadata songMetadata, StationItem stationItem)
+        private static string FindAppropriateArtistName(SongMetadata songMetadata, StationItem stationItem)
         {
             //This method tries to find a localized name for the artist, if applicable. This makes speech sound more natural.
 
-            var builtInArtist = await ArtistFetcher.FindBuiltInArtistAsync(songMetadata.Artist, stationItem.PrimaryLocale ?? "jp");
+            var builtInArtist = NepApp.MetadataManager.FindBuiltInArtist(songMetadata.Artist, stationItem.PrimaryLocale ?? "jp");
 
             if (builtInArtist == null) return songMetadata.Artist;
 

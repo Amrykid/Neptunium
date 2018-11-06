@@ -238,5 +238,16 @@ namespace Neptunium.Core.Media.Metadata
                 song.SongLength = TimeSpan.FromMilliseconds(recording.Length);
             }
         }
+
+        public string ExtractIDFromUri(Uri musicBrainzUri)
+        {
+            if (musicBrainzUri == null) return null;
+
+            if (!musicBrainzUri.DnsSafeHost.Equals("musicbrainz.org")) return null;
+            if (musicBrainzUri.Segments.Length < 2) return null;
+            if (!musicBrainzUri.Segments[1].Equals("artist/")) return null;
+
+            return musicBrainzUri.Segments[2];
+        }
     }
 }
