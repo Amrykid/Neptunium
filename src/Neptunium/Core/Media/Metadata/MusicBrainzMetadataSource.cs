@@ -3,7 +3,9 @@ using Neptunium.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Neptunium.Core.Media.Metadata
@@ -47,9 +49,10 @@ namespace Neptunium.Core.Media.Metadata
                         //If there is an image, make sure the actual url isn't null.
                         if (!string.IsNullOrWhiteSpace(imageRel.Target))
                         {
+                            var url = await ResolveImageUrlAsync(new Uri(imageRel.Target));
                             //Check if the URL is accessible.
-                            if (await CheckIfUrlIsWebAccessibleAsync(new Uri(imageRel.Target)))
-                                data.ArtistImage = imageRel.Target; //Its accessible, set the url as the artist image.
+                            if (await CheckIfUrlIsWebAccessibleAsync(new Uri(url)))
+                                data.ArtistImage = url; //Its accessible, set the url as the artist image.
                         }
                     }
 
@@ -198,8 +201,9 @@ namespace Neptunium.Core.Media.Metadata
                         {
                             if (!string.IsNullOrWhiteSpace(imageRel.Target))
                             {
-                                if (await CheckIfUrlIsWebAccessibleAsync(new Uri(imageRel.Target)))
-                                    data.ArtistImage = imageRel.Target;
+                                var url = await ResolveImageUrlAsync(new Uri(imageRel.Target));
+                                if (await CheckIfUrlIsWebAccessibleAsync(new Uri(url)))
+                                    data.ArtistImage = url;
                             }
                         }
                     }
@@ -210,6 +214,7 @@ namespace Neptunium.Core.Media.Metadata
 
             return null;
         }
+
 
         /// <summary>
         /// Tries to find information on a particular song.
@@ -249,5 +254,35 @@ namespace Neptunium.Core.Media.Metadata
 
             return musicBrainzUri.Segments[2];
         }
+        public static async Task<string> ResolveImageUrlAsync(Uri target)
+        {
+            if (target == null) return null;
+
+            if (target.DnsSafeHost.Equals("commons.wikimedia.org"))
+            {
+                //Resolves Wikipedia/Wikimedia Image relations from MusicBrainz
+                using (HttpClient http = new HttpClient())
+                {
+                    var html = await http.GetStringAsync(target);
+
+                    var match = Regex.Match(html, @"<div class=""fullImageLink"" id=""file""><a.+?>", RegexOptions.Singleline);
+                    if (match != null)
+                    {
+                        var match2 = Regex.Match(match.Value, @"href="".+?""", RegexOptions.Singleline);
+                        if (match2 != null)
+                        {
+                            var imgUrl = match2.Value.Substring(@"href=""".Length);
+                            imgUrl = imgUrl.Trim('"');
+
+                            return imgUrl;
+                        }
+
+                    }
+                }
+            }
+
+            return null;
+        }
+
     }
 }
