@@ -127,6 +127,9 @@
 
                         <Setter Target="StationImage.Width" Value="400" />
                         <Setter Target="StationImage.Height" Value="400" />
+
+                        <Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />
+                        <Setter Target="ArtistTrackBlock.Style" Value="{ThemeResource SubtitleTextBlockStyle}" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -141,6 +144,9 @@
 
                         <Setter Target="StationImage.Width" Value="400" />
                         <Setter Target="StationImage.Height" Value="400" />
+
+                        <Setter Target="TrackTextBlock.Style" Value="{ThemeResource TitleTextBlockStyle}" />
+                        <Setter Target="ArtistTrackBlock.Style" Value="{ThemeResource SubtitleTextBlockStyle}" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -154,6 +160,9 @@
                         <Setter Target="LargeImageBackground.HorizontalAlignment" Value="Center" />
                         <Setter Target="StationImage.Width" Value="200" />
                         <Setter Target="StationImage.Height" Value="200" />
+
+                        <Setter Target="TrackTextBlock.Style" Value="{ThemeResource BaseTextBlockStyle}" />
+                        <Setter Target="ArtistTrackBlock.Style" Value="{ThemeResource BodyTextBlockStyle}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
