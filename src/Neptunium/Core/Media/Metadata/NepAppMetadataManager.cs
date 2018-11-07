@@ -176,7 +176,7 @@ namespace Neptunium.Core.Media.Metadata
             var builtInArtist = FindBuiltInArtist(originalMetadata.Artist, station.PrimaryLocale);
             if (builtInArtist != null)
             {
-                if (!string.IsNullOrWhiteSpace(builtInArtist.MusicBrainzUrl?.ToString()))
+                if (builtInArtist.MusicBrainzUrl != null)
                 {
                     //Grab MusicBrainz information directly from the url.
 
@@ -184,7 +184,7 @@ namespace Neptunium.Core.Media.Metadata
                     artistData = await musicBrainzSource.GetArtistAsync(artistID, builtInArtist.CountryOfOrigin ?? "JP");
                 }
 
-                if (!string.IsNullOrWhiteSpace(builtInArtist.JPopAsiaUrl?.ToString()))
+                if (builtInArtist.JPopAsiaUrl != null)
                 {
                     originalMetadata.JPopAsiaArtistInfo = await JPopAsiaArtistFetcher.GetArtistDataOnJPopAsiaAsync(builtInArtist.Name, builtInArtist.JPopAsiaUrl);
                 }
@@ -198,10 +198,10 @@ namespace Neptunium.Core.Media.Metadata
 
                 //Grab information about the artist from JPopAsia.com
                 originalMetadata.JPopAsiaArtistInfo = await JPopAsiaArtistFetcher.FindArtistDataOnJPopAsiaAsync(originalMetadata.Artist.Trim(), station.PrimaryLocale);
-
-                //Grab a background of the artist from FanArtTV.com
-                originalMetadata.FanArtTVBackgroundUrl = await FanArtTVFetcher.FetchArtistBackgroundAsync(originalMetadata.Artist.Trim(), station.PrimaryLocale);
             }
+
+            //Grab a background of the artist from FanArtTV.com
+            originalMetadata.FanArtTVBackgroundUrl = await FanArtTVFetcher.FetchArtistBackgroundAsync(originalMetadata.Artist.Trim(), station.PrimaryLocale);
 
 
             //todo cache
