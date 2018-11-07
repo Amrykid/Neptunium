@@ -311,22 +311,85 @@ namespace Neptunium.Core.UI
 
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
 
-            string imgUrl = null;
-            if (nowPlaying is ExtendedSongMetadata && NepApp.SongManager.CurrentSong == nowPlaying)
+            TileBindingContentAdaptive largeBindingContent = new TileBindingContentAdaptive()
             {
-                var albumArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Neptunium.Media.Songs.NepAppSongMetadataBackground.Album);
-                var artistArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Neptunium.Media.Songs.NepAppSongMetadataBackground.Artist);
-
-                imgUrl = albumArt?.ToString();
-
-                if (string.IsNullOrWhiteSpace(imgUrl))
+                PeekImage = new TilePeekImage()
                 {
-                    imgUrl = artistArt?.ToString() ?? nowPlaying.StationLogo.ToString();
+                    Source = nowPlaying.StationLogo.ToString(),
+                    AlternateText = nowPlaying.StationPlayedOn,
+                    HintCrop = TilePeekImageCrop.None
+                },
+                Children =
+                    {
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Track,
+                            HintStyle = AdaptiveTextStyle.Body
+                        },
+
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Artist,
+                            HintWrap = true,
+                            HintStyle = AdaptiveTextStyle.CaptionSubtle
+                        }
+                    }
+            };
+
+            TileBindingContentAdaptive mediumBindingContent = new TileBindingContentAdaptive()
+            {
+                PeekImage = new TilePeekImage()
+                {
+                    Source = nowPlaying.StationLogo.ToString(),
+                    AlternateText = nowPlaying.StationPlayedOn,
+                    HintCrop = TilePeekImageCrop.None
+                },
+                Children =
+                    {
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Track,
+                            HintStyle = AdaptiveTextStyle.Body
+                        },
+
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Artist,
+                            HintWrap = true,
+                            HintStyle = AdaptiveTextStyle.CaptionSubtle
+                        }
+                    }
+            };
+
+            TileBindingContentAdaptive smallBindingContent = new TileBindingContentAdaptive()
+            {
+                BackgroundImage = new TileBackgroundImage()
+                {
+                    Source = nowPlaying.StationLogo.ToString(),
                 }
-            }
+            };
+
+            ShowNowPlayingTileUpdateBase(nowPlaying, tiler, largeBindingContent, mediumBindingContent, smallBindingContent);
+        }
+
+        public void UpdateExtendedMetadataLiveTile(ExtendedSongMetadata nowPlaying)
+        {
+            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //not supported
+            if (NepApp.SongManager.CurrentSong != nowPlaying) return;
+
+            var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
+
+            string imgUrl = null;
+
+            var albumArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Neptunium.Media.Songs.NepAppSongMetadataBackground.Album);
+            var artistArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Neptunium.Media.Songs.NepAppSongMetadataBackground.Artist);
+
+            imgUrl = albumArt?.ToString();
 
             if (string.IsNullOrWhiteSpace(imgUrl))
-                imgUrl = nowPlaying.StationLogo.ToString();
+            {
+                imgUrl = artistArt?.ToString() ?? nowPlaying.StationLogo.ToString();
+            }
 
             TileBindingContentAdaptive largeBindingContent = new TileBindingContentAdaptive()
             {
@@ -384,6 +447,11 @@ namespace Neptunium.Core.UI
                 }
             };
 
+            ShowNowPlayingTileUpdateBase(nowPlaying, tiler, largeBindingContent, mediumBindingContent, smallBindingContent);
+        }
+
+        private static void ShowNowPlayingTileUpdateBase(SongMetadata nowPlaying, TileUpdater tiler, TileBindingContentAdaptive largeBindingContent, TileBindingContentAdaptive mediumBindingContent, TileBindingContentAdaptive smallBindingContent)
+        {
             Func<TileBindingContentAdaptive, TileBinding> createBinding = (TileBindingContentAdaptive con) =>
             {
                 return new TileBinding()

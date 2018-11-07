@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using static Neptunium.NepApp;
@@ -44,7 +45,7 @@ namespace Neptunium.Core.UI
             NavigationItems = new ReadOnlyObservableCollection<NepAppUINavigationItem>(navigationItems);
             Notifier = new NepAppUIManagerNotifier();
             LockScreen = new NepAppUILockScreenManager();
-            LiveTileHandler = new NepAppUILiveTileHandler();
+            LiveTileHandler = new NepAppUILiveTileHandler(this);
             ToastHandler = new NepAppUIToastNotificationHandler();
             windowService = WindowManager.GetWindowServiceForCurrentWindow();
         }
@@ -189,6 +190,25 @@ namespace Neptunium.Core.UI
 
             ViewTitle = navItem.DisplayText;
         }
+
+        internal void ClearLiveTileAndMediaNotifcation()
+        {
+            if (!NepApp.IsServerMode)
+            {
+                if (App.GetDevicePlatform() == Crystal3.Core.Platform.Desktop || App.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                {
+                    //clears the tile if we're suspending.
+                    TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+                }
+
+                if (!NepApp.MediaPlayer.IsPlaying)
+                {
+                    //removes the now playing notification from the action center.
+                    ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
+                }
+            }
+        }
+
 
         #region No-Chrome Mode
         public event EventHandler<NepAppUIManagerNoChromeStatusChangedEventArgs> NoChromeStatusChanged;

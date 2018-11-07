@@ -12,31 +12,13 @@ namespace Neptunium.Core.UI
 {
     public class NepAppUILiveTileHandler
     {
-        internal NepAppUILiveTileHandler()
+        internal NepAppUILiveTileHandler(NepAppUIManager nepAppUIManager)
         {
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged += SongManager_SongChanged;
             NepApp.SongManager.StationRadioProgramStarted += SongManager_StationRadioProgramStarted;
 
-            if (!NepApp.MediaPlayer.IsPlaying) ClearLiveTileAndMediaNotifcation();
-        }
-
-        internal void ClearLiveTileAndMediaNotifcation()
-        {
-            if (!NepApp.IsServerMode)
-            {
-                if (App.GetDevicePlatform() == Crystal3.Core.Platform.Desktop || App.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-                {
-                    //clears the tile if we're suspending.
-                    TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-                }
-
-                if (!NepApp.MediaPlayer.IsPlaying)
-                {
-                    //removes the now playing notification from the action center.
-                    ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
-                }
-            }
+            if (!NepApp.MediaPlayer.IsPlaying) nepAppUIManager?.ClearLiveTileAndMediaNotifcation();
         }
 
         private void SongManager_StationRadioProgramStarted(object sender, NepAppStationProgramStartedEventArgs e)
@@ -47,12 +29,12 @@ namespace Neptunium.Core.UI
 
         private void SongManager_SongChanged(object sender, NepAppSongChangedEventArgs e)
         {
-            NepApp.UI.Notifier.UpdateLiveTile((ExtendedSongMetadata)e.Metadata);
+            NepApp.UI.Notifier.UpdateExtendedMetadataLiveTile((ExtendedSongMetadata)e.Metadata);
         }
 
         private void SongManager_PreSongChanged(object sender, NepAppSongChangedEventArgs e)
         {
-            
+            NepApp.UI.Notifier.UpdateLiveTile(e.Metadata);
         }
     }
 }

@@ -363,7 +363,7 @@ namespace Neptunium
 
         protected override Task OnSuspendingAsync()
         {
-            NepApp.UI.LiveTileHandler.ClearLiveTileAndMediaNotifcation();
+            NepApp.UI.ClearLiveTileAndMediaNotifcation();
 
             return Task.CompletedTask;
         }
