@@ -98,7 +98,7 @@ namespace Neptunium.Core.UI
         {
             //var picturesLibrary = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
 
-            var originalFileName = uri.Segments.Last().Trim().Replace(":", "-").Replace(",", "-");
+            var originalFileName = Uri.UnescapeDataString(uri.Segments.Last().Trim().Replace(":", "-").Replace(",", "-"));
 
             StorageFile fileObject = await lockScreenFolder.TryGetItemAsync(originalFileName) as StorageFile;
 
