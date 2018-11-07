@@ -135,6 +135,74 @@ namespace Neptunium.Core.UI
             toastNotifier.Show(notification);
         }
 
+        internal void UpdateSongToastNotification(ExtendedSongMetadata metaData)
+        {
+            //try and find a nice image to set for the toast
+            string toastLogo = null;
+            if (!string.IsNullOrWhiteSpace(metaData.Album?.AlbumCoverUrl))
+            {
+                toastLogo = metaData.Album?.AlbumCoverUrl;
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(metaData.ArtistInfo?.ArtistImage))
+                {
+                    toastLogo = metaData.ArtistInfo?.ArtistImage;
+                }
+                else
+                {
+                    toastLogo = metaData.StationLogo.ToString();
+                }
+            }
+
+            ToastContent content = new ToastContent()
+            {
+                Launch = "now-playing",
+                Audio = new ToastAudio()
+                {
+                    Silent = true,
+                },
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = metaData.Track,
+                                HintStyle = AdaptiveTextStyle.Title
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = metaData.Artist,
+                                HintStyle = AdaptiveTextStyle.Subtitle
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = metaData.StationPlayedOn,
+                                HintStyle = AdaptiveTextStyle.Caption
+                            },
+                        },
+                        AppLogoOverride = new ToastGenericAppLogo()
+                        {
+                            Source = toastLogo
+                        }
+                    }
+                }
+            };
+
+            var notification = new ToastNotification(content.GetXml());
+            notification.Tag = SongNotificationTag;
+            notification.NotificationMirroring = NotificationMirroring.Disabled;
+            //
+            notification.SuppressPopup = true;
+            //
+            toastNotifier.Show(notification);
+        }
+
         internal void ShowErrorToastNotification(StationItem currentStation, string title, string message)
         {
             ToastContent content = new ToastContent()
