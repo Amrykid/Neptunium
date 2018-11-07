@@ -183,6 +183,11 @@ namespace Neptunium.Core.Media.Metadata
                     string artistID = musicBrainzSource.ExtractIDFromUri(builtInArtist.MusicBrainzUrl);
                     artistData = await musicBrainzSource.GetArtistAsync(artistID, builtInArtist.CountryOfOrigin ?? "JP");
                 }
+
+                if (!string.IsNullOrWhiteSpace(builtInArtist.JPopAsiaUrl?.ToString()))
+                {
+                    originalMetadata.JPopAsiaArtistInfo = await JPopAsiaArtistFetcher.GetArtistDataOnJPopAsiaAsync(builtInArtist.Name, builtInArtist.JPopAsiaUrl);
+                }
             }
             else
             {
@@ -192,7 +197,7 @@ namespace Neptunium.Core.Media.Metadata
                 artistData = await musicBrainzSource.TryFindArtistAsync(originalMetadata.Artist, station.PrimaryLocale);
 
                 //Grab information about the artist from JPopAsia.com
-                originalMetadata.JPopAsiaArtistInfo = await ArtistFetcher.FindArtistDataOnJPopAsiaAsync(originalMetadata.Artist.Trim(), station.PrimaryLocale);
+                originalMetadata.JPopAsiaArtistInfo = await JPopAsiaArtistFetcher.FindArtistDataOnJPopAsiaAsync(originalMetadata.Artist.Trim(), station.PrimaryLocale);
 
                 //Grab a background of the artist from FanArtTV.com
                 originalMetadata.FanArtTVBackgroundUrl = await FanArtTVFetcher.FetchArtistBackgroundAsync(originalMetadata.Artist.Trim(), station.PrimaryLocale);
@@ -228,5 +233,67 @@ namespace Neptunium.Core.Media.Metadata
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// An object representing an artist listed in BuiltinArtists.xml.
+    /// </summary>
+    public class BuiltinArtistEntry
+    {
+        /// <summary>
+        /// The name of the artist.
+        /// </summary>
+        public string Name { get; internal set; }
+        /// <summary>
+        /// The URL of their JPopAsiaUrl page, if they have one.
+        /// </summary>
+        public Uri JPopAsiaUrl { get; set; }
+        /// <summary>
+        /// A list of alternative names that the artist has.
+        /// </summary>
+        public BuiltinArtistEntryAltName[] AltNames { get; set; }
+        /// <summary>
+        /// The URL of their FanArtTVUrl page, if they have one.
+        /// </summary>
+        public Uri FanArtTVUrl { get; set; }
+        /// <summary>
+        /// The country of origin for the artist.
+        /// </summary>
+        public string CountryOfOrigin { get; internal set; }
+        /// <summary>
+        /// The language the artist's name is in.
+        /// </summary>
+        public string NameLanguage { get; internal set; } = "en";
+        /// <summary>
+        /// How to pronounce the artist's name, if applicable.
+        /// </summary>
+        public string NameSayAs { get; internal set; }
+        public Uri MusicBrainzUrl { get; internal set; }
+    }
+
+    /// <summary>
+    /// An object representing an alternative way to refer to an artist.
+    /// </summary>
+    public struct BuiltinArtistEntryAltName
+    {
+        public BuiltinArtistEntryAltName(string name, string lang = "en", string sayAs = null)
+        {
+            NameLanguage = lang;
+            Name = name;
+            NameSayAs = sayAs;
+        }
+
+        /// <summary>
+        /// The alternative name
+        /// </summary>
+        public string Name { get; private set; }
+        /// <summary>
+        /// The language the name is in.
+        /// </summary>
+        public string NameLanguage { get; private set; }
+        /// <summary>
+        /// How to pronounce the name, if applicable.
+        /// </summary>
+        public string NameSayAs { get; private set; }
     }
 }

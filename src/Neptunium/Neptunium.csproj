@@ -125,7 +125,7 @@
     <Compile Include="Core\Media\INepAppMediaStreamer.cs" />
     <Compile Include="Core\Media\Metadata\BaseSongMetadataSource.cs" />
     <Compile Include="Core\Media\Metadata\FanArtTVFetcher.cs" />
-    <Compile Include="Core\Media\Metadata\ArtistFetcher.cs" />
+    <Compile Include="Core\Media\Metadata\JPopAsiaArtistFetcher.cs" />
     <Compile Include="Core\Media\Metadata\MusicBrainzMetadataSource.cs" />
     <Compile Include="Core\Media\Metadata\NepAppMetadataManager.cs" />
     <Compile Include="Core\Media\Metadata\SongMetadata.cs" />

@@ -12,7 +12,7 @@ namespace Neptunium.Core.Media.Metadata
     /// <summary>
     /// Formerly: Small utility class to grab artist data from JPopAsia.com - This use to be a feature in the original version of Neptunium (when it was called Hanasu)
     /// </summary>
-    public static class ArtistFetcher
+    public static class JPopAsiaArtistFetcher
     {
         /// <summary>
         /// Finds an artist on JPopAsia.com.
@@ -89,13 +89,50 @@ namespace Neptunium.Core.Media.Metadata
             return null;
         }
 
-        /// <summary>
-        /// Scrapes the artist page on JPopAsia.com
-        /// </summary>
-        /// <param name="artistName">The name of the artist represented on the page.</param>
-        /// <param name="httpResponse">The http response containing the HTML of the page.</param>
-        /// <returns>JPopAsiaArtistData or null</returns>
-        private static async Task<JPopAsiaArtistData> ParseArtistPageForDataAsync(string artistName, HttpResponseMessage httpResponse)
+        public static async Task<JPopAsiaArtistData> GetArtistDataOnJPopAsiaAsync(string artistName, Uri jpopAsiaUri)
+        {
+            if (jpopAsiaUri == null) return null;
+            if (!jpopAsiaUri.DnsSafeHost.Equals("jpopasia.com")) return null;
+
+            //Sets up an http client and response object.
+            HttpClient http = new HttpClient();
+            HttpResponseMessage httpResponse = null;
+
+            try
+            {
+                //Try to access the artist via a direct url.
+                httpResponse = await http.GetAsync(jpopAsiaUri);
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    //The artist was successfuly reached from the direct url, we can scrape the page here.
+                    return await ParseArtistPageForDataAsync(artistName, httpResponse);
+                }
+            }
+            catch
+            {
+                return null;
+            }
+            finally
+            {
+                //Clean up http objects here.
+                if (httpResponse != null)
+                {
+                    httpResponse.Dispose();
+                    httpResponse = null;
+                }
+                http.Dispose();
+            }
+
+            return null;
+        }
+
+            /// <summary>
+            /// Scrapes the artist page on JPopAsia.com
+            /// </summary>
+            /// <param name="artistName">The name of the artist represented on the page.</param>
+            /// <param name="httpResponse">The http response containing the HTML of the page.</param>
+            /// <returns>JPopAsiaArtistData or null</returns>
+            private static async Task<JPopAsiaArtistData> ParseArtistPageForDataAsync(string artistName, HttpResponseMessage httpResponse)
         {
             //Creates a JPopAsiaArtistData representing the artist.
             JPopAsiaArtistData result = new JPopAsiaArtistData();
@@ -141,68 +178,6 @@ namespace Neptunium.Core.Media.Metadata
 
             return result;
         }
-    }
-
-    /// <summary>
-    /// An object representing an artist listed in BuiltinArtists.xml.
-    /// </summary>
-    public class BuiltinArtistEntry
-    {
-        /// <summary>
-        /// The name of the artist.
-        /// </summary>
-        public string Name { get; internal set; }
-        /// <summary>
-        /// The URL of their JPopAsiaUrl page, if they have one.
-        /// </summary>
-        public Uri JPopAsiaUrl { get; set; }
-        /// <summary>
-        /// A list of alternative names that the artist has.
-        /// </summary>
-        public BuiltinArtistEntryAltName[] AltNames { get; set; }
-        /// <summary>
-        /// The URL of their FanArtTVUrl page, if they have one.
-        /// </summary>
-        public Uri FanArtTVUrl { get; set; }
-        /// <summary>
-        /// The country of origin for the artist.
-        /// </summary>
-        public string CountryOfOrigin { get; internal set; }
-        /// <summary>
-        /// The language the artist's name is in.
-        /// </summary>
-        public string NameLanguage { get; internal set; } = "en";
-        /// <summary>
-        /// How to pronounce the artist's name, if applicable.
-        /// </summary>
-        public string NameSayAs { get; internal set; }
-        public Uri MusicBrainzUrl { get; internal set; }
-    }
-
-    /// <summary>
-    /// An object representing an alternative way to refer to an artist.
-    /// </summary>
-    public struct BuiltinArtistEntryAltName
-    {
-        public BuiltinArtistEntryAltName(string name, string lang = "en", string sayAs = null)
-        {
-            NameLanguage = lang;
-            Name = name;
-            NameSayAs = sayAs;
-        }
-
-        /// <summary>
-        /// The alternative name
-        /// </summary>
-        public string Name { get; private set; }
-        /// <summary>
-        /// The language the name is in.
-        /// </summary>
-        public string NameLanguage { get; private set; }
-        /// <summary>
-        /// How to pronounce the name, if applicable.
-        /// </summary>
-        public string NameSayAs { get; private set; }
     }
 
     /// <summary>
