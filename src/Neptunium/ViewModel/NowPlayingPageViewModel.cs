@@ -73,6 +73,7 @@ namespace Neptunium.ViewModel
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged += SongManager_SongChanged;
             NepApp.SongManager.ArtworkProcessor.SongArtworkProcessingComplete += SongManager_SongArtworkProcessingComplete;
+            NepApp.MediaPlayer.FatalMediaErrorOccurred += MediaPlayer_FatalMediaErrorOccurred;
 
             IsPlaying = NepApp.MediaPlayer.IsPlaying;
             IsMediaEngaged = NepApp.MediaPlayer.IsMediaEngaged;
@@ -80,6 +81,15 @@ namespace Neptunium.ViewModel
             UpdateMetadataFollowedByArtwork();
 
             base.OnNavigatedTo(sender, e);
+        }
+
+        private void MediaPlayer_FatalMediaErrorOccurred(object sender, Windows.Media.Playback.MediaPlayerFailedEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                IsPlaying = NepApp.MediaPlayer.IsPlaying;
+                IsMediaEngaged = NepApp.MediaPlayer.IsMediaEngaged;
+            });
         }
 
         private void MediaPlayer_MediaEngagementChanged(object sender, EventArgs e)
@@ -152,6 +162,7 @@ namespace Neptunium.ViewModel
             NepApp.SongManager.PreSongChanged -= SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged -= SongManager_SongChanged;
             NepApp.SongManager.ArtworkProcessor.SongArtworkProcessingComplete -= SongManager_SongArtworkProcessingComplete;
+            NepApp.MediaPlayer.FatalMediaErrorOccurred -= MediaPlayer_FatalMediaErrorOccurred;
 
             base.OnNavigatedFrom(sender, e);
         }
