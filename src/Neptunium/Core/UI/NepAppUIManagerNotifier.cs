@@ -72,23 +72,7 @@ namespace Neptunium.Core.UI
 
         public void ShowSongToastNotification(ExtendedSongMetadata metaData)
         {
-            //try and find a nice image to set for the toast
-            string toastLogo = null;
-            if (!string.IsNullOrWhiteSpace(metaData.Album?.AlbumCoverUrl))
-            {
-                toastLogo = metaData.Album?.AlbumCoverUrl;
-            }
-            else
-            {
-                if (!string.IsNullOrWhiteSpace(metaData.ArtistInfo?.ArtistImage))
-                {
-                    toastLogo = metaData.ArtistInfo?.ArtistImage;
-                }
-                else
-                {
-                    toastLogo = metaData.StationLogo.ToString();
-                }
-            }
+            string toastLogo = FindToastLogo(metaData);
 
             ToastContent content = new ToastContent()
             {
@@ -137,23 +121,7 @@ namespace Neptunium.Core.UI
 
         internal void UpdateSongToastNotification(ExtendedSongMetadata metaData)
         {
-            //try and find a nice image to set for the toast
-            string toastLogo = null;
-            if (!string.IsNullOrWhiteSpace(metaData.Album?.AlbumCoverUrl))
-            {
-                toastLogo = metaData.Album?.AlbumCoverUrl;
-            }
-            else
-            {
-                if (!string.IsNullOrWhiteSpace(metaData.ArtistInfo?.ArtistImage))
-                {
-                    toastLogo = metaData.ArtistInfo?.ArtistImage;
-                }
-                else
-                {
-                    toastLogo = metaData.StationLogo.ToString();
-                }
-            }
+            string toastLogo = FindToastLogo(metaData);
 
             ToastContent content = new ToastContent()
             {
@@ -201,6 +169,39 @@ namespace Neptunium.Core.UI
             notification.SuppressPopup = true;
             //
             toastNotifier.Show(notification);
+        }
+
+        private static string FindToastLogo(ExtendedSongMetadata metaData)
+        {
+            //try and find a nice image to set for the toast
+            string toastLogo = null;
+            if (!string.IsNullOrWhiteSpace(metaData.Album?.AlbumCoverUrl))
+            {
+                toastLogo = metaData.Album?.AlbumCoverUrl;
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(metaData.ArtistInfo?.ArtistImage))
+                {
+                    toastLogo = metaData.ArtistInfo?.ArtistImage;
+                }
+                else
+                {
+                    if (metaData.JPopAsiaArtistInfo != null)
+                    {
+                        if (metaData.JPopAsiaArtistInfo.ArtistImageUrl != null)
+                            toastLogo = metaData.JPopAsiaArtistInfo.ArtistImageUrl.ToString();
+                    }
+
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(toastLogo))
+            {
+                toastLogo = metaData.StationLogo.ToString();
+            }
+
+            return toastLogo;
         }
 
         internal void ShowErrorToastNotification(StationItem currentStation, string title, string message)
