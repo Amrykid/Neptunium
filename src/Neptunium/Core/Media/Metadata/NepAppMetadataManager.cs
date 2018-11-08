@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using static Neptunium.NepApp;
 
 namespace Neptunium.Core.Media.Metadata
@@ -37,10 +39,25 @@ namespace Neptunium.Core.Media.Metadata
         /// <returns>A list of artists.</returns>
         private async Task<BuiltinArtistEntry[]> LoadBuiltinArtistEntriesAsync()
         {
-            //Opens up an XDocument for reading the xml file.
-            var file = builtInArtistsFile;
-            var reader = await file.OpenReadAsync();
-            XDocument xmlDoc = XDocument.Load(reader.AsStream());
+            XDocument xmlDoc = null;
+            IRandomAccessStreamWithContentType reader = null; //local file only
+
+            try
+            {
+                using (HttpClient http = new HttpClient())
+                {
+                    var xmlText = await http.GetStringAsync("https://raw.githubusercontent.com/Amrykid/Neptunium-ArtistsDB/master/BuiltinArtists.xml");
+                    xmlDoc = XDocument.Parse(xmlText);
+                }
+            }
+            catch (Exception ex)
+            {
+                //Opens up an XDocument for reading the xml file.
+
+                var file = builtInArtistsFile;
+                reader = await file.OpenReadAsync();
+                xmlDoc = XDocument.Load(reader.AsStream());
+            }
 
             //Creates a list to hold the artists.
             List<BuiltinArtistEntry> artists = new List<BuiltinArtistEntry>();
@@ -109,7 +126,7 @@ namespace Neptunium.Core.Media.Metadata
 
             //Clean up.
             xmlDoc = null;
-            reader.Dispose();
+            reader?.Dispose();
 
             return artists.ToArray();
         }
