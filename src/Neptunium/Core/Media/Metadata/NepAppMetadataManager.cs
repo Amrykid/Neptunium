@@ -166,13 +166,16 @@ namespace Neptunium.Core.Media.Metadata
             if (originalMetadata.IsUnknownMetadata) throw new ArgumentException("Unknown metadata was passed.", nameof(originalMetadata));
 
             //Checks if we're on battery saver mode.
-            if (Windows.System.Power.PowerManager.EnergySaverStatus == Windows.System.Power.EnergySaverStatus.On) return false;
+            if (Windows.System.Power.PowerManager.EnergySaverStatus == Windows.System.Power.EnergySaverStatus.On)
+                return false;
 
             //We're not on battery saver mode. Let's check to see if we're on a metered network or roaming.
-            if (NepApp.Network.NetworkUtilizationBehavior != NepAppNetworkManager.NetworkDeterminedAppBehaviorStyle.Normal) return false;
+            if (NepApp.Network.NetworkUtilizationBehavior != NepAppNetworkManager.NetworkDeterminedAppBehaviorStyle.Normal)
+                return false;
 
             //We're not metered or roaming. Lastly, lets check if the user wants us to find song metadata.
-            if (!(bool)NepApp.Settings.GetSetting(AppSettings.TryToFindSongMetadata)) return false;
+            if (!(bool)NepApp.Settings.GetSetting(AppSettings.TryToFindSongMetadata))
+                return false;
 
 
             AlbumData albumData = null;

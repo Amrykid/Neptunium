@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Neptunium.Core.Media.Metadata;
+﻿using Neptunium.Core.Media.Metadata;
 using Neptunium.Media.Songs;
-using Windows.UI.Core;
-using Windows.UI.Notifications;
 
 namespace Neptunium.Core.UI
 {

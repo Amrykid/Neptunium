@@ -220,14 +220,12 @@ namespace Neptunium.Media.Songs
 
             ExtendedSongMetadata newMetadata = new ExtendedSongMetadata(songMetadata);
 
-            bool hasMoreMetadata = false;
-            if (hasMoreMetadata = await NepApp.MetadataManager.FindAdditionalMetadataAsync(newMetadata))
-            {
-                CurrentSong = newMetadata;
-                CurrentSong.SongLength = newMetadata.SongLength;
-                RaisePropertyChanged(nameof(CurrentSong));
-            }
-            
+            bool hasMoreMetadata = await NepApp.MetadataManager.FindAdditionalMetadataAsync(newMetadata);
+
+            CurrentSong = newMetadata;
+            CurrentSong.SongLength = newMetadata.SongLength;
+            RaisePropertyChanged(nameof(CurrentSong));
+
             await History.AddSongAsync(CurrentSong);
 
             SongChanged.Invoke(this, new NepAppSongChangedEventArgs(CurrentSong));
