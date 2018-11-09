@@ -110,13 +110,27 @@ namespace Neptunium.Media.Songs
             }
             else
             {
-                //reset all artwork
-                artworkUriDictionary[NepAppSongMetadataBackground.Album] = null;
-                artworkUriDictionary[NepAppSongMetadataBackground.Artist] = null;
-
-                NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, null, currentSong));
-                NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, null, currentSong));
+                ResetArtworkInternal();
             }
+
+            SongArtworkProcessingComplete?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void ResetArtworkInternal()
+        {
+            var currentSong = NepApp.SongManager.CurrentSong;
+
+            //reset all artwork
+            artworkUriDictionary[NepAppSongMetadataBackground.Album] = null;
+            artworkUriDictionary[NepAppSongMetadataBackground.Artist] = null;
+
+            NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Album, null, currentSong));
+            NoSongArtworkAvailable?.Invoke(this, new NepAppSongMetadataArtworkEventArgs(NepAppSongMetadataBackground.Artist, null, currentSong));
+        }
+
+        internal void ResetArtwork()
+        {
+            ResetArtworkInternal();
 
             SongArtworkProcessingComplete?.Invoke(this, EventArgs.Empty);
         }

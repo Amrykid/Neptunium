@@ -220,7 +220,8 @@ namespace Neptunium.Media.Songs
 
             ExtendedSongMetadata newMetadata = new ExtendedSongMetadata(songMetadata);
 
-            if (await NepApp.MetadataManager.FindAdditionalMetadataAsync(newMetadata))
+            bool hasMoreMetadata = false;
+            if (hasMoreMetadata = await NepApp.MetadataManager.FindAdditionalMetadataAsync(newMetadata))
             {
                 CurrentSong = newMetadata;
                 CurrentSong.SongLength = newMetadata.SongLength;
@@ -231,7 +232,14 @@ namespace Neptunium.Media.Songs
 
             SongChanged.Invoke(this, new NepAppSongChangedEventArgs(CurrentSong));
 
-            ArtworkProcessor.UpdateArtworkMetadata();
+            if (hasMoreMetadata)
+            {
+                ArtworkProcessor.UpdateArtworkMetadata();
+            }
+            else
+            {
+                ArtworkProcessor.ResetArtwork();
+            }
         }
 
         internal SongMetadata GetCurrentSongOrUnknown()
@@ -294,7 +302,6 @@ namespace Neptunium.Media.Songs
             metadataLock.Release();
         }
 
-
         internal void ResetMetadata()
         {
             DeactivateProgramBlockTimer();
@@ -305,8 +312,6 @@ namespace Neptunium.Media.Songs
             RaisePropertyChanged(nameof(CurrentSong));
             PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(null));
         }
-
-
 
 
         private bool IsHostedStationProgramBeginning(SongMetadata songMetadata, StationItem currentStation, out StationProgram stationProgram)
