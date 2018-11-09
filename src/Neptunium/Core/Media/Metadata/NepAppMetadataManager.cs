@@ -156,6 +156,34 @@ namespace Neptunium.Core.Media.Metadata
             return builtInMatch;
         }
 
+        private BuiltinArtistEntry FindBuiltInArtistInsideInArtistMetadata(string artist, string primaryLocale)
+        {
+            if (!IsInitialized) return null;
+            if (string.IsNullOrWhiteSpace(artist)) return null;
+
+            BuiltinArtistEntry result = null;
+
+            foreach(BuiltinArtistEntry builtinArtistEntry in builtinArtistEntries)
+            {
+                if (artist.Contains("(" + builtinArtistEntry.Name + ")"))
+                {
+                    result = builtinArtistEntry;
+                    break;
+                }
+
+                if (builtinArtistEntry.AltNames != null)
+                {
+                    if (builtinArtistEntry.AltNames.Any(x => artist.Contains("(" + x.Name + ")")))
+                    {
+                        result = builtinArtistEntry;
+                        break;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public async Task<bool> FindAdditionalMetadataAsync(ExtendedSongMetadata originalMetadata)
         {
             if (!IsInitialized) return false;
@@ -189,6 +217,7 @@ namespace Neptunium.Core.Media.Metadata
 
             //Next, try and figure out the artist
             var builtInArtist = FindBuiltInArtist(originalMetadata.Artist, station.PrimaryLocale);
+            if (builtInArtist == null) builtInArtist = FindBuiltInArtistInsideInArtistMetadata(originalMetadata.Artist, station.PrimaryLocale);
             if (builtInArtist != null)
             {
                 if (builtInArtist.MusicBrainzUrl != null)
