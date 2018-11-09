@@ -222,11 +222,6 @@ namespace Neptunium.Media
 
             streamer.Play();
 
-            if (streamer.SongMetadata != null)
-            {
-                NepApp.SongManager.HandleMetadata(streamer.SongMetadata, stream);
-            }
-
             ConnectingEnd?.Invoke(this, EventArgs.Empty);
 
 
