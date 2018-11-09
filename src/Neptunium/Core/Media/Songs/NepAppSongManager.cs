@@ -166,20 +166,6 @@ namespace Neptunium.Media.Songs
                     HandleStationSongMetadata(songMetadata, currentStream, CurrentStation);
                 }
             }
-            catch (Exception ex)
-            {
-                if (!Debugger.IsAttached)
-                {
-                    Dictionary<string, string> properties = new Dictionary<string, string>();
-                    properties.Add("Song-Metadata", songMetadata?.ToString());
-                    properties.Add("Current-Station", currentStream?.ParentStation);
-                    Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex, properties);
-                }
-                else
-                {
-                    Debugger.Break();
-                }
-            }
             finally
             {
                 metadataLock.Release();
@@ -218,6 +204,11 @@ namespace Neptunium.Media.Songs
 
             PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(songMetadata));
 
+            await HandleStationSongMetadataStage2Async(songMetadata);
+        }
+
+        private async System.Threading.Tasks.Task HandleStationSongMetadataStage2Async(SongMetadata songMetadata)
+        {
             ExtendedSongMetadata newMetadata = new ExtendedSongMetadata(songMetadata);
 
             bool hasMoreMetadata = await NepApp.MetadataManager.FindAdditionalMetadataAsync(newMetadata);
@@ -266,7 +257,7 @@ namespace Neptunium.Media.Songs
             });
 
             CurrentProgram = currentProgram;
-            SetCurrentMetadataToUnknown(currentProgram.Name);
+            SetCurrentMetadataToUnknownInternal(currentProgram.Name);
         }
 
         private SongMetadata GetUnknownSongMetadata(StationItem stationPlaying = null, string radioProgram = null)
@@ -284,9 +275,15 @@ namespace Neptunium.Media.Songs
             return unknown;
         }
 
-        internal async void SetCurrentMetadataToUnknown(string program = null)
+        public async void SetCurrentMetadataToUnknown(string program = null)
         {
             await metadataLock.WaitAsync();
+            SetCurrentMetadataToUnknownInternal();
+            metadataLock.Release();
+        }
+
+        private void SetCurrentMetadataToUnknownInternal(string program = null)
+        {
             //todo make a readonly field
             SongMetadata unknown = GetUnknownSongMetadata();
 
@@ -297,7 +294,6 @@ namespace Neptunium.Media.Songs
             PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(unknown));
 
             ArtworkProcessor.UpdateArtworkMetadata();
-            metadataLock.Release();
         }
 
         internal void ResetMetadata()
