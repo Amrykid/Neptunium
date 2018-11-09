@@ -22,12 +22,14 @@ namespace Neptunium.Core.UI
 
         private void SongManager_SongChanged(object sender, NepAppSongChangedEventArgs e)
         {
-            NepApp.UI.Notifier.UpdateExtendedMetadataLiveTile((ExtendedSongMetadata)e.Metadata);
+            if (e.Metadata != null)
+                NepApp.UI.Notifier.UpdateExtendedMetadataLiveTile((ExtendedSongMetadata)e.Metadata);
         }
 
         private void SongManager_PreSongChanged(object sender, NepAppSongChangedEventArgs e)
         {
-            NepApp.UI.Notifier.UpdateLiveTile(e.Metadata);
+            if (e.Metadata != null)
+                NepApp.UI.Notifier.UpdateLiveTile(e.Metadata);
         }
     }
 }
