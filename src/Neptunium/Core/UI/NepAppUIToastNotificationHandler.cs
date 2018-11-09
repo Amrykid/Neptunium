@@ -64,6 +64,8 @@ namespace Neptunium.Core.UI
 
         private async void SongManager_SongChanged(object sender, NepAppSongChangedEventArgs e)
         {
+            if (e.Metadata == null) return;
+
             if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
             {
                 if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
