@@ -120,6 +120,7 @@ namespace Neptunium.Media.Songs
                 //this is used for the now playing bar via data binding.
                 RaisePropertyChanged(nameof(CurrentSong));
 
+                //part of the reason for the double-song announcement bug. why is this here again?
                 PreSongChanged?.Invoke(this, new NepAppSongChangedEventArgs(CurrentSong));
             }
         }

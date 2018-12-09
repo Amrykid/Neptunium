@@ -1,4 +1,5 @@
 ﻿using Crystal3;
+using Neptunium.Core.Media.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,8 @@ namespace Neptunium.Core.Media.Bluetooth
     {
         public NepAppMediaBluetoothDeviceCoordinator DeviceCoordinator { get; private set; }
         public bool IsBluetoothModeActive { get; private set; }
+
+        private SongMetadata lastAnnouncedSongMetadata = null;
 
         public NepAppMediaBluetoothManager(Neptunium.Media.NepAppMediaPlayerManager playerManager)
         {
@@ -33,11 +36,18 @@ namespace Neptunium.Core.Media.Bluetooth
         private async void SongManager_PreSongChanged(object sender, Neptunium.Media.Songs.NepAppSongChangedEventArgs e)
         {
             if (e.Metadata == null) return;
+            if (e.Metadata.IsUnknownMetadata) return;
+
+            if (lastAnnouncedSongMetadata != null)
+            {
+                if (lastAnnouncedSongMetadata.Equals(e.Metadata)) return;
+            }
 
             if (IsBluetoothModeActive)
             {
                 if ((bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsInBluetoothMode))
                 {
+                    lastAnnouncedSongMetadata = e.Metadata;
                     await VoiceUtility.AnnonceSongMetadataUsingVoiceAsync(e, VoiceMode.Bluetooth);
                 }
             }
