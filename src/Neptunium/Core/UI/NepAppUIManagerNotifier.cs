@@ -441,7 +441,7 @@ namespace Neptunium.Core.UI
             ShowNowPlayingTileUpdateBase(nowPlaying, tiler, largeBindingContent, mediumBindingContent, smallBindingContent);
         }
 
-        public void UpdateExtendedMetadataLiveTile(ExtendedSongMetadata nowPlaying)
+        public void UpdateExtendedMetadataLiveTile(SongMetadata nowPlaying)
         {
             if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //not supported
             if (NepApp.SongManager.CurrentSong != nowPlaying) return;
@@ -449,6 +449,9 @@ namespace Neptunium.Core.UI
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
 
             string imgUrl = null;
+
+            if (NepApp.SongManager.ArtworkProcessor.SongMetadata == null) return;
+            if (!NepApp.SongManager.ArtworkProcessor.SongMetadata.Equals(nowPlaying)) return;
 
             var albumArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Neptunium.Media.Songs.NepAppSongMetadataBackground.Album);
             var artistArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Neptunium.Media.Songs.NepAppSongMetadataBackground.Artist);

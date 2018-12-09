@@ -32,6 +32,8 @@ namespace Neptunium.Media.Songs
             return IsSongArtworkAvailable(out NepAppSongMetadataBackground type);
         }
 
+        public SongMetadata SongMetadata { get; private set; }
+
         public bool IsSongArtworkAvailable(out NepAppSongMetadataBackground nepAppSongMetadataBackgroundType)
         {
             if (artworkUriDictionary[NepAppSongMetadataBackground.Album] != null)
@@ -53,6 +55,7 @@ namespace Neptunium.Media.Songs
         {
             var currentSong = NepApp.SongManager.CurrentSong;
             var currentSongWithMetadata = currentSong as ExtendedSongMetadata;
+            SongMetadata = currentSong;
 
             //Handle backgrounds
             if (currentSongWithMetadata != null)
@@ -119,6 +122,7 @@ namespace Neptunium.Media.Songs
         private void ResetArtworkInternal()
         {
             var currentSong = NepApp.SongManager.CurrentSong;
+            SongMetadata = currentSong;
 
             //reset all artwork
             artworkUriDictionary[NepAppSongMetadataBackground.Album] = null;
