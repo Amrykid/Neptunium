@@ -41,5 +41,11 @@ namespace Neptunium.View.Dialog
                 this.GetViewModel<StationHandoffDialogFragment>().HandOffCommand.Execute(e.ClickedItem);
             }
         }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            //Focus on the cancel button.
+            CancelButton.Focus(FocusState.Programmatic);
+        }
     }
 }
