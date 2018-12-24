@@ -336,18 +336,7 @@ namespace Neptunium.View
             switch (message.Name)
             {
                 case "ShowHandoffFlyout":
-                    //todo implement handoff flyout.
-
-                    App.Dispatcher.RunAsync(() =>
-                    {
-                        var handoffFlyout = Flyout.GetAttachedFlyout(HeaderControlHintIcon);
-                        if (handoffFlyout != null)
-                        {
-                            handoffFlyout.ShowAt(HeaderControlHintIcon);
-                            HandoffFlyoutSystemListBox.Focus(FocusState.Keyboard);
-                        }
-                    });
-
+                    this.GetViewModel<AppShellViewModel>()?.MediaCastingCommand.Execute(null);
                     break;
             }
         }
@@ -355,18 +344,6 @@ namespace Neptunium.View
         public IEnumerable<string> GetSubscriptions()
         {
             return new string[] { "ShowHandoffFlyout" };
-        }
-
-        private void HandoffListButton_Click(object sender, RoutedEventArgs e)
-        {
-            var btn = sender as ListItemButton;
-
-            if (btn.DataContext == null) return;
-
-            this.GetViewModel<AppShellViewModel>()
-                .HandoffFragment
-                .HandOffCommand
-                .Execute(btn.DataContext);
         }
     }
 }

@@ -123,6 +123,7 @@ namespace Neptunium
         internal static void RegisterUIDialogs()
         {
             NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
+            NepApp.UI.Overlay.RegisterDialogFragment<StationHandoffDialogFragment, StationHandoffDialog>();
         }
 
         private static volatile bool isInBackground = false;

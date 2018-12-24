@@ -34,17 +34,16 @@ namespace Neptunium.ViewModel
         });
 
         public SleepTimerContextFragment SleepTimerFragment => new SleepTimerContextFragment();
-        public HandoffContextFragment HandoffFragment => new HandoffContextFragment();
 
         public RelayCommand MediaCastingCommand => new RelayCommand(async x =>
         {
             if (NepApp.MediaPlayer.IsMediaEngaged)
             {
-                NepApp.MediaPlayer.ShowCastingPicker();
+                await NepApp.UI.Overlay.ShowDialogFragmentAsync<StationHandoffDialogFragment>();
             }
             else
             {
-                await NepApp.UI.ShowInfoDialogAsync("Can't do that!", "You must be listening to sonething before you can cast it!");
+                await NepApp.UI.ShowInfoDialogAsync("Can't do that!", "You must be listening to sonething before you can cast it or hand it off!");
             }
         });
 
@@ -57,7 +56,6 @@ namespace Neptunium.ViewModel
 
         public AppShellViewModel()
         {
-
             NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), ""); //"");
             NepApp.UI.AddNavigationRoute("Now Playing", typeof(NowPlayingPageViewModel), "");
             NepApp.UI.AddNavigationRoute("History", typeof(SongHistoryPageViewModel), "");

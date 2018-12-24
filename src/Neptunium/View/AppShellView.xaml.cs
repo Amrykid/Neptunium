@@ -359,30 +359,15 @@ namespace Neptunium.View
                 TogglePaneButton.IsChecked = false;
         }
 
-        private void HandoffListButton_Click(object sender, RoutedEventArgs e)
-        {
-            var btn = sender as ListItemButton;
-
-            if (btn.DataContext == null) return;
-
-            NepApp.UI.Notifier.VibrateClick();
-
-            this.GetViewModel<AppShellViewModel>()
-                .HandoffFragment
-                .HandOffCommand
-                .Execute(btn.DataContext);
-        }
-
         public void OnReceivedMessage(Message message, Action<object> resultCallback)
         {
             switch (message.Name)
             {
                 case "ShowHandoffFlyout":
-                    App.Dispatcher.RunAsync(() =>
+                    App.Dispatcher.RunWhenIdleAsync(() =>
                     {
-                        HandoffButton.Flyout.ShowAt(HandoffButton);
+                        this.GetViewModel<AppShellViewModel>()?.MediaCastingCommand.Execute(null);
                     });
-
                     break;
             }
         }

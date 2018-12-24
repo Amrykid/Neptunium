@@ -245,42 +245,12 @@
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="1">
                 <AppBarButton Icon="Play" Name="PlayButton" Label="Play" 
                               Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
-                <AppBarButton Icon="Go" ToolTipService.ToolTip="Handoff"
+                <AppBarButton Icon="OpenWith" ToolTipService.ToolTip="Handoff/Cast"
                               x:Name="HandoffButton"
+                              Label="Cast"
+                              Command="{Binding MediaCastingCommand}"
                               Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}">
-                    <AppBarButton.Flyout>
-                        <Flyout>
-                            <Grid x:Name="HandoffFlyoutRootGrid" DataContext="{Binding HandoffFragment, UpdateSourceTrigger=PropertyChanged}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="50" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <TextBlock Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}" Width="250"
-                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                           Text="Select a device to transfer playback to.&#10;&#10;Note: You must be streaming/listening to a station before hand." />
-
-                                <Button Command="{Binding RefreshCommand, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1">
-                                    <SymbolIcon Symbol="Refresh" />
-                                </Button>
-
-                                <ListBox Grid.Row="2" ItemsSource="{Binding AvailableSystems, UpdateSourceTrigger=PropertyChanged}">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <tk:ListItemButton Name="HandoffListButton" Click="HandoffListButton_Click">
-                                                <TextBlock Text="{Binding DisplayName}" />
-                                            </tk:ListItemButton>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </Grid>
-                        </Flyout>
-                    </AppBarButton.Flyout>
                 </AppBarButton>
-                <AppBarButton Icon="OpenWith" ToolTipService.ToolTip="Cast"
-                              Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
-                              Command="{Binding MediaCastingCommand}" />
                 <AppBarButton x:Name="sleepTimerBtn" Visibility="Collapsed" Icon="Clock"
                               Label="Sleep Timer"
                               Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"

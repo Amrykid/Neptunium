@@ -187,7 +187,7 @@
     <Compile Include="ViewModel\AboutPageViewModel.cs" />
     <Compile Include="ViewModel\AppShellViewModel.cs" />
     <Compile Include="ViewModel\CompactNowPlayingPageViewModel.cs" />
-    <Compile Include="ViewModel\Fragments\HandoffContextFragment.cs" />
+    <Compile Include="ViewModel\Dialog\StationHandoffDialogFragment.cs" />
     <Compile Include="ViewModel\Fragments\SleepTimerContextFragment.cs" />
     <Compile Include="ViewModel\Dialog\StationInfoDialogFragment.cs" />
     <Compile Include="ViewModel\NowPlayingPageViewModel.cs" />
@@ -208,6 +208,9 @@
     </Compile>
     <Compile Include="View\CompactNowPlayingPage.xaml.cs">
       <DependentUpon>CompactNowPlayingPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dialog\StationHandoffDialog.xaml.cs">
+      <DependentUpon>StationHandoffDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Dialog\StationInfoDialog.xaml.cs">
       <DependentUpon>StationInfoDialog.xaml</DependentUpon>
@@ -381,6 +384,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\CompactNowPlayingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dialog\StationHandoffDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

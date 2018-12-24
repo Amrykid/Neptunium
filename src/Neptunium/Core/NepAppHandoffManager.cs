@@ -72,7 +72,7 @@ namespace Neptunium
             if (RemoteSystemAccess == RemoteSystemAccessStatus.Allowed)
             {
                 remoteSystemWatcher = RemoteSystem.CreateWatcher(new IRemoteSystemFilter[] {
-                    new RemoteSystemDiscoveryTypeFilter(RemoteSystemDiscoveryType.Proximal),
+                    new RemoteSystemDiscoveryTypeFilter(RemoteSystemDiscoveryType.Any),
                     new RemoteSystemAuthorizationKindFilter(RemoteSystemAuthorizationKind.SameUser),
                     new RemoteSystemStatusTypeFilter(RemoteSystemStatusType.Available)
                 });
@@ -115,8 +115,11 @@ namespace Neptunium
             var system = systemList.FirstOrDefault(x => x.Id == args.RemoteSystem.Id);
             if (system != null)
             {
-                systemList[systemList.IndexOf(system)] = args.RemoteSystem;
-                RemoteSystemsListUpdated?.Invoke(this, EventArgs.Empty);
+                App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    systemList[systemList.IndexOf(system)] = args.RemoteSystem;
+                    RemoteSystemsListUpdated?.Invoke(this, EventArgs.Empty);
+                });
             }
         }
 
