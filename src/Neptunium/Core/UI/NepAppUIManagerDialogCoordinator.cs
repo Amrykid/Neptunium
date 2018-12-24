@@ -127,7 +127,7 @@ namespace Neptunium.Core.UI
             else
             {
                 inlineFrame.Width = width;
-                inlineFrame.Height = height - 20;
+                inlineFrame.Height = height - (NepApp.UI.IsInNoChromeMode ? 60 : 20);
 
             }
         }
