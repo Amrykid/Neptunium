@@ -54,7 +54,7 @@
                       Opacity=".5" />
 
                 <Grid Grid.Row="0" x:Name="MetadataPanel" HorizontalAlignment="Stretch" Margin="20 0">
-                    <Grid Grid.Column="1" VerticalAlignment="Center" x:Name="TrackArtistPanel" Margin="0">
+                    <Grid Grid.Column="1" VerticalAlignment="Center" x:Name="TrackArtistPanel" Margin="16.5 0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" MaxHeight="125" />
                             <RowDefinition Height="30" />
