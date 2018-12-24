@@ -10,6 +10,7 @@ using System.IO;
 using Windows.Storage;
 using Crystal3.Utilities;
 using System.Reactive.Linq;
+using System.Threading;
 
 namespace Neptunium.Core.Media.History
 {
@@ -18,6 +19,8 @@ namespace Neptunium.Core.Media.History
         private JsonSerializer serializer = null;
         private StorageFolder dataFolder = null;
         private StorageFile historyFile = null;
+
+        private SemaphoreSlim historyFileLock = new SemaphoreSlim(1);
 
         public bool IsInitialized { get; private set; }
         public event EventHandler<SongHistorianSongUpdatedEventArgs> SongAdded;
@@ -78,7 +81,15 @@ namespace Neptunium.Core.Media.History
                     tsvText += FormatSongHistoryItemToTSV(item);
                 }
 
-                await FileIO.AppendTextAsync(historyFile, tsvText);
+                await historyFileLock.WaitAsync();
+                try
+                {
+                    await FileIO.AppendTextAsync(historyFile, tsvText);
+                }
+                finally
+                {
+                    historyFileLock.Release();
+                }
             }
 
             IsInitialized = true;
@@ -163,7 +174,15 @@ namespace Neptunium.Core.Media.History
 
             SongAdded?.Invoke(this, new SongHistorianSongUpdatedEventArgs(item));
 
-            await FileIO.AppendTextAsync(historyFile, FormatSongHistoryItemToTSV(item));
+            await historyFileLock.WaitAsync();
+            try
+            {
+                await FileIO.AppendTextAsync(historyFile, FormatSongHistoryItemToTSV(item));
+            }
+            finally
+            {
+                historyFileLock.Release();
+            }
         }
     }
 }
