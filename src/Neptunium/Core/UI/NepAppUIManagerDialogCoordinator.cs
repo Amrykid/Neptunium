@@ -203,6 +203,8 @@ namespace Neptunium.Core.UI
 
             await EndShowingDialogAsync();
 
+            fragment.Dispose();
+
             return result;
         }
 

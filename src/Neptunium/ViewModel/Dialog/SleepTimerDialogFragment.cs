@@ -25,7 +25,7 @@ namespace Neptunium.ViewModel.Dialog
             });
 
             SelectedSleepItem = AvailableSleepItems.First(x => x.TimeToWait == TimeSpan.MinValue);
-            EstimatedTime = NepApp.MediaPlayer.SleepTimer.IsSleepTimerRunning ? NepApp.MediaPlayer.SleepTimer.EstimateTimeToElapse.Value.TimeOfDay.ToString() : "None";
+            EstimatedTime = NepApp.MediaPlayer.SleepTimer.IsSleepTimerRunning ? NepApp.MediaPlayer.SleepTimer.EstimateTimeToElapse.Value.ToString("t") : "None";
         }
 
         public override Task<NepAppUIManagerDialogResult> InvokeAsync(object parameter)
