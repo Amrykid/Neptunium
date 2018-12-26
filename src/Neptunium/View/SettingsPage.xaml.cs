@@ -40,6 +40,9 @@ namespace Neptunium.View
                 default:
                     HapticFeedbackSwitch.IsEnabled = false;
                     HeadphonesAnnounceSongsSwitch.IsEnabled = false;
+
+                    SongNotificationSwitch.XYFocusDown = MetadataSwitch;
+                    MetadataSwitch.XYFocusUp = SongNotificationSwitch;
                     break;
             }
         }
