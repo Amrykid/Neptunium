@@ -256,50 +256,9 @@
                               Label="Sleep Timer"
                               Margin="0 0 5 0"
                               Visibility="Collapsed"
+                              Command="{Binding SleepTimerCommand}"
                               Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
-                              ToolTipService.ToolTip="Sleep Timer">
-                    <AppBarButton.Flyout>
-                        <Flyout>
-                            <Grid x:Name="SleepTimerRootGrid" 
-                                  DataContext="{Binding SleepTimerFragment, UpdateSourceTrigger=PropertyChanged}"
-                                  Width="300">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="50" />
-                                    <RowDefinition Height="45" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <Grid Grid.Row="0" Margin="5,5,5,5">
-                                    <TextBlock Margin="10 0" Text="Sleep Timer"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                       Style="{ThemeResource TitleTextBlockStyle}" />
-                                </Grid>
-
-                                <TextBlock Grid.Row="1" Margin="15 0"
-                                       Style="{ThemeResource BodyTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}">
-                                    <Span>
-                                        <Run Text="Scheduled Time:" />
-                                        <Run Text="{Binding EstimatedTime, UpdateSourceTrigger=PropertyChanged}" 
-                                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
-                                    </Span>
-                                </TextBlock>
-
-                                <ListView Grid.Row="2" Margin="15 0" Header="Time to wait:" 
-                                          x:Name="SleepTimerTimeSelectionBox"
-                                          ItemsSource="{Binding AvailableSleepItems, UpdateSourceTrigger=PropertyChanged}"
-                                          SelectedItem="{Binding SelectedSleepItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                          HorizontalAlignment="Stretch">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding DisplayName}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                            </Grid>
-                        </Flyout>
-                    </AppBarButton.Flyout>
-                </AppBarButton>
+                              ToolTipService.ToolTip="Sleep Timer" />
 
                 <AppBarButton x:Name="MobileMoreMenuButton" Visibility="Visible" Icon="AllApps" Label="More">
                     <AppBarButton.Flyout>
@@ -308,7 +267,8 @@
                                             Text="Handoff/Cast"
                                             Command="{Binding MediaCastingCommand}" />
                             <MenuFlyoutItem ToolTipService.ToolTip="Sleep Timer"
-                                            Text="Sleep Timer" />
+                                            Text="Sleep Timer"
+                                            Command="{Binding SleepTimerCommand}" />
                         </MenuFlyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>

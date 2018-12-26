@@ -124,6 +124,7 @@ namespace Neptunium
         {
             NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
             NepApp.UI.Overlay.RegisterDialogFragment<StationHandoffDialogFragment, StationHandoffDialog>();
+            NepApp.UI.Overlay.RegisterDialogFragment<SleepTimerDialogFragment, SleepTimerDialog>();
         }
 
         private static volatile bool isInBackground = false;

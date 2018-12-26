@@ -9,6 +9,7 @@ namespace Neptunium.Media
         private NepAppMediaPlayerManager nepAppMediaPlayerManager;
 
         internal bool IsSleepTimerRunning { get { return sleepTimer.IsEnabled; } }
+        internal DateTime? EstimateTimeToElapse { get; private set; }
 
         public NepAppMediaSleepTimer(NepAppMediaPlayerManager nepAppMediaPlayerManager)
         {
@@ -25,13 +26,18 @@ namespace Neptunium.Media
             }
 
             sleepTimer.Interval = timeToWait;
+            EstimateTimeToElapse = DateTime.Now.Add(timeToWait);
 
             sleepTimer.Start();
         }
 
         internal void ClearSleepTimer()
         {
-            if (sleepTimer.IsEnabled) sleepTimer.Stop();
+            if (sleepTimer.IsEnabled)
+            {
+                sleepTimer.Stop();
+                EstimateTimeToElapse = null;
+            }
         }
 
         private async void SleepTimer_Tick(object sender, object e)

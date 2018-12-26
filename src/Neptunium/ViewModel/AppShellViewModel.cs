@@ -9,7 +9,6 @@ using Neptunium.Core;
 using Crystal3.UI.Commands;
 using Microsoft.HockeyApp;
 using Neptunium.ViewModel.Dialog;
-using Neptunium.ViewModel.Fragments;
 using Neptunium.Core.Media.Metadata;
 using Windows.System.UserProfile;
 using Windows.Services.Store;
@@ -33,7 +32,17 @@ namespace Neptunium.ViewModel
             NepApp.MediaPlayer.Pause();
         });
 
-        public SleepTimerContextFragment SleepTimerFragment => new SleepTimerContextFragment();
+        public RelayCommand SleepTimerCommand => new RelayCommand(async x =>
+        {
+            if (NepApp.MediaPlayer.IsMediaEngaged)
+            {
+                await NepApp.UI.Overlay.ShowDialogFragmentAsync<SleepTimerDialogFragment>();
+            }
+            else
+            {
+                await NepApp.UI.ShowInfoDialogAsync("Can't do that!", "You must be listening to sonething before you can set the sleep timer!");
+            }
+        });
 
         public RelayCommand MediaCastingCommand => new RelayCommand(async x =>
         {
