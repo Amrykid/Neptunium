@@ -171,6 +171,7 @@ namespace Neptunium.Media
 
 
             timeoutTask = Task.Delay(10000);
+
             connectionTask = streamer.TryConnectAsync(stream); //a failure to connect is caught as a Neptunium.Core.NeptuniumStreamConnectionFailedException by AppShellViewModel
 
             Task result = await Task.WhenAny(connectionTask, timeoutTask);
@@ -204,6 +205,7 @@ namespace Neptunium.Media
             CurrentPlayer.MediaFailed += CurrentPlayer_MediaFailed;
             CurrentPlayerSession = CurrentPlayer.PlaybackSession;
             CurrentPlayerSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+
             streamer.InitializePlayback(CurrentPlayer);
 
             await CurrentPlayer.WaitForMediaOpenAsync();
@@ -223,8 +225,6 @@ namespace Neptunium.Media
             streamer.Play();
 
             ConnectingEnd?.Invoke(this, EventArgs.Empty);
-
-
             playLock.Release();
         }
 

@@ -27,6 +27,7 @@ using Windows.UI.Xaml.Navigation;
 using WinRTXamlToolkit.Controls;
 using static Crystal3.UI.StatusManager.StatusManager;
 using Crystal3.Messaging;
+using Neptunium.Media;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -285,7 +286,19 @@ namespace Neptunium.View
 
             if (NepApp.MediaPlayer.CurrentStream != null)
             {
-                NepApp.UI.Overlay.ShowSnackBarMessageAsync("Now Streaming - " + NepApp.MediaPlayer.CurrentStream.ParentStation);
+                string msg = "Now Streaming - " + NepApp.MediaPlayer.CurrentStream.ParentStation;
+
+                if (NepApp.MediaPlayer.CurrentStreamer is ShoutcastStationMediaStreamer)
+                {
+                    var stationInfo = ((ShoutcastStationMediaStreamer)NepApp.MediaPlayer.CurrentStreamer).ShoutcastStationInfo;
+
+                    if (!string.IsNullOrWhiteSpace(stationInfo.StationDescription))
+                    {
+                        msg += Environment.NewLine + Environment.NewLine + stationInfo.StationDescription;
+                    }
+                }
+
+                NepApp.UI.Overlay.ShowSnackBarMessageAsync(msg);
             }
         }
 

@@ -5,6 +5,7 @@ using System;
 using Windows.Media.Core;
 using Neptunium.Core.Media.Metadata;
 using System.Threading;
+using UWPShoutcastMSS.Streaming;
 
 namespace Neptunium.Media
 {
@@ -16,6 +17,16 @@ namespace Neptunium.Media
         }
 
         public SongMetadata Metadata { get; private set; }
+    }
+
+    public class MediaStreamerStationInfoAcquiredEventArgs : EventArgs
+    {
+        internal MediaStreamerStationInfoAcquiredEventArgs(ServerStationInfo serverStationInfo)
+        {
+            StationInfo = serverStationInfo;
+        }
+
+        public ServerStationInfo StationInfo { get; private set; }
     }
 
     internal interface INepAppMediaStreamer : IDisposable
@@ -75,11 +86,20 @@ namespace Neptunium.Media
         }
 
         public event EventHandler<MediaStreamerMetadataChangedEventArgs> MetadataChanged;
+        public event EventHandler<MediaStreamerStationInfoAcquiredEventArgs> StationInfoAcquired;
 
         protected void RaiseMetadataChanged(SongMetadata metadata)
         {
             this.SongMetadata = metadata;
             MetadataChanged?.Invoke(this, new MediaStreamerMetadataChangedEventArgs(metadata));
+        }
+
+        protected void RaiseStationInfoAcquired(ServerStationInfo serverStationInfo)
+        {
+            if (serverStationInfo != null)
+            {
+                StationInfoAcquired?.Invoke(this, new MediaStreamerStationInfoAcquiredEventArgs(serverStationInfo));
+            }
         }
 
         public abstract void InitializePlayback(MediaPlayer player);
