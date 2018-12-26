@@ -248,12 +248,14 @@
                 <AppBarButton Icon="OpenWith" ToolTipService.ToolTip="Handoff/Cast"
                               x:Name="HandoffButton"
                               Label="Cast"
+                              Visibility="Collapsed"
                               Command="{Binding MediaCastingCommand}"
                               Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}">
                 </AppBarButton>
-                <AppBarButton x:Name="sleepTimerBtn" Visibility="Collapsed" Icon="Clock"
+                <AppBarButton x:Name="SleepTimerButton" Icon="Clock"
                               Label="Sleep Timer"
                               Margin="0 0 5 0"
+                              Visibility="Collapsed"
                               Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
                               ToolTipService.ToolTip="Sleep Timer">
                     <AppBarButton.Flyout>
@@ -298,6 +300,18 @@
                         </Flyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>
+
+                <AppBarButton x:Name="MobileMoreMenuButton" Visibility="Visible" Icon="AllApps" Label="More">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem ToolTipService.ToolTip="Handoff/Cast"
+                                            Text="Handoff/Cast"
+                                            Command="{Binding MediaCastingCommand}" />
+                            <MenuFlyoutItem ToolTipService.ToolTip="Sleep Timer"
+                                            Text="Sleep Timer" />
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
             </StackPanel>
         </Grid>
 
@@ -332,6 +346,10 @@
                         <Setter Target="snackBarGrid.Margin" Value="0 20 20 0" />
                         <Setter Target="snackBarGrid.HorizontalAlignment" Value="Right" />
                         <Setter Target="snackBarGrid.VerticalAlignment" Value="Top" />
+
+                        <Setter Target="SleepTimerButton.Visibility" Value="Visible" />
+                        <Setter Target="HandoffButton.Visibility" Value="Visible" />
+                        <Setter Target="MobileMoreMenuButton.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -354,6 +372,10 @@
                         <Setter Target="snackBarGrid.Margin" Value="0 20 20 0" />
                         <Setter Target="snackBarGrid.HorizontalAlignment" Value="Right" />
                         <Setter Target="snackBarGrid.VerticalAlignment" Value="Top" />
+
+                        <Setter Target="SleepTimerButton.Visibility" Value="Visible" />
+                        <Setter Target="HandoffButton.Visibility" Value="Visible" />
+                        <Setter Target="MobileMoreMenuButton.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -373,6 +395,10 @@
                         <Setter Target="snackBarGrid.Margin" Value="0" />
                         <Setter Target="snackBarGrid.HorizontalAlignment" Value="Stretch" />
                         <Setter Target="snackBarGrid.VerticalAlignment" Value="Bottom" />
+
+                        <Setter Target="SleepTimerButton.Visibility" Value="Collapsed" />
+                        <Setter Target="HandoffButton.Visibility" Value="Collapsed" />
+                        <Setter Target="MobileMoreMenuButton.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

@@ -312,7 +312,7 @@ namespace Neptunium.View
                 }
 
                 //AppBarButton doesn't seem to like the ManualRelayCommand so, I have to set its IsEnabled property here.
-                sleepTimerBtn.Visibility = e.IsPlaying ? Visibility.Visible : Visibility.Collapsed;
+                SleepTimerButton.IsEnabled = e.IsPlaying;
             });
         }
 
@@ -323,7 +323,7 @@ namespace Neptunium.View
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            sleepTimerBtn.Visibility = NepApp.MediaPlayer.IsPlaying ? Visibility.Visible : Visibility.Collapsed;
+            SleepTimerButton.IsEnabled = NepApp.MediaPlayer.IsPlaying;
 
             NepApp.UI.UpdateSelectedNavigationItems();
 
