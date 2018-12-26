@@ -137,6 +137,7 @@
     <Compile Include="Core\Media\Songs\NepAppSongManagerMediaTransportUpdater.cs" />
     <Compile Include="Core\Media\Songs\NepAppSongMetadataArtworkEventArgs.cs" />
     <Compile Include="Core\Media\Songs\NepAppSongMetadataBackground.cs" />
+    <Compile Include="Core\Media\Songs\NepAppStationMessageReceivedEventArgs.cs" />
     <Compile Include="Core\Media\Songs\NepAppStationProgramStartedEventArgs.cs" />
     <Compile Include="Core\Media\VoiceUtility.cs" />
     <Compile Include="Core\NepAppDataCacheManager.cs" />

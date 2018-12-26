@@ -31,6 +31,7 @@ namespace Neptunium.Media.Songs
         public event EventHandler<NepAppSongChangedEventArgs> PreSongChanged;
         public event EventHandler<NepAppSongChangedEventArgs> SongChanged;
         public event EventHandler<NepAppStationProgramStartedEventArgs> StationRadioProgramStarted;
+        public event EventHandler<NepAppStationMessageReceivedEventArgs> NepAppStationMessageReceived;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -191,6 +192,7 @@ namespace Neptunium.Media.Songs
                     if (currentStation.StationMessages.Contains(songMetadata.Track) ||
                         currentStation.StationMessages.Contains(songMetadata.Artist))
                     {
+                        NepAppStationMessageReceived?.Invoke(this, new NepAppStationMessageReceivedEventArgs(songMetadata));
                         metadataLock.Release();
                         return;
                     }
