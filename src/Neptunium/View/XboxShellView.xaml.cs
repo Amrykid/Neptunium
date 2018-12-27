@@ -336,7 +336,10 @@ namespace Neptunium.View
             switch (message.Name)
             {
                 case "ShowHandoffFlyout":
-                    this.GetViewModel<AppShellViewModel>()?.MediaCastingCommand.Execute(null);
+                    App.Dispatcher.RunWhenIdleAsync(() =>
+                    {
+                        this.GetViewModel<AppShellViewModel>()?.MediaCastingCommand.Execute(null);
+                    });
                     break;
             }
         }

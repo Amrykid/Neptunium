@@ -92,9 +92,6 @@
                     <Button x:Name="playPauseButton" ToolTipService.ToolTip="Play/Pause">
                         <SymbolIcon Symbol="Play" />
                     </Button>
-                    <Button ToolTipService.ToolTip="Cast" Command="{Binding MediaCastingCommand}">
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE952;" />
-                    </Button>
                     <Button ToolTipService.ToolTip="Handoff" x:Name="HandoffButton" Click="HandoffButton_Click">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
                     </Button>
