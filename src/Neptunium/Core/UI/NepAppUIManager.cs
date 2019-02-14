@@ -160,7 +160,7 @@ namespace Neptunium.Core.UI
         }
         #endregion
 
-        public void AddNavigationRoute(string displayText, Type navigationViewModel, string symbol = "")
+        public void AddNavigationRoute(string displayText, Type navigationViewModel, string symbol = "", string pageHeader = null)
         {
             if (navigationItems.Any(x => x.DisplayText.Equals(displayText))) return;
 
@@ -168,6 +168,7 @@ namespace Neptunium.Core.UI
             navItem.DisplayText = displayText;
             navItem.Symbol = symbol;
             navItem.NavigationViewModelType = navigationViewModel;
+            navItem.PageHeaderText = pageHeader ?? displayText;
             navItem.Command = new RelayCommand(x =>
             {
                 NavigateToItem(navItem, x);
@@ -185,7 +186,7 @@ namespace Neptunium.Core.UI
 
             //UpdateSelectedNavigationItems();
 
-            ViewTitle = navItem.DisplayText;
+            ViewTitle = navItem.PageHeaderText;
         }
 
         internal void ClearLiveTileAndMediaNotifcation()

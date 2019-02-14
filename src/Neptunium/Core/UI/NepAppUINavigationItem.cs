@@ -1,12 +1,9 @@
-﻿using Crystal3.Model;
-using Crystal3.UI.Commands;
+﻿using Crystal3.UI.Commands;
 using System;
-using System.ComponentModel;
-using static Neptunium.NepApp;
 
 namespace Neptunium.Core.UI
 {
-    public class NepAppUINavigationItem : ModelBase
+    public class NepAppUINavigationItem : Microsoft.UI.Xaml.Controls.NavigationViewItem
     {
         internal NepAppUINavigationItem()
         {
@@ -14,9 +11,14 @@ namespace Neptunium.Core.UI
         }
 
         public string Symbol { get; internal set; }
-        public string DisplayText { get; internal set; }
+        public string DisplayText
+        {
+            //needed from the switch from ModelBase to NavigationViewItem
+            get { return base.Content as string; }
+            set { base.Content = value; }
+        }
         public Type NavigationViewModelType { get; internal set; }
         public RelayCommand Command { get; internal set; }
-        public bool IsSelected { get { return GetPropertyValue<bool>(); } set { SetPropertyValue<bool>(value: value); } }
+        public string PageHeaderText { get; internal set; }
     }
 }

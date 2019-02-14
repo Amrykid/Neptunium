@@ -23,13 +23,6 @@
                       Visibility="Visible"
                       IsItemClickEnabled="True"
                       IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}">
-            <ListView.HeaderTemplate>
-                <DataTemplate>
-                    <TextBlock Text="Station Library"
-                                   Margin="5 0"
-                                   Style="{ThemeResource TitleTextBlockStyle}" />
-                </DataTemplate>
-            </ListView.HeaderTemplate>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -98,7 +91,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        
+
         <GridView ItemsSource="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}"
                       SelectionMode="Single"
                       Margin="5"
@@ -107,22 +100,6 @@
                       IsItemClickEnabled="True"
                       x:DeferLoadStrategy="Lazy"
                       IsEnabled="{Binding NetworkAvailable, UpdateSourceTrigger=PropertyChanged}">
-            <GridView.HeaderTemplate>
-                <DataTemplate>
-                    <TextBlock Text="Station Library"
-                                   Margin="5 0"
-                                   Style="{ThemeResource TitleTextBlockStyle}" />
-                </DataTemplate>
-            </GridView.HeaderTemplate>
-            <!--<GridView.GroupStyle>
-                    <GroupStyle>
-                        <GroupStyle.HeaderTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Key}"/>
-                            </DataTemplate>
-                        </GroupStyle.HeaderTemplate>
-                    </GroupStyle>
-                </GridView.GroupStyle>-->
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <wrt:ListItemButton Command="{Binding ElementName=thisPage, Path=DataContext.ShowStationInfoCommand}"

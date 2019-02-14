@@ -184,6 +184,7 @@ namespace Neptunium
             }
 
             this.Options.HandleSystemBackNavigation = true;
+            this.Options.HandleBackButtonForTopLevelNavigation = false;
         }
 
         protected override async Task OnApplicationInitializedAsync()
