@@ -124,7 +124,7 @@
                                   Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
                                   ToolTipService.ToolTip="Sleep Timer" />
 
-                        <AppBarButton x:Name="MobileMoreMenuButton" Visibility="Visible" Icon="AllApps" Label="More">
+                        <AppBarButton x:Name="MobileMoreMenuButton" Visibility="Visible" Icon="AllApps" Label="More" Margin="0 0 5 0">
                             <AppBarButton.Flyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem ToolTipService.ToolTip="Handoff/Cast"

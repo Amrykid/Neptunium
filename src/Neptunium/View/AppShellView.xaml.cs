@@ -76,12 +76,35 @@ namespace Neptunium.View
             NowPlayingButton.SetBinding(Button.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
 
             NepApp.MediaPlayer.MediaEngagementChanged += MediaPlayer_MediaEngagementChanged;
+            NepApp.MediaPlayer.IsPlayingChanged += MediaPlayer_IsPlayingChanged;
 
 
             NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
             NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
 
             Messenger.AddTarget(this);
+        }
+
+        private void MediaPlayer_IsPlayingChanged(object sender, NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                if (e.IsPlaying)
+                {
+                    PlayButton.Label = "Pause";
+                    PlayButton.Icon = new SymbolIcon(Symbol.Pause);
+                    PlayButton.Command = ((AppShellViewModel)this.DataContext).PausePlaybackCommand;
+                }
+                else
+                {
+                    PlayButton.Label = "Play";
+                    PlayButton.Icon = new SymbolIcon(Symbol.Play);
+                    PlayButton.Command = ((AppShellViewModel)this.DataContext).ResumePlaybackCommand;
+                }
+
+                //AppBarButton doesn't seem to like the ManualRelayCommand so, I have to set its IsEnabled property here.
+                SleepTimerButton.IsEnabled = e.IsPlaying;
+            });
         }
 
         private void MediaPlayer_MediaEngagementChanged(object sender, EventArgs e)
@@ -163,7 +186,7 @@ namespace Neptunium.View
 
         public IEnumerable<string> GetSubscriptions()
         {
-            return new string[] { "ShowHandoffFlyout" };
+            return new string[] { "ShowHandoffFlyout", "ShowNowPlayingOverlay", "HideNowPlayingOverlay" };
         }
 
         private void NavView_ItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)
@@ -187,7 +210,6 @@ namespace Neptunium.View
             private AppShellView parentShell = null;
             private NavigationServiceBase navManager = null;
             private EventHandler<NavigationManagerPreBackRequestedEventArgs> backHandler = null;
-            private bool backHandlerReleased = false;
             internal AppShellViewModelNowPlayingOverlayCoordinator(AppShellView appShellView)
             {
                 if (appShellView == null) throw new ArgumentNullException(nameof(appShellView));
@@ -211,7 +233,6 @@ namespace Neptunium.View
                         //hack to handle the back button.
                         e.Handled = true;
                         navManager.PreBackRequested -= backHandler;
-                        backHandlerReleased = true;
                         await HideOverlayAsync();
                     });
                     navManager.PreBackRequested += backHandler;
