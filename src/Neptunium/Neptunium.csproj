@@ -144,7 +144,6 @@
     <Compile Include="Core\NepAppHandoffManager.cs" />
     <Compile Include="Core\Media\NepAppMediaPlayerManager.cs" />
     <Compile Include="Core\NepAppNetworkManager.cs" />
-    <Compile Include="Core\NepAppServerFrontEndManager.cs" />
     <Compile Include="Core\Settings\NepAppSettingChangedEventArgs.cs" />
     <Compile Include="Core\Settings\NepAppSettingsManager.cs" />
     <Compile Include="ColorUtilities.cs" />
@@ -192,8 +191,6 @@
     <Compile Include="ViewModel\Dialog\StationHandoffDialogFragment.cs" />
     <Compile Include="ViewModel\Dialog\StationInfoDialogFragment.cs" />
     <Compile Include="ViewModel\NowPlayingPageViewModel.cs" />
-    <Compile Include="ViewModel\ServerRemotePageViewModel.cs" />
-    <Compile Include="ViewModel\Server\ServerShellViewModel.cs" />
     <Compile Include="ViewModel\SettingsPageViewModel.cs" />
     <Compile Include="ViewModel\SongHistoryPageViewModel.cs" />
     <Compile Include="ViewModel\StationProgramsPageViewModel.cs" />
@@ -219,14 +216,8 @@
     <Compile Include="View\Dialog\StationInfoDialog.xaml.cs">
       <DependentUpon>StationInfoDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\ServerShellView.xaml.cs">
-      <DependentUpon>ServerShellView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\NowPlayingPage.xaml.cs">
       <DependentUpon>NowPlayingPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\ServerRemotePage.xaml.cs">
-      <DependentUpon>ServerRemotePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
@@ -403,15 +394,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ServerShellView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\NowPlayingPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\ServerRemotePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -5,10 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Notifications;
 using Windows.UI.Popups;
@@ -129,7 +126,7 @@ namespace Neptunium.Core.UI
                 dialog.Title = title;
                 if (commands != null)
                 {
-                    foreach(IUICommand command in commands)
+                    foreach (IUICommand command in commands)
                     {
                         dialog.Commands.Add(command);
                     }
@@ -193,19 +190,16 @@ namespace Neptunium.Core.UI
 
         internal void ClearLiveTileAndMediaNotifcation()
         {
-            if (!NepApp.IsServerMode)
+            if (App.GetDevicePlatform() == Crystal3.Core.Platform.Desktop || App.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
-                if (App.GetDevicePlatform() == Crystal3.Core.Platform.Desktop || App.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-                {
-                    //clears the tile if we're suspending.
-                    TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-                }
+                //clears the tile if we're suspending.
+                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+            }
 
-                if (!NepApp.MediaPlayer.IsPlaying)
-                {
-                    //removes the now playing notification from the action center.
-                    ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
-                }
+            if (!NepApp.MediaPlayer.IsPlaying)
+            {
+                //removes the now playing notification from the action center.
+                ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
             }
         }
 

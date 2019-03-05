@@ -27,6 +27,5 @@ namespace Neptunium
 
         AutomaticallyConserveDataWhenOnMeteredConnections,
         AutomaticallyDetermineAppropriateBitrateBasedOnConnection,
-        ShowRemoteMenu,
     }
 }

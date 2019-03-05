@@ -56,13 +56,6 @@ namespace Neptunium.ViewModel
             }
         });
 
-        public RelayCommand GoToRemoteCommand => new RelayCommand(x =>
-        {
-            var remotePage = NepApp.UI.NavigationItems.FirstOrDefault(X => X.NavigationViewModelType == typeof(ServerRemotePageViewModel));
-            if (remotePage == null) throw new Exception("Remote page not found.");
-            NepApp.UI.NavigateToItem(remotePage);
-        });
-
         public AppShellViewModel()
         {
             NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), ""); //"");
@@ -70,16 +63,6 @@ namespace Neptunium.ViewModel
             NepApp.UI.AddNavigationRoute("History", typeof(SongHistoryPageViewModel), "");
             NepApp.UI.AddNavigationRoute("Schedule", typeof(StationProgramsPageViewModel), "");
             NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");
-
-#if !DEBUG
-            if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowRemoteMenu))
-            {
-#endif
-            NepApp.UI.AddNavigationRoute("Remote", typeof(ServerRemotePageViewModel), "");
-#if !DEBUG
-            }
-#endif
-
             NepApp.UI.AddNavigationRoute("About", typeof(AboutPageViewModel), "");
 
 

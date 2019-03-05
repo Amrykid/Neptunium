@@ -3,12 +3,10 @@ using Crystal3.Navigation;
 using Kimono.Controls.SnackBar;
 using Microsoft.HockeyApp;
 using Neptunium.Core;
-using Neptunium.Core.UI;
 using Neptunium.View;
 using Neptunium.View.Dialog;
 using Neptunium.ViewModel;
 using Neptunium.ViewModel.Dialog;
-using Neptunium.ViewModel.Server;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,13 +16,10 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
-using Windows.ApplicationModel.Core;
 using Windows.Gaming.Input;
 using Windows.Networking.Connectivity;
 using Windows.System;
-using Windows.System.RemoteSystems;
 using Windows.UI.Core;
-using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -236,17 +231,8 @@ namespace Neptunium
 
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
-            if (!NepApp.IsServerMode)
-            {
-                WindowManager.GetNavigationManagerForCurrentWindow()
-                    .RootNavigationService.NavigateTo<AppShellViewModel>();
-            }
-            else
-            {
-                WindowManager.GetNavigationManagerForCurrentWindow()
-                    .RootNavigationService.NavigateTo<ServerShellViewModel>();
-            }
-
+            WindowManager.GetNavigationManagerForCurrentWindow()
+                .RootNavigationService.NavigateTo<AppShellViewModel>();
             await PostUIInitAsync();
         }
 
@@ -254,16 +240,8 @@ namespace Neptunium
         {
             if (args.PreviousExecutionState != ApplicationExecutionState.Running)
             {
-                if (!NepApp.IsServerMode)
-                {
-                    WindowManager.GetNavigationManagerForCurrentWindow()
-                        .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
-                }
-                else
-                {
-                    WindowManager.GetNavigationManagerForCurrentWindow()
-                        .RootNavigationService.SafeNavigateTo<ServerShellViewModel>();
-                }
+                WindowManager.GetNavigationManagerForCurrentWindow()
+                    .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
             }
 
             if (args.Kind == ActivationKind.Protocol)
