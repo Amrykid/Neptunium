@@ -11,6 +11,7 @@ using Crystal3.UI.Commands;
 using Windows.ApplicationModel.DataTransfer;
 using System.Reactive.Linq;
 using System.Reactive;
+using Crystal3.Utilities;
 
 namespace Neptunium.ViewModel
 {
@@ -19,6 +20,7 @@ namespace Neptunium.ViewModel
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             IsBusy = true;
+            History = new ObservableCollection<SongHistoryItem>();
 
             try
             {
@@ -29,13 +31,9 @@ namespace Neptunium.ViewModel
                 var items = await NepApp.SongManager.History.GetHistoryOfSongsAsync();
                 await App.Dispatcher.RunWhenIdleAsync(() =>
                 {
-                    if (items == null)
+                    if (items != null)
                     {
-                        History = new ObservableCollection<SongHistoryItem>();
-                    }
-                    else
-                    {
-                        History = new ObservableCollection<SongHistoryItem>(items);
+                        History.AddRange(items);
                     }
                 });
 
