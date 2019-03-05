@@ -179,6 +179,10 @@ namespace Neptunium.Core.Media.History
             {
                 await FileIO.AppendTextAsync(historyFile, FormatSongHistoryItemToTSV(item));
             }
+            catch (Exception ex)
+            {
+
+            }
             finally
             {
                 historyFileLock.Release();

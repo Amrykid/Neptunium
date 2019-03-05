@@ -202,8 +202,11 @@ namespace Neptunium.Core.Media.Metadata
                             if (!string.IsNullOrWhiteSpace(imageRel.Target))
                             {
                                 var url = await ResolveImageUrlAsync(new Uri(imageRel.Target));
-                                if (await CheckIfUrlIsWebAccessibleAsync(new Uri(url)))
-                                    data.ArtistImage = url;
+                                if (url != null)
+                                {
+                                    if (await CheckIfUrlIsWebAccessibleAsync(new Uri(url)))
+                                        data.ArtistImage = url;
+                                }
                             }
                         }
                     }
