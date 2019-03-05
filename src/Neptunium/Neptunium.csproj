@@ -190,6 +190,7 @@
     <Compile Include="ViewModel\Dialog\SleepTimerDialogFragment.cs" />
     <Compile Include="ViewModel\Dialog\StationHandoffDialogFragment.cs" />
     <Compile Include="ViewModel\Dialog\StationInfoDialogFragment.cs" />
+    <Compile Include="ViewModel\Fragment\NowPlayingViewModelFragment.cs" />
     <Compile Include="ViewModel\NowPlayingPageViewModel.cs" />
     <Compile Include="ViewModel\SettingsPageViewModel.cs" />
     <Compile Include="ViewModel\SongHistoryPageViewModel.cs" />

@@ -1,21 +1,32 @@
 ﻿using Crystal3.Model;
+using Crystal3.UI.Commands;
+using Neptunium.Core.Media.Metadata;
+using Neptunium.Core.Stations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Crystal3.Navigation;
-using Neptunium.Core.Media.Metadata;
-using Neptunium.Core.Stations;
-using Crystal3.UI.Commands;
-using Crystal3.Messaging;
-using Windows.UI;
 
-namespace Neptunium.ViewModel
+namespace Neptunium.ViewModel.Fragment
 {
-    //Now used for every platform that isn't Mobile/Desktop since new fluent design was created.
-    public class NowPlayingPageViewModel : ViewModelBase
+    public class NowPlayingViewModelFragment: ViewModelFragment
     {
+        public NowPlayingViewModelFragment()
+        {
+            NepApp.MediaPlayer.IsPlayingChanged += MediaPlayer_IsPlayingChanged;
+            NepApp.MediaPlayer.MediaEngagementChanged += MediaPlayer_MediaEngagementChanged;
+            NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
+            NepApp.SongManager.SongChanged += SongManager_SongChanged;
+            NepApp.SongManager.ArtworkProcessor.SongArtworkProcessingComplete += SongManager_SongArtworkProcessingComplete;
+            NepApp.MediaPlayer.FatalMediaErrorOccurred += MediaPlayer_FatalMediaErrorOccurred;
+
+            IsPlaying = NepApp.MediaPlayer.IsPlaying;
+            IsMediaEngaged = NepApp.MediaPlayer.IsMediaEngaged;
+
+            UpdateMetadataFollowedByArtwork();
+        }
+
         public SongMetadata CurrentSong
         {
             get { return GetPropertyValue<SongMetadata>(); }
@@ -65,23 +76,6 @@ namespace Neptunium.ViewModel
         {
             get { return GetPropertyValue<bool>(); }
             private set { SetPropertyValue<bool>(value: value); }
-        }
-
-        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
-        {
-            NepApp.MediaPlayer.IsPlayingChanged += MediaPlayer_IsPlayingChanged;
-            NepApp.MediaPlayer.MediaEngagementChanged += MediaPlayer_MediaEngagementChanged;
-            NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
-            NepApp.SongManager.SongChanged += SongManager_SongChanged;
-            NepApp.SongManager.ArtworkProcessor.SongArtworkProcessingComplete += SongManager_SongArtworkProcessingComplete;
-            NepApp.MediaPlayer.FatalMediaErrorOccurred += MediaPlayer_FatalMediaErrorOccurred;
-
-            IsPlaying = NepApp.MediaPlayer.IsPlaying;
-            IsMediaEngaged = NepApp.MediaPlayer.IsMediaEngaged;
-
-            UpdateMetadataFollowedByArtwork();
-
-            base.OnNavigatedTo(sender, e);
         }
 
         private void MediaPlayer_FatalMediaErrorOccurred(object sender, Windows.Media.Playback.MediaPlayerFailedEventArgs e)
@@ -156,7 +150,7 @@ namespace Neptunium.ViewModel
             });
         }
 
-        protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
+        public override void Dispose()
         {
             NepApp.MediaPlayer.MediaEngagementChanged -= MediaPlayer_MediaEngagementChanged;
             NepApp.MediaPlayer.IsPlayingChanged -= MediaPlayer_IsPlayingChanged;
@@ -165,7 +159,7 @@ namespace Neptunium.ViewModel
             NepApp.SongManager.ArtworkProcessor.SongArtworkProcessingComplete -= SongManager_SongArtworkProcessingComplete;
             NepApp.MediaPlayer.FatalMediaErrorOccurred -= MediaPlayer_FatalMediaErrorOccurred;
 
-            base.OnNavigatedFrom(sender, e);
+            base.Dispose();
         }
 
         private async void UpdateMetadataFollowedByArtwork()

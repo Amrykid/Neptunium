@@ -28,6 +28,7 @@ using WinRTXamlToolkit.Controls;
 using static Crystal3.UI.StatusManager.StatusManager;
 using Crystal3.Messaging;
 using Neptunium.Media;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -43,6 +44,7 @@ namespace Neptunium.View
         private FrameNavigationService inlineNavigationService = null;
         private ApplicationView applicationView = null;
         private CoreApplicationView coreApplicationView = null;
+        private AppShellViewModelNowPlayingOverlayCoordinator nowPlayingOverlayCoordinator = null;
         public AppShellView()
         {
             this.InitializeComponent();
@@ -66,11 +68,14 @@ namespace Neptunium.View
             NepApp.UI.SetOverlayParentAndSnackBarContainer(OverlayPanel, snackBarGrid);
             App.RegisterUIDialogs();
 
+            nowPlayingOverlayCoordinator = new AppShellViewModelNowPlayingOverlayCoordinator(this);
 
 
             NavView.SetBinding(Microsoft.UI.Xaml.Controls.NavigationView.HeaderProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
 
             NowPlayingButton.SetBinding(Button.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
+
+            NepApp.MediaPlayer.MediaEngagementChanged += MediaPlayer_MediaEngagementChanged;
 
 
             NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
@@ -79,19 +84,26 @@ namespace Neptunium.View
             Messenger.AddTarget(this);
         }
 
+        private void MediaPlayer_MediaEngagementChanged(object sender, EventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+            });
+        }
 
         private void Overlay_DialogShown(object sender, EventArgs e)
         {
-            NavView.IsBackEnabled = true;
-            NavView.IsBackButtonVisible = Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Collapsed;
+            WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(true);
+
             foreach (var item in NepApp.UI.NavigationItems)
                 item.IsEnabled = false;
         }
 
         private void Overlay_DialogHidden(object sender, EventArgs e)
         {
-            NavView.IsBackEnabled = inlineNavigationService.CanGoBackward;
-            NavView.IsBackButtonVisible = Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Visible;
+            WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
+
             foreach (var item in NepApp.UI.NavigationItems)
                 item.IsEnabled = true;
         }
@@ -134,6 +146,18 @@ namespace Neptunium.View
                         this.GetViewModel<AppShellViewModel>()?.MediaCastingCommand.Execute(null);
                     });
                     break;
+                case "ShowNowPlayingOverlay":
+                    App.Dispatcher.RunWhenIdleAsync(async () =>
+                    {
+                        await nowPlayingOverlayCoordinator.ShowOverlayAsync();
+                    });
+                    break;
+                case "HideNowPlayingOverlay":
+                    App.Dispatcher.RunWhenIdleAsync(async () =>
+                    {
+                        await nowPlayingOverlayCoordinator.HideOverlayAsync();
+                    });
+                    break;
             }
         }
 
@@ -158,9 +182,67 @@ namespace Neptunium.View
             }
         }
 
-        private void NavView_BackRequested(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs args)
+        private class AppShellViewModelNowPlayingOverlayCoordinator
         {
-            inlineNavigationService.GoBack();
+            private AppShellView parentShell = null;
+            private NavigationServiceBase navManager = null;
+            private EventHandler<NavigationManagerPreBackRequestedEventArgs> backHandler = null;
+            private bool backHandlerReleased = false;
+            internal AppShellViewModelNowPlayingOverlayCoordinator(AppShellView appShellView)
+            {
+                if (appShellView == null) throw new ArgumentNullException(nameof(appShellView));
+                parentShell = appShellView;
+                parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
+                navManager = WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two);
+            }
+
+            private bool IsOverlayVisible()
+            {
+                return parentShell.NowPlayingPanel.Opacity > 0.0 && parentShell.NowPlayingPanel.IsHitTestVisible;
+            }
+
+            public async Task ShowOverlayAsync()
+            {
+                if (!IsOverlayVisible())
+                {
+                    backHandler = new EventHandler<NavigationManagerPreBackRequestedEventArgs>(async (o, e) =>
+                    {
+                        //hack to handle the back button.
+                        e.Handled = true;
+                        navManager.PreBackRequested -= backHandler;
+                        backHandlerReleased = true;
+                        await HideOverlayAsync();
+                    });
+                    navManager.PreBackRequested += backHandler;
+
+                    parentShell.NowPlayingPanel.Opacity = 0;
+                    parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    await parentShell.NowPlayingPanel.Fade(.95f).StartAsync();
+                    parentShell.NowPlayingPanel.IsHitTestVisible = true;
+                    WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(true);
+                }
+            }
+
+            public async Task HideOverlayAsync()
+            {
+                if (IsOverlayVisible())
+                {
+                    await parentShell.NowPlayingPanel.Fade(0.0f).StartAsync();
+                    parentShell.NowPlayingPanel.IsHitTestVisible = false;
+                    parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
+                    WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(parentShell.inlineNavigationService.CanGoBackward);
+                }
+            }
+        }
+
+        private void NowPlayingButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(async () =>
+            {
+                await nowPlayingOverlayCoordinator.ShowOverlayAsync();
+            });
         }
     }
 }

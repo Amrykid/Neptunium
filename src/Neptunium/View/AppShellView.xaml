@@ -15,10 +15,16 @@
 
     <Grid x:Name="RootGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <muxc:NavigationView x:Name="NavView" PaneDisplayMode="LeftMinimal" 
-                             ItemInvoked="NavView_ItemInvoked"
-                             BackRequested="NavView_BackRequested">
+                             PaneTitle="Neptunium"
+                             IsBackButtonVisible="Collapsed"
+                             ItemInvoked="NavView_ItemInvoked">
             <Grid>
-                <Frame x:Name="InlineFrame" Grid.Row="1" Grid.RowSpan="1" Grid.ColumnSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Frame x:Name="InlineFrame" Grid.Row="0">
                     <Frame.Transitions>
                         <TransitionCollection>
                             <RepositionThemeTransition />
@@ -61,6 +67,7 @@
                             Background="Transparent" 
                             x:Name="NowPlayingButton" 
                             Height="85"
+                            Click="NowPlayingButton_Click"
                             HorizontalAlignment="Stretch"
                             Margin="0 0 0 0"
                             HorizontalContentAlignment="Stretch">
@@ -134,10 +141,23 @@
             </Grid>
         </muxc:NavigationView>
 
+        <Grid x:Name="NowPlayingPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Grid.RowSpan="3"
+              IsHitTestVisible="False"
+              Opacity="0">
+            <Grid.ChildrenTransitions>
+                <TransitionCollection>
+                    <RepositionThemeTransition />
+                </TransitionCollection>
+            </Grid.ChildrenTransitions>
+
+            <local:NowPlayingPage DataContext="{Binding NowPlayingFragment}" />
+        </Grid>
+
 
         <Grid x:Name="OverlayPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                  Grid.RowSpan="3"
-                  Opacity=".95">
+              Grid.RowSpan="3"
+              Opacity=".95">
             <Grid.ChildrenTransitions>
                 <TransitionCollection>
                     <RepositionThemeTransition />

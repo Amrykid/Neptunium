@@ -1,22 +1,17 @@
-﻿using Crystal3.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Crystal3;
+using Crystal3.Model;
 using Crystal3.Navigation;
-using Neptunium.Core;
 using Crystal3.UI.Commands;
-using Microsoft.HockeyApp;
-using Neptunium.ViewModel.Dialog;
-using Neptunium.Core.Media.Metadata;
-using Windows.System.UserProfile;
-using Windows.Services.Store;
-using Windows.Foundation;
-using Windows.UI.Xaml;
 using Neptunium.Core.Media.Audio;
-using Neptunium.Core.Media;
 using Neptunium.Core.Stations;
+using Neptunium.ViewModel.Dialog;
+using Neptunium.ViewModel.Fragment;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Services.Store;
+using Windows.UI.Xaml;
 
 namespace Neptunium.ViewModel
 {
@@ -56,10 +51,21 @@ namespace Neptunium.ViewModel
             }
         });
 
+
+        public NowPlayingViewModelFragment NowPlayingFragment { get; private set; }
         public AppShellViewModel()
         {
             NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), ""); //"");
-            NepApp.UI.AddNavigationRoute("Now Playing", typeof(NowPlayingPageViewModel), "");
+
+            if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Desktop && CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Mobile)
+            {
+                NepApp.UI.AddNavigationRoute("Now Playing", typeof(NowPlayingPageViewModel), "");
+            }
+            else
+            {
+                NowPlayingFragment = new NowPlayingViewModelFragment();
+            }
+
             NepApp.UI.AddNavigationRoute("History", typeof(SongHistoryPageViewModel), "");
             NepApp.UI.AddNavigationRoute("Schedule", typeof(StationProgramsPageViewModel), "");
             NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");

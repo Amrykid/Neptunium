@@ -2,7 +2,9 @@
 using Crystal3.Model;
 using Crystal3.Navigation;
 using Crystal3.UI;
+using Crystal3.UI.Commands;
 using Neptunium.ViewModel;
+using Neptunium.ViewModel.Fragment;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,6 +35,8 @@ namespace Neptunium.View
     public sealed partial class NowPlayingPage : Page
     {
         private FrameNavigationService inlineNavigationService = null;
+        private RelayCommand pausePlayBackCommand;
+        private RelayCommand resumePlayBackCommand;
         public NowPlayingPage()
         {
             this.InitializeComponent();
@@ -63,17 +67,28 @@ namespace Neptunium.View
 
         private void UpdatePlaybackStatus(bool isPlaying)
         {
+            if (DataContext is NowPlayingPageViewModel)
+            {
+                resumePlayBackCommand = ((NowPlayingPageViewModel)this.DataContext).ResumePlaybackCommand;
+                pausePlayBackCommand = ((NowPlayingPageViewModel)this.DataContext).PausePlaybackCommand;
+            }
+            else if (DataContext is NowPlayingViewModelFragment)
+            {
+                resumePlayBackCommand = ((NowPlayingViewModelFragment)this.DataContext).ResumePlaybackCommand;
+                pausePlayBackCommand = ((NowPlayingViewModelFragment)this.DataContext).PausePlaybackCommand;
+            }
+
             if (isPlaying)
             {
                 playPauseButton.SetValue(ToolTipService.ToolTipProperty, "Pause");
                 playPauseButton.Content = new SymbolIcon(Symbol.Pause);
-                playPauseButton.Command = ((NowPlayingPageViewModel)this.DataContext).PausePlaybackCommand;
+                playPauseButton.Command = pausePlayBackCommand;
             }
             else
             {
                 playPauseButton.SetValue(ToolTipService.ToolTipProperty, "Play");
                 playPauseButton.Content = new SymbolIcon(Symbol.Play);
-                playPauseButton.Command = ((NowPlayingPageViewModel)this.DataContext).ResumePlaybackCommand;
+                playPauseButton.Command = resumePlayBackCommand;
             }
         }
 
