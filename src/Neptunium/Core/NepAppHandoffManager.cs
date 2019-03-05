@@ -115,9 +115,9 @@ namespace Neptunium
             var system = systemList.FirstOrDefault(x => x.Id == args.RemoteSystem.Id);
             if (system != null)
             {
+                systemList[systemList.IndexOf(system)] = args.RemoteSystem;
                 App.Dispatcher.RunWhenIdleAsync(() =>
                 {
-                    systemList[systemList.IndexOf(system)] = args.RemoteSystem;
                     RemoteSystemsListUpdated?.Invoke(this, EventArgs.Empty);
                 });
             }
