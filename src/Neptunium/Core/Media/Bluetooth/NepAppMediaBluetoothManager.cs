@@ -21,7 +21,7 @@ namespace Neptunium.Core.Media.Bluetooth
 
         public NepAppMediaBluetoothManager(Neptunium.Media.NepAppMediaPlayerManager playerManager)
         {
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //bluetooth control is not supported on xbox.
+            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //bluetooth control is not supported on xbox.
 
             DeviceCoordinator = new NepAppMediaBluetoothDeviceCoordinator();
 

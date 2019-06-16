@@ -23,7 +23,7 @@ namespace Neptunium.Core.UI
             tileUpdater = TileUpdateManager.CreateTileUpdaterForApplication();
 
 
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
                 vibrationDevice = VibrationDevice.GetDefault();
         }
 
@@ -246,14 +246,14 @@ namespace Neptunium.Core.UI
 
         public bool CheckIfStationTilePinned(StationItem stationItem)
         {
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return false; //not supported
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return false; //not supported
 
             return SecondaryTile.Exists(GetStationItemTileId(stationItem));
         }
 
         public async Task<bool> PinStationAsTileAsync(StationItem stationItem)
         {
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return false; //not supported
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return false; //not supported
 
             if (!CheckIfStationTilePinned(stationItem))
             {
@@ -376,7 +376,7 @@ namespace Neptunium.Core.UI
 
         public void UpdateLiveTile(SongMetadata nowPlaying)
         {
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //not supported
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //not supported
 
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
 
@@ -443,7 +443,7 @@ namespace Neptunium.Core.UI
 
         public void UpdateExtendedMetadataLiveTile(SongMetadata nowPlaying)
         {
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //not supported
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //not supported
             if (NepApp.SongManager.CurrentSong != nowPlaying) return;
 
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();

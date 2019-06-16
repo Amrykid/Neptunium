@@ -65,7 +65,7 @@ namespace Neptunium
                         reportBuilder.AppendLine();
                     }
 
-                    reportBuilder.AppendLine("Platform: " + Enum.GetName(typeof(Crystal3.Core.Platform), CrystalApplication.GetDevicePlatform()));
+                    reportBuilder.AppendLine("Platform: " + Enum.GetName(typeof(Crystal3.Core.Platform), DeviceInformation.GetDevicePlatform()));
                     reportBuilder.AppendLine("Is Playing?: " + NepApp.MediaPlayer.IsPlaying);
                     reportBuilder.AppendLine("Current Station: " + NepApp.MediaPlayer.CurrentStream != null ? NepApp.MediaPlayer.CurrentStream.ParentStation : "None");
 
@@ -169,7 +169,7 @@ namespace Neptunium
         {
             base.OnConfigure();
 
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
+            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
             {
 #if DEBUG
                 //todo not actually a todo but a PSA: to do Xbox testing on PC, set a breakpoint on Gamepads.Count or uncomment the Debugger.Break code.
@@ -192,7 +192,7 @@ namespace Neptunium
             SnackBarAppearance.Opacity = 1;
             SnackBarAppearance.Transition = new PopupThemeTransition();
 
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox && !CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
+            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox && !CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
             {
                 Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
@@ -304,7 +304,7 @@ namespace Neptunium
 
         internal static bool GetIfPrimaryWindowVisible()
         {
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
+            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
             {
                 return isAppVisible && !isInBackground && isAppFocused;
             }

@@ -26,7 +26,7 @@ namespace Neptunium.ViewModel
         {
             NepApp.Settings.SettingChanged += Settings_SettingChanged;
 
-            if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
+            if (DeviceInformation.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
             {
                 if (await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync())
                 {

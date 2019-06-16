@@ -1,11 +1,15 @@
-﻿using Crystal3.Navigation;
+﻿using Crystal3;
+using Crystal3.Navigation;
 using Crystal3.UI.Commands;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Notifications;
 using Windows.UI.Popups;
@@ -191,7 +195,7 @@ namespace Neptunium.Core.UI
 
         internal void ClearLiveTileAndMediaNotifcation()
         {
-            if (App.GetDevicePlatform() == Crystal3.Core.Platform.Desktop || App.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Desktop || DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
                 //clears the tile if we're suspending.
                 TileUpdateManager.CreateTileUpdaterForApplication().Clear();

@@ -130,7 +130,7 @@ namespace Neptunium.ViewModel
 
         private static void AskToStreamLastPlayedStation()
         {
-            if (Crystal3.CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
+            if (Crystal3.DeviceInformation.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
             {
                 if (!string.IsNullOrWhiteSpace(NepApp.Stations.LastPlayedStationName))
                 {

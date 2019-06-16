@@ -30,7 +30,7 @@ namespace Neptunium.Core.Media.Audio
 
         private IHeadsetDetector CreateHeadsetDetectorByPlatform()
         {
-            switch (Crystal3.CrystalApplication.GetDevicePlatform())
+            switch (Crystal3.DeviceInformation.GetDevicePlatform())
             {
                 case Crystal3.Core.Platform.Mobile:
                     return new MobileHeadsetDetector();

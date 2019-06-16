@@ -1,4 +1,6 @@
-﻿using Kukkii;
+using Crystal3;
+using Kukkii;
+using Neptunium.Core;
 using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Settings;
 using Neptunium.Core.Stations;

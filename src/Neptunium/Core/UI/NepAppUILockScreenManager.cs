@@ -121,7 +121,7 @@ namespace Neptunium.Core.UI
 
                     fileObject = await lockScreenFolder.TryGetItemAsync(originalFileName) as StorageFile;
 
-                    if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                    if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
                     {
                         //crop it on mobile.
 
@@ -142,7 +142,7 @@ namespace Neptunium.Core.UI
                 }
             }
 
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
                 //from the msdn doc for TrySetLockScreenImageAsync: The operation will fail on mobile if the file size exceeds 2 MBs even if it returns true.
 

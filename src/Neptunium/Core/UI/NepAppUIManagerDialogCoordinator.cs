@@ -84,7 +84,7 @@ namespace Neptunium.Core.UI
 
         private Rect GetScreenBounds()
         {
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile 
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Mobile 
                 || UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Touch)
             {
                 return Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().VisibleBounds;

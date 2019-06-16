@@ -31,7 +31,7 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
-            switch(CrystalApplication.GetDevicePlatform())
+            switch(DeviceInformation.GetDevicePlatform())
             {
                 case Crystal3.Core.Platform.Mobile:
                     HapticFeedbackSwitch.IsEnabled = true;
@@ -60,7 +60,7 @@ namespace Neptunium.View
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
+            if (DeviceInformation.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
             {
                 //only show bluetooth settings on devices that have bluetooth.
                 bluetoothPivot.IsEnabled = await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync();
