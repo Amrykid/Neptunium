@@ -57,7 +57,7 @@ namespace Neptunium.ViewModel
         {
             NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), ""); //"");
 
-            if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Desktop && CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Mobile)
+            if (DeviceInformation.GetDevicePlatform() != Crystal3.Core.Platform.Desktop && DeviceInformation.GetDevicePlatform() != Crystal3.Core.Platform.Mobile)
             {
                 NepApp.UI.AddNavigationRoute("Now Playing", typeof(NowPlayingPageViewModel), "");
             }

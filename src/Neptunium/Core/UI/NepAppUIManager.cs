@@ -171,6 +171,7 @@ namespace Neptunium.Core.UI
             NepAppUINavigationItem navItem = new NepAppUINavigationItem();
             navItem.DisplayText = displayText;
             navItem.Symbol = symbol;
+            navItem.Icon = new FontIcon() { Glyph = symbol };
             navItem.NavigationViewModelType = navigationViewModel;
             navItem.PageHeaderText = pageHeader ?? displayText;
             navItem.Command = new RelayCommand(x =>
