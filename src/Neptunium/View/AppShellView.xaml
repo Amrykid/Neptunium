@@ -14,14 +14,18 @@
     mc:Ignorable="d">
 
     <Grid x:Name="RootGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <muxc:NavigationView x:Name="NavView" PaneDisplayMode="LeftMinimal" 
                              PaneTitle="Neptunium"
+                             IsSettingsVisible="False"
                              IsBackButtonVisible="Collapsed"
                              ItemInvoked="NavView_ItemInvoked">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Frame x:Name="InlineFrame" Grid.Row="0">
@@ -49,21 +53,23 @@
                         </TransitionCollection>
                     </Grid.Transitions>
                 </Grid>
+            </Grid>
+        </muxc:NavigationView>
 
-                <Grid x:Name="bottomAppBar" 
-                  Grid.Row="2" 
+        <Grid x:Name="bottomAppBar" 
+                  Grid.Row="1" 
                   Height="85"
                   RequestedTheme="Dark"
                   Visibility="Collapsed"
                   Background="{ThemeResource SystemControlBackgroundAccentBrush}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
 
-                    <Grid Grid.Column="0" Padding="0">
-                        <Button Style="{x:Null}" 
+            <Grid Grid.Column="0" Padding="0">
+                <Button Style="{x:Null}" 
                             Background="Transparent" 
                             x:Name="NowPlayingButton" 
                             Height="85"
@@ -71,28 +77,28 @@
                             HorizontalAlignment="Stretch"
                             Margin="0 0 0 0"
                             HorizontalContentAlignment="Stretch">
-                            <Grid HorizontalAlignment="Stretch">
+                    <Grid HorizontalAlignment="Stretch">
 
-                                <Grid.ChildrenTransitions>
-                                    <TransitionCollection>
-                                        <RepositionThemeTransition />
-                                    </TransitionCollection>
-                                </Grid.ChildrenTransitions>
+                        <Grid.ChildrenTransitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </Grid.ChildrenTransitions>
 
-                                <Grid VerticalAlignment="Center" Margin="10 -5 10 0" RequestedTheme="Dark">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="25" />
-                                        <RowDefinition Height="20" />
-                                        <RowDefinition Height="20" />
-                                    </Grid.RowDefinitions>
+                        <Grid VerticalAlignment="Center" Margin="10 -5 10 0" RequestedTheme="Dark">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25" />
+                                <RowDefinition Height="20" />
+                                <RowDefinition Height="20" />
+                            </Grid.RowDefinitions>
 
-                                    <TextBlock Grid.Row="0" Text="{Binding Track, UpdateSourceTrigger=PropertyChanged}"
+                            <TextBlock Grid.Row="0" Text="{Binding Track, UpdateSourceTrigger=PropertyChanged}"
                                            Style="{ThemeResource SubtitleTextBlockStyle}"
                                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-                                    <TextBlock Grid.Row="1" Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}"
+                            <TextBlock Grid.Row="1" Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}"
                                            Style="{ThemeResource BaseTextBlockStyle}"
                                            Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
-                                    <TextBlock Grid.Row="2"
+                            <TextBlock Grid.Row="2"
                                            Style="{ThemeResource CaptionTextBlockStyle}"
                                            Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
                                     <Span>
@@ -100,23 +106,23 @@
                                         <Run Text="·" />
                                         <Run Text="{Binding RadioProgram, UpdateSourceTrigger=PropertyChanged}" />
                                     </Span>
-                                    </TextBlock>
-                                </Grid>
+                            </TextBlock>
+                        </Grid>
 
-                            </Grid>
-                        </Button>
                     </Grid>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="1">
-                        <AppBarButton Icon="Play" Name="PlayButton" Label="Play" 
+                </Button>
+            </Grid>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="1">
+                <AppBarButton Icon="Play" Name="PlayButton" Label="Play" 
                                   Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
-                        <AppBarButton Icon="OpenWith" ToolTipService.ToolTip="Handoff/Cast"
+                <AppBarButton Icon="OpenWith" ToolTipService.ToolTip="Handoff/Cast"
                                   x:Name="HandoffButton"
                                   Label="Cast"
                                   Visibility="Collapsed"
                                   Command="{Binding MediaCastingCommand}"
                                   Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}">
-                        </AppBarButton>
-                        <AppBarButton x:Name="SleepTimerButton" Icon="Clock"
+                </AppBarButton>
+                <AppBarButton x:Name="SleepTimerButton" Icon="Clock"
                                   Label="Sleep Timer"
                                   Margin="0 0 5 0"
                                   Visibility="Collapsed"
@@ -124,22 +130,20 @@
                                   Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
                                   ToolTipService.ToolTip="Sleep Timer" />
 
-                        <AppBarButton x:Name="MobileMoreMenuButton" Visibility="Visible" Icon="AllApps" Label="More" Margin="0 0 5 0">
-                            <AppBarButton.Flyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem ToolTipService.ToolTip="Handoff/Cast"
+                <AppBarButton x:Name="MobileMoreMenuButton" Visibility="Visible" Icon="AllApps" Label="More" Margin="0 0 5 0">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem ToolTipService.ToolTip="Handoff/Cast"
                                                 Text="Handoff/Cast"
                                                 Command="{Binding MediaCastingCommand}" />
-                                    <MenuFlyoutItem ToolTipService.ToolTip="Sleep Timer"
+                            <MenuFlyoutItem ToolTipService.ToolTip="Sleep Timer"
                                                 Text="Sleep Timer"
                                                 Command="{Binding SleepTimerCommand}" />
-                                </MenuFlyout>
-                            </AppBarButton.Flyout>
-                        </AppBarButton>
-                    </StackPanel>
-                </Grid>
-            </Grid>
-        </muxc:NavigationView>
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+            </StackPanel>
+        </Grid>
 
         <Grid x:Name="NowPlayingPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
               Grid.RowSpan="3"

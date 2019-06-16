@@ -42,6 +42,7 @@ namespace Neptunium.View
     public sealed partial class AppShellView : Page, Crystal3.Messaging.IMessagingTarget
     {
         private FrameNavigationService inlineNavigationService = null;
+        private WindowService windowService = null;
         private ApplicationView applicationView = null;
         private CoreApplicationView coreApplicationView = null;
         private AppShellViewModelNowPlayingOverlayCoordinator nowPlayingOverlayCoordinator = null;
@@ -61,6 +62,7 @@ namespace Neptunium.View
             NavView.SetBinding(Microsoft.UI.Xaml.Controls.NavigationView.MenuItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
 
             inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
+            windowService = WindowManager.GetWindowServiceForCurrentWindow();
             UpdateSelectedNavigationItems();
             NepApp.UI.SetNavigationService(inlineNavigationService);
             inlineNavigationService.Navigated += InlineNavigationService_Navigated;
@@ -125,7 +127,7 @@ namespace Neptunium.View
 
         private void Overlay_DialogHidden(object sender, EventArgs e)
         {
-            WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
+            windowService.SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
 
             foreach (var item in NepApp.UI.NavigationItems)
                 item.IsEnabled = true;
@@ -134,7 +136,7 @@ namespace Neptunium.View
 
         private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
         {
-            NavView.IsBackEnabled = inlineNavigationService.CanGoBackward;
+            //windowService.SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
             UpdateSelectedNavigationItems();
         }
 
