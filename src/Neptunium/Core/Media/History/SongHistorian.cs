@@ -126,9 +126,16 @@ namespace Neptunium.Core.Media.History
 
                 foreach (var line in lines.Reverse())
                 {
-                    SongHistoryItem item = ParseSongHistoryItemFromTSVLine(line);
+                    try
+                    {
+                        SongHistoryItem item = ParseSongHistoryItemFromTSVLine(line);
 
-                    results.Add(item);
+                        results.Add(item);
+                    }
+                    catch (IndexOutOfRangeException)
+                    {
+                        //A line didn't have enough tabs.
+                    }
                 }
             }
             catch (Exception ex)
