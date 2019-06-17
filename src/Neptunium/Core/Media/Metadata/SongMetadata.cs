@@ -57,6 +57,11 @@ namespace Neptunium.Core.Media.Metadata
             return this.Track.Equals(other.Track, StringComparison.CurrentCultureIgnoreCase) && this.Artist.Equals(other.Artist, StringComparison.CurrentCultureIgnoreCase);
         }
 
+        public override int GetHashCode()
+        {
+            return (Track?.GetHashCode() ?? 0) + (Artist?.GetHashCode() ?? 0) + (StationPlayedOn?.GetHashCode() ?? 0);
+        }
+
         public bool FullyEquals(SongMetadata other)
         {
             if (!this.Equals(other)) return false;
