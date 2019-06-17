@@ -35,11 +35,9 @@ namespace Neptunium.View
             {
                 case Crystal3.Core.Platform.Mobile:
                     HapticFeedbackSwitch.IsEnabled = true;
-                    HeadphonesAnnounceSongsSwitch.IsEnabled = true;
                     break;
                 default:
                     HapticFeedbackSwitch.IsEnabled = false;
-                    HeadphonesAnnounceSongsSwitch.IsEnabled = false;
 
                     SongNotificationSwitch.XYFocusDown = MetadataSwitch;
                     MetadataSwitch.XYFocusUp = SongNotificationSwitch;

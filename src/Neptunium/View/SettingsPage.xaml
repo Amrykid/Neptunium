@@ -31,14 +31,8 @@
                                Text="Notifications"/>
                         <ToggleSwitch Header="Show song change notifications"
                                       x:Name="SongNotificationSwitch"
-                                      XYFocusDown="{Binding ElementName=HeadphonesAnnounceSongsSwitch}"
-                                      IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-
-                        <ToggleSwitch Header="Announce song when the song playing&#x0a;changes when headphones are connected."
-                                      x:Name="HeadphonesAnnounceSongsSwitch"
-                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
                                       XYFocusDown="{Binding ElementName=HapticFeedbackSwitch}"
-                                      IsOn="{Binding SaySongNotificationsWhenHeadphonesConnected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                      IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
                         <MenuFlyoutSeparator />
 
@@ -47,7 +41,7 @@
 
                         <ToggleSwitch Header="Use haptic feedback" 
                                       x:Name="HapticFeedbackSwitch"
-                                      XYFocusUp="{Binding ElementName=HeadphonesAnnounceSongsSwitch}"
+                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
                                       XYFocusDown="{Binding ElementName=MetadataSwitch}"
                                       IsOn="{Binding UseHapticFeedback, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
@@ -114,7 +108,7 @@
                         <Button x:Name="SelectBluetoothButton" Click="SelectBluetoothButton_Click" Content="Select Device" />
                         <Button Content="Clear Device" Margin="5 0" Command="{Binding ClearBluetoothDeviceCommand}" />
                     </StackPanel>
-                    
+
                     <MenuFlyoutSeparator />
 
                     <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
@@ -122,15 +116,6 @@
 
                     <ToggleSwitch Header="Announce song when the song playing&#x0a;changes when connected to Bluetooth."
                                   IsOn="{Binding SaySongNotificationsInBluetoothMode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                </StackPanel>
-            </PivotItem>
-            <PivotItem Header="Experimental">
-                <StackPanel Margin="10 0">
-                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
-                               Text="Miscellaneous"/>
-                    <ToggleSwitch Header="Show Remote menu"
-                                      x:Name="ShowRemoteSwitch"
-                                      IsOn="{Binding ShowRemote, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                 </StackPanel>
             </PivotItem>
         </Pivot>

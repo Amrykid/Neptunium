@@ -75,11 +75,6 @@ namespace Neptunium.ViewModel
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
             NepApp.MediaPlayer.FatalMediaErrorOccurred += MediaPlayer_FatalMediaErrorOccurred;
             NepApp.MediaPlayer.Audio.HeadsetDetector.IsHeadsetPluggedInChanged += HeadsetDetector_IsHeadsetPluggedInChanged;
-
-            if (NepApp.MediaPlayer.Audio.HeadsetDetector.IsHeadsetPluggedIn)
-            {
-                ShowOverlayForHeadphonesStatus(true);
-            }
         }
 
         private async void MediaPlayer_FatalMediaErrorOccurred(object sender, Windows.Media.Playback.MediaPlayerFailedEventArgs e)

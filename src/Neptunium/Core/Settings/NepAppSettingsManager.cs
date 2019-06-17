@@ -49,10 +49,6 @@ namespace Neptunium.Core.Settings
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection)))
                 ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection), true);
 
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.SaySongNotificationsWhenHeadphonesAreConnected)))
-                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.SaySongNotificationsWhenHeadphonesAreConnected), false);
-
-
             //bluetooth mode stuff
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.SaySongNotificationsInBluetoothMode)))
                 ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.SaySongNotificationsInBluetoothMode), false);
