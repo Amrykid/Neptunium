@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
+using Windows.ApplicationModel.Core;
 using Windows.Gaming.Input;
 using Windows.Networking.Connectivity;
 using Windows.System;
@@ -189,6 +190,10 @@ namespace Neptunium
 
         protected override async Task OnApplicationInitializedAsync()
         {
+            var coreApplicationView = CoreApplication.GetCurrentView();
+            if (coreApplicationView != null)
+                coreApplicationView.TitleBar.ExtendViewIntoTitleBar = true;
+
             SnackBarAppearance.Opacity = 1;
             SnackBarAppearance.Transition = new PopupThemeTransition();
 

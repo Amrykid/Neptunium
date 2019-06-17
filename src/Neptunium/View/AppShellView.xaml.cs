@@ -52,8 +52,8 @@ namespace Neptunium.View
             this.InitializeComponent();
 
             coreApplicationView = CoreApplication.GetCurrentView();
-            if (coreApplicationView != null)
-                coreApplicationView.TitleBar.ExtendViewIntoTitleBar = true;
+            //if (coreApplicationView != null)
+            //    coreApplicationView.TitleBar.ExtendViewIntoTitleBar = true;
 
             applicationView = ApplicationView.GetForCurrentView();
             applicationView.TitleBar.BackgroundColor = Colors.Transparent;
