@@ -52,7 +52,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="48,0,48,0">
         <GridView ItemsSource="{Binding AvailableStations, UpdateSourceTrigger=PropertyChanged}"
                   SelectionMode="Single"
-                  Margin="5"
+                  Margin="5 10 5 0"
                   x:Name="stationsGridView"
                   IsItemClickEnabled="True"
                   Style="{StaticResource TitleSafeGridViewStyle}"
@@ -63,13 +63,6 @@
                     <Setter Property="SelectedBackground" Value="{x:Null}" />
                 </Style>
             </GridView.Resources>
-            <GridView.HeaderTemplate>
-                <DataTemplate>
-                    <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
-                           Margin="10 0"
-                           Text="Stations" />
-                </DataTemplate>
-            </GridView.HeaderTemplate>
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Grid Width="125" Height="200">
