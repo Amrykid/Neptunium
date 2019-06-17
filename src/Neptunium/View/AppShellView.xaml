@@ -23,6 +23,11 @@
                              IsSettingsVisible="False"
                              IsBackButtonVisible="Collapsed"
                              ItemInvoked="NavView_ItemInvoked">
+            <muxc:NavigationView.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Style="{ThemeResource TitleTextBlockStyle}" TextDecorations="None" />
+                </DataTemplate>
+            </muxc:NavigationView.HeaderTemplate>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />

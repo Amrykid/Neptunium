@@ -99,7 +99,7 @@ namespace Neptunium.ViewModel
             NepApp.Network.IsConnectedChanged -= Network_IsConnectedChanged;
 
             //SortedAvailableStations.Clear();
-            AvailableStations.Clear();
+            AvailableStations?.Clear();
 
             SelectedStation = null;
 
