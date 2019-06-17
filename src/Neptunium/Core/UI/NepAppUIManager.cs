@@ -32,7 +32,7 @@ namespace Neptunium.Core.UI
         private WindowService windowService = null;
 
 
-        public string ViewTitle { get { return _viewTitle.ToUpper(); } private set { _viewTitle = value; RaisePropertyChanged(nameof(ViewTitle)); } }
+        public string ViewTitle { get { return _viewTitle; } private set { _viewTitle = value; RaisePropertyChanged(nameof(ViewTitle)); } }
         public ReadOnlyObservableCollection<NepAppUINavigationItem> NavigationItems { get; private set; }
         public NepAppUIManagerNotifier Notifier { get; private set; }
         public NepAppUIManagerDialogCoordinator Overlay { get; private set; }
