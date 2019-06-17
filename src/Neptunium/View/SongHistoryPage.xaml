@@ -17,7 +17,7 @@
             <!--<CollectionViewSource x:Key="GroupedSongItems" IsSourceGrouped="True" Source="{Binding History, UpdateSourceTrigger=PropertyChanged}" />-->
             <cconv:RelativeTimeConverter TimeMode="Past" x:Key="TimeConv" HourFormatString="Today" MinuteFormatString="Today" SecondFormatString="Today" />
 
-            <DataTemplate x:Key="MobileSongHistoryItemTemplate">
+            <DataTemplate x:Key="SongHistoryItemTemplate">
                 <wrt:ListItemButton>
                     <Grid Height="90">
                         <Grid.ColumnDefinitions>
@@ -68,67 +68,11 @@
                     </wrt:ListItemButton.ContextFlyout>
                 </wrt:ListItemButton>
             </DataTemplate>
-
-            <DataTemplate x:Key="TabletOrHigherSongHistoryItemTemplate">
-                <wrt:ListItemButton>
-                    <Grid Height="100" Margin="0 0 0 5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" MaxWidth="100" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <!--<Image Grid.Column="0"
-                               Width="85" Height="85" Stretch="UniformToFill">
-                            <Image.Source>
-                                <BitmapImage UriSource="{Binding Metadata.StationLogo}" DecodePixelHeight="85" DecodePixelWidth="85" />
-                            </Image.Source>
-                        </Image>-->
-
-                        <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="3*" />
-                                <RowDefinition Height="1*" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Text="{Binding Track, Mode=OneTime}" Grid.Row="0" 
-                                       Style="{ThemeResource TitleTextBlockStyle}"
-                                       x:Name="TrackTextBlock"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                       VerticalAlignment="Bottom"/>
-                            <TextBlock Grid.Row="1"
-                                    VerticalAlignment="Top"
-                                    x:Name="ArtistTextBlock"
-                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-                                    Style="{ThemeResource BodyTextBlockStyle}">
-                            <Span>
-                                <Run Text="{Binding Artist, Mode=OneTime}" />
-                                <Run Text="·" FontWeight="ExtraBold" />
-                                <Run Text="{Binding StationPlayedOn, Mode=OneTime}" />
-                            </Span>
-                            </TextBlock>
-                        </Grid>
-                    </Grid>
-                    <wrt:ListItemButton.ContextFlyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Text="Copy" 
-                                            Command="{Binding ElementName=thisPage, Path=DataContext.CopyMetadataCommand}"
-                                            CommandParameter="{Binding}" />
-                        </MenuFlyout>
-                    </wrt:ListItemButton.ContextFlyout>
-                </wrt:ListItemButton>
-            </DataTemplate>
         </Grid.Resources>
 
         <ListView x:Name="SongHistoryListView"
-                  ItemTemplate="{StaticResource MobileSongHistoryItemTemplate}"
+                  ItemTemplate="{StaticResource SongHistoryItemTemplate}"
                   ItemsSource="{Binding History, UpdateSourceTrigger=PropertyChanged}">
-            <ListView.HeaderTemplate>
-                <DataTemplate>
-                    <TextBlock Text="Play History"
-                                   Margin="10 5"
-                                   Style="{ThemeResource TitleTextBlockStyle}" />
-                </DataTemplate>
-            </ListView.HeaderTemplate>
             <ListView.Transitions>
                 <TransitionCollection>
                     <AddDeleteThemeTransition />
@@ -149,7 +93,7 @@
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="SongHistoryListView.ItemTemplate" Value="{StaticResource TabletOrHigherSongHistoryItemTemplate}" />
+                        <!--<Setter Target="SongHistoryListView.ItemTemplate" Value="{StaticResource SongHistoryItemTemplate}" />-->
                     </VisualState.Setters>
                 </VisualState>
 
@@ -159,7 +103,7 @@
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="SongHistoryListView.ItemTemplate" Value="{StaticResource MobileSongHistoryItemTemplate}" />
+                        <!--<Setter Target="SongHistoryListView.ItemTemplate" Value="{StaticResource SongHistoryItemTemplate}" />-->
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
