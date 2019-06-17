@@ -65,8 +65,8 @@ namespace Neptunium.View
 
             NavView.SetBinding(Microsoft.UI.Xaml.Controls.NavigationView.MenuItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
 
-            inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
-            windowService = WindowManager.GetWindowServiceForCurrentWindow();
+            inlineNavigationService = WindowManager.GetNavigationManagerForCurrentView().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
+            windowService = WindowManager.GetWindowServiceForCurrentView();
             UpdateSelectedNavigationItems();
             NepApp.UI.SetNavigationService(inlineNavigationService);
             inlineNavigationService.Navigated += InlineNavigationService_Navigated;
@@ -139,7 +139,7 @@ namespace Neptunium.View
 
         private void Overlay_DialogShown(object sender, EventArgs e)
         {
-            WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(true);
+            windowService.SetAppViewBackButtonVisibility(true);
 
             foreach (var item in NepApp.UI.NavigationItems)
                 item.IsEnabled = false;
@@ -238,7 +238,7 @@ namespace Neptunium.View
                 parentShell = appShellView;
                 parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
-                navManager = WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two);
+                navManager = WindowManager.GetNavigationManagerForCurrentView().GetNavigationServiceFromFrameLevel(FrameLevel.Two);
             }
 
             private bool IsOverlayVisible()
@@ -263,7 +263,7 @@ namespace Neptunium.View
                     parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
                     await parentShell.NowPlayingPanel.Fade(.95f).StartAsync();
                     parentShell.NowPlayingPanel.IsHitTestVisible = true;
-                    WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(true);
+                    WindowManager.GetWindowServiceForCurrentView().SetAppViewBackButtonVisibility(true);
                 }
             }
 
@@ -275,7 +275,7 @@ namespace Neptunium.View
                     parentShell.NowPlayingPanel.IsHitTestVisible = false;
                     parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
-                    WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(parentShell.inlineNavigationService.CanGoBackward);
+                    WindowManager.GetWindowServiceForCurrentView().SetAppViewBackButtonVisibility(parentShell.inlineNavigationService.CanGoBackward);
                 }
             }
         }
