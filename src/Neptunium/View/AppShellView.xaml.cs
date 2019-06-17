@@ -92,6 +92,8 @@ namespace Neptunium.View
 
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
             {
+                //Add acrylic.
+
                 Windows.UI.Xaml.Media.AcrylicBrush myBrush = new Windows.UI.Xaml.Media.AcrylicBrush();
                 myBrush.BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop;
                 myBrush.TintColor = uiSettings.GetColorValue(UIColorType.AccentDark2);

@@ -15,6 +15,7 @@ using Crystal3.Messaging;
 using WinRTXamlToolkit.Controls;
 using Crystal3.UI;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.ViewManagement;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -27,12 +28,15 @@ namespace Neptunium.View
     public sealed partial class XboxShellView : Page, Crystal3.Messaging.IMessagingTarget
     {
         private FrameNavigationService inlineNavigationService = null;
+        private UISettings uiSettings = null;
         public XboxShellView()
         {
             this.InitializeComponent();
 
+            uiSettings = new Windows.UI.ViewManagement.UISettings();
+
             SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
-            inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
+            inlineNavigationService = WindowManager.GetNavigationManagerForCurrentView().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
             NepApp.UI.SetNavigationService(inlineNavigationService);
             inlineNavigationService.Navigated += InlineNavigationService_Navigated;
 
@@ -60,6 +64,34 @@ namespace Neptunium.View
             }));
 
             Messenger.AddTarget(this);
+
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
+            {
+                //Add acrylic.
+
+                Windows.UI.Xaml.Media.AcrylicBrush myBrush = new Windows.UI.Xaml.Media.AcrylicBrush();
+                myBrush.BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop;
+                myBrush.TintColor = uiSettings.GetColorValue(UIColorType.AccentDark2);
+                myBrush.FallbackColor = uiSettings.GetColorValue(UIColorType.AccentDark2);
+                myBrush.Opacity = 0.6;
+                myBrush.TintOpacity = 0.5;
+
+                HeaderGrid.Background = myBrush;
+
+                Windows.UI.Xaml.Media.AcrylicBrush myBrush2 = new Windows.UI.Xaml.Media.AcrylicBrush();
+                myBrush2.BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.Backdrop;
+                myBrush2.TintColor = uiSettings.GetColorValue(UIColorType.AccentDark2);
+                myBrush2.FallbackColor = uiSettings.GetColorValue(UIColorType.AccentDark2);
+                myBrush2.Opacity = 0.6;
+                myBrush2.TintOpacity = 0.5;
+
+                TransportControlGrid.Background = myBrush;
+            }
+            else
+            {
+                HeaderGrid.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
+                TransportControlGrid.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
+            }
         }
 
         private void UI_NoChromeStatusChanged(object sender, NepAppUIManagerNoChromeStatusChangedEventArgs e)

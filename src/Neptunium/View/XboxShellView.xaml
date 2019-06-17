@@ -82,8 +82,7 @@
                     </Grid.RowDefinitions>
 
                     <Grid Grid.Row="0" x:Name="HeaderGrid" Height="78" Visibility="Visible"
-                          Padding="48,27,48,0"
-                          Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+                          Padding="48,27,48,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50" />
                             <ColumnDefinition Width="*" />
@@ -153,7 +152,6 @@
 
                         <Grid x:Name="TransportControlGrid" Width="330" 
                               Height="110" VerticalAlignment="Bottom"
-                              Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                               HorizontalAlignment="Right" Margin="0 0 68 20"
                               Visibility="Visible"
                               IsHitTestVisible="False"

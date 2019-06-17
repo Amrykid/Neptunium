@@ -30,7 +30,11 @@ namespace Neptunium.View
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [Crystal3.Navigation.NavigationViewModel(typeof(Neptunium.ViewModel.NowPlayingPageViewModel),
-        Crystal3.Navigation.NavigationViewSupportedPlatform.Desktop | Crystal3.Navigation.NavigationViewSupportedPlatform.Mobile | NavigationViewSupportedPlatform.IoT)]
+        Crystal3.Navigation.NavigationViewSupportedPlatform.Desktop 
+        | Crystal3.Navigation.NavigationViewSupportedPlatform.Mobile 
+        | NavigationViewSupportedPlatform.IoT
+        | NavigationViewSupportedPlatform.Holographic
+        | NavigationViewSupportedPlatform.Team)]
     [Neptunium.Core.UI.NepAppUINoChromePage()]
     public sealed partial class NowPlayingPage : Page
     {
@@ -43,7 +47,7 @@ namespace Neptunium.View
 
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
 
-            inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two) as FrameNavigationService;
+            inlineNavigationService = WindowManager.GetNavigationManagerForCurrentView().GetNavigationServiceFromFrameLevel(FrameLevel.Two) as FrameNavigationService;
 
             if (ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
             {

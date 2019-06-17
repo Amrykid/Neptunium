@@ -178,7 +178,8 @@ namespace Neptunium
                 //then however over .Count twice with a breakpoint once to force system to recognize xbox one controller.
                 //if (Debugger.IsAttached)
                 //    Debugger.Break();
-                if (Gamepad.Gamepads.Count > 0)
+
+                if (true) //if (Gamepad.Gamepads.Count > 0)
                 {
                     this.Options.OverridePlatform(Crystal3.Core.Platform.Xbox);
                 }
@@ -238,7 +239,7 @@ namespace Neptunium
 
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
-            WindowManager.GetNavigationManagerForCurrentWindow()
+            WindowManager.GetNavigationManagerForCurrentView()
                 .RootNavigationService.NavigateTo<AppShellViewModel>();
             await PostUIInitAsync();
         }
@@ -248,7 +249,7 @@ namespace Neptunium
             if (args.PreviousExecutionState != ApplicationExecutionState.Running)
             {
                 //First, initializes the shell if it isn't already running.
-                WindowManager.GetNavigationManagerForCurrentWindow()
+                WindowManager.GetNavigationManagerForCurrentView()
                 .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
             }
 
@@ -276,7 +277,7 @@ namespace Neptunium
                 if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
                 {
                     //Xbox shell at this time doesn't use the overlay yet.
-                    WindowManager.GetNavigationManagerForCurrentWindow()
+                    WindowManager.GetNavigationManagerForCurrentView()
                         .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
                         .NavigateTo<NowPlayingPageViewModel>();
                 }

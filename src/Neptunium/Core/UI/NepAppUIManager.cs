@@ -48,7 +48,7 @@ namespace Neptunium.Core.UI
             LockScreen = new NepAppUILockScreenManager();
             LiveTileHandler = new NepAppUILiveTileHandler(this);
             ToastHandler = new NepAppUIToastNotificationHandler();
-            windowService = WindowManager.GetWindowServiceForCurrentWindow();
+            windowService = WindowManager.GetWindowServiceForCurrentView();
         }
 
         internal void SetNavigationService(NavigationServiceBase navService)
@@ -89,7 +89,7 @@ namespace Neptunium.Core.UI
                 navItem.IsSelected = false;
             }
 
-            var navigationManager = WindowManager.GetNavigationManagerForCurrentWindow();
+            var navigationManager = WindowManager.GetNavigationManagerForCurrentView();
 
             NepAppUINavigationItem item = null;
             item = navigationItems.FirstOrDefault(x =>

@@ -173,7 +173,8 @@ namespace Neptunium.Core.UI
             });
             view.KeyDown += escapeHandler;
 
-            var navManager = WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two);
+            var navManager = WindowManager.GetNavigationManagerForCurrentView()
+                .GetNavigationServiceFromFrameLevel(FrameLevel.Two);
             EventHandler<NavigationManagerPreBackRequestedEventArgs> backHandler = null;
             bool backHandlerReleased = false;
             backHandler = new EventHandler<NavigationManagerPreBackRequestedEventArgs>((o, e) =>
