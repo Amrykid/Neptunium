@@ -179,7 +179,7 @@ namespace Neptunium
                 //if (Debugger.IsAttached)
                 //    Debugger.Break();
 
-                if (true) //if (Gamepad.Gamepads.Count > 0)
+                if (Gamepad.Gamepads.Count > 0)
                 {
                     this.Options.OverridePlatform(Crystal3.Core.Platform.Xbox);
                 }
