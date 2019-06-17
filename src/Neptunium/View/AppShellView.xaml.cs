@@ -47,6 +47,7 @@ namespace Neptunium.View
         private ApplicationView applicationView = null;
         private CoreApplicationView coreApplicationView = null;
         private AppShellViewModelNowPlayingOverlayCoordinator nowPlayingOverlayCoordinator = null;
+        private UISettings uiSettings = null;
         public AppShellView()
         {
             this.InitializeComponent();
@@ -59,6 +60,8 @@ namespace Neptunium.View
             applicationView.TitleBar.BackgroundColor = Colors.Transparent;
             applicationView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
             applicationView.TitleBar.InactiveBackgroundColor = Colors.Transparent;
+
+            uiSettings = new Windows.UI.ViewManagement.UISettings();
 
             NavView.SetBinding(Microsoft.UI.Xaml.Controls.NavigationView.MenuItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
 
@@ -86,6 +89,22 @@ namespace Neptunium.View
             NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
 
             Messenger.AddTarget(this);
+
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
+            {
+                Windows.UI.Xaml.Media.AcrylicBrush myBrush = new Windows.UI.Xaml.Media.AcrylicBrush();
+                myBrush.BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop;
+                myBrush.TintColor = uiSettings.GetColorValue(UIColorType.AccentDark2);
+                myBrush.FallbackColor = uiSettings.GetColorValue(UIColorType.AccentDark2);
+                myBrush.Opacity = 0.6;
+                myBrush.TintOpacity = 0.5;
+
+                bottomAppBar.Background = myBrush;
+            }
+            else
+            {
+                bottomAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
+            }
         }
 
         private void MediaPlayer_IsPlayingChanged(object sender, NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
