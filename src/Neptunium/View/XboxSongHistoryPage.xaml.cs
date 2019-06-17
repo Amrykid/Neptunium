@@ -44,6 +44,7 @@ namespace Neptunium.View
 
                     firstItem.Focus(FocusState.Keyboard);
 
+                    SongHistoryListView.SelectedIndex = 0;
                 }
             }));
         }
