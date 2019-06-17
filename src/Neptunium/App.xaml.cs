@@ -1,4 +1,5 @@
 ﻿using Crystal3;
+using Crystal3.Messaging;
 using Crystal3.Navigation;
 using Kimono.Controls.SnackBar;
 using Microsoft.HockeyApp;
@@ -246,12 +247,14 @@ namespace Neptunium
         {
             if (args.PreviousExecutionState != ApplicationExecutionState.Running)
             {
+                //First, initializes the shell if it isn't already running.
                 WindowManager.GetNavigationManagerForCurrentWindow()
-                    .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
+                .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
             }
 
             if (args.Kind == ActivationKind.Protocol)
             {
+                //This handles being launched from a uri
                 var pargs = args as ProtocolActivatedEventArgs;
 
                 var uri = pargs.Uri;
@@ -269,9 +272,19 @@ namespace Neptunium
             }
             else if (args.Kind == ActivationKind.ToastNotification && args.PreviousExecutionState == ApplicationExecutionState.Running)
             {
-                WindowManager.GetNavigationManagerForCurrentWindow()
-                    .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
-                    .NavigateTo<NowPlayingPageViewModel>();
+
+                if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+                {
+                    //Xbox shell at this time doesn't use the overlay yet.
+                    WindowManager.GetNavigationManagerForCurrentWindow()
+                        .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
+                        .NavigateTo<NowPlayingPageViewModel>();
+                }
+                else
+                {
+                    //App shell does use the overlay at this time.
+                    await Messenger.SendMessageAsync("ShowNowPlayingOverlay", null);
+                }
             }
         }
 
