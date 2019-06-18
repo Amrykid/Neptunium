@@ -86,11 +86,13 @@ namespace Neptunium.View
                 myBrush2.TintOpacity = 0.5;
 
                 TransportControlGrid.Background = myBrush;
+                TransportControlGrid.BorderBrush = myBrush;
             }
             else
             {
                 HeaderGrid.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
                 TransportControlGrid.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
+                TransportControlGrid.BorderBrush = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
             }
         }
 

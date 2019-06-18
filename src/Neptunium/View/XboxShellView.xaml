@@ -156,7 +156,6 @@
                               Visibility="Visible"
                               IsHitTestVisible="False"
                               Opacity="0.1"
-                              BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}"
                               BorderThickness="1"
                               Padding="5">
                             <Grid.RowDefinitions>
