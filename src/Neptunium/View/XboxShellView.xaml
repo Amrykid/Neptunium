@@ -9,148 +9,83 @@
     KeyUp="Page_KeyUp"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <SplitView
-            x:Name="RootSplitView"
-            Margin="0,0,0,0"
-            DisplayMode="Overlay">
-            <SplitView.Pane>
-                <Grid Margin="48, 27, 48, 27">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="LayoutRoot">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
+            <Grid Grid.Row="0" x:Name="HeaderGrid" Height="78" Visibility="Visible"
+                  Padding="48,27,48,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="50" />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Padding="0" Background="Transparent" x:Name="SplitViewOpenButton" Click="SplitViewOpenButton_Click">
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" Height="50" Width="50" Foreground="White"
-                              HorizontalAlignment="Left"
-                              Grid.Row="0"/>
-
-                    <StackPanel x:Name="RootSplitViewPaneStackPanel" Grid.Row="1">
-                        <StackPanel.Resources>
-                            <Style BasedOn="{StaticResource SplitViewTextBlockStyle}" TargetType="TextBlock" />
-                            <Style BasedOn="{StaticResource SplitViewRadioButtonStyle}" TargetType="RadioButton" />
-                        </StackPanel.Resources>
-
-                        <ItemsControl x:Name="SplitViewNavigationList">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <RadioButton
-                                        Command="{Binding Command, Mode=OneTime}"
-                                        Content="{Binding DisplayText, Mode=OneTime}"
-                                        GroupName="Navigation"
-                                        Click="RadioButton_Click"
-                                        IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                        Style="{StaticResource SplitViewRadioButtonStyle}">
-                                        <RadioButton.Tag>
-                                            <TextBlock
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                FontSize="{StaticResource SplitViewLargeNavFontSize}"
-                                                Text="{Binding Symbol, Mode=OneTime}" />
-                                        </RadioButton.Tag>
-                                    </RadioButton>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                        <StackPanel Grid.Row="1">
-                            <StackPanel.Resources>
-                                <Style BasedOn="{StaticResource SplitViewTextBlockStyle}" TargetType="TextBlock" />
-                            </StackPanel.Resources>
-
-                            <Button
-                                x:Name="FeedbackButton"
-                                Click="FeedbackButton_Click"
-                                Content="Feedback"
-                                Style="{StaticResource SplitViewButtonStyle}"
-                                Visibility="Collapsed">
-                                <Button.Tag>
-                                    <TextBlock FontSize="{StaticResource SplitViewLargeNavFontSize}" Text="" />
-                                </Button.Tag>
-                            </Button>
-                        </StackPanel>
-                    </StackPanel>
-                </Grid>
-            </SplitView.Pane>
-            <SplitView.Content>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Grid Grid.Row="0" x:Name="HeaderGrid" Height="78" Visibility="Visible"
-                          Padding="48,27,48,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="50" />
-                        </Grid.ColumnDefinitions>
-
-                        <Button Grid.Column="0" Padding="0" Background="Transparent" x:Name="SplitViewOpenButton" Click="SplitViewOpenButton_Click">
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE700;" Height="50" Width="50" Foreground="White"
                                   HorizontalAlignment="Center" Margin="0 -2 0 0"/>
-                        </Button>
+                </Button>
 
-                        <TextBlock Grid.Column="1" x:Name="PageTitleTextBlock" Style="{ThemeResource PageTitleTextBlockStyle}" 
+                <TextBlock Grid.Column="1" x:Name="PageTitleTextBlock" Style="{ThemeResource PageTitleTextBlockStyle}" 
                                    HorizontalAlignment="Left"
                                    Margin="0 0 0 0"
                                    VerticalAlignment="Center" />
 
-                        <StackPanel Grid.Column="2" Padding="10 0" VerticalAlignment="Center" Width="350" 
+                <StackPanel Grid.Column="2" Padding="10 0" VerticalAlignment="Center" Width="350" 
                                     x:Name="CurrentMediaMetadataPanel"
                                     HorizontalAlignment="Right"
                                     Visibility="Collapsed">
-                            <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                    <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                    Style="{ThemeResource BaseTextBlockStyle}"
                                    TextAlignment="Right"
                                    TextWrapping="NoWrap"
                                    Text="{Binding Track, UpdateSourceTrigger=PropertyChanged}"
                                    x:Name="NowPlayingTrackTextBlock">
-                                <TextBlock.Transitions>
-                                    <TransitionCollection>
-                                        <ContentThemeTransition HorizontalOffset="1" VerticalOffset="0" />
-                                        <AddDeleteThemeTransition />
-                                        <RepositionThemeTransition />
-                                    </TransitionCollection>
-                                </TextBlock.Transitions>
-                            </TextBlock>
+                        <TextBlock.Transitions>
+                            <TransitionCollection>
+                                <ContentThemeTransition HorizontalOffset="1" VerticalOffset="0" />
+                                <AddDeleteThemeTransition />
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </TextBlock.Transitions>
+                    </TextBlock>
 
-                            <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                    <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                    Style="{ThemeResource BodyTextBlockStyle}"
                                    TextAlignment="Right"
                                    Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}"
                                    x:Name="NowPlayingArtistTextBlock">
-                                <TextBlock.Transitions>
-                                    <TransitionCollection>
-                                        <ContentThemeTransition HorizontalOffset="1" VerticalOffset="0" />
-                                        <AddDeleteThemeTransition />
-                                        <RepositionThemeTransition />
-                                    </TransitionCollection>
-                                </TextBlock.Transitions>
-                            </TextBlock>
-                        </StackPanel>
+                        <TextBlock.Transitions>
+                            <TransitionCollection>
+                                <ContentThemeTransition HorizontalOffset="1" VerticalOffset="0" />
+                                <AddDeleteThemeTransition />
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </TextBlock.Transitions>
+                    </TextBlock>
+                </StackPanel>
 
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Column="3" FontSize="25" 
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Column="3" FontSize="25" 
                                   HorizontalAlignment="Center" Foreground="White" x:Name="HeaderControlHintIcon">
-                            <FontIcon.Transitions>
-                                <TransitionCollection>
-                                    <RepositionThemeTransition IsStaggeringEnabled="True" />
-                                </TransitionCollection>
-                            </FontIcon.Transitions>
-                        </FontIcon>
+                    <FontIcon.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition IsStaggeringEnabled="True" />
+                        </TransitionCollection>
+                    </FontIcon.Transitions>
+                </FontIcon>
 
 
-                    </Grid>
-                    <Grid Grid.Row="1">
-                        <Frame x:Name="InlineFrame" Margin="0" />
+            </Grid>
+            <Grid Grid.Row="1">
+                <Frame x:Name="InlineFrame" Margin="0" />
 
-                        <Grid x:Name="snackBarGrid" Margin="0 0 48 20" VerticalAlignment="Bottom" HorizontalAlignment="Center" />
+                <Grid x:Name="snackBarGrid" Margin="0 0 48 20" VerticalAlignment="Bottom" HorizontalAlignment="Center" />
 
-                        <Grid x:Name="TransportControlGrid" Width="330" 
+                <Grid x:Name="TransportControlGrid" Width="330" 
                               Height="110" VerticalAlignment="Bottom"
                               HorizontalAlignment="Right" Margin="0 0 68 20"
                               Visibility="Visible"
@@ -158,55 +93,53 @@
                               Opacity="0.1"
                               BorderThickness="1"
                               Padding="5">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="20" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.Resources>
-                                <Storyboard x:Name="ExitStoryboard" >
-                                    <DoubleAnimation From="1" To="0.1" Storyboard.TargetProperty="Opacity"
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.Resources>
+                        <Storyboard x:Name="ExitStoryboard" >
+                            <DoubleAnimation From="1" To="0.1" Storyboard.TargetProperty="Opacity"
                                                      Duration="0:0:0.350"
                                                      Storyboard.TargetName="TransportControlGrid">
-                                        <DoubleAnimation.EasingFunction>
-                                            <CubicEase/>
-                                        </DoubleAnimation.EasingFunction>
-                                    </DoubleAnimation>
-                                </Storyboard>
-                                <Storyboard x:Name="EnterStoryboard">
-                                    <DoubleAnimation From="0.1" To="1" Storyboard.TargetProperty="Opacity" 
+                                <DoubleAnimation.EasingFunction>
+                                    <CubicEase/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                        <Storyboard x:Name="EnterStoryboard">
+                            <DoubleAnimation From="0.1" To="1" Storyboard.TargetProperty="Opacity" 
                                                      Duration="0:0:0.350"
                                                      Storyboard.TargetName="TransportControlGrid">
-                                        <DoubleAnimation.EasingFunction>
-                                            <CubicEase/>
-                                        </DoubleAnimation.EasingFunction>
-                                    </DoubleAnimation>
-                                </Storyboard>
-                            </Grid.Resources>
+                                <DoubleAnimation.EasingFunction>
+                                    <CubicEase/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </Grid.Resources>
 
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Row="0" 
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Row="0" 
                                       Grid.Column="0"
                                       HorizontalAlignment="Center" Foreground="White" />
 
-                            <TextBlock Grid.Column="1"
+                    <TextBlock Grid.Column="1"
                                        Margin="10 0"
                                        Style="{ThemeResource BaseTextBlockStyle}"
                                        Text="Media Controls" />
 
-                            <StackPanel Orientation="Horizontal" Grid.Row="1"
+                    <StackPanel Orientation="Horizontal" Grid.Row="1"
                                         Grid.ColumnSpan="2"
                                         Margin="0 7 0 0">
-                                <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
-                            </StackPanel>
-                            <!--<MediaPlayerElement Grid.Row="2" AreTransportControlsEnabled="True" x:Name="TransportControlsGridMediaPlayerElement"  />-->
-                        </Grid>
-                    </Grid>
+                        <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                    <!--<MediaPlayerElement Grid.Row="2" AreTransportControlsEnabled="True" x:Name="TransportControlsGridMediaPlayerElement"  />-->
                 </Grid>
-            </SplitView.Content>
-        </SplitView>
+            </Grid>
+        </Grid>
 
         <Grid x:Name="OverlayPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity=".95" Visibility="Collapsed">
             <Grid.ChildrenTransitions>
@@ -216,5 +149,11 @@
                 </TransitionCollection>
             </Grid.ChildrenTransitions>
         </Grid>
+
+        <Grid.ContextFlyout>
+            <MenuFlyout Opening="MenuFlyout_Opening" Closing="MenuFlyout_Closing">
+                
+            </MenuFlyout>
+        </Grid.ContextFlyout>
     </Grid>
 </Page>

@@ -16,6 +16,7 @@ using WinRTXamlToolkit.Controls;
 using Crystal3.UI;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.ViewManagement;
+using Crystal3.UI.Commands;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -35,34 +36,31 @@ namespace Neptunium.View
 
             uiSettings = new Windows.UI.ViewManagement.UISettings();
 
-            SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
+            ///Set up navigation
             inlineNavigationService = WindowManager.GetNavigationManagerForCurrentView().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
             NepApp.UI.SetNavigationService(inlineNavigationService);
             inlineNavigationService.Navigated += InlineNavigationService_Navigated;
-
             inlineNavigationService.PreBackRequested += InlineNavigationService_PreBackRequested;
+            PageTitleTextBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
 
+            ///Set up dialogs
             NepApp.UI.SetOverlayParentAndSnackBarContainer(OverlayPanel, snackBarGrid);
-
             App.RegisterUIDialogs();
-
             NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
             NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
             NepApp.UI.NoChromeStatusChanged += UI_NoChromeStatusChanged;
 
+            ///Set up media metadata
             NowPlayingTrackTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
             NowPlayingArtistTextBlock.SetBinding(TextBlock.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
-
-            PageTitleTextBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
-
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
-
             //handler to allow the metadata to animate onto the screen for the first time.
             CurrentMediaMetadataPanel.SetBinding(Control.VisibilityProperty, NepApp.CreateBinding(NepApp.MediaPlayer, nameof(NepApp.MediaPlayer.IsMediaEngaged), binding =>
             {
                 binding.Converter = new Crystal3.UI.Converters.BooleanToVisibilityConverter();
             }));
 
+            ///Set up messaging
             Messenger.AddTarget(this);
 
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
@@ -119,7 +117,7 @@ namespace Neptunium.View
 
         private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
         {
-            
+
         }
 
         private void DeactivateNoChromeMode()
@@ -132,25 +130,11 @@ namespace Neptunium.View
             transportGridVisible = false;
 
             SplitViewOpenButton.Focus(FocusState.Pointer); //reduces the amount of times that the splitview open button has the focus rectangle when that is used to open the menu.
-
-            if (InlineFrame.Content is IXboxInputPage)
-            {
-                var page = ((IXboxInputPage)InlineFrame.Content);
-                //makes sure that if we go left from the inline frame, we end up selecting the current page's item in the nav list.
-                IEnumerable<NepAppUINavigationItem> items = (IEnumerable<NepAppUINavigationItem>)SplitViewNavigationList.ItemsSource;
-                var selectedItem = items.First(x => x.IsSelected);
-                var container = SplitViewNavigationList.ContainerFromItem(selectedItem);
-                page.SetLeftFocus((UIElement)container);
-
-                //set the upper focus to the hamburger menu
-                page.SetTopFocus(SplitViewOpenButton);
-            }
         }
 
         private void ActivateNoChromeMode()
         {
             //no chrome mode
-            RootSplitView.IsPaneOpen = false;
             HeaderGrid.Visibility = Visibility.Collapsed;
 
             TransportControlGrid.Opacity = 0;
@@ -220,38 +204,6 @@ namespace Neptunium.View
             }
         }
 
-        private void HandleSplitViewPaneOpen()
-        {
-            if (InlineFrame.Content is IXboxInputPage)
-            {
-                ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
-            }
-
-            SplitViewNavigationList.Focus(FocusState.Keyboard);
-
-            var selectedNavItem = NepApp.UI.NavigationItems.FirstOrDefault(x => x.IsSelected);
-            if (selectedNavItem != null)
-            {
-                //highlight and focus on the current nav item.
-                var selectedNavContainer = SplitViewNavigationList.ContainerFromItem(selectedNavItem) as ContentPresenter;
-                var selectedNavButton = VisualTreeHelper.GetChild(selectedNavContainer, 0) as RadioButton;
-                selectedNavButton.Focus(FocusState.Keyboard);
-            }
-        }
-
-        private void SplitViewOpenButton_Click(object sender, RoutedEventArgs e)
-        {
-            RootSplitView.IsPaneOpen = true;
-            HandleSplitViewPaneOpen();
-        }
-
-        private void RadioButton_Click(object sender, RoutedEventArgs e)
-        {
-            //dismiss the menu if its open.
-            if (RootSplitView.DisplayMode == SplitViewDisplayMode.Overlay)
-                RootSplitView.IsPaneOpen = false;
-        }
-
         private void Page_KeyUp(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.GamepadY)
@@ -277,16 +229,8 @@ namespace Neptunium.View
                 //if (isInNoChromeMode) return;
 
                 e.Handled = true;
-                RootSplitView.IsPaneOpen = !RootSplitView.IsPaneOpen;
 
-                if (RootSplitView.IsPaneOpen)
-                {
-                    HandleSplitViewPaneOpen();
-                }
-                else
-                {
-                    HandleSplitViewPaneClose();
-                }
+                ShowNavigationFlyout();
             }
             //else if (e.Key == Windows.System.VirtualKey.Left)
             //{
@@ -381,6 +325,49 @@ namespace Neptunium.View
         public IEnumerable<string> GetSubscriptions()
         {
             return new string[] { "ShowHandoffFlyout" };
+        }
+
+        private void SplitViewOpenButton_Click(object sender, RoutedEventArgs e)
+        {
+            ShowNavigationFlyout();
+        }
+
+        private void ShowNavigationFlyout()
+        {
+            var navFlyout = ((MenuFlyout)LayoutRoot.ContextFlyout);
+            var flyoutOptions = new Windows.UI.Xaml.Controls.Primitives.FlyoutShowOptions()
+            {
+                Placement = Windows.UI.Xaml.Controls.Primitives.FlyoutPlacementMode.Full,
+                ShowMode = Windows.UI.Xaml.Controls.Primitives.FlyoutShowMode.Standard
+            };
+
+            navFlyout.ShowAt(LayoutRoot, flyoutOptions);
+        }
+
+        private void MenuFlyout_Opening(object sender, object e)
+        {
+            var navFlyout = sender as MenuFlyout;
+            if (navFlyout == null) return;
+
+            if (navFlyout.Items.Count > 0) return;
+
+            foreach (var navItem in NepApp.UI.NavigationItems)
+            {
+                var menuItem = new MenuFlyoutItem();
+                menuItem.Text = navItem.PageHeaderText;
+                menuItem.Icon = navItem.Icon;
+                menuItem.Command = new RelayCommand(param =>
+                {
+                    NepApp.UI.NavigateToItem(navItem, param);
+                });
+                navFlyout.Items.Add(menuItem);
+            }
+        }
+
+        private void MenuFlyout_Closing(Windows.UI.Xaml.Controls.Primitives.FlyoutBase sender, Windows.UI.Xaml.Controls.Primitives.FlyoutBaseClosingEventArgs args)
+        {
+            //var navFlyout = sender as MenuFlyout;
+            //navFlyout?.Items.Clear();
         }
     }
 }

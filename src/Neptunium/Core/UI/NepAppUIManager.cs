@@ -26,6 +26,8 @@ namespace Neptunium.Core.UI
         public event PropertyChangedEventHandler PropertyChanged;
 
         #region Core
+        public event EventHandler<NepAppUIManagerNavigationRouteAddedEventArgs> NavigationRouteAdded;
+
         private NavigationServiceBase inlineNavigationService = null;
         private string _viewTitle = "PAGE TITLE";
         private ObservableCollection<NepAppUINavigationItem> navigationItems = null;
@@ -179,6 +181,8 @@ namespace Neptunium.Core.UI
                 NavigateToItem(navItem, x);
             });
             navigationItems.Add(navItem);
+
+            NavigationRouteAdded?.Invoke(this, new NepAppUIManagerNavigationRouteAddedEventArgs(navItem));
         }
 
         public void NavigateToItem(NepAppUINavigationItem navItem, object parameter = null)
