@@ -90,6 +90,8 @@ namespace Neptunium.View
 
             Messenger.AddTarget(this);
 
+            DeviceInformation.SubplatformChanged += DeviceInformation_SubplatformChanged;
+
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase") &&
                 Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush"))
             {
@@ -108,6 +110,25 @@ namespace Neptunium.View
             {
                 bottomAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
             }
+        }
+
+        private void DeviceInformation_SubplatformChanged(object sender, DeviceInformationSubplatformChangedEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                if (e.Status == DeviceInformationSubplatformChangedEventArgs.DeviceInformationSubplatformChangedStatus.Activation)
+                {
+                    switch (e.Subplatform)
+                    {
+                        case Crystal3.Core.Subplatform.MixedReality:
+                            NepApp.UI.Overlay.ShowSnackBarMessageAsync("Mixed Reality active.");
+                            break;
+                        case Crystal3.Core.Subplatform.TabletMode:
+                            NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tablet mode active.");
+                            break;
+                    }
+                }
+            });
         }
 
         private void MediaPlayer_IsPlayingChanged(object sender, NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
