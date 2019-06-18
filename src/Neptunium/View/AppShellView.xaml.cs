@@ -123,9 +123,6 @@ namespace Neptunium.View
                         case Crystal3.Core.Subplatform.MixedReality:
                             NepApp.UI.Overlay.ShowSnackBarMessageAsync("Mixed Reality active.");
                             break;
-                        case Crystal3.Core.Subplatform.TabletMode:
-                            NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tablet mode active.");
-                            break;
                     }
                 }
             });
