@@ -1,4 +1,5 @@
-﻿using Crystal3.Model;
+﻿using Crystal3;
+using Crystal3.Model;
 using Crystal3.Navigation;
 using Kimono.Controls.SnackBar;
 using Microsoft.Toolkit.Uwp.UI.Animations;
@@ -123,6 +124,12 @@ namespace Neptunium.Core.UI
                     inlineFrame.Width = 400;
                     inlineFrame.Height = 600;
                 }
+            }
+            else if (DeviceInformation.IsCurrentViewInMixedReality())
+            {
+                //In Mixed Reality, the bottom part of the dialog was cut off. This should now give it some space.
+                inlineFrame.Width = width;
+                inlineFrame.Height = height - 150;
             }
             else
             {
