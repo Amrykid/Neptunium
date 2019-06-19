@@ -73,6 +73,10 @@ namespace Neptunium.Media.Songs
                 updater.MusicProperties.Artist = songMetadata.Artist;
                 updater.AppMediaId = songMetadata.StationPlayedOn.GetHashCode().ToString();
 
+                if (songMetadata.StationLogo != null)
+                {
+                    updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(songMetadata.StationLogo);
+                }
 
                 if (songMetadata is ExtendedSongMetadata)
                 {
@@ -87,11 +91,6 @@ namespace Neptunium.Media.Songs
                 }
                 else
                 {
-                    if (songMetadata.StationLogo != null)
-                    {
-                        updater.Thumbnail = RandomAccessStreamReference.CreateFromUri(songMetadata.StationLogo);
-                    }
-
                     updater.MusicProperties.AlbumTitle = "";
                     updater.MusicProperties.AlbumArtist = "";
                 }
