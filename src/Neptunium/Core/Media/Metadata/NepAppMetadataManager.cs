@@ -74,7 +74,6 @@ namespace Neptunium.Core.Media.Metadata
 
                 if (artistElement.Elements("AltName") != null)
                 {
-
                     artistEntry.AltNames = artistElement.Elements("AltName").Select(altNameElement =>
                     {
                         string name = altNameElement.Value;
@@ -88,6 +87,14 @@ namespace Neptunium.Core.Media.Metadata
                             sayAs = altNameElement.Attribute("SayAs").Value;
 
                         return new BuiltinArtistEntryAltName(name, lang, sayAs);
+                    }).ToArray();
+                }
+
+                if (artistElement.Elements("Related") != null)
+                {
+                    artistEntry.RelatedArtists = artistElement.Elements("Related").Select(relatedElement =>
+                    {
+                        return relatedElement.Value;
                     }).ToArray();
                 }
 
@@ -313,6 +320,7 @@ namespace Neptunium.Core.Media.Metadata
         /// </summary>
         public string NameSayAs { get; internal set; }
         public Uri MusicBrainzUrl { get; internal set; }
+        public string[] RelatedArtists { get; internal set; }
     }
 
     /// <summary>
