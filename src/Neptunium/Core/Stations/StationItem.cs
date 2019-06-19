@@ -46,6 +46,14 @@ namespace Neptunium.Core.Stations
         {
             return Name.Trim().ToLower().GetHashCode();
         }
+
+        public override string ToString()
+        {
+            //Mixed Reality and HoloLens uses this value for the speech annotation.
+            //e.g. "Say 'NepApp.Core.Stations.StationItem'".
+            //todo: add to each station, an easy to pronounce equivalent of each station's name.
+            return Name;
+        }
     }
 
     //Used in cases where one provider (e.g. asia dream radio) has multiple different streams under their name.
