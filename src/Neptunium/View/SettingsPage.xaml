@@ -29,7 +29,7 @@
                     <StackPanel Margin="10 0">
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Notifications"/>
-                        <ToggleSwitch Header="Show song change notifications"
+                        <ToggleSwitch Header="Show song change notifications."
                                       x:Name="SongNotificationSwitch"
                                       XYFocusDown="{Binding ElementName=HapticFeedbackSwitch}"
                                       IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
@@ -39,7 +39,7 @@
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="UI"/>
 
-                        <ToggleSwitch Header="Use haptic feedback" 
+                        <ToggleSwitch Header="Use haptic feedback." 
                                       x:Name="HapticFeedbackSwitch"
                                       XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
                                       XYFocusDown="{Binding ElementName=MetadataSwitch}"
@@ -49,7 +49,7 @@
                         
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Metadata"/>
-                        <ToggleSwitch Header="Find song metadata when song changes" 
+                        <ToggleSwitch Header="Find song metadata when song changes." 
                                       x:Name="MetadataSwitch"
                                       XYFocusUp="{Binding ElementName=HapticFeedbackSwitch}"
                                       IsOn="{Binding FindSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />

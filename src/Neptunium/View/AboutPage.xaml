@@ -34,13 +34,14 @@
                     <LineBreak />avatar29A's <Hyperlink NavigateUri="https://github.com/avatar29A/MusicBrainz">MusicBrainz</Hyperlink>
                     <LineBreak />xyzzer's <Hyperlink NavigateUri="https://github.com/xyzzer/WinRTXamlToolkit/">WinRTXamlToolkit</Hyperlink>
                     <LineBreak /><Hyperlink NavigateUri="https://github.com/Microsoft/UWPCommunityToolkit">UWPCommunityToolkit</Hyperlink>
+                    <LineBreak /><Hyperlink NavigateUri="https://github.com/microsoft/microsoft-ui-xaml">Windows UI Library</Hyperlink>
                 </TextBlock>
 
                 <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" Text="License" />
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" Padding="5">
                     MIT License
                     <LineBreak />
-                    <LineBreak />Copyright (c) 2017 Alexander Mitchell-Robinson
+                    <LineBreak />Copyright (c) 2019, 2020 Alexander Mitchell-Robinson
                     <LineBreak />
                     <LineBreak />Permission is hereby granted, free of charge, to any person obtaining a copy
                     of this software and associated documentation files (the "Software"), to deal
