@@ -127,6 +127,8 @@ namespace Neptunium.Core.Media.Metadata
                     artistEntry.NameSayAs = artistElement.Attribute("SayAs").Value;
                 }
 
+                artistEntry.IsBuiltIn = true;
+
                 //Adds the artist entry to the list.
                 artists.Add(artistEntry);
             }
@@ -266,22 +268,24 @@ namespace Neptunium.Core.Media.Metadata
         {
             //try to strip out "Feat." artists
 
-            string originalArtistString = originalMetadata.Artist;
-            if (featuredArtistRegex.IsMatch(originalMetadata.Artist))
-                originalMetadata.Artist = featuredArtistRegex.Replace(originalMetadata.Artist, "").Trim();
+            /* Formats:
+            - ArtistA & ArtistB | ([a-zA-Z1-9\w\.\~\-\']+)\s*(&|and|And|AND)\s*([a-zA-Z1-9\w\.\~\-\']+)
+            - ArtistA (F|f)eat. ArtistB ((,|%|and) ArtistC)*
+            - ArtistA, ArtistB .... (& ArtistC) |  e.g. 'Minase Inori, Hanazawa Kana, Iguchi Yuka & Hayami Saori' | s.Split(',', '&').Select(y => y.Trim());
+            - ArtistA x ArtistB
+            */
 
-            if (featuredArtistRegex.IsMatch(originalArtistString))
+            var artists = originalMetadata.Artist
+                .Split(new string[] { ",", "&", "ft.", "feat.", "Feat.", "FEAT.", " x " }, StringSplitOptions.None).Select(y => y.Trim());
+
+            if (artists.Count() >= 1)
             {
-                try
-                {
-                    var artistsMatch = featuredArtistRegex.Match(originalArtistString);
-                    var artists = artistsMatch.Groups[1].Value.Split(',').Select(x => x.Trim());
-                    originalMetadata.FeaturedArtists = artists.ToArray();
-                }
-                catch (Exception)
-                {
+                originalMetadata.Artist = artists.ElementAt(0);
+            }
 
-                }
+            if (artists.Count() > 1)
+            {
+                originalMetadata.FeaturedArtists = artists.Skip(1).ToArray();
             }
         }
     }
@@ -321,6 +325,7 @@ namespace Neptunium.Core.Media.Metadata
         public string NameSayAs { get; internal set; }
         public Uri MusicBrainzUrl { get; internal set; }
         public string[] RelatedArtists { get; internal set; }
+        public bool IsBuiltIn { get; internal set; }
     }
 
     /// <summary>
