@@ -53,42 +53,52 @@
 
             <DataTemplate x:Key="SongHistoryItemTemplate">
                 <wrt:ListItemButton>
-                    <Grid Height="100" Margin="0 0 0 5">
+                    <Grid Margin="0 0 0 5" Padding="10 0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" MaxWidth="100" />
+                            <ColumnDefinition Width="0" /><!--<ColumnDefinition Width="60" />-->
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="200" />
                         </Grid.ColumnDefinitions>
 
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                        </Grid.RowDefinitions>
+
                         <!--<Image Grid.Column="0"
-                               Width="85" Height="85" Stretch="UniformToFill">
+                               Grid.Row="0"
+                               Grid.RowSpan="2"
+                               Stretch="Fill"
+                               Width="45"
+                               Height="45"
+                               VerticalAlignment="Center">
                             <Image.Source>
-                                <BitmapImage UriSource="{Binding Metadata.StationLogo}" DecodePixelHeight="85" DecodePixelWidth="85" />
+                                <BitmapImage UriSource="{Binding Metadata.StationLogo, UpdateSourceTrigger=PropertyChanged}" />
                             </Image.Source>
                         </Image>-->
 
-                        <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="3*" />
-                                <RowDefinition Height="1*" />
-                            </Grid.RowDefinitions>
 
-                            <TextBlock Text="{Binding Track, Mode=OneTime}" Grid.Row="0" 
-                                       Style="{ThemeResource TitleTextBlockStyle}"
-                                       x:Name="TrackTextBlock"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                       VerticalAlignment="Bottom"/>
-                            <TextBlock Grid.Row="1"
-                                    VerticalAlignment="Top"
-                                    x:Name="ArtistTextBlock"
-                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
-                                    Style="{ThemeResource BodyTextBlockStyle}">
+                        <TextBlock Style="{ThemeResource BaseTextBlockStyle}"
+                           Text="{Binding Track, Mode=OneTime}"
+                           Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                           Grid.Column="1"
+                           TextTrimming="WordEllipsis"
+                           MaxWidth="200"
+                           HorizontalAlignment="Left"
+                           ToolTipService.ToolTip="{Binding Track, Mode=OneTime}"
+                           VerticalAlignment="Bottom"
+                           Grid.Row="0" />
+
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
+                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                   Grid.Column="1"
+                                   Grid.Row="1">
                             <Span>
                                 <Run Text="{Binding Artist, Mode=OneTime}" />
                                 <Run Text="·" FontWeight="ExtraBold" />
                                 <Run Text="{Binding StationPlayedOn, Mode=OneTime}" />
                             </Span>
-                            </TextBlock>
-                        </Grid>
+                        </TextBlock>
                     </Grid>
                     <wrt:ListItemButton.ContextFlyout>
                         <MenuFlyout>
@@ -106,13 +116,6 @@
                   Style="{StaticResource TitleSafeListViewStyle}"
                   Margin="48 0 48 0"
                   ItemTemplate="{StaticResource SongHistoryItemTemplate}">
-            <ListView.HeaderTemplate>
-                <DataTemplate>
-                    <TextBlock Text="Play History"
-                                   Margin="10 0"
-                                   Style="{ThemeResource TitleTextBlockStyle}" />
-                </DataTemplate>
-            </ListView.HeaderTemplate>
             <ListView.Transitions>
                 <TransitionCollection>
                     <AddDeleteThemeTransition />
