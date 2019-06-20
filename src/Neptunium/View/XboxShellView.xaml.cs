@@ -63,6 +63,8 @@ namespace Neptunium.View
             ///Set up messaging
             Messenger.AddTarget(this);
 
+            SetInlineFrameMarginPaddingForOverflowScrolling();
+
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase"))
             {
                 //Add acrylic.
@@ -125,6 +127,7 @@ namespace Neptunium.View
             //reactivate chrome
 
             HeaderGrid.Visibility = Visibility.Visible;
+            SetInlineFrameMarginPaddingForOverflowScrolling();
 
             TransportControlGrid.Opacity = 0.1;
             transportGridVisible = false;
@@ -132,10 +135,18 @@ namespace Neptunium.View
             SplitViewOpenButton.Focus(FocusState.Pointer); //reduces the amount of times that the splitview open button has the focus rectangle when that is used to open the menu.
         }
 
+        private void SetInlineFrameMarginPaddingForOverflowScrolling()
+        {
+            InlineFrame.Margin = new Thickness(0, -100, 0, 0);
+            InlineFrame.Padding = new Thickness(0, 200, 0, 0);
+        }
+
         private void ActivateNoChromeMode()
         {
             //no chrome mode
             HeaderGrid.Visibility = Visibility.Collapsed;
+            InlineFrame.Margin = new Thickness(0);
+            InlineFrame.Padding = new Thickness(0);
 
             TransportControlGrid.Opacity = 0;
             transportGridVisible = false;

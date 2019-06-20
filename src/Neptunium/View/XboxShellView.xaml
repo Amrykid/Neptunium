@@ -11,13 +11,13 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="LayoutRoot">
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" x:Name="HeaderGrid" Height="78" Visibility="Visible"
-                  Padding="48,27,48,0">
+            <ScrollViewer>
+                <Frame x:Name="InlineFrame" Margin="0" />
+            </ScrollViewer>
+
+            <Grid x:Name="HeaderGrid" Height="78" Visibility="Visible"
+                  Padding="48,27,48,0" VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="*" />
@@ -80,12 +80,10 @@
 
 
             </Grid>
-            <Grid Grid.Row="1">
-                <Frame x:Name="InlineFrame" Margin="0" />
 
-                <Grid x:Name="snackBarGrid" Margin="0 0 48 20" VerticalAlignment="Bottom" HorizontalAlignment="Center" />
+            <Grid x:Name="snackBarGrid" Margin="0 0 48 20" VerticalAlignment="Bottom" HorizontalAlignment="Center" />
 
-                <Grid x:Name="TransportControlGrid" Width="330" 
+            <Grid x:Name="TransportControlGrid" Width="330" 
                               Height="110" VerticalAlignment="Bottom"
                               HorizontalAlignment="Right" Margin="0 0 68 20"
                               Visibility="Visible"
@@ -93,51 +91,50 @@
                               Opacity="0.1"
                               BorderThickness="1"
                               Padding="5">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="20" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.Resources>
-                        <Storyboard x:Name="ExitStoryboard" >
-                            <DoubleAnimation From="1" To="0.1" Storyboard.TargetProperty="Opacity"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.Resources>
+                    <Storyboard x:Name="ExitStoryboard" >
+                        <DoubleAnimation From="1" To="0.1" Storyboard.TargetProperty="Opacity"
                                                      Duration="0:0:0.350"
                                                      Storyboard.TargetName="TransportControlGrid">
-                                <DoubleAnimation.EasingFunction>
-                                    <CubicEase/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                        </Storyboard>
-                        <Storyboard x:Name="EnterStoryboard">
-                            <DoubleAnimation From="0.1" To="1" Storyboard.TargetProperty="Opacity" 
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase/>
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                    </Storyboard>
+                    <Storyboard x:Name="EnterStoryboard">
+                        <DoubleAnimation From="0.1" To="1" Storyboard.TargetProperty="Opacity" 
                                                      Duration="0:0:0.350"
                                                      Storyboard.TargetName="TransportControlGrid">
-                                <DoubleAnimation.EasingFunction>
-                                    <CubicEase/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                        </Storyboard>
-                    </Grid.Resources>
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase/>
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                    </Storyboard>
+                </Grid.Resources>
 
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Row="0" 
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Row="0" 
                                       Grid.Column="0"
                                       HorizontalAlignment="Center" Foreground="White" />
 
-                    <TextBlock Grid.Column="1"
+                <TextBlock Grid.Column="1"
                                        Margin="10 0"
                                        Style="{ThemeResource BaseTextBlockStyle}"
                                        Text="Media Controls" />
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="1"
+                <StackPanel Orientation="Horizontal" Grid.Row="1"
                                         Grid.ColumnSpan="2"
                                         Margin="0 7 0 0">
-                        <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>
-                    <!--<MediaPlayerElement Grid.Row="2" AreTransportControlsEnabled="True" x:Name="TransportControlsGridMediaPlayerElement"  />-->
-                </Grid>
+                    <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
+                </StackPanel>
+                <!--<MediaPlayerElement Grid.Row="2" AreTransportControlsEnabled="True" x:Name="TransportControlsGridMediaPlayerElement"  />-->
             </Grid>
         </Grid>
 
