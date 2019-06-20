@@ -91,7 +91,7 @@
 
                         <Grid VerticalAlignment="Center" Margin="10 -5 10 0" RequestedTheme="Dark">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="25" />
+                                <RowDefinition Height="27" />
                                 <RowDefinition Height="20" />
                                 <RowDefinition Height="20" />
                             </Grid.RowDefinitions>
