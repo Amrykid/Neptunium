@@ -22,7 +22,9 @@ using Windows.Gaming.Input;
 using Windows.Networking.Connectivity;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
@@ -204,8 +206,7 @@ namespace Neptunium
             if (coreApplicationView != null)
                 coreApplicationView.TitleBar.ExtendViewIntoTitleBar = true;
 
-            SnackBarAppearance.Opacity = 1;
-            SnackBarAppearance.Transition = new PopupThemeTransition();
+            ConfigureSnackBar();
 
             if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox && !CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
             {
@@ -220,6 +221,35 @@ namespace Neptunium
             Window.Current.Activated += Current_Activated;
 
             await NepApp.InitializeAsync();
+        }
+
+        private static void ConfigureSnackBar()
+        {
+            UISettings uiSettings = new UISettings();
+
+            SnackBarAppearance.Opacity = 1;
+            SnackBarAppearance.Transition = new PopupThemeTransition();
+
+            //check for acrylic support
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase")
+                && Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush"))
+            {
+                //Add acrylic.
+
+                Windows.UI.Xaml.Media.AcrylicBrush myBrush = new Windows.UI.Xaml.Media.AcrylicBrush();
+                myBrush.BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.Backdrop;
+                myBrush.TintColor = uiSettings.GetColorValue(UIColorType.AccentDark2);
+                myBrush.FallbackColor = uiSettings.GetColorValue(UIColorType.AccentDark2);
+                myBrush.Opacity = 0.6;
+                myBrush.TintOpacity = 0.5;
+
+                SnackBarAppearance.BackgroundBrush = myBrush;
+            }
+            else
+            {
+                //fallback to a solid color.
+                SnackBarAppearance.BackgroundBrush = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
+            }
         }
 
         private async Task PostUIInitAsync()
