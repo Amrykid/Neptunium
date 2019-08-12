@@ -1,6 +1,5 @@
 ﻿using Neptunium.Core;
 using Neptunium.Core.Media.Audio;
-using Neptunium.Core.Media.Bluetooth;
 using Neptunium.Core.Media.History;
 using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
@@ -28,7 +27,6 @@ namespace Neptunium.Media
 
         public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
         internal StationStream CurrentStream { get; private set; }
-        public NepAppMediaBluetoothManager Bluetooth { get; private set; }
         public NepAppAudioManager Audio { get; private set; }
         public NepAppMediaSleepTimer SleepTimer { get; private set; }
         private MediaPlayer CurrentPlayer { get; set; }
@@ -61,7 +59,6 @@ namespace Neptunium.Media
         internal NepAppMediaPlayerManager()
         {
             playLock = new SemaphoreSlim(1);
-            Bluetooth = new NepAppMediaBluetoothManager(this);
             Audio = new NepAppAudioManager(this);
             SleepTimer = new NepAppMediaSleepTimer(this);
         }

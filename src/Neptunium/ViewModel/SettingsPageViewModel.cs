@@ -12,35 +12,15 @@ namespace Neptunium.ViewModel
 {
     public class SettingsPageViewModel : ViewModelBase
     {
-        public RelayCommand ClearBluetoothDeviceCommand => new RelayCommand(x =>
-        {
-            if (NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.IsInitialized)
-            {
-                NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.ClearDevice();
-
-                SelectedBluetoothDeviceName = "None";
-            }
-        });
-
-        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             NepApp.Settings.SettingChanged += Settings_SettingChanged;
-
-            if (DeviceInformation.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
-            {
-                if (await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync())
-                {
-                    SelectedBluetoothDeviceName = NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.SelectedBluetoothDeviceName ?? "None";
-                }
-            }
-
             base.OnNavigatedTo(sender, e);
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
             NepApp.Settings.SettingChanged -= Settings_SettingChanged;
-
             base.OnNavigatedFrom(sender, e);
         }
 
@@ -66,12 +46,6 @@ namespace Neptunium.ViewModel
             set { NepApp.Settings.SetSetting(AppSettings.TryToFindSongMetadata, value); }
         }
 
-        public bool SaySongNotificationsInBluetoothMode
-        {
-            get { return (bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsInBluetoothMode); }
-            set { NepApp.Settings.SetSetting(AppSettings.SaySongNotificationsInBluetoothMode, value); }
-        }
-
         public bool UpdateLockScreenWithSongArt
         {
             get { return (bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt); }
@@ -94,12 +68,6 @@ namespace Neptunium.ViewModel
             {
                 return NepApp.UI.LockScreen.FallbackLockScreenImage;
             }
-        }
-
-        public string SelectedBluetoothDeviceName
-        {
-            get { return GetPropertyValue<string>(); }
-            set { SetPropertyValue<string>(value: value); }
         }
 
         public bool ConserveData

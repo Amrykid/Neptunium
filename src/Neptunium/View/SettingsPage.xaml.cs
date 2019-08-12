@@ -45,32 +45,16 @@ namespace Neptunium.View
             }
         }
 
-        private async void SelectBluetoothButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectBluetoothButton.IsEnabled = false;
-            var device = await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.SelectDeviceAsync(Window.Current.Bounds);
-            if (device != null)
-            {
-                this.GetViewModel<SettingsPageViewModel>().SelectedBluetoothDeviceName = device.Name;
-            }
-            SelectBluetoothButton.IsEnabled = true;
-        }
-
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             if (DeviceInformation.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
             {
-                //only show bluetooth settings on devices that have bluetooth.
-                bluetoothPivot.IsEnabled = await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync();
-
                 UpdateLockScreenSwitch.Visibility = Visibility.Visible;
             }
             else
             {
                 //force focus on Xbox.
                 RootPivot.Focus(FocusState.Keyboard);
-
-                RootPivot.Items.Remove(bluetoothPivot);
             }
         }
 

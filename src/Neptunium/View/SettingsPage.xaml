@@ -89,35 +89,6 @@
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
-            <PivotItem x:Name="bluetoothPivot" Header="Bluetooth" IsEnabled="False">
-                <StackPanel Margin="10 0">
-                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
-                               Text="Activation"/>
-
-                    <TextBlock Text="Activate Bluetooth features when connected to this device."
-                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                               TextWrapping="Wrap" Margin="0 0 0 5" />
-
-                    <TextBlock>
-                        <Run Text="Selected Bluetooth Device: " />
-                        <Run Text="{Binding SelectedBluetoothDeviceName, UpdateSourceTrigger=PropertyChanged}"
-                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
-                    </TextBlock>
-
-                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                        <Button x:Name="SelectBluetoothButton" Click="SelectBluetoothButton_Click" Content="Select Device" />
-                        <Button Content="Clear Device" Margin="5 0" Command="{Binding ClearBluetoothDeviceCommand}" />
-                    </StackPanel>
-
-                    <MenuFlyoutSeparator />
-
-                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
-                               Text="Options" />
-
-                    <ToggleSwitch Header="Announce song when the song playing&#x0a;changes when connected to Bluetooth."
-                                  IsOn="{Binding SaySongNotificationsInBluetoothMode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                </StackPanel>
-            </PivotItem>
         </Pivot>
 
         <VisualStateManager.VisualStateGroups>
