@@ -119,7 +119,15 @@ namespace Neptunium
 
         internal static void RegisterUIDialogs()
         {
-            NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
+            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, XboxStationInfoDialog>();
+            }
+            else
+            {
+                NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
+            }
+
             NepApp.UI.Overlay.RegisterDialogFragment<StationHandoffDialogFragment, StationHandoffDialog>();
             NepApp.UI.Overlay.RegisterDialogFragment<SleepTimerDialogFragment, SleepTimerDialog>();
         }
@@ -273,7 +281,6 @@ namespace Neptunium
             }
             else if (args.Kind == ActivationKind.ToastNotification && args.PreviousExecutionState == ApplicationExecutionState.Running)
             {
-
                 if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
                 {
                     //Xbox shell at this time doesn't use the overlay yet.
@@ -378,24 +385,18 @@ namespace Neptunium
             switch (args.TaskInstance.Task.Name)
             {
                 default:
-
                     if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails)
                     {
-
                         var asTD = args.TaskInstance.TriggerDetails as AppServiceTriggerDetails;
-
                         switch (asTD.Name)
                         {
                             case NepAppHandoffManager.ContinuedAppExperienceAppServiceName:
                                 NepApp.Handoff.HandleBackgroundActivation(asTD); //handles any messages aimed at the handoff manager from a remote devices
                                 break;
                         }
-
                     }
-
                     break;
             }
-
             return Task.CompletedTask;
         }
     }
