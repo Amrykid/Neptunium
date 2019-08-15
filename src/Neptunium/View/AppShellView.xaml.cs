@@ -262,7 +262,7 @@ namespace Neptunium.View
                 navManager = WindowManager.GetNavigationManagerForCurrentView().GetNavigationServiceFromFrameLevel(FrameLevel.Two);
             }
 
-            private bool IsOverlayVisible()
+            internal bool IsOverlayVisible()
             {
                 return parentShell.NowPlayingPanel.Opacity > 0.0 && parentShell.NowPlayingPanel.IsHitTestVisible;
             }

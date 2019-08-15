@@ -22,7 +22,8 @@
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="25" />
+                    <ColumnDefinition Width="25" />
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Padding="0" Background="Transparent" x:Name="SplitViewOpenButton" Click="SplitViewOpenButton_Click">
@@ -70,7 +71,15 @@
                 </StackPanel>
 
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF095;" Grid.Column="3" FontSize="25" 
-                                  HorizontalAlignment="Center" Foreground="White" x:Name="HeaderControlHintIcon">
+                          HorizontalAlignment="Center" Foreground="White" x:Name="HeaderControlHintIcon">
+                    <FontIcon.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition IsStaggeringEnabled="True" />
+                        </TransitionCollection>
+                    </FontIcon.Transitions>
+                </FontIcon>
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF096;" Grid.Column="4" FontSize="25" 
+                          HorizontalAlignment="Center" Foreground="White" x:Name="HeaderControlHintIcon2">
                     <FontIcon.Transitions>
                         <TransitionCollection>
                             <RepositionThemeTransition IsStaggeringEnabled="True" />
@@ -138,6 +147,18 @@
             </Grid>
         </Grid>
 
+        <Grid x:Name="NowPlayingPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              IsHitTestVisible="False"
+              Opacity="0">
+            <Grid.ChildrenTransitions>
+                <TransitionCollection>
+                    <RepositionThemeTransition />
+                </TransitionCollection>
+            </Grid.ChildrenTransitions>
+
+            <local:XboxNowPlayingPage DataContext="{Binding NowPlayingFragment}" />
+        </Grid>
+
         <Grid x:Name="OverlayPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Opacity=".95" Visibility="Collapsed">
             <Grid.ChildrenTransitions>
                 <TransitionCollection>
@@ -149,7 +170,7 @@
 
         <Grid.ContextFlyout>
             <MenuFlyout Opening="MenuFlyout_Opening" Closing="MenuFlyout_Closing">
-                
+
             </MenuFlyout>
         </Grid.ContextFlyout>
     </Grid>

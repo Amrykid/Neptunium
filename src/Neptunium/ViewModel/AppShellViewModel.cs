@@ -55,17 +55,9 @@ namespace Neptunium.ViewModel
         public NowPlayingViewModelFragment NowPlayingFragment { get; private set; }
         public AppShellViewModel()
         {
+            NowPlayingFragment = new NowPlayingViewModelFragment();
+
             NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), ""); //"");
-
-            if (DeviceInformation.GetDevicePlatform() != Crystal3.Core.Platform.Desktop && DeviceInformation.GetDevicePlatform() != Crystal3.Core.Platform.Mobile)
-            {
-                NepApp.UI.AddNavigationRoute("Now Playing", typeof(NowPlayingPageViewModel), "");
-            }
-            else
-            {
-                NowPlayingFragment = new NowPlayingViewModelFragment();
-            }
-
             NepApp.UI.AddNavigationRoute("History", typeof(SongHistoryPageViewModel), "");
             //NepApp.UI.AddNavigationRoute("Schedule", typeof(StationProgramsPageViewModel), "");
             NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");

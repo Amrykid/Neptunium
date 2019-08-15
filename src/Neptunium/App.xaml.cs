@@ -65,7 +65,11 @@ namespace Neptunium
                     if (ex != null)
                     {
                         reportBuilder.AppendLine("Exception HResult: " + ex.HResult.ToString());
-                        if (ex.InnerException != null) reportBuilder.AppendLine("Inner-Exception: " + ex.InnerException.ToString());
+                        if (ex.InnerException != null)
+                        {
+                            reportBuilder.AppendLine("Inner-Exception: " + ex.InnerException.ToString());
+                        }
+
                         reportBuilder.AppendLine();
                     }
 
@@ -73,7 +77,10 @@ namespace Neptunium
                     reportBuilder.AppendLine("Is Playing?: " + NepApp.MediaPlayer.IsPlaying);
                     reportBuilder.AppendLine("Current Station: " + NepApp.MediaPlayer.CurrentStream != null ? NepApp.MediaPlayer.CurrentStream.ParentStation : "None");
 
-                    if (NepApp.MediaPlayer.CurrentStream != null) reportBuilder.AppendLine("Station Stream: " + NepApp.MediaPlayer.CurrentStream.ToString());
+                    if (NepApp.MediaPlayer.CurrentStream != null)
+                    {
+                        reportBuilder.AppendLine("Station Stream: " + NepApp.MediaPlayer.CurrentStream.ToString());
+                    }
 
                     reportBuilder.AppendLine("Is Casting?: " + NepApp.MediaPlayer.IsCasting);
                     reportBuilder.AppendLine("Is Sleep Timer Running?: " + NepApp.MediaPlayer.SleepTimer.IsSleepTimerRunning);
@@ -105,7 +112,9 @@ namespace Neptunium
                 if (exception is NeptuniumException)
                 {
                     if (await GetIfPrimaryWindowVisibleAsync())
+                    {
                         await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Something went wrong!", e.Message);
+                    }
                 }
 
                 Dictionary<string, string> dictionary = new Dictionary<string, string>();
@@ -204,7 +213,9 @@ namespace Neptunium
         {
             var coreApplicationView = CoreApplication.GetCurrentView();
             if (coreApplicationView != null)
+            {
                 coreApplicationView.TitleBar.ExtendViewIntoTitleBar = true;
+            }
 
             ConfigureSnackBar();
 
@@ -255,7 +266,9 @@ namespace Neptunium
         private async Task PostUIInitAsync()
         {
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
+            {
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
+            }
 
             Window.Current.VisibilityChanged += Current_VisibilityChanged;
             isAppVisible = Window.Current.Visible;
@@ -311,18 +324,8 @@ namespace Neptunium
             }
             else if (args.Kind == ActivationKind.ToastNotification && args.PreviousExecutionState == ApplicationExecutionState.Running)
             {
-                if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
-                {
-                    //Xbox shell at this time doesn't use the overlay yet.
-                    WindowManager.GetNavigationManagerForCurrentView()
-                        .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
-                        .NavigateTo<NowPlayingPageViewModel>();
-                }
-                else
-                {
-                    //App shell does use the overlay at this time.
-                    await Messenger.SendMessageAsync("ShowNowPlayingOverlay", null);
-                }
+                //App/Xbox shell does use the overlay at this time.
+                await Messenger.SendMessageAsync("ShowNowPlayingOverlay", null);
             }
         }
 
