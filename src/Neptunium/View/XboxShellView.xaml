@@ -22,8 +22,8 @@
                     <ColumnDefinition Width="50" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="25" />
-                    <ColumnDefinition Width="25" />
+                    <ColumnDefinition Width="30" />
+                    <ColumnDefinition Width="30" />
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Padding="0" Background="Transparent" x:Name="SplitViewOpenButton" Click="SplitViewOpenButton_Click">
