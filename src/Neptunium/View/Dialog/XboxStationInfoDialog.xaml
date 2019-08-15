@@ -50,9 +50,10 @@
             <ListView ItemsSource="{Binding Station.Streams, UpdateSourceTrigger=PropertyChanged}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
-                  IsFocusEngagementEnabled="True"
+                  IsFocusEngagementEnabled="False"
                   Margin="5 0"
                   SelectionMode="None">
+                <!--for the time being, no stations have enough streams for IsFocusEngagementEnabled to be true-->
                 <ListView.HeaderTemplate>
                     <DataTemplate>
                         <TextBlock Text="Available Streams" Style="{ThemeResource BaseTextBlockStyle}"/>
