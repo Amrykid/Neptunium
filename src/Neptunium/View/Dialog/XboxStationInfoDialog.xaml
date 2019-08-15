@@ -51,7 +51,7 @@
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   IsFocusEngagementEnabled="False"
-                  Margin="5 0"
+                  Margin="5 10"
                   SelectionMode="None">
                 <!--for the time being, no stations have enough streams for IsFocusEngagementEnabled to be true-->
                 <ListView.HeaderTemplate>
@@ -115,13 +115,15 @@
             <AppBarButton Label="Website" Icon="Globe" Grid.Column="0"
                           Command="{Binding OpenStationWebsiteCommand}" />
 
-            <Button Content="Cancel" Grid.Column="3" 
-                    Command="{Binding CancelCommand, UpdateSourceTrigger=PropertyChanged}" 
-                    MinWidth="75" x:Name="CancelButton" />
+            <AppBarButton Label="Cancel" Grid.Column="3" 
+                          Icon="Cancel"
+                          Command="{Binding CancelCommand, UpdateSourceTrigger=PropertyChanged}" 
+                          x:Name="CancelButton" />
 
-            <Button Content="Play" Grid.Column="4" 
-                    Command="{Binding PlayCommand, UpdateSourceTrigger=PropertyChanged}"
-                    Background="{ThemeResource AccentButtonBackground}" MinWidth="75" />
+            <AppBarButton Label="Play" Grid.Column="4" 
+                          Icon="Play"
+                          Command="{Binding PlayCommand, UpdateSourceTrigger=PropertyChanged}"
+                          Background="{ThemeResource AccentButtonBackground}" MinWidth="75" />
         </Grid>
     </Grid>
 </Page>
