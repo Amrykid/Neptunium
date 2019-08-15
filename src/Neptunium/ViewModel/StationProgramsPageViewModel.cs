@@ -34,7 +34,7 @@ namespace Neptunium.ViewModel
 
                 try
                 {
-                    await LoadScheduleAsync();
+                    //await LoadScheduleAsync();
                 }
                 catch
                 {
