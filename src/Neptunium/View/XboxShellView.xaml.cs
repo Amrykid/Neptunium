@@ -38,7 +38,6 @@ namespace Neptunium.View
             this.InitializeComponent();
 
             uiSettings = new Windows.UI.ViewManagement.UISettings();
-            nowPlayingOverlayCoordinator = new XboxShellViewModelNowPlayingOverlayCoordinator(this);
 
             ///Set up navigation
             inlineNavigationService = WindowManager.GetNavigationManagerForCurrentView().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
@@ -46,6 +45,8 @@ namespace Neptunium.View
             inlineNavigationService.Navigated += InlineNavigationService_Navigated;
             inlineNavigationService.PreBackRequested += InlineNavigationService_PreBackRequested;
             PageTitleTextBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
+
+            nowPlayingOverlayCoordinator = new XboxShellViewModelNowPlayingOverlayCoordinator(this);
 
             ///Set up dialogs
             NepApp.UI.SetOverlayParentAndSnackBarContainer(OverlayPanel, snackBarGrid);
@@ -262,6 +263,7 @@ namespace Neptunium.View
 
                 ShowNavigationFlyout();
             }
+        }
 
         private volatile bool transportGridVisible = false;
         private volatile bool transportGridAnimating = false;
