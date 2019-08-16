@@ -38,6 +38,9 @@ namespace Neptunium.View
                     break;
                 default:
                     HapticFeedbackSwitch.IsEnabled = false;
+                    HapticFeedbackSwitch.XYFocusUp = null;
+                    HapticFeedbackSwitch.XYFocusDown = null;
+                    HapticFeedbackSwitch.IsTabStop = false;
 
                     SongNotificationSwitch.XYFocusDown = MetadataSwitch;
                     MetadataSwitch.XYFocusUp = SongNotificationSwitch;

@@ -19,6 +19,7 @@
         </Style>
         <Style TargetType="MenuFlyoutSeparator">
             <Setter Property="Margin" Value="-10 10" />
+            <Setter Property="IsTabStop" Value="False" />
         </Style>
     </Page.Resources>
 
@@ -34,7 +35,7 @@
                                       XYFocusDown="{Binding ElementName=HapticFeedbackSwitch}"
                                       IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
-                        <MenuFlyoutSeparator />
+                        <MenuFlyoutSeparator IsTabStop="False" />
 
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="UI"/>
@@ -45,7 +46,7 @@
                                       XYFocusDown="{Binding ElementName=MetadataSwitch}"
                                       IsOn="{Binding UseHapticFeedback, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
-                        <MenuFlyoutSeparator />
+                        <MenuFlyoutSeparator IsTabStop="False" />
                         
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Metadata"/>
