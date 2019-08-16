@@ -19,6 +19,7 @@ using Windows.UI.ViewManagement;
 using Crystal3.UI.Commands;
 using System.Threading.Tasks;
 using Microsoft.Toolkit.Uwp.UI.Animations;
+using System.Threading;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -408,6 +409,8 @@ namespace Neptunium.View
             private XboxShellView parentShell = null;
             private NavigationServiceBase navManager = null;
             private EventHandler<NavigationManagerPreBackRequestedEventArgs> backHandler = null;
+            private SemaphoreSlim overlayLock = new SemaphoreSlim(1, 1);
+            private volatile bool isOverlayAnimating = false;
             internal XboxShellViewModelNowPlayingOverlayCoordinator(XboxShellView appShellView)
             {
                 if (appShellView == null) throw new ArgumentNullException(nameof(appShellView));
@@ -415,6 +418,17 @@ namespace Neptunium.View
                 parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
                 navManager = WindowManager.GetNavigationManagerForCurrentView().GetNavigationServiceFromFrameLevel(FrameLevel.Two);
+
+                backHandler = new EventHandler<NavigationManagerPreBackRequestedEventArgs>(async (o, e) =>
+                {
+                    if (!IsOverlayVisible())
+                    {
+                        //hack to handle the back button.
+                        e.Handled = true;
+                        await HideOverlayAsync();
+                    }
+                });
+                navManager.PreBackRequested += backHandler;
             }
 
             internal bool IsOverlayVisible()
@@ -426,20 +440,18 @@ namespace Neptunium.View
             {
                 if (!IsOverlayVisible())
                 {
-                    backHandler = new EventHandler<NavigationManagerPreBackRequestedEventArgs>(async (o, e) =>
-                    {
-                        //hack to handle the back button.
-                        e.Handled = true;
-                        navManager.PreBackRequested -= backHandler;
-                        await HideOverlayAsync();
-                    });
-                    navManager.PreBackRequested += backHandler;
+                    if (isOverlayAnimating) return;
 
+                    await overlayLock.WaitAsync();
+                    isOverlayAnimating = true;
                     parentShell.NowPlayingPanel.Opacity = 0;
                     parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
                     await parentShell.NowPlayingPanel.Fade(.95f).StartAsync();
                     parentShell.NowPlayingPanel.IsHitTestVisible = true;
-                    WindowManager.GetWindowServiceForCurrentView().SetAppViewBackButtonVisibility(true);
+                    isOverlayAnimating = false;
+
+                    //WindowManager.GetWindowServiceForCurrentView().SetAppViewBackButtonVisibility(true);
+                    overlayLock.Release();
                 }
             }
 
@@ -447,11 +459,17 @@ namespace Neptunium.View
             {
                 if (IsOverlayVisible())
                 {
+                    if (isOverlayAnimating) return;
+
+                    await overlayLock.WaitAsync();
+                    isOverlayAnimating = true;
                     await parentShell.NowPlayingPanel.Fade(0.0f).StartAsync();
                     parentShell.NowPlayingPanel.IsHitTestVisible = false;
                     parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    isOverlayAnimating = false;
 
-                    WindowManager.GetWindowServiceForCurrentView().SetAppViewBackButtonVisibility(parentShell.inlineNavigationService.CanGoBackward);
+                    //WindowManager.GetWindowServiceForCurrentView().SetAppViewBackButtonVisibility(parentShell.inlineNavigationService.CanGoBackward);
+                    overlayLock.Release();
                 }
             }
         }
