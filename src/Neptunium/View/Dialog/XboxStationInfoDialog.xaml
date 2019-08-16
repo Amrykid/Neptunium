@@ -113,16 +113,22 @@
                 <ColumnDefinition Width="90" />
             </Grid.ColumnDefinitions>
             <AppBarButton Label="Website" Icon="Globe" Grid.Column="0"
+                          x:Name="WebsiteButton"
+                          XYFocusRight="{Binding ElementName=CancelButton}"
                           Command="{Binding OpenStationWebsiteCommand}" />
 
             <AppBarButton Label="Cancel" Grid.Column="3" 
                           Icon="Cancel"
                           Command="{Binding CancelCommand, UpdateSourceTrigger=PropertyChanged}" 
-                          x:Name="CancelButton" />
+                          x:Name="CancelButton"
+                          XYFocusLeft="{Binding ElementName=WebsiteButton}"
+                          XYFocusRight="{Binding ElementName=PlayButton}"/>
 
             <AppBarButton Label="Play" Grid.Column="4" 
                           Icon="Play"
                           Command="{Binding PlayCommand, UpdateSourceTrigger=PropertyChanged}"
+                          x:Name="PlayButton"
+                          XYFocusLeft="{Binding ElementName=CancelButton}"
                           Background="{ThemeResource AccentButtonBackground}" MinWidth="75" />
         </Grid>
     </Grid>
