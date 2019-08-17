@@ -428,7 +428,6 @@ namespace Neptunium.View
                         await HideOverlayAsync();
                     }
                 });
-                navManager.PreBackRequested += backHandler;
             }
 
             internal bool IsOverlayVisible()
@@ -449,6 +448,7 @@ namespace Neptunium.View
                     await parentShell.NowPlayingPanel.Fade(.95f).StartAsync();
                     parentShell.NowPlayingPanel.IsHitTestVisible = true;
                     isOverlayAnimating = false;
+                    navManager.PreBackRequested += backHandler;
 
                     //WindowManager.GetWindowServiceForCurrentView().SetAppViewBackButtonVisibility(true);
                     overlayLock.Release();
@@ -467,6 +467,7 @@ namespace Neptunium.View
                     parentShell.NowPlayingPanel.IsHitTestVisible = false;
                     parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     isOverlayAnimating = false;
+                    navManager.PreBackRequested -= backHandler;
 
                     //WindowManager.GetWindowServiceForCurrentView().SetAppViewBackButtonVisibility(parentShell.inlineNavigationService.CanGoBackward);
                     overlayLock.Release();
