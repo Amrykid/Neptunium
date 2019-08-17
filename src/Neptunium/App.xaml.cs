@@ -219,7 +219,7 @@ namespace Neptunium
 
             ConfigureSnackBar();
 
-            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox && !CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
+            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox && !DeviceInformation.IsPlatformOverridden())
             {
                 Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
