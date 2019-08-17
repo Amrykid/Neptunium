@@ -26,3 +26,6 @@ url=https://github.com/AzureKitsune/MusicBrainz.git
 [submodule "src/Neptunium/Data/Artists/Neptunium-ArtistsDB"]
 	path = src/Neptunium/Data/Artists/Neptunium-ArtistsDB
 	url = ../Neptunium-ArtistsDB.git
+[submodule "lib/winrtxamltoolkit"]
+	path = lib/winrtxamltoolkit
+	url = https://github.com/xyzzer/WinRTXamlToolkit.git
