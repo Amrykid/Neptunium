@@ -16,5 +16,7 @@ namespace Neptunium.Glue
 
         void RestoreFocus();
         void PreserveFocus();
+
+        void FocusDefault();
     }
 }

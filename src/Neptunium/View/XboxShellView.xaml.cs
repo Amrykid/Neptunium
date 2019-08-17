@@ -160,18 +160,12 @@ namespace Neptunium.View
 
         private void Overlay_DialogShown(object sender, EventArgs e)
         {
-            if (InlineFrame.Content is IXboxInputPage)
-            {
-                ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
-            }
+            PreserveFocusFromInlineFramePage();
         }
 
         private void Overlay_DialogHidden(object sender, EventArgs e)
         {
-            if (InlineFrame.Content is IXboxInputPage)
-            {
-                ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
-            }
+            RestoreFocusToInlineFramePage();
         }
 
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
@@ -213,17 +207,33 @@ namespace Neptunium.View
 
         private void HandleSplitViewPaneClose()
         {
-            InlineFrame.Focus(FocusState.Programmatic);
+            RestoreFocusToInlineFramePage();
+        }
 
+        private void RestoreFocusToInlineFramePage()
+        {
+            InlineFrame.Focus(FocusState.Programmatic);
             if (InlineFrame.Content is IXboxInputPage)
             {
                 ((IXboxInputPage)InlineFrame.Content).RestoreFocus();
             }
         }
 
-        private void Page_KeyUp(object sender, KeyRoutedEventArgs e)
+        private void PreserveFocusFromInlineFramePage()
         {
+            if (InlineFrame.Content is IXboxInputPage)
+            {
+                ((IXboxInputPage)InlineFrame.Content).PreserveFocus();
+            }
+        }
+
+        private async void Page_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+#if DEBUG
+            if (e.Key == Windows.System.VirtualKey.GamepadY || e.Key == Windows.System.VirtualKey.Y)
+#else
             if (e.Key == Windows.System.VirtualKey.GamepadY)
+#endif
             {
                 if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
                 if (NepApp.UI.IsInNoChromeMode) return;
@@ -240,18 +250,22 @@ namespace Neptunium.View
 
                 e.Handled = true;
             }
+#if DEBUG
+            else if (e.Key == Windows.System.VirtualKey.GamepadX || e.Key == Windows.System.VirtualKey.X)
+#else
             else if (e.Key == Windows.System.VirtualKey.GamepadX)
+#endif
             {
                 if (NepApp.UI.Overlay.IsOverlayedDialogVisible) return;
                 if (transportGridAnimating) return;
 
                 if (nowPlayingOverlayCoordinator.IsOverlayVisible())
                 {
-                    nowPlayingOverlayCoordinator.HideOverlayAsync();
+                    await nowPlayingOverlayCoordinator.HideOverlayAsync();
                 }
                 else
                 {
-                    nowPlayingOverlayCoordinator.ShowOverlayAsync();
+                    await nowPlayingOverlayCoordinator.ShowOverlayAsync();
                 }
 
             }
@@ -411,6 +425,7 @@ namespace Neptunium.View
             private EventHandler<NavigationManagerPreBackRequestedEventArgs> backHandler = null;
             private SemaphoreSlim overlayLock = new SemaphoreSlim(1, 1);
             private volatile bool isOverlayAnimating = false;
+            private XboxNowPlayingPage nowPlayingPage = null;
             internal XboxShellViewModelNowPlayingOverlayCoordinator(XboxShellView appShellView)
             {
                 if (appShellView == null) throw new ArgumentNullException(nameof(appShellView));
@@ -428,6 +443,8 @@ namespace Neptunium.View
                         await HideOverlayAsync();
                     }
                 });
+
+                nowPlayingPage = parentShell.NowPlayingPanel.Children[0] as XboxNowPlayingPage;
             }
 
             internal bool IsOverlayVisible()
@@ -450,6 +467,10 @@ namespace Neptunium.View
                     isOverlayAnimating = false;
                     navManager.PreBackRequested += backHandler;
 
+                    parentShell.PreserveFocusFromInlineFramePage();
+
+                    (nowPlayingPage as IXboxInputPage)?.FocusDefault();
+
                     //WindowManager.GetWindowServiceForCurrentView().SetAppViewBackButtonVisibility(true);
                     overlayLock.Release();
                 }
@@ -468,6 +489,8 @@ namespace Neptunium.View
                     parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                     isOverlayAnimating = false;
                     navManager.PreBackRequested -= backHandler;
+
+                    parentShell.RestoreFocusToInlineFramePage();
 
                     //WindowManager.GetWindowServiceForCurrentView().SetAppViewBackButtonVisibility(parentShell.inlineNavigationService.CanGoBackward);
                     overlayLock.Release();

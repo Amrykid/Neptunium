@@ -113,5 +113,10 @@ namespace Neptunium.View
         {
 
         }
+
+        public void FocusDefault()
+        {
+            
+        }
     }
 }
