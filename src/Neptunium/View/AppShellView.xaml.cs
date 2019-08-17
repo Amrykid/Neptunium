@@ -27,6 +27,8 @@ using Windows.UI.Xaml.Navigation;
 using WinRTXamlToolkit.Controls;
 using static Crystal3.UI.StatusManager.StatusManager;
 using Crystal3.Messaging;
+using Neptunium.Media;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -36,240 +38,97 @@ namespace Neptunium.View
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     [Crystal3.Navigation.NavigationViewModel(typeof(AppShellViewModel),
-        NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile)]
+        NavigationViewSupportedPlatform.Desktop | NavigationViewSupportedPlatform.Mobile 
+        | NavigationViewSupportedPlatform.Holographic | NavigationViewSupportedPlatform.Team)]
     public sealed partial class AppShellView : Page, Crystal3.Messaging.IMessagingTarget
     {
         private FrameNavigationService inlineNavigationService = null;
-        private volatile bool isInNoChromeMode = false;
+        private WindowService windowService = null;
+        private ApplicationView applicationView = null;
+        private CoreApplicationView coreApplicationView = null;
+        private AppShellViewModelNowPlayingOverlayCoordinator nowPlayingOverlayCoordinator = null;
+        private UISettings uiSettings = null;
         public AppShellView()
         {
             this.InitializeComponent();
 
-            CoreApplicationView view = CoreApplication.GetCurrentView();
-            if (view != null)
-                view.TitleBar.ExtendViewIntoTitleBar = false;
+            coreApplicationView = CoreApplication.GetCurrentView();
+            //if (coreApplicationView != null)
+            //    coreApplicationView.TitleBar.ExtendViewIntoTitleBar = true;
 
-            SplitViewNavigationList.SetBinding(ItemsControl.ItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
+            applicationView = ApplicationView.GetForCurrentView();
+            applicationView.TitleBar.BackgroundColor = Colors.Transparent;
+            applicationView.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+            applicationView.TitleBar.InactiveBackgroundColor = Colors.Transparent;
 
-            inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
+            uiSettings = new Windows.UI.ViewManagement.UISettings();
+
+            NavView.SetBinding(Microsoft.UI.Xaml.Controls.NavigationView.MenuItemsSourceProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.NavigationItems)));
+
+            inlineNavigationService = WindowManager.GetNavigationManagerForCurrentView().RegisterFrameAsNavigationService(InlineFrame, FrameLevel.Two);
+            windowService = WindowManager.GetWindowServiceForCurrentView();
+            UpdateSelectedNavigationItems();
             NepApp.UI.SetNavigationService(inlineNavigationService);
             inlineNavigationService.Navigated += InlineNavigationService_Navigated;
 
             NepApp.UI.SetOverlayParentAndSnackBarContainer(OverlayPanel, snackBarGrid);
             App.RegisterUIDialogs();
-            SetTitleBarAndMobileStatusBarToMatchAppBar();
 
-            PageTitleBlock.SetBinding(TextBlock.TextProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
-            //PageTitleBlock.SetValue(TextBlock.TextProperty, NepApp.UI.ViewTitle);
+            nowPlayingOverlayCoordinator = new AppShellViewModelNowPlayingOverlayCoordinator(this);
 
-            Window.Current.SizeChanged += Current_SizeChanged;
+
+            NavView.SetBinding(Microsoft.UI.Xaml.Controls.NavigationView.HeaderProperty, NepApp.CreateBinding(NepApp.UI, nameof(NepApp.UI.ViewTitle)));
 
             NowPlayingButton.SetBinding(Button.DataContextProperty, NepApp.CreateBinding(NepApp.SongManager, nameof(NepApp.SongManager.CurrentSong)));
-            NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
-            NepApp.MediaPlayer.ConnectingBegin += Media_ConnectingBegin;
-            NepApp.MediaPlayer.ConnectingEnd += Media_ConnectingEnd;
-            NepApp.MediaPlayer.IsCastingChanged += Media_IsCastingChanged;
+
             NepApp.MediaPlayer.MediaEngagementChanged += MediaPlayer_MediaEngagementChanged;
+            NepApp.MediaPlayer.IsPlayingChanged += MediaPlayer_IsPlayingChanged;
+
 
             NepApp.UI.Overlay.OverlayedDialogShown += Overlay_DialogShown;
             NepApp.UI.Overlay.OverlayedDialogHidden += Overlay_DialogHidden;
 
             Messenger.AddTarget(this);
+
+            DeviceInformation.SubplatformChanged += DeviceInformation_SubplatformChanged;
+
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase") &&
+                Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush"))
+            {
+                //Add acrylic.
+
+                Windows.UI.Xaml.Media.AcrylicBrush myBrush = new Windows.UI.Xaml.Media.AcrylicBrush();
+                myBrush.BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.HostBackdrop;
+                myBrush.TintColor = uiSettings.GetColorValue(UIColorType.AccentDark2);
+                myBrush.FallbackColor = uiSettings.GetColorValue(UIColorType.AccentDark2);
+                myBrush.Opacity = 0.6;
+                myBrush.TintOpacity = 0.5;
+
+                bottomAppBar.Background = myBrush;
+            }
+            else
+            {
+                bottomAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
+            }
         }
 
-        private void MediaPlayer_MediaEngagementChanged(object sender, EventArgs e)
+        private void DeviceInformation_SubplatformChanged(object sender, DeviceInformationSubplatformChangedEventArgs e)
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
-
-                if (NepApp.MediaPlayer.IsMediaEngaged)
+                if (e.Status == DeviceInformationSubplatformChangedEventArgs.DeviceInformationSubplatformChangedStatus.Activation)
                 {
-                    NepApp.SongManager.RefreshMetadata();
+                    switch (e.Subplatform)
+                    {
+                        case Crystal3.Core.Subplatform.MixedReality:
+                            NepApp.UI.Overlay.ShowSnackBarMessageAsync("Mixed Reality active.");
+                            break;
+                    }
                 }
             });
         }
 
-        private void Overlay_DialogShown(object sender, EventArgs e)
-        {
-            WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(true);
-        }
-
-        private void Overlay_DialogHidden(object sender, EventArgs e)
-        {
-            WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
-
-            bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
-            topAppBar.Visibility = Visibility.Visible;
-        }
-
-        private void Media_IsCastingChanged(object sender, EventArgs e)
-        {
-            App.Dispatcher.RunAsync(() =>
-            {
-                UpdateCastingUI();
-
-                if (!isInNoChromeMode)
-                    SetTitleBarAndMobileStatusBarToMatchAppBar();
-            });
-        }
-
-        private void UpdateCastingUI()
-        {
-            if (NepApp.MediaPlayer.IsCasting)
-            {
-                var uiSettings = new Windows.UI.ViewManagement.UISettings();
-                topAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.AccentDark3));
-                bottomAppBar.Background = topAppBar.Background;
-            }
-            else
-            {
-                var uiSettings = new Windows.UI.ViewManagement.UISettings();
-                topAppBar.Background = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
-                bottomAppBar.Background = topAppBar.Background;
-            }
-        }
-
-        private void SetTitleBarAndMobileStatusBarToMatchAppBar()
-        {
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                //sets the mobile status bar to match the top app bar.
-                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
-                statusBar.BackgroundOpacity = 1.0;
-            }
-
-
-            ApplicationView.GetForCurrentView().TitleBar.BackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
-            ApplicationView.GetForCurrentView().TitleBar.ButtonBackgroundColor = ((SolidColorBrush)topAppBar.Background)?.Color;
-        }
-
-        private void SetMobileStatusBarToTransparent()
-        {
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                //sets the mobile status bar to match the top app bar.
-                var statusBar = Windows.UI.ViewManagement.StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = Colors.Transparent;
-                statusBar.BackgroundOpacity = 0.0;
-            }
-
-            ApplicationView.GetForCurrentView().TitleBar.BackgroundColor = Colors.Transparent;
-            ApplicationView.GetForCurrentView().TitleBar.ButtonBackgroundColor = Colors.Transparent;
-
-        }
-
-        private void Current_SizeChanged(object sender, Windows.UI.Core.WindowSizeChangedEventArgs e)
-        {
-            CollapseBottomAppBarBasedOnSize();
-        }
-
-        private void CollapseBottomAppBarBasedOnSize()
-        {
-            if (NepApp.UI.Overlay.IsOverlayedDialogVisible)
-            {
-                //only collapse the app bars on smaller screens.
-                if (Window.Current.Bounds.Width < 720)
-                {
-                    topAppBar.Visibility = Visibility.Collapsed;
-                    bottomAppBar.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    topAppBar.Visibility = Visibility.Visible;
-                    bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
-                }
-            }
-        }
-
-        private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
-        {
-            WindowManager.GetWindowServiceForCurrentWindow().SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
-
-            if (inlineNavigationService.NavigationFrame.Content?.GetType().GetTypeInfo().GetCustomAttribute<NepAppUINoChromePageAttribute>() != null)
-            {
-                //no chrome mode
-
-                topAppBar.Visibility = Visibility.Collapsed;
-                bottomAppBar.Visibility = Visibility.Collapsed;
-
-                RootSplitView.IsPaneOpen = false;
-                RootSplitView.DisplayMode = SplitViewDisplayMode.Overlay;
-
-                SetMobileStatusBarToTransparent();
-
-                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-
-                if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-                {
-                    RootGrid.Margin = new Thickness(0, -25, 0, 0);
-                }
-
-
-                ShellVisualStateGroup.States.Remove(DesktopVisualState);
-                ShellVisualStateGroup.States.Remove(TabletVisualState);
-                ShellVisualStateGroup.States.Remove(PhoneVisualState);
-
-                isInNoChromeMode = true;
-            }
-            else
-            {
-                //reactivate chrome
-
-                topAppBar.Visibility = Visibility.Visible;
-                bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
-
-                //todo remember splitview state instead of trying to guess below.
-                if (Window.Current.Bounds.Width >= 720)
-                {
-                    if (Window.Current.Bounds.Width >= 1080)
-                    {
-                        RootSplitView.DisplayMode = SplitViewDisplayMode.Inline;
-                        RootSplitView.IsPaneOpen = true;
-                    }
-                    else
-                    {
-                        RootSplitView.DisplayMode = SplitViewDisplayMode.CompactInline;
-                    }
-                }
-
-                UpdateCastingUI();
-
-                SetTitleBarAndMobileStatusBarToMatchAppBar();
-
-                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
-
-                if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-                {
-                    RootGrid.Margin = new Thickness(0);
-                }
-
-                if (!ShellVisualStateGroup.States.Contains(DesktopVisualState))
-                    ShellVisualStateGroup.States.Add(DesktopVisualState);
-
-                if (!ShellVisualStateGroup.States.Contains(TabletVisualState))
-                    ShellVisualStateGroup.States.Add(TabletVisualState);
-
-                if (!ShellVisualStateGroup.States.Contains(PhoneVisualState))
-                    ShellVisualStateGroup.States.Add(PhoneVisualState);
-
-                isInNoChromeMode = false;
-            }
-        }
-
-        IndefiniteWorkStatusManagerControl statusControl = null;
-        private void Media_ConnectingEnd(object sender, EventArgs e)
-        {
-            statusControl?.Dispose();
-        }
-
-        private void Media_ConnectingBegin(object sender, EventArgs e)
-        {
-            statusControl = WindowManager.GetStatusManagerForCurrentWindow().DoIndefiniteWork(null, "Connecting...");
-        }
-
-        private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
+        private void MediaPlayer_IsPlayingChanged(object sender, NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
@@ -287,63 +146,60 @@ namespace Neptunium.View
                 }
 
                 //AppBarButton doesn't seem to like the ManualRelayCommand so, I have to set its IsEnabled property here.
-                sleepTimerBtn.Visibility = e.IsPlaying ? Visibility.Visible : Visibility.Collapsed;
+                SleepTimerButton.IsEnabled = e.IsPlaying;
             });
         }
 
-        private void FeedbackButton_Click(object sender, RoutedEventArgs e)
+        private void MediaPlayer_MediaEngagementChanged(object sender, EventArgs e)
         {
-            NepApp.UI.Notifier.VibrateClick();
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                bottomAppBar.Visibility = NepApp.MediaPlayer.IsMediaEngaged ? Visibility.Visible : Visibility.Collapsed;
+            });
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Overlay_DialogShown(object sender, EventArgs e)
         {
-            sleepTimerBtn.Visibility = NepApp.MediaPlayer.IsPlaying ? Visibility.Visible : Visibility.Collapsed;
+            windowService.SetAppViewBackButtonVisibility(true);
 
-            //FeedbackButton.Visibility = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.IsSupported() ? Visibility.Visible : Visibility.Collapsed;
+            foreach (var item in NepApp.UI.NavigationItems)
+                item.IsEnabled = false;
         }
 
-        private void TogglePaneButton_Checked(object sender, RoutedEventArgs e)
+        private void Overlay_DialogHidden(object sender, EventArgs e)
         {
-            NepApp.UI.Notifier.VibrateClick();
-            RootSplitView.IsPaneOpen = true;
+            windowService.SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
+
+            foreach (var item in NepApp.UI.NavigationItems)
+                item.IsEnabled = true;
         }
 
-        private void TogglePaneButton_Unchecked(object sender, RoutedEventArgs e)
+
+        private void InlineNavigationService_Navigated(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.UI.Notifier.VibrateClick();
-            RootSplitView.IsPaneOpen = false;
+            //windowService.SetAppViewBackButtonVisibility(inlineNavigationService.CanGoBackward);
+            UpdateSelectedNavigationItems();
         }
 
-        private void NowPlayingButton_Click(object sender, RoutedEventArgs e)
+        private void UpdateSelectedNavigationItems()
         {
-            NepApp.UI.Notifier.VibrateClick();
+            var viewModel = inlineNavigationService.GetNavigatedViewModel();
+            if (viewModel == null) return;
+            bool somethingSelected = false;
+            foreach (var item in NepApp.UI.NavigationItems)
+            {
+                item.IsSelected = item.NavigationViewModelType == viewModel.GetType();
+                if (item.IsSelected)
+                {
+                    NavView.SelectedItem = item;
+                    somethingSelected = true;
+                }
+            }
 
-            //todo make a binding
-            inlineNavigationService.SafeNavigateTo<NowPlayingPageViewModel>();
-        }
-
-        private void RadioButton_Click(object sender, RoutedEventArgs e)
-        {
-            NepApp.UI.Notifier.VibrateClick();
-
-            //dismiss the menu if its open.
-            if (RootSplitView.DisplayMode == SplitViewDisplayMode.Overlay)
-                TogglePaneButton.IsChecked = false;
-        }
-
-        private void HandoffListButton_Click(object sender, RoutedEventArgs e)
-        {
-            var btn = sender as ListItemButton;
-
-            if (btn.DataContext == null) return;
-
-            NepApp.UI.Notifier.VibrateClick();
-
-            this.GetViewModel<AppShellViewModel>()
-                .HandoffFragment
-                .HandOffCommand
-                .Execute(btn.DataContext);
+            if (!somethingSelected)
+            {
+                NavView.SelectedItem = null;
+            }
         }
 
         public void OnReceivedMessage(Message message, Action<object> resultCallback)
@@ -351,18 +207,106 @@ namespace Neptunium.View
             switch (message.Name)
             {
                 case "ShowHandoffFlyout":
-                    App.Dispatcher.RunAsync(() =>
+                    App.Dispatcher.RunWhenIdleAsync(() =>
                     {
-                        HandoffButton.Flyout.ShowAt(HandoffButton);
+                        this.GetViewModel<AppShellViewModel>()?.MediaCastingCommand.Execute(null);
                     });
-
+                    break;
+                case "ShowNowPlayingOverlay":
+                    App.Dispatcher.RunWhenIdleAsync(async () =>
+                    {
+                        await nowPlayingOverlayCoordinator.ShowOverlayAsync();
+                    });
+                    break;
+                case "HideNowPlayingOverlay":
+                    App.Dispatcher.RunWhenIdleAsync(async () =>
+                    {
+                        await nowPlayingOverlayCoordinator.HideOverlayAsync();
+                    });
                     break;
             }
         }
 
         public IEnumerable<string> GetSubscriptions()
         {
-            return new string[] { "ShowHandoffFlyout" };
+            return new string[] { "ShowHandoffFlyout", "ShowNowPlayingOverlay", "HideNowPlayingOverlay" };
+        }
+
+        private void NavView_ItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)
+        {
+            if (args.IsSettingsInvoked)
+            {
+
+            }
+            else
+            {
+                var item = args.InvokedItemContainer as NepAppUINavigationItem;
+                if (item != null)
+                {
+                    NepApp.UI.NavigateToItem(item);
+                }
+            }
+        }
+
+        private class AppShellViewModelNowPlayingOverlayCoordinator
+        {
+            private AppShellView parentShell = null;
+            private NavigationServiceBase navManager = null;
+            private EventHandler<NavigationManagerPreBackRequestedEventArgs> backHandler = null;
+            internal AppShellViewModelNowPlayingOverlayCoordinator(AppShellView appShellView)
+            {
+                if (appShellView == null) throw new ArgumentNullException(nameof(appShellView));
+                parentShell = appShellView;
+                parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
+                navManager = WindowManager.GetNavigationManagerForCurrentView().GetNavigationServiceFromFrameLevel(FrameLevel.Two);
+            }
+
+            internal bool IsOverlayVisible()
+            {
+                return parentShell.NowPlayingPanel.Opacity > 0.0 && parentShell.NowPlayingPanel.IsHitTestVisible;
+            }
+
+            public async Task ShowOverlayAsync()
+            {
+                if (!IsOverlayVisible())
+                {
+                    backHandler = new EventHandler<NavigationManagerPreBackRequestedEventArgs>(async (o, e) =>
+                    {
+                        //hack to handle the back button.
+                        e.Handled = true;
+                        navManager.PreBackRequested -= backHandler;
+                        await HideOverlayAsync();
+                    });
+                    navManager.PreBackRequested += backHandler;
+
+                    parentShell.NowPlayingPanel.Opacity = 0;
+                    parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                    await parentShell.NowPlayingPanel.Fade(.95f).StartAsync();
+                    parentShell.NowPlayingPanel.IsHitTestVisible = true;
+                    WindowManager.GetWindowServiceForCurrentView().SetAppViewBackButtonVisibility(true);
+                }
+            }
+
+            public async Task HideOverlayAsync()
+            {
+                if (IsOverlayVisible())
+                {
+                    await parentShell.NowPlayingPanel.Fade(0.0f).StartAsync();
+                    parentShell.NowPlayingPanel.IsHitTestVisible = false;
+                    parentShell.NowPlayingPanel.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
+                    WindowManager.GetWindowServiceForCurrentView().SetAppViewBackButtonVisibility(parentShell.inlineNavigationService.CanGoBackward);
+                }
+            }
+        }
+
+        private void NowPlayingButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(async () =>
+            {
+                await nowPlayingOverlayCoordinator.ShowOverlayAsync();
+            });
         }
     }
 }

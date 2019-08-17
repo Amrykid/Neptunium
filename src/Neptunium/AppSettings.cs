@@ -21,12 +21,10 @@ namespace Neptunium
         SelectedBluetoothDevice,
         SelectedBluetoothDeviceName,
         SaySongNotificationsInBluetoothMode,
-        SaySongNotificationsWhenHeadphonesAreConnected,
         UpdateLockScreenWithSongArt,
         FallBackLockScreenImageUri,
 
         AutomaticallyConserveDataWhenOnMeteredConnections,
         AutomaticallyDetermineAppropriateBitrateBasedOnConnection,
-        ShowRemoteMenu,
     }
 }

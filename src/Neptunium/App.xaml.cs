@@ -1,14 +1,13 @@
 ﻿using Crystal3;
+using Crystal3.Messaging;
 using Crystal3.Navigation;
 using Kimono.Controls.SnackBar;
 using Microsoft.HockeyApp;
 using Neptunium.Core;
-using Neptunium.Core.UI;
 using Neptunium.View;
 using Neptunium.View.Dialog;
 using Neptunium.ViewModel;
 using Neptunium.ViewModel.Dialog;
-using Neptunium.ViewModel.Server;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,10 +21,10 @@ using Windows.ApplicationModel.Core;
 using Windows.Gaming.Input;
 using Windows.Networking.Connectivity;
 using Windows.System;
-using Windows.System.RemoteSystems;
 using Windows.UI.Core;
-using Windows.UI.Notifications;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=402347&clcid=0x409
@@ -66,18 +65,25 @@ namespace Neptunium
                     if (ex != null)
                     {
                         reportBuilder.AppendLine("Exception HResult: " + ex.HResult.ToString());
-                        if (ex.InnerException != null) reportBuilder.AppendLine("Inner-Exception: " + ex.InnerException.ToString());
+                        if (ex.InnerException != null)
+                        {
+                            reportBuilder.AppendLine("Inner-Exception: " + ex.InnerException.ToString());
+                        }
+
                         reportBuilder.AppendLine();
                     }
 
-                    reportBuilder.AppendLine("Platform: " + Enum.GetName(typeof(Crystal3.Core.Platform), CrystalApplication.GetDevicePlatform()));
+                    reportBuilder.AppendLine("Platform: " + Enum.GetName(typeof(Crystal3.Core.Platform), DeviceInformation.GetDevicePlatform()));
                     reportBuilder.AppendLine("Is Playing?: " + NepApp.MediaPlayer.IsPlaying);
-                    reportBuilder.AppendLine("Current Station: " + NepApp.MediaPlayer.CurrentStream != null ? NepApp.MediaPlayer.CurrentStream.ParentStation.Name : "None");
+                    reportBuilder.AppendLine("Current Station: " + NepApp.MediaPlayer.CurrentStream != null ? NepApp.MediaPlayer.CurrentStream.ParentStation : "None");
 
-                    if (NepApp.MediaPlayer.CurrentStream != null) reportBuilder.AppendLine("Station Stream: " + NepApp.MediaPlayer.CurrentStream.ToString());
+                    if (NepApp.MediaPlayer.CurrentStream != null)
+                    {
+                        reportBuilder.AppendLine("Station Stream: " + NepApp.MediaPlayer.CurrentStream.ToString());
+                    }
 
                     reportBuilder.AppendLine("Is Casting?: " + NepApp.MediaPlayer.IsCasting);
-                    reportBuilder.AppendLine("Is Sleep Timer Running?: " + NepApp.MediaPlayer.IsSleepTimerRunning);
+                    reportBuilder.AppendLine("Is Sleep Timer Running?: " + NepApp.MediaPlayer.SleepTimer.IsSleepTimerRunning);
 
 
                     return reportBuilder.ToString();
@@ -106,7 +112,9 @@ namespace Neptunium
                 if (exception is NeptuniumException)
                 {
                     if (await GetIfPrimaryWindowVisibleAsync())
+                    {
                         await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Something went wrong!", e.Message);
+                    }
                 }
 
                 Dictionary<string, string> dictionary = new Dictionary<string, string>();
@@ -122,7 +130,17 @@ namespace Neptunium
 
         internal static void RegisterUIDialogs()
         {
-            NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
+            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            {
+                NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, XboxStationInfoDialog>();
+            }
+            else
+            {
+                NepApp.UI.Overlay.RegisterDialogFragment<StationInfoDialogFragment, StationInfoDialog>();
+            }
+
+            NepApp.UI.Overlay.RegisterDialogFragment<StationHandoffDialogFragment, StationHandoffDialog>();
+            NepApp.UI.Overlay.RegisterDialogFragment<SleepTimerDialogFragment, SleepTimerDialog>();
         }
 
         private static volatile bool isInBackground = false;
@@ -172,13 +190,14 @@ namespace Neptunium
         {
             base.OnConfigure();
 
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
+            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
             {
 #if DEBUG
                 //todo not actually a todo but a PSA: to do Xbox testing on PC, set a breakpoint on Gamepads.Count or uncomment the Debugger.Break code.
                 //then however over .Count twice with a breakpoint once to force system to recognize xbox one controller.
                 //if (Debugger.IsAttached)
                 //    Debugger.Break();
+
                 if (Gamepad.Gamepads.Count > 0)
                 {
                     this.Options.OverridePlatform(Crystal3.Core.Platform.Xbox);
@@ -187,14 +206,20 @@ namespace Neptunium
             }
 
             this.Options.HandleSystemBackNavigation = true;
+            this.Options.HandleBackButtonForTopLevelNavigation = true;
         }
 
         protected override async Task OnApplicationInitializedAsync()
         {
-            SnackBarAppearance.Opacity = 1;
-            SnackBarAppearance.Transition = new PopupThemeTransition();
+            var coreApplicationView = CoreApplication.GetCurrentView();
+            if (coreApplicationView != null)
+            {
+                coreApplicationView.TitleBar.ExtendViewIntoTitleBar = true;
+            }
 
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox && !CrystalApplication.GetCurrentAsCrystalApplication().Options.OverridePlatformDetection)
+            ConfigureSnackBar();
+
+            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox && !DeviceInformation.IsPlatformOverridden())
             {
                 Windows.UI.ViewManagement.ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
@@ -209,10 +234,41 @@ namespace Neptunium
             await NepApp.InitializeAsync();
         }
 
+        private static void ConfigureSnackBar()
+        {
+            UISettings uiSettings = new UISettings();
+
+            SnackBarAppearance.Opacity = 1;
+            SnackBarAppearance.Transition = new PopupThemeTransition();
+
+            //check for acrylic support
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.XamlCompositionBrushBase")
+                && Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush"))
+            {
+                //Add acrylic.
+
+                Windows.UI.Xaml.Media.AcrylicBrush myBrush = new Windows.UI.Xaml.Media.AcrylicBrush();
+                myBrush.BackgroundSource = Windows.UI.Xaml.Media.AcrylicBackgroundSource.Backdrop;
+                myBrush.TintColor = uiSettings.GetColorValue(UIColorType.AccentDark2);
+                myBrush.FallbackColor = uiSettings.GetColorValue(UIColorType.AccentDark2);
+                myBrush.Opacity = 0.6;
+                myBrush.TintOpacity = 0.5;
+
+                SnackBarAppearance.BackgroundBrush = myBrush;
+            }
+            else
+            {
+                //fallback to a solid color.
+                SnackBarAppearance.BackgroundBrush = new SolidColorBrush(uiSettings.GetColorValue(UIColorType.Accent));
+            }
+        }
+
         private async Task PostUIInitAsync()
         {
             if ((BackgroundAccess = BackgroundExecutionManager.GetAccessStatus()) == BackgroundAccessStatus.Unspecified)
+            {
                 BackgroundAccess = await BackgroundExecutionManager.RequestAccessAsync();
+            }
 
             Window.Current.VisibilityChanged += Current_VisibilityChanged;
             isAppVisible = Window.Current.Visible;
@@ -234,17 +290,8 @@ namespace Neptunium
 
         public override async Task OnFreshLaunchAsync(LaunchActivatedEventArgs args)
         {
-            if (!NepApp.IsServerMode)
-            {
-                WindowManager.GetNavigationManagerForCurrentWindow()
-                    .RootNavigationService.NavigateTo<AppShellViewModel>();
-            }
-            else
-            {
-                WindowManager.GetNavigationManagerForCurrentWindow()
-                    .RootNavigationService.NavigateTo<ServerShellViewModel>();
-            }
-
+            WindowManager.GetNavigationManagerForCurrentView()
+                .RootNavigationService.NavigateTo<AppShellViewModel>();
             await PostUIInitAsync();
         }
 
@@ -252,20 +299,14 @@ namespace Neptunium
         {
             if (args.PreviousExecutionState != ApplicationExecutionState.Running)
             {
-                if (!NepApp.IsServerMode)
-                {
-                    WindowManager.GetNavigationManagerForCurrentWindow()
-                        .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
-                }
-                else
-                {
-                    WindowManager.GetNavigationManagerForCurrentWindow()
-                        .RootNavigationService.SafeNavigateTo<ServerShellViewModel>();
-                }
+                //First, initializes the shell if it isn't already running.
+                WindowManager.GetNavigationManagerForCurrentView()
+                .RootNavigationService.SafeNavigateTo<AppShellViewModel>();
             }
 
             if (args.Kind == ActivationKind.Protocol)
             {
+                //This handles being launched from a uri
                 var pargs = args as ProtocolActivatedEventArgs;
 
                 var uri = pargs.Uri;
@@ -283,9 +324,8 @@ namespace Neptunium
             }
             else if (args.Kind == ActivationKind.ToastNotification && args.PreviousExecutionState == ApplicationExecutionState.Running)
             {
-                WindowManager.GetNavigationManagerForCurrentWindow()
-                    .GetNavigationServiceFromFrameLevel(FrameLevel.Two)
-                    .NavigateTo<NowPlayingPageViewModel>();
+                //App/Xbox shell does use the overlay at this time.
+                await Messenger.SendMessageAsync("ShowNowPlayingOverlay", null);
             }
         }
 
@@ -323,7 +363,7 @@ namespace Neptunium
 
         internal static bool GetIfPrimaryWindowVisible()
         {
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
+            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Desktop)
             {
                 return isAppVisible && !isInBackground && isAppFocused;
             }
@@ -363,20 +403,7 @@ namespace Neptunium
 
         protected override Task OnSuspendingAsync()
         {
-            if (!NepApp.IsServerMode)
-            {
-                if (App.GetDevicePlatform() == Crystal3.Core.Platform.Desktop || App.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
-                {
-                    //clears the tile if we're suspending.
-                    TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-                }
-
-                if (!NepApp.MediaPlayer.IsPlaying)
-                {
-                    //removes the now playing notification from the action center.
-                    ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
-                }
-            }
+            NepApp.UI.ClearLiveTileAndMediaNotifcation();
 
             return Task.CompletedTask;
         }
@@ -391,24 +418,18 @@ namespace Neptunium
             switch (args.TaskInstance.Task.Name)
             {
                 default:
-
                     if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails)
                     {
-
                         var asTD = args.TaskInstance.TriggerDetails as AppServiceTriggerDetails;
-
                         switch (asTD.Name)
                         {
                             case NepAppHandoffManager.ContinuedAppExperienceAppServiceName:
                                 NepApp.Handoff.HandleBackgroundActivation(asTD); //handles any messages aimed at the handoff manager from a remote devices
                                 break;
                         }
-
                     }
-
                     break;
             }
-
             return Task.CompletedTask;
         }
     }

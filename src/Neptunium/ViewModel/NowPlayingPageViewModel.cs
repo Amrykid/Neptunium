@@ -13,6 +13,7 @@ using Windows.UI;
 
 namespace Neptunium.ViewModel
 {
+    //Now used for every platform that isn't Mobile/Desktop since new fluent design was created.
     public class NowPlayingPageViewModel : ViewModelBase
     {
         public SongMetadata CurrentSong
@@ -48,12 +49,6 @@ namespace Neptunium.ViewModel
             private set { SetPropertyValue<Uri>(value: value); }
         }
 
-        public Color BackgroundColor
-        {
-            get { return GetPropertyValue<Color>(); }
-            private set { SetPropertyValue<Color>(value: value); }
-        }
-
         public Uri CoverImage
         {
             get { return GetPropertyValue<Uri>(); }
@@ -78,15 +73,24 @@ namespace Neptunium.ViewModel
             NepApp.MediaPlayer.MediaEngagementChanged += MediaPlayer_MediaEngagementChanged;
             NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged += SongManager_SongChanged;
-            NepApp.SongManager.SongArtworkProcessingComplete += SongManager_SongArtworkProcessingComplete;
+            NepApp.SongManager.ArtworkProcessor.SongArtworkProcessingComplete += SongManager_SongArtworkProcessingComplete;
+            NepApp.MediaPlayer.FatalMediaErrorOccurred += MediaPlayer_FatalMediaErrorOccurred;
 
             IsPlaying = NepApp.MediaPlayer.IsPlaying;
             IsMediaEngaged = NepApp.MediaPlayer.IsMediaEngaged;
 
-            UpdateMetadata();
-            UpdateArtwork();
+            UpdateMetadataFollowedByArtwork();
 
             base.OnNavigatedTo(sender, e);
+        }
+
+        private void MediaPlayer_FatalMediaErrorOccurred(object sender, Windows.Media.Playback.MediaPlayerFailedEventArgs e)
+        {
+            App.Dispatcher.RunWhenIdleAsync(() =>
+            {
+                IsPlaying = NepApp.MediaPlayer.IsPlaying;
+                IsMediaEngaged = NepApp.MediaPlayer.IsMediaEngaged;
+            });
         }
 
         private void MediaPlayer_MediaEngagementChanged(object sender, EventArgs e)
@@ -103,7 +107,7 @@ namespace Neptunium.ViewModel
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
                 IsPlaying = NepApp.MediaPlayer.IsPlaying;
-                UpdateMetadata();
+                UpdateMetadataFollowedByArtwork();
             });
         }
 
@@ -115,48 +119,29 @@ namespace Neptunium.ViewModel
             });
         }
 
-        private async void UpdateArtwork()
+        private void UpdateArtwork()
         {
-            var albumArt = NepApp.SongManager.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Album);
-            if (albumArt != null)
+            if (NepApp.MediaPlayer.CurrentStream != null && CurrentStation != null && IsMediaEngaged)
             {
-                CoverImage = albumArt;
+                var albumArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Album);
+                var artistArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Media.Songs.NepAppSongMetadataBackground.Artist);
+
+                //Ew
+                Background = (artistArt ?? artistArt) ?? (!string.IsNullOrWhiteSpace(CurrentStation.Background) ? new Uri(CurrentStation.Background) : null);
+
+                if (Background == null)
+                {
+                    CoverImage = albumArt ?? CurrentStation.StationLogoUrl;
+                }
+                else
+                {
+                    CoverImage = null;
+                }
             }
             else
             {
-                CoverImage = NepApp.MediaPlayer.CurrentStream?.ParentStation?.StationLogoUrl;
-            }
-
-            Neptunium.Media.Songs.NepAppSongMetadataBackground backgroundType;
-            if (NepApp.SongManager.IsSongArtworkAvailable(out backgroundType))
-            {
-                //update the background
-                Background = NepApp.SongManager.GetSongArtworkUri(backgroundType);
-            }
-            else
-            {
-                if (NepApp.MediaPlayer.IsPlaying && NepApp.MediaPlayer.CurrentStream != null)
-                {
-                    if (!string.IsNullOrWhiteSpace(NepApp.MediaPlayer.CurrentStream.ParentStation.Background))
-                    {
-                        //update the background
-                        Background = new Uri(NepApp.MediaPlayer.CurrentStream.ParentStation.Background);
-                    }
-                    else
-                    {
-                        Background = null;
-                    }
-                }
-            }
-
-            if (Background != null)
-            {
-                var backgroundColor = await StationSupplementaryDataManager.GetDominantColorAsync(Background);
-                if (backgroundColor != BackgroundColor)
-                {
-                    BackgroundColor = backgroundColor;
-                    await Messenger.SendMessageAsync("NowPlayingBgColor", backgroundColor);
-                }
+                CoverImage = null;
+                Background = null;
             }
         }
 
@@ -168,7 +153,7 @@ namespace Neptunium.ViewModel
         {
             App.Dispatcher.RunWhenIdleAsync(() =>
             {
-                UpdateMetadata();
+                UpdateMetadataFollowedByArtwork();
             });
         }
 
@@ -178,15 +163,16 @@ namespace Neptunium.ViewModel
             NepApp.MediaPlayer.IsPlayingChanged -= MediaPlayer_IsPlayingChanged;
             NepApp.SongManager.PreSongChanged -= SongManager_PreSongChanged;
             NepApp.SongManager.SongChanged -= SongManager_SongChanged;
-            NepApp.SongManager.SongArtworkProcessingComplete -= SongManager_SongArtworkProcessingComplete;
+            NepApp.SongManager.ArtworkProcessor.SongArtworkProcessingComplete -= SongManager_SongArtworkProcessingComplete;
+            NepApp.MediaPlayer.FatalMediaErrorOccurred -= MediaPlayer_FatalMediaErrorOccurred;
 
             base.OnNavigatedFrom(sender, e);
         }
 
-        private void UpdateMetadata()
+        private async void UpdateMetadataFollowedByArtwork()
         {
             CurrentSong = NepApp.SongManager.GetCurrentSongOrUnknown();
-            CurrentStation = NepApp.MediaPlayer.CurrentStream?.ParentStation;
+            CurrentStation = await NepApp.Stations.GetStationByNameAsync(NepApp.MediaPlayer.CurrentStream?.ParentStation);
 
             UpdateArtwork();
         }

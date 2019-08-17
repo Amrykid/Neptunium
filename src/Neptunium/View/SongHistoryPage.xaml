@@ -13,58 +13,24 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
         <Grid.Resources>
-            <Style x:Key="TitleSafeListViewStyle" TargetType="ListView">
-                <!-- modified version of the style from here: https://docs.microsoft.com/en-us/windows/uwp/design/devices/designing-for-tv#tv-safe-area -->
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="ListView">
-                            <Border BorderBrush="{TemplateBinding BorderBrush}"
-                                        Background="{TemplateBinding Background}"
-                                        BorderThickness="{TemplateBinding BorderThickness}">
-                                <ScrollViewer x:Name="ScrollViewer"
-                                                  TabNavigation="{TemplateBinding TabNavigation}"
-                                                  HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-                                                  HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                                  IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
-                                                  VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-                                                  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                                  IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
-                                                  IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                                                  IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                                                  ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
-                                                  IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                                                  BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
-                                  AutomationProperties.AccessibilityView="Raw">
-                                    <ItemsPresenter Header="{TemplateBinding Header}"
-                                                        HeaderTemplate="{TemplateBinding HeaderTemplate}"
-                                                        HeaderTransitions="{TemplateBinding HeaderTransitions}"
-                                                        Footer="{TemplateBinding Footer}"
-                                                        FooterTemplate="{TemplateBinding FooterTemplate}"
-                                                        FooterTransitions="{TemplateBinding FooterTransitions}"
-                                                        Padding="{TemplateBinding Padding}"
-                                                        Margin="0,0,0,27"/>
-                                </ScrollViewer>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-
-            <CollectionViewSource x:Key="GroupedSongItems" IsSourceGrouped="True" Source="{Binding History, UpdateSourceTrigger=PropertyChanged}" />
+            <!--<CollectionViewSource x:Key="GroupedSongItems" IsSourceGrouped="True" Source="{Binding History, UpdateSourceTrigger=PropertyChanged}" />-->
             <cconv:RelativeTimeConverter TimeMode="Past" x:Key="TimeConv" HourFormatString="Today" MinuteFormatString="Today" SecondFormatString="Today" />
 
-            <DataTemplate x:Key="MobileSongHistoryItemTemplate">
+            <DataTemplate x:Key="SongHistoryItemTemplate">
                 <wrt:ListItemButton>
                     <Grid Height="90">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="45" />
+                            <ColumnDefinition Width="Auto" MaxWidth="45" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationLogo}" Grid.Column="0"
-                                     Width="45" Height="45" Stretch="UniformToFill" />
+                        <!--<Image Grid.Column="0"
+                               Width="45" Height="45" Stretch="UniformToFill">
+                            <Image.Source>
+                                <BitmapImage UriSource="{Binding Metadata.StationLogo}" DecodePixelHeight="45" DecodePixelWidth="45" />
+                            </Image.Source>
+                        </Image>-->
 
                         <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
                             <Grid.RowDefinitions>
@@ -75,67 +41,22 @@
 
 
                             <TextBlock Style="{ThemeResource BaseTextBlockStyle}"
-                                       Text="{Binding Metadata.Track}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                       Text="{Binding Track, Mode=OneTime}"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
                                        TextTrimming="WordEllipsis"
                                        HorizontalAlignment="Left"
-                                       ToolTipService.ToolTip="{Binding Metadata.Track}"
+                                       ToolTipService.ToolTip="{Binding Track, Mode=OneTime}"
                                        VerticalAlignment="Bottom"
-                                       Grid.Row="0" />  
+                                       Grid.Row="0" />
 
                             <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
+                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
                                        Grid.Row="1"
-                                       Text="{Binding Metadata.Artist}" />
+                                       Text="{Binding Artist, Mode=OneTime}" />
 
                             <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
                                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                       Grid.Row="2" Text="{Binding Metadata.StationPlayedOn}"  />
-                        </Grid>
-                    </Grid>
-                    <wrt:ListItemButton.ContextFlyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem Text="Copy" 
-                                            Command="{Binding ElementName=thisPage, Path=DataContext.CopyMetadataCommand}"
-                                            CommandParameter="{Binding}" />
-                        </MenuFlyout>
-                    </wrt:ListItemButton.ContextFlyout>
-                </wrt:ListItemButton>
-            </DataTemplate>
-
-            <DataTemplate x:Key="TabletOrHigherSongHistoryItemTemplate">
-                <wrt:ListItemButton>
-                    <Grid Height="100" Margin="0 0 0 5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <uwp:ImageEx IsCacheEnabled="True" Source="{Binding Metadata.StationLogo}" Grid.Column="0"
-                                     Width="85" Height="85" Stretch="UniformToFill" />
-
-                        <Grid Grid.Column="1" Margin="15 0" VerticalAlignment="Center">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="3*" />
-                                <RowDefinition Height="1*" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Text="{Binding Metadata.Track}" Grid.Row="0" 
-                                       Style="{ThemeResource TitleTextBlockStyle}"
-                                       x:Name="TrackTextBlock"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                       VerticalAlignment="Bottom"/>
-                            <TextBlock Grid.Row="1"
-                                    VerticalAlignment="Top"
-                                    x:Name="ArtistTextBlock"
-                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                    Style="{ThemeResource BodyTextBlockStyle}">
-                            <Span>
-                                <Run Text="{Binding Metadata.Artist}" />
-                                <Run Text="·" FontWeight="ExtraBold" />
-                                <Run Text="{Binding Metadata.StationPlayedOn}" />
-                            </Span>
-                            </TextBlock>
+                                       Grid.Row="2" Text="{Binding StationPlayedOn, Mode=OneTime}"  />
                         </Grid>
                     </Grid>
                     <wrt:ListItemButton.ContextFlyout>
@@ -149,17 +70,9 @@
             </DataTemplate>
         </Grid.Resources>
 
-        <ListView x:Name="SongHistoryListView" ItemsSource="{Binding Source={StaticResource GroupedSongItems}}"
-                  Style="{StaticResource TitleSafeListViewStyle}">
-            <ListView.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Key.Date, Converter={StaticResource TimeConv}}"/>
-                        </DataTemplate>
-                    </GroupStyle.HeaderTemplate>
-                </GroupStyle>
-            </ListView.GroupStyle>
+        <ListView x:Name="SongHistoryListView"
+                  ItemTemplate="{StaticResource SongHistoryItemTemplate}"
+                  ItemsSource="{Binding History, UpdateSourceTrigger=PropertyChanged}">
             <ListView.Transitions>
                 <TransitionCollection>
                     <AddDeleteThemeTransition />
@@ -167,41 +80,30 @@
             </ListView.Transitions>
         </ListView>
 
+        <ProgressRing VerticalAlignment="Center" HorizontalAlignment="Center"
+                      IsActive="{Binding IsBusy, UpdateSourceTrigger=PropertyChanged}"
+                      Height="60"
+                      Width="60" />
+
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
-                <VisualState x:Name="XboxVisualState">
-                    <VisualState.StateTriggers>
-                        <wst:DeviceFamilyStateTrigger DeviceFamily="Xbox" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="SongHistoryListView.Margin" Value="48 0 48 0" />
-                        <Setter Target="SongHistoryListView.ItemTemplate" Value="{StaticResource TabletOrHigherSongHistoryItemTemplate}" />
-                    </VisualState.Setters>
-                </VisualState>
                 <VisualState x:Name="TabletOrHigherVisualState">
                     <VisualState.StateTriggers>
-                        <wst:CompositeStateTrigger Operator="And">
-                            <wst:CompositeStateTrigger Operator="Or">
-                                <wst:DeviceFamilyStateTrigger DeviceFamily="Desktop" />
-                                <wst:DeviceFamilyStateTrigger DeviceFamily="Mobile" />
-                            </wst:CompositeStateTrigger>
-
-                            <wst:AdaptiveTrigger MinWindowWidth="720" />
-                        </wst:CompositeStateTrigger>
+                        <AdaptiveTrigger MinWindowWidth="720" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="SongHistoryListView.ItemTemplate" Value="{StaticResource TabletOrHigherSongHistoryItemTemplate}" />
+                        <!--<Setter Target="SongHistoryListView.ItemTemplate" Value="{StaticResource SongHistoryItemTemplate}" />-->
                     </VisualState.Setters>
                 </VisualState>
 
                 <VisualState x:Name="PhoneVisualState">
                     <VisualState.StateTriggers>
-                        <wst:AdaptiveTrigger MinWindowWidth="0" />
+                        <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="SongHistoryListView.ItemTemplate" Value="{StaticResource MobileSongHistoryItemTemplate}" />
+                        <!--<Setter Target="SongHistoryListView.ItemTemplate" Value="{StaticResource SongHistoryItemTemplate}" />-->
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

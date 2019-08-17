@@ -32,7 +32,10 @@ namespace Neptunium.Media
                 streamSource.MetadataChanged += ShoutcastStream_MetadataChanged;
                 StreamMediaSource = MediaSource.CreateFromMediaStreamSource(streamSource.MediaStreamSource);
                 StreamMediaSource.StateChanged += StreamMediaSource_StateChanged;
-                this.StationPlaying = stream.ParentStation;
+                this.StationPlaying = await NepApp.Stations.GetStationByNameAsync(stream.ParentStation);
+
+                ShoutcastStationInfo = streamSource.StationInfo;
+                RaiseStationInfoAcquired(streamSource.StationInfo);
             }
             catch (Exception ex)
             {
@@ -52,6 +55,8 @@ namespace Neptunium.Media
                 throw new Neptunium.Core.NeptuniumStreamConnectionFailedException(stream, ex);
             }
         }
+
+        public ServerStationInfo ShoutcastStationInfo { get; private set; }
 
         public override bool PollConnection()
         {

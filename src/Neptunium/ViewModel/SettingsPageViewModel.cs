@@ -12,35 +12,15 @@ namespace Neptunium.ViewModel
 {
     public class SettingsPageViewModel : ViewModelBase
     {
-        public RelayCommand ClearBluetoothDeviceCommand => new RelayCommand(x =>
-        {
-            if (NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.IsInitialized)
-            {
-                NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.ClearDevice();
-
-                SelectedBluetoothDeviceName = "None";
-            }
-        });
-
-        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
             NepApp.Settings.SettingChanged += Settings_SettingChanged;
-
-            if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
-            {
-                if (await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync())
-                {
-                    SelectedBluetoothDeviceName = NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.SelectedBluetoothDeviceName ?? "None";
-                }
-            }
-
             base.OnNavigatedTo(sender, e);
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
             NepApp.Settings.SettingChanged -= Settings_SettingChanged;
-
             base.OnNavigatedFrom(sender, e);
         }
 
@@ -64,18 +44,6 @@ namespace Neptunium.ViewModel
         {
             get { return (bool)NepApp.Settings.GetSetting(AppSettings.TryToFindSongMetadata); }
             set { NepApp.Settings.SetSetting(AppSettings.TryToFindSongMetadata, value); }
-        }
-
-        public bool SaySongNotificationsInBluetoothMode
-        {
-            get { return (bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsInBluetoothMode); }
-            set { NepApp.Settings.SetSetting(AppSettings.SaySongNotificationsInBluetoothMode, value); }
-        }
-
-        public bool SaySongNotificationsWhenHeadphonesConnected
-        {
-            get { return (bool)NepApp.Settings.GetSetting(AppSettings.SaySongNotificationsWhenHeadphonesAreConnected); }
-            set { NepApp.Settings.SetSetting(AppSettings.SaySongNotificationsWhenHeadphonesAreConnected, value); }
         }
 
         public bool UpdateLockScreenWithSongArt
@@ -102,12 +70,6 @@ namespace Neptunium.ViewModel
             }
         }
 
-        public string SelectedBluetoothDeviceName
-        {
-            get { return GetPropertyValue<string>(); }
-            set { SetPropertyValue<string>(value: value); }
-        }
-
         public bool ConserveData
         {
             get { return (bool)NepApp.Settings.GetSetting(AppSettings.AutomaticallyConserveDataWhenOnMeteredConnections); }
@@ -128,12 +90,6 @@ namespace Neptunium.ViewModel
         {
             get { return (bool)NepApp.Settings.GetSetting(AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection); }
             set { NepApp.Settings.SetSetting(AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection, value); }
-        }
-
-        public bool ShowRemote
-        {
-            get { return (bool)NepApp.Settings.GetSetting(AppSettings.ShowRemoteMenu); }
-            set { NepApp.Settings.SetSetting(AppSettings.ShowRemoteMenu, value); }
         }
 
         public bool UseHapticFeedback

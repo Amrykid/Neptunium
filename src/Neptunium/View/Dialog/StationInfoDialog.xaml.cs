@@ -32,7 +32,7 @@ namespace Neptunium.View
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
                 PinStationButton.Visibility = Visibility.Collapsed; //pinning isn't supported on Xbox.
 
             //Focus on the cancel button.

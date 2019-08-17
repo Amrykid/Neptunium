@@ -47,6 +47,27 @@ namespace Neptunium.Core.Media.Metadata
 
             return data;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (!(obj is SongMetadata)) return false;
+
+            SongMetadata other = (SongMetadata)obj;
+            return this.Track.Equals(other.Track, StringComparison.CurrentCultureIgnoreCase) && this.Artist.Equals(other.Artist, StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Track?.GetHashCode() ?? 0) + (Artist?.GetHashCode() ?? 0) + (StationPlayedOn?.GetHashCode() ?? 0);
+        }
+
+        public bool FullyEquals(SongMetadata other)
+        {
+            if (!this.Equals(other)) return false;
+
+            throw new NotImplementedException(); //todo: compare other fields
+        }
     }
 
     public class ExtendedSongMetadata: SongMetadata

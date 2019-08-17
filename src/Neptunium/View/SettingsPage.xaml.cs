@@ -30,34 +30,34 @@ namespace Neptunium.View
         public SettingsPage()
         {
             this.InitializeComponent();
-        }
 
-        private async void SelectBluetoothButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectBluetoothButton.IsEnabled = false;
-            var device = await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.SelectDeviceAsync(Window.Current.Bounds);
-            if (device != null)
+            switch(DeviceInformation.GetDevicePlatform())
             {
-                this.GetViewModel<SettingsPageViewModel>().SelectedBluetoothDeviceName = device.Name;
+                case Crystal3.Core.Platform.Mobile:
+                    HapticFeedbackSwitch.IsEnabled = true;
+                    break;
+                default:
+                    HapticFeedbackSwitch.IsEnabled = false;
+                    HapticFeedbackSwitch.XYFocusUp = null;
+                    HapticFeedbackSwitch.XYFocusDown = null;
+                    HapticFeedbackSwitch.IsTabStop = false;
+
+                    SongNotificationSwitch.XYFocusDown = MetadataSwitch;
+                    MetadataSwitch.XYFocusUp = SongNotificationSwitch;
+                    break;
             }
-            SelectBluetoothButton.IsEnabled = true;
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (CrystalApplication.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
+            if (DeviceInformation.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
             {
-                //only show bluetooth settings on devices that have bluetooth.
-                bluetoothPivot.IsEnabled = await NepApp.MediaPlayer.Bluetooth.DeviceCoordinator.HasBluetoothRadiosAsync();
-
                 UpdateLockScreenSwitch.Visibility = Visibility.Visible;
             }
             else
             {
                 //force focus on Xbox.
                 RootPivot.Focus(FocusState.Keyboard);
-
-                RootPivot.Items.Remove(bluetoothPivot);
             }
         }
 

@@ -71,7 +71,11 @@ namespace Neptunium
 
             if (RemoteSystemAccess == RemoteSystemAccessStatus.Allowed)
             {
-                remoteSystemWatcher = RemoteSystem.CreateWatcher(new IRemoteSystemFilter[] { new RemoteSystemDiscoveryTypeFilter(RemoteSystemDiscoveryType.Proximal) });
+                remoteSystemWatcher = RemoteSystem.CreateWatcher(new IRemoteSystemFilter[] {
+                    new RemoteSystemDiscoveryTypeFilter(RemoteSystemDiscoveryType.Any),
+                    new RemoteSystemAuthorizationKindFilter(RemoteSystemAuthorizationKind.SameUser),
+                    new RemoteSystemStatusTypeFilter(RemoteSystemStatusType.Available)
+                });
                 remoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcher_RemoteSystemAdded;
                 remoteSystemWatcher.RemoteSystemRemoved += RemoteSystemWatcher_RemoteSystemRemoved;
                 remoteSystemWatcher.RemoteSystemUpdated += RemoteSystemWatcher_RemoteSystemUpdated;
@@ -112,7 +116,10 @@ namespace Neptunium
             if (system != null)
             {
                 systemList[systemList.IndexOf(system)] = args.RemoteSystem;
-                RemoteSystemsListUpdated?.Invoke(this, EventArgs.Empty);
+                App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    RemoteSystemsListUpdated?.Invoke(this, EventArgs.Empty);
+                });
             }
         }
 
@@ -219,15 +226,15 @@ namespace Neptunium
             return await RemoteLauncher.LaunchUriAsync(request, new Uri("nep:" + args));
         }
 
-        public async Task<bool> HandoffStationToRemoteDeviceAsync(RemoteSystem device, StationItem station)
+        public async Task<bool> HandoffStationToRemoteDeviceAsync(RemoteSystem device, string stationName)
         {
             if (!IsSupported) return false;
 
             var data = new ValueSet();
             data.Add("Command", "Play-Station");
-            data.Add("Station", station.Name);
+            data.Add("Station", stationName);
 
-            var status = await LaunchAppOnDeviceAsync(device, "play-station?station=" + station.Name);
+            var status = await LaunchAppOnDeviceAsync(device, "play-station?station=" + stationName);
 
             if (status == RemoteLaunchUriStatus.Success)
             {
@@ -349,7 +356,7 @@ namespace Neptunium
                         response.Add("IsPlaying", NepApp.MediaPlayer.IsPlaying);
 
                         if (NepApp.MediaPlayer.IsPlaying && NepApp.MediaPlayer.CurrentStream != null)
-                            response.Add("CurrentStation", NepApp.MediaPlayer.CurrentStream.ParentStation.Name);
+                            response.Add("CurrentStation", NepApp.MediaPlayer.CurrentStream.ParentStation);
 
                         break;
                     }

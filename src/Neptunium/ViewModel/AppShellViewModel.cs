@@ -1,22 +1,17 @@
-﻿using Crystal3.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Crystal3;
+using Crystal3.Model;
 using Crystal3.Navigation;
-using Neptunium.Core;
 using Crystal3.UI.Commands;
-using Microsoft.HockeyApp;
-using Neptunium.ViewModel.Dialog;
-using Neptunium.ViewModel.Fragments;
-using Neptunium.Core.Media.Metadata;
-using Windows.System.UserProfile;
-using Windows.Services.Store;
-using Windows.Foundation;
-using Windows.UI.Xaml;
 using Neptunium.Core.Media.Audio;
-using Neptunium.Core.Media;
+using Neptunium.Core.Stations;
+using Neptunium.ViewModel.Dialog;
+using Neptunium.ViewModel.Fragment;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Services.Store;
+using Windows.UI.Xaml;
 
 namespace Neptunium.ViewModel
 {
@@ -32,65 +27,51 @@ namespace Neptunium.ViewModel
             NepApp.MediaPlayer.Pause();
         });
 
-        public SleepTimerContextFragment SleepTimerFragment => new SleepTimerContextFragment();
-        public HandoffContextFragment HandoffFragment => new HandoffContextFragment();
+        public RelayCommand SleepTimerCommand => new RelayCommand(async x =>
+        {
+            if (NepApp.MediaPlayer.IsMediaEngaged)
+            {
+                await NepApp.UI.Overlay.ShowDialogFragmentAsync<SleepTimerDialogFragment>();
+            }
+            else
+            {
+                await NepApp.UI.ShowInfoDialogAsync("Can't do that!", "You must be listening to sonething before you can set the sleep timer!");
+            }
+        });
 
         public RelayCommand MediaCastingCommand => new RelayCommand(async x =>
         {
             if (NepApp.MediaPlayer.IsMediaEngaged)
             {
-                NepApp.MediaPlayer.ShowCastingPicker();
+                await NepApp.UI.Overlay.ShowDialogFragmentAsync<StationHandoffDialogFragment>();
             }
             else
             {
-                await NepApp.UI.ShowInfoDialogAsync("Can't do that!", "You must be listening to sonething before you can cast it!");
+                await NepApp.UI.ShowInfoDialogAsync("Can't do that!", "You must be listening to sonething before you can cast it or hand it off!");
             }
         });
 
-        public RelayCommand GoToRemoteCommand => new RelayCommand(async x =>
-        {
-            var remotePage = NepApp.UI.NavigationItems.FirstOrDefault(X => X.NavigationViewModelType == typeof(ServerRemotePageViewModel));
-            if (remotePage == null) throw new Exception("Remote page not found.");
-            NepApp.UI.NavigateToItem(remotePage);
-        });
 
+        public NowPlayingViewModelFragment NowPlayingFragment { get; private set; }
         public AppShellViewModel()
         {
+            NowPlayingFragment = new NowPlayingViewModelFragment();
 
             NepApp.UI.AddNavigationRoute("Stations", typeof(StationsPageViewModel), ""); //"");
-            NepApp.UI.AddNavigationRoute("Now Playing", typeof(NowPlayingPageViewModel), "");
             NepApp.UI.AddNavigationRoute("History", typeof(SongHistoryPageViewModel), "");
-            NepApp.UI.AddNavigationRoute("Schedule", typeof(StationProgramsPageViewModel), "");
+            //NepApp.UI.AddNavigationRoute("Schedule", typeof(StationProgramsPageViewModel), "");
             NepApp.UI.AddNavigationRoute("Settings", typeof(SettingsPageViewModel), "");
-
-#if !DEBUG
-            if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowRemoteMenu))
-            {
-#endif
-                NepApp.UI.AddNavigationRoute("Remote", typeof(ServerRemotePageViewModel), "");
-#if !DEBUG
-            }
-#endif
-
             NepApp.UI.AddNavigationRoute("About", typeof(AboutPageViewModel), "");
 
 
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
-            NepApp.SongManager.PreSongChanged += SongManager_PreSongChanged;
-            NepApp.SongManager.SongChanged += SongManager_SongChanged;
-            NepApp.SongManager.StationRadioProgramStarted += SongManager_StationRadioProgramStarted;
+            NepApp.MediaPlayer.FatalMediaErrorOccurred += MediaPlayer_FatalMediaErrorOccurred;
             NepApp.MediaPlayer.Audio.HeadsetDetector.IsHeadsetPluggedInChanged += HeadsetDetector_IsHeadsetPluggedInChanged;
+        }
 
-            if (NepApp.MediaPlayer.Audio.HeadsetDetector.IsHeadsetPluggedIn)
-            {
-                ShowOverlayForHeadphonesStatus(true);
-            }
-
-            if (UserProfilePersonalizationSettings.IsSupported())
-            {
-                NepApp.SongManager.SongArtworkAvailable += SongManager_SongArtworkAvailable;
-                NepApp.SongManager.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
-            }
+        private async void MediaPlayer_FatalMediaErrorOccurred(object sender, Windows.Media.Playback.MediaPlayerFailedEventArgs e)
+        {
+            await NepApp.UI.ShowInfoDialogAsync("Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
         }
 
         private void HeadsetDetector_IsHeadsetPluggedInChanged(object sender, EventArgs e)
@@ -107,105 +88,15 @@ namespace Neptunium.ViewModel
             });
         }
 
-        private async void SongManager_NoSongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
-        {
-            if ((bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt))
-            {
-                //sets the fallback lockscreen image when we don't have any artwork available.
-                if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Artist)
-                {
-                    try
-                    {
-                        await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-                }
-            }
-        }
-
-        private async void SongManager_SongArtworkAvailable(object sender, Media.Songs.NepAppSongMetadataArtworkEventArgs e)
-        {
-            if ((bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt))
-            {
-                if (e.ArtworkType == Media.Songs.NepAppSongMetadataBackground.Artist)
-                {
-                    try
-                    {
-                        bool result = await NepApp.UI.LockScreen.TrySetLockScreenImageFromUriAsync(e.ArtworkUri);
-
-                        if (!result)
-                        {
-                            await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        //todo make and set an image that represents the lack of artwork. maybe a dark image with the app logo?
-                        //maybe allow the user to set an image to use in this case.
-
-                        await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
-                    }
-                }
-            }
-        }
-
-        private async void SongManager_StationRadioProgramStarted(object sender, Media.Songs.NepAppStationProgramStartedEventArgs e)
-        {
-            if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
-            {
-                if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
-                {
-                    if (e.RadioProgram.Style == Core.Stations.StationProgramStyle.Block)
-                    {
-                        NepApp.UI.Notifier.ShowStationBlockProgrammingToastNotification(e.RadioProgram, e.Metadata);
-                    }
-                    else
-                    {
-                        NepApp.UI.Notifier.ShowStationHostedProgrammingToastNotification(e.RadioProgram, e.Metadata);
-                    }
-                }
-                else
-                {
-                    if (e.RadioProgram.Style == Core.Stations.StationProgramStyle.Block)
-                    {
-                        await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tuning into " + e.RadioProgram.Name + " on " + e.Station);
-                    }
-                    else
-                    {
-                        await NepApp.UI.Overlay.ShowSnackBarMessageAsync("Tuning into " + e.RadioProgram.Name + " by " + e.RadioProgram.Host);
-                    }
-                }
-            }
-
-            if (e.Metadata != null)
-                NepApp.UI.Notifier.UpdateLiveTile(new ExtendedSongMetadata(e.Metadata));
-        }
-
-        private async void SongManager_SongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
-        {
-            if (!await App.GetIfPrimaryWindowVisibleAsync()) //if the primary window isn't visible
-            {
-                if ((bool)NepApp.Settings.GetSetting(AppSettings.ShowSongNotifications))
-                    NepApp.UI.Notifier.ShowSongToastNotification((ExtendedSongMetadata)e.Metadata);
-            }
-
-            NepApp.UI.Notifier.UpdateLiveTile((ExtendedSongMetadata)e.Metadata);
-        }
-
-        private void SongManager_PreSongChanged(object sender, Media.Songs.NepAppSongChangedEventArgs e)
-        {
-
-        }
-
         private void Media_IsPlayingChanged(object sender, Media.NepAppMediaPlayerManager.NepAppMediaPlayerManagerIsPlayingEventArgs e)
         {
 
         }
-
+#if RELEASE
         protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+#else
+        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+#endif
         {
             base.OnNavigatedTo(sender, e);
 
@@ -215,12 +106,73 @@ namespace Neptunium.ViewModel
 
             RaisePropertyChanged(nameof(ResumePlaybackCommand));
 
-
             //CheckForReverseHandoffOpportunitiesIfSupported();
 
 #if RELEASE
             await CheckForUpdatesAsync();
 #endif
+
+            AskToStreamLastPlayedStation();
+        }
+
+        private static void AskToStreamLastPlayedStation()
+        {
+            if (Crystal3.DeviceInformation.GetDevicePlatform() != Crystal3.Core.Platform.Xbox)
+            {
+                if (!string.IsNullOrWhiteSpace(NepApp.Stations.LastPlayedStationName))
+                {
+                    NepApp.UI.Overlay.ShowSnackBarMessageWithCallbackAsync(
+                        string.Format("Continue streaming {0}?", NepApp.Stations.LastPlayedStationName),
+                        "Yes",
+                        TimeSpan.FromSeconds(30),
+                        async msg =>
+                        {
+                            await StreamLastPlayedStationAsync();
+                        });
+                }
+            }
+            else
+            {
+                //for xbox, we'll do something different.
+            }
+        }
+
+        private static async Task StreamLastPlayedStationAsync()
+        {
+            var station = await NepApp.Stations.GetStationByNameAsync(NepApp.Stations.LastPlayedStationName);
+            if (station != null)
+            {
+                var controller = await NepApp.UI.Overlay.ShowProgressDialogAsync(string.Format("Connecting to {0}...", station.Name), "Please wait...");
+                controller.SetIndeterminate();
+
+                try
+                {
+                    StationStream stream = null;
+                    if (stream == null)
+                    {
+                        //check if we need to automatically choose a lower bitrate.
+                        if ((int)NepApp.Network.NetworkUtilizationBehavior < 2) //check if we're on "conservative" or "opt-in"
+                        {
+                            //grab the stream with the lowest bitrate
+                            stream = station.Streams.OrderBy(x => x.Bitrate).First();
+                        }
+                        else
+                        {
+                            stream = station.Streams.OrderByDescending(x => x.Bitrate).First(); //otherwise, grab a higher bitrate
+                        }
+                    }
+
+                    await NepApp.MediaPlayer.TryStreamStationAsync(stream);
+                }
+                catch (Exception ex)
+                {
+                    await NepApp.UI.ShowInfoDialogAsync("Uh-oh! Couldn't do that!", ex.Message);
+                }
+                finally
+                {
+                    await controller.CloseAsync();
+                }
+            }
         }
 
         private static async Task CheckForUpdatesAsync()

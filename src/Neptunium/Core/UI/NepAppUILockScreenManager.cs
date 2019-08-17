@@ -16,7 +16,8 @@ namespace Neptunium.Core.UI
     public class NepAppUILockScreenManager
     {
         private Rect screenBounds = default(Rect);
-        private object originalLockScreen; //currently, there is no universal way to get the original lock screen. this api ( https://docs.microsoft.com/en-us/uwp/api/Windows.System.UserProfile.LockScreen ) only exists on the desktop sku.
+        //currently, there is no universal way to get the original lock screen. this api ( https://docs.microsoft.com/en-us/uwp/api/Windows.System.UserProfile.LockScreen ) only exists on the desktop sku.
+        //private object originalLockScreen;
         private Uri fallBackLockScreenImage = null;
         private StorageFolder lockScreenFolder = null;
         internal NepAppUILockScreenManager()
@@ -37,13 +38,67 @@ namespace Neptunium.Core.UI
                 var file = await lockScreenFolder.GetFileAsync(fallBackFileName);
                 fallBackLockScreenImage = new Uri(file.Path);
             }
+
+            if (UserProfilePersonalizationSettings.IsSupported())
+            {
+                NepApp.SongManager.ArtworkProcessor.SongArtworkAvailable += SongManager_SongArtworkAvailable;
+                NepApp.SongManager.ArtworkProcessor.NoSongArtworkAvailable += SongManager_NoSongArtworkAvailable;
+            }
         }
 
+
+        private async void SongManager_NoSongArtworkAvailable(object sender, Neptunium.Media.Songs.NepAppSongMetadataArtworkEventArgs e)
+        {
+            if ((bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt))
+            {
+                //sets the fallback lockscreen image when we don't have any artwork available.
+                if (e.ArtworkType == Neptunium.Media.Songs.NepAppSongMetadataBackground.Artist)
+                {
+                    try
+                    {
+                        await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+            }
+        }
+
+        private async void SongManager_SongArtworkAvailable(object sender, Neptunium.Media.Songs.NepAppSongMetadataArtworkEventArgs e)
+        {
+            if ((bool)NepApp.Settings.GetSetting(AppSettings.UpdateLockScreenWithSongArt))
+            {
+                if (e.ArtworkType == Neptunium.Media.Songs.NepAppSongMetadataBackground.Artist)
+                {
+                    try
+                    {
+                        bool result = await NepApp.UI.LockScreen.TrySetLockScreenImageFromUriAsync(e.ArtworkUri);
+
+                        if (!result)
+                        {
+                            await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        //todo make and set an image that represents the lack of artwork. maybe a dark image with the app logo?
+                        //maybe allow the user to set an image to use in this case.
+
+                        await NepApp.UI.LockScreen.TrySetFallbackLockScreenImageAsync();
+                    }
+                }
+            }
+        }
+
+
+        #region Functions
         public async Task<bool> TrySetLockScreenImageFromUriAsync(Uri uri)
         {
             //var picturesLibrary = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
 
-            var originalFileName = uri.Segments.Last().Trim().Replace(":", "-").Replace(",", "-");
+            var originalFileName = Uri.UnescapeDataString(uri.Segments.Last().Trim().Replace(":", "-").Replace(",", "-"));
 
             StorageFile fileObject = await lockScreenFolder.TryGetItemAsync(originalFileName) as StorageFile;
 
@@ -66,7 +121,7 @@ namespace Neptunium.Core.UI
 
                     fileObject = await lockScreenFolder.TryGetItemAsync(originalFileName) as StorageFile;
 
-                    if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+                    if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
                     {
                         //crop it on mobile.
 
@@ -87,7 +142,7 @@ namespace Neptunium.Core.UI
                 }
             }
 
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
             {
                 //from the msdn doc for TrySetLockScreenImageAsync: The operation will fail on mobile if the file size exceeds 2 MBs even if it returns true.
 
@@ -166,5 +221,6 @@ namespace Neptunium.Core.UI
 
             return false;
         }
+        #endregion
     }
 }

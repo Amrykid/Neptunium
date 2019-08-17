@@ -1,4 +1,5 @@
-﻿using Crystal3.Model;
+﻿using Crystal3;
+using Crystal3.Model;
 using Crystal3.Navigation;
 using Kimono.Controls.SnackBar;
 using Microsoft.Toolkit.Uwp.UI.Animations;
@@ -84,7 +85,7 @@ namespace Neptunium.Core.UI
 
         private Rect GetScreenBounds()
         {
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile 
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Mobile 
                 || UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Touch)
             {
                 return Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().VisibleBounds;
@@ -124,10 +125,16 @@ namespace Neptunium.Core.UI
                     inlineFrame.Height = 600;
                 }
             }
+            else if (DeviceInformation.IsCurrentViewInMixedReality())
+            {
+                //In Mixed Reality, the bottom part of the dialog was cut off. This should now give it some space.
+                inlineFrame.Width = width;
+                inlineFrame.Height = height - 150;
+            }
             else
             {
                 inlineFrame.Width = width;
-                inlineFrame.Height = height - 20;
+                inlineFrame.Height = height - 60;
 
             }
         }
@@ -173,7 +180,8 @@ namespace Neptunium.Core.UI
             });
             view.KeyDown += escapeHandler;
 
-            var navManager = WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two);
+            var navManager = WindowManager.GetNavigationManagerForCurrentView()
+                .GetNavigationServiceFromFrameLevel(FrameLevel.Two);
             EventHandler<NavigationManagerPreBackRequestedEventArgs> backHandler = null;
             bool backHandlerReleased = false;
             backHandler = new EventHandler<NavigationManagerPreBackRequestedEventArgs>((o, e) =>
@@ -202,6 +210,8 @@ namespace Neptunium.Core.UI
             Window.Current.SizeChanged -= Current_SizeChanged;
 
             await EndShowingDialogAsync();
+
+            fragment.Dispose();
 
             return result;
         }
@@ -307,6 +317,10 @@ namespace Neptunium.Core.UI
         public Task ShowSnackBarMessageAsync(string message, TimeSpan duration)
         {
             return snackManager.ShowMessageAsync(message, (int)duration.TotalMilliseconds);  
+        }
+        public Task ShowSnackBarMessageWithCallbackAsync(string message, string buttonText, TimeSpan duration, Action<SnackBarMessage> callback)
+        {
+            return snackManager.ShowMessageWithCallbackAsync(message, buttonText, callback, (int)duration.TotalMilliseconds);
         }
 
         public void RegisterDialogFragment<T, V>() where T : NepAppUIDialogFragment where V : Control

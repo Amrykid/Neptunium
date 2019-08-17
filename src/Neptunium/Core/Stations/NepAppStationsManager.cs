@@ -4,15 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.UI.Xaml;
-using Windows.Web.Http;
 using static Neptunium.NepApp;
 
 namespace Neptunium.Core.Stations
@@ -69,9 +64,21 @@ namespace Neptunium.Core.Stations
         public string LastPlayedStationName { get; private set; }
         public DateTime LastPlayedStationDate { get; private set; }
 
+
+        //may or may not be accurate.
+        public int StationsCount { get { return stationItems.Count; } }
+
+        private List<Stations.StationItem> stationItems = new List<StationItem>();
+
         internal async Task<StationItem[]> GetStationsAsync()
         {
             await stationsLock.WaitAsync();
+
+            if (stationItems.Count > 0)
+            {
+                stationsLock.Release();
+                return stationItems.ToArray();
+            }
 
             StorageFile file = await GetStationsFileAsync();
 
@@ -81,18 +88,15 @@ namespace Neptunium.Core.Stations
 
             try
             {
-                List<StationItem> stationList = new List<StationItem>();
-
                 foreach (var stationElement in xmlDoc.Element("Stations").Elements("Station"))
                 {
                     var station = await ConvertStationElementToStationAsync(stationElement);
 
-                    stationList.Add(station);
-
+                    stationItems.Add(station);
                 }
 
                 stationsLock.Release();
-                return stationList.ToArray();
+                return stationItems.ToArray();
             }
             catch (Exception ex)
             {
@@ -112,34 +116,56 @@ namespace Neptunium.Core.Stations
             {
                 await stationsLock.WaitAsync();
 
-                StorageFile file = await GetStationsFileAsync();
+                bool stationsLoaded = stationItems.Count > 0;
 
-                var reader = await file.OpenReadAsync();
-
-                XDocument xmlDoc = XDocument.Load(reader.AsStream());
-
-                try
+                if (stationsLoaded)
                 {
-                    foreach (var stationElement in xmlDoc.Element("Stations").Elements("Station"))
+                    foreach (var station in stationItems)
                     {
-                        var station = await ConvertStationElementToStationAsync(stationElement);
-
                         o.OnNext(station);
                     }
 
-                    stationsLock.Release();
-                }
-                catch (Exception ex)
-                {
-                    stationsLock.Release();
-                    o.OnError(new Exception("An error occurred", ex));
-                }
-                finally
-                {
-                    xmlDoc = null;
-                    reader.Dispose();
-
                     o.OnCompleted();
+                    stationsLock.Release();
+                }
+                else
+                {
+                    StorageFile file = await GetStationsFileAsync();
+
+                    var reader = await file.OpenReadAsync();
+                    var stream = reader.AsStream();
+                    XDocument xmlDoc = XDocument.Load(stream);
+
+                    try
+                    {
+                        foreach (var stationElement in xmlDoc.Element("Stations").Elements("Station"))
+                        {
+                            var station = await ConvertStationElementToStationAsync(stationElement);
+
+                            o.OnNext(station);
+
+                            if (!stationsLoaded)
+                            {
+                                stationItems.Add(station);
+                            }
+                        }
+
+                        stationsLock.Release();
+                    }
+                    catch (Exception ex)
+                    {
+                        stationsLock.Release();
+                        o.OnError(new Exception("An error occurred", ex));
+                    }
+                    finally
+                    {
+                        xmlDoc = null;
+                        stream.Dispose();
+                        reader.Dispose();
+                        file = null;
+
+                        o.OnCompleted();
+                    }
                 }
 
                 return Disposable.Empty;
@@ -198,7 +224,7 @@ namespace Neptunium.Core.Stations
 
                     var program = new StationProgram();
                     program.Name = x.Attribute("Name")?.Value;
-                    program.Station = station;
+                    program.Station = station.Name;
 
                     if (x.Attribute("Style") != null)
                     {
@@ -244,10 +270,14 @@ namespace Neptunium.Core.Stations
 
                                     listings.Add(listing);
                                 }
+#if !DEBUG
                                 catch (Exception ex)
                                 {
-#if !DEBUG
-                                            Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex);
+
+                                    Microsoft.HockeyApp.HockeyClient.Current.TrackException(ex);
+#else
+                                catch (Exception)
+                                {
 #endif
                                 }
                             }

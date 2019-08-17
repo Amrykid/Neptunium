@@ -9,43 +9,67 @@ using Neptunium.Core.Media.History;
 using System.Collections.ObjectModel;
 using Crystal3.UI.Commands;
 using Windows.ApplicationModel.DataTransfer;
+using System.Reactive.Linq;
+using System.Reactive;
+using Crystal3.Utilities;
 
 namespace Neptunium.ViewModel
 {
-    public class SongHistoryPageViewModel : ViewModelBase
+    public class SongHistoryPageViewModel : UIViewModelBase
     {
-        protected override void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
+        protected override async void OnNavigatedTo(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.SongManager.History.HistoryOfSongs.CollectionChanged += HistoryOfSongs_CollectionChanged;
-            UpdateHistory(NepApp.SongManager.History.HistoryOfSongs);
+            IsBusy = true;
+            History = new ObservableCollection<SongHistoryItem>();
 
-            base.OnNavigatedTo(sender, e);
+            try
+            {
+                //await UI.WaitForUILoadAsync();
+
+                NepApp.SongManager.History.SongAdded += History_SongAdded;
+
+                var items = await NepApp.SongManager.History.GetHistoryOfSongsAsync();
+                await App.Dispatcher.RunWhenIdleAsync(() =>
+                {
+                    if (items != null)
+                    {
+                        History.AddRange(items);
+                    }
+                });
+
+                base.OnNavigatedTo(sender, e);
+            }
+            catch (Exception)
+            {
+                //todo handle exception
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private void History_SongAdded(object sender, SongHistorianSongUpdatedEventArgs e)
+        {
+            App.Dispatcher.RunAsync(() =>
+            {
+                History.Insert(0, e.Item);
+            });
         }
 
         protected override void OnNavigatedFrom(object sender, CrystalNavigationEventArgs e)
         {
-            NepApp.SongManager.History.HistoryOfSongs.CollectionChanged -= HistoryOfSongs_CollectionChanged;
+            NepApp.SongManager.History.SongAdded -= History_SongAdded;
+            History = null;
 
             base.OnNavigatedFrom(sender, e);
         }
+        
 
-        private void HistoryOfSongs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        public ObservableCollection<SongHistoryItem> History
         {
-            App.Dispatcher.RunAsync(() =>
-            {
-                UpdateHistory(sender as ObservableCollection<SongHistoryItem>);
-            });
-        }
-
-        private void UpdateHistory(ObservableCollection<SongHistoryItem> collection)
-        {
-            History = collection.GroupBy(x => x.PlayedDate.Date).OrderByDescending(x => x.Key).Select(x => x);
-        }
-
-        public IEnumerable<IGrouping<DateTime, SongHistoryItem>> History
-        {
-            get { return GetPropertyValue<IEnumerable<IGrouping<DateTime, SongHistoryItem>>>(); }
-            private set { SetPropertyValue<IEnumerable<IGrouping<DateTime, SongHistoryItem>>>(value: value); }
+            get { return GetPropertyValue<ObservableCollection<SongHistoryItem>>(); }
+            private set { SetPropertyValue<ObservableCollection<SongHistoryItem>>(value: value); }
         }
 
         public RelayCommand CopyMetadataCommand => new RelayCommand(x =>
@@ -57,9 +81,9 @@ namespace Neptunium.ViewModel
 
                 DataPackage package = new DataPackage();
                 package.Properties.Description = "Song Metadata";
-                package.Properties.Title = item.Metadata.Track;
+                package.Properties.Title = item.Track;
                 package.Properties.ApplicationName = "Neptunium";
-                package.SetText(item.Metadata.ToString());
+                package.SetText(item.ToString());
                 Clipboard.SetContent(package);
 
                 NepApp.UI.Overlay.ShowSnackBarMessageAsync("Copied");

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Neptunium.Core.Stations
 {
-    public class StationItem : ModelBase
+    public class StationItem
     {
         public StationItem(string name, string description, Uri stationLogo, StationStream[] streams)
         {
@@ -20,7 +20,7 @@ namespace Neptunium.Core.Stations
 
             foreach (var stream in streams)
             {
-                stream.ParentStation = this;
+                stream.ParentStation = this.Name;
 
                 if (stream.StreamUrl == null) throw new Exception(string.Format("{0} stream doesn't have a url.", stream.ToString()));
             }
@@ -45,6 +45,14 @@ namespace Neptunium.Core.Stations
         public override int GetHashCode()
         {
             return Name.Trim().ToLower().GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            //Mixed Reality and HoloLens uses this value for the speech annotation.
+            //e.g. "Say 'NepApp.Core.Stations.StationItem'".
+            //todo: add to each station, an easy to pronounce equivalent of each station's name.
+            return Name;
         }
     }
 

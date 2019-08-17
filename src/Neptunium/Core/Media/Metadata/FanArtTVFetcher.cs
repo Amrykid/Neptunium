@@ -10,12 +10,13 @@ namespace Neptunium.Core.Media.Metadata
 {
     public static class FanArtTVFetcher
     {
-        public static async Task<Uri> FetchArtistBackgroundAsync(string name)
+        public static async Task<Uri> FetchArtistBackgroundAsync(string name, string stationLcale)
         {
-            var builtinArtists = await ArtistFetcher.GetBuiltinArtistEntriesAsync();
-            var artist = builtinArtists.FirstOrDefault(x => x.Name.ToLower() == name.ToLower() || x.AltNames.Any(str => str.ToLower() == name.ToLower()));
+            var artist = NepApp.MetadataManager.FindBuiltInArtist(name, stationLcale);
             if (artist == null) return null;
             if (artist.FanArtTVUrl == null) return null;
+
+            if (!NepApp.Network.IsConnected) return null;
 
             HttpClient http = new HttpClient();
             HttpResponseMessage httpResponse = null;
@@ -38,14 +39,16 @@ namespace Neptunium.Core.Media.Metadata
                     if (images.Count > 0)
                     {
                         var groups = images[0].Groups;
-                        var imgSrc = groups[groups.Count - 1].Value;
 
-                        return new Uri("https://fanart.tv" + imgSrc);
+                        if (groups.Count > 0)
+                        {
+                            var imgSrc = groups[groups.Count - 1].Value;
+
+                            return new Uri("https://fanart.tv" + imgSrc);
+                        }
                     }
                 }
             }
-            catch (Exception)
-            { }
             finally
             {
                 httpResponse.Dispose();

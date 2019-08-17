@@ -17,7 +17,7 @@
             </Grid.RowDefinitions>
 
             <TextBlock x:Name="PART_TitleBlock" Text="Title" Grid.Row="0" VerticalAlignment="Bottom"
-                       Style="{ThemeResource TitleTextBlockStyle}" />
+                       Style="{ThemeResource BaseTextBlockStyle}" />
             <TextBlock x:Name="PART_MessageBlock" Text="Message" Grid.Row="1"
                        Style="{ThemeResource BodyTextBlockStyle}" />
 

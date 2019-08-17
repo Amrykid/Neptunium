@@ -1,4 +1,5 @@
-﻿using Crystal3.Navigation;
+﻿using Crystal3;
+using Crystal3.Navigation;
 using Crystal3.UI.Commands;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using static Neptunium.NepApp;
@@ -24,17 +26,21 @@ namespace Neptunium.Core.UI
         public event PropertyChangedEventHandler PropertyChanged;
 
         #region Core
+        public event EventHandler<NepAppUIManagerNavigationRouteAddedEventArgs> NavigationRouteAdded;
+
         private NavigationServiceBase inlineNavigationService = null;
         private string _viewTitle = "PAGE TITLE";
         private ObservableCollection<NepAppUINavigationItem> navigationItems = null;
         private WindowService windowService = null;
 
 
-        public string ViewTitle { get { return _viewTitle.ToUpper(); } private set { _viewTitle = value; RaisePropertyChanged(nameof(ViewTitle)); } }
+        public string ViewTitle { get { return _viewTitle; } private set { _viewTitle = value; RaisePropertyChanged(nameof(ViewTitle)); } }
         public ReadOnlyObservableCollection<NepAppUINavigationItem> NavigationItems { get; private set; }
         public NepAppUIManagerNotifier Notifier { get; private set; }
         public NepAppUIManagerDialogCoordinator Overlay { get; private set; }
         public NepAppUILockScreenManager LockScreen { get; private set; }
+        public NepAppUILiveTileHandler LiveTileHandler { get; private set; }
+        public NepAppUIToastNotificationHandler ToastHandler { get; private set; }
 
         internal NepAppUIManager()
         {
@@ -42,7 +48,9 @@ namespace Neptunium.Core.UI
             NavigationItems = new ReadOnlyObservableCollection<NepAppUINavigationItem>(navigationItems);
             Notifier = new NepAppUIManagerNotifier();
             LockScreen = new NepAppUILockScreenManager();
-            windowService = WindowManager.GetWindowServiceForCurrentWindow();
+            LiveTileHandler = new NepAppUILiveTileHandler(this);
+            ToastHandler = new NepAppUIToastNotificationHandler();
+            windowService = WindowManager.GetWindowServiceForCurrentView();
         }
 
         internal void SetNavigationService(NavigationServiceBase navService)
@@ -74,7 +82,7 @@ namespace Neptunium.Core.UI
             Overlay = new NepAppUIManagerDialogCoordinator(this, parentControl, snackBarContainer);
         }
 
-        private void UpdateSelectedNavigationItems()
+        internal void UpdateSelectedNavigationItems()
         {
             var pageType = ((FrameNavigationService)inlineNavigationService).NavigationFrame.CurrentSourcePageType;
 
@@ -83,11 +91,13 @@ namespace Neptunium.Core.UI
                 navItem.IsSelected = false;
             }
 
+            var navigationManager = WindowManager.GetNavigationManagerForCurrentView();
+
             NepAppUINavigationItem item = null;
             item = navigationItems.FirstOrDefault(x =>
             {
-                var navAttr = pageType.GetTypeInfo().GetCustomAttribute<Crystal3.Navigation.NavigationViewModelAttribute>();
-                return navAttr.ViewModel == x.NavigationViewModelType;
+                var navInfo = navigationManager.GetViewModelInfo(x.NavigationViewModelType);
+                return pageType == navInfo.ViewType;
             });
 
             if (item != null)
@@ -122,7 +132,7 @@ namespace Neptunium.Core.UI
                 dialog.Title = title;
                 if (commands != null)
                 {
-                    foreach(IUICommand command in commands)
+                    foreach (IUICommand command in commands)
                     {
                         dialog.Commands.Add(command);
                     }
@@ -156,17 +166,23 @@ namespace Neptunium.Core.UI
         }
         #endregion
 
-        public void AddNavigationRoute(string displayText, Type navigationViewModel, string symbol = "")
+        public void AddNavigationRoute(string displayText, Type navigationViewModel, string symbol = "", string pageHeader = null)
         {
+            if (navigationItems.Any(x => x.DisplayText.Equals(displayText))) return;
+
             NepAppUINavigationItem navItem = new NepAppUINavigationItem();
             navItem.DisplayText = displayText;
             navItem.Symbol = symbol;
+            navItem.Icon = new FontIcon() { Glyph = symbol };
             navItem.NavigationViewModelType = navigationViewModel;
+            navItem.PageHeaderText = pageHeader ?? displayText;
             navItem.Command = new RelayCommand(x =>
             {
                 NavigateToItem(navItem, x);
             });
             navigationItems.Add(navItem);
+
+            NavigationRouteAdded?.Invoke(this, new NepAppUIManagerNavigationRouteAddedEventArgs(navItem));
         }
 
         public void NavigateToItem(NepAppUINavigationItem navItem, object parameter = null)
@@ -179,7 +195,53 @@ namespace Neptunium.Core.UI
 
             //UpdateSelectedNavigationItems();
 
-            ViewTitle = navItem.DisplayText;
+            ViewTitle = navItem.PageHeaderText;
         }
+
+        internal void ClearLiveTileAndMediaNotifcation()
+        {
+            if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Desktop || DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+            {
+                //clears the tile if we're suspending.
+                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+            }
+
+            if (!NepApp.MediaPlayer.IsPlaying)
+            {
+                //removes the now playing notification from the action center.
+                ToastNotificationManager.History.Remove(NepAppUIManagerNotifier.SongNotificationTag);
+            }
+        }
+
+
+        #region No-Chrome Mode
+        public event EventHandler<NepAppUIManagerNoChromeStatusChangedEventArgs> NoChromeStatusChanged;
+
+        public bool IsInNoChromeMode { get; private set; }
+
+        public void ActivateNoChromeMode()
+        {
+            if (IsInNoChromeMode) return;
+
+            IsInNoChromeMode = true;
+
+            NoChromeStatusChanged?.Invoke(this, new NepAppUIManagerNoChromeStatusChangedEventArgs()
+            {
+                ShouldBeInNoChromeMode = IsInNoChromeMode
+            });
+        }
+
+        public void DeactivateNoChromeMode()
+        {
+            if (!IsInNoChromeMode) return;
+
+            IsInNoChromeMode = false;
+
+            NoChromeStatusChanged?.Invoke(this, new NepAppUIManagerNoChromeStatusChangedEventArgs()
+            {
+                ShouldBeInNoChromeMode = IsInNoChromeMode
+            });
+        }
+        #endregion
     }
 }

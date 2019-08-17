@@ -9,243 +9,63 @@
     xmlns:tk="using:WinRTXamlToolkit.Controls"
     xmlns:uwp="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:wst="using:WindowsStateTriggers"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     x:Name="ShellPage"
-    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
     <Grid x:Name="RootGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition MaxHeight="50" Height="Auto"/>
             <RowDefinition Height="*" />
-            <RowDefinition MaxHeight="65" Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <muxc:NavigationView x:Name="NavView" PaneDisplayMode="LeftMinimal" 
+                             PaneTitle="Neptunium"
+                             IsSettingsVisible="False"
+                             IsBackButtonVisible="Collapsed"
+                             ItemInvoked="NavView_ItemInvoked">
+            <muxc:NavigationView.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Style="{ThemeResource TitleTextBlockStyle}" />
+                </DataTemplate>
+            </muxc:NavigationView.HeaderTemplate>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Frame x:Name="InlineFrame" Grid.Row="0">
+                    <Frame.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </Frame.Transitions>
+                    <Frame.ContentTransitions>
+                        <TransitionCollection>
+                            <NavigationThemeTransition>
+                                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                                    <EntranceNavigationTransitionInfo />
+                                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                            </NavigationThemeTransition>
+                        </TransitionCollection>
+                    </Frame.ContentTransitions>
+                </Frame>
 
-        <Grid x:Name="topAppBar"
-              Grid.Row="0"
-              Height="50"
-              Background="{ThemeResource SystemControlBackgroundAccentBrush}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-
-            <Grid Grid.Column="0" RequestedTheme="Dark">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <ToggleButton
-                        Grid.Column="0"
-                        x:Name="TogglePaneButton"
-                        AutomationProperties.Name="Menu"
-                        Checked="TogglePaneButton_Checked"
-                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                        Style="{StaticResource SplitViewTogglePaneButtonStyle}"
-                        TabIndex="1"
-                        ToolTipService.ToolTip="Menu"
-                        Unchecked="TogglePaneButton_Unchecked" />
-
-                <TextBlock Name="PageTitleBlock" Grid.Column="1" VerticalAlignment="Center"
-                           Style="{ThemeResource BaseTextBlockStyle}" />
+                <!--defined second so that it has a higher z-index-->
+                <Grid x:Name="snackBarGrid" Grid.Row="1" Grid.RowSpan="1" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
+                    <Grid.Transitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </Grid.Transitions>
+                </Grid>
             </Grid>
-
-            <StackPanel Orientation="Horizontal" Grid.Column="2">
-                <AppBarButton Icon="Go" ToolTipService.ToolTip="Handoff"
-                              x:Name="HandoffButton"
-                              Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}">
-                    <AppBarButton.Flyout>
-                        <Flyout>
-                            <Grid x:Name="HandoffFlyoutRootGrid" DataContext="{Binding HandoffFragment, UpdateSourceTrigger=PropertyChanged}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="50" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <TextBlock Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}" Width="250"
-                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-                                           Text="Select a device to transfer playback to.&#10;&#10;Note: You must be streaming/listening to a station before hand." />
-
-                                <Button Command="{Binding RefreshCommand, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1">
-                                    <SymbolIcon Symbol="Refresh" />
-                                </Button>
-
-                                <ListBox Grid.Row="2" ItemsSource="{Binding AvailableSystems, UpdateSourceTrigger=PropertyChanged}">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <tk:ListItemButton Name="HandoffListButton" Click="HandoffListButton_Click">
-                                                <TextBlock Text="{Binding DisplayName}" />
-                                            </tk:ListItemButton>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </Grid>
-                        </Flyout>
-                    </AppBarButton.Flyout>
-                </AppBarButton>
-                <AppBarButton Icon="OpenWith" ToolTipService.ToolTip="Cast"
-                              Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
-                              Command="{Binding MediaCastingCommand}" />
-                <AppBarButton x:Name="sleepTimerBtn" Visibility="Collapsed" Icon="Clock"
-                              Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
-                              ToolTipService.ToolTip="Sleep Timer">
-                    <AppBarButton.Flyout>
-                        <Flyout>
-                            <Grid x:Name="SleepTimerRootGrid" 
-                                  DataContext="{Binding SleepTimerFragment, UpdateSourceTrigger=PropertyChanged}"
-                                  Width="300">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="50" />
-                                    <RowDefinition Height="45" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-
-                                <Grid Grid.Row="0" Margin="5,5,5,5">
-                                    <TextBlock Margin="10 0" Text="Sleep Timer"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                       Style="{ThemeResource TitleTextBlockStyle}" />
-                                </Grid>
-
-                                <TextBlock Grid.Row="1" Margin="15 0"
-                                       Style="{ThemeResource BodyTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}">
-                                    <Span>
-                                        <Run Text="Scheduled Time:" />
-                                        <Run Text="{Binding EstimatedTime, UpdateSourceTrigger=PropertyChanged}" 
-                                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
-                                    </Span>
-                                </TextBlock>
-
-                                <ListView Grid.Row="2" Margin="15 0" Header="Time to wait:" 
-                                          x:Name="SleepTimerTimeSelectionBox"
-                                          ItemsSource="{Binding AvailableSleepItems, UpdateSourceTrigger=PropertyChanged}"
-                                          SelectedItem="{Binding SelectedSleepItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                          HorizontalAlignment="Stretch">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding DisplayName}" Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" />
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                            </Grid>
-                        </Flyout>
-                    </AppBarButton.Flyout>
-                </AppBarButton>
-            </StackPanel>
-        </Grid>
-
-        <SplitView Grid.Row="1"
-                   x:Name="RootSplitView"
-                   Margin="0,0,0,0"
-                   DisplayMode="CompactInline">
-            <SplitView.Pane>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-
-                    <StackPanel x:Name="RootSplitViewPaneStackPanel" Grid.Row="0">
-                        <StackPanel.Resources>
-                            <Style BasedOn="{StaticResource SplitViewTextBlockStyle}" TargetType="TextBlock" />
-                            <Style BasedOn="{StaticResource SplitViewRadioButtonStyle}" TargetType="RadioButton" />
-                        </StackPanel.Resources>
-
-                        <ItemsControl x:Name="SplitViewNavigationList">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <RadioButton
-                                        Click="RadioButton_Click"
-                                        Command="{Binding Command, Mode=OneTime}"
-                                        Content="{Binding DisplayText, Mode=OneTime}"
-                                        GroupName="Navigation"
-                                        IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                        Style="{StaticResource SplitViewRadioButtonStyle}">
-                                        <RadioButton.Tag>
-                                            <TextBlock
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                FontSize="{StaticResource SplitViewLargeNavFontSize}"
-                                                Text="{Binding Symbol, Mode=OneTime}" />
-                                        </RadioButton.Tag>
-                                    </RadioButton>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-
-                        <!--  font family = Segoe MDL2 Assets  -->
-                        <!--<RadioButton GroupName="Navigation" Style="{StaticResource SplitViewRadioButtonStyle}" Content="Stations"
-                                 Command="{Binding GoToStationsViewCommand}" x:Name="stationsNavButton">
-                            <RadioButton.Tag>
-                                <TextBlock Text="" FontSize="{StaticResource SplitViewLargeNavFontSize}" />
-                            </RadioButton.Tag>
-                        </RadioButton>-->
-
-                        <StackPanel Grid.Row="1">
-                            <StackPanel.Resources>
-                                <Style BasedOn="{StaticResource SplitViewTextBlockStyle}" TargetType="TextBlock" />
-                            </StackPanel.Resources>
-
-                            <Button
-                                x:Name="FeedbackButton"
-                                Click="FeedbackButton_Click"
-                                Content="Feedback"
-                                Style="{StaticResource SplitViewButtonStyle}"
-                                Visibility="Collapsed">
-                                <Button.Tag>
-                                    <TextBlock FontSize="{StaticResource SplitViewLargeNavFontSize}" Text="" />
-                                </Button.Tag>
-                            </Button>
-                        </StackPanel>
-                    </StackPanel>
-                </Grid>
-            </SplitView.Pane>
-            <SplitView.Content>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Frame x:Name="InlineFrame" Grid.Row="1" Grid.RowSpan="1">
-                        <Frame.Transitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition />
-                            </TransitionCollection>
-                        </Frame.Transitions>
-                        <Frame.ContentTransitions>
-                            <TransitionCollection>
-                                <NavigationThemeTransition>
-                                    <NavigationThemeTransition.DefaultNavigationTransitionInfo>
-                                        <EntranceNavigationTransitionInfo />
-                                    </NavigationThemeTransition.DefaultNavigationTransitionInfo>
-                                </NavigationThemeTransition>
-                            </TransitionCollection>
-                        </Frame.ContentTransitions>
-                    </Frame>
-
-                    <!--defined second so that it has a higher z-index-->
-                    <Grid x:Name="snackBarGrid" Grid.Row="0" Grid.RowSpan="1">
-                        <Grid.Transitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition />
-                            </TransitionCollection>
-                        </Grid.Transitions>
-                    </Grid>
-                </Grid>
-            </SplitView.Content>
-        </SplitView>
+        </muxc:NavigationView>
 
         <Grid x:Name="bottomAppBar" 
-              Grid.Row="2" 
-              Height="65"
-              RequestedTheme="Dark"
-              Visibility="Collapsed"
-              Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+                  Grid.Row="1" 
+                  Height="85"
+                  RequestedTheme="Dark"
+                  Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -254,18 +74,14 @@
 
             <Grid Grid.Column="0" Padding="0">
                 <Button Style="{x:Null}" 
-                        Background="Transparent" 
-                        x:Name="NowPlayingButton" 
-                        Height="65"
-                        HorizontalAlignment="Stretch"
-                        Margin="0 0 0 0"
-                        Click="NowPlayingButton_Click"
-                        HorizontalContentAlignment="Stretch">
-                    <Grid HorizontalAlignment="Stretch" Height="100">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition MaxWidth="60" Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+                            Background="Transparent" 
+                            x:Name="NowPlayingButton" 
+                            Height="85"
+                            Click="NowPlayingButton_Click"
+                            HorizontalAlignment="Stretch"
+                            Margin="0 0 0 0"
+                            HorizontalContentAlignment="Stretch">
+                    <Grid HorizontalAlignment="Stretch">
 
                         <Grid.ChildrenTransitions>
                             <TransitionCollection>
@@ -273,46 +89,79 @@
                             </TransitionCollection>
                         </Grid.ChildrenTransitions>
 
-                        <uwp:ImageEx
-                            x:Name="NowPlayingImage"
-                            Grid.Column="0"
-                            Visibility="Collapsed"
-                            Height="60"
-                            VerticalAlignment="Top"
-                            Source="{Binding StationLogo, UpdateSourceTrigger=PropertyChanged}"
-                            IsCacheEnabled="True" />
-
-                        <Grid Grid.Column="1" Margin="10 -5 10 0" RequestedTheme="Dark">
+                        <Grid VerticalAlignment="Center" Margin="10 -5 10 0" RequestedTheme="Dark">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="20" />
+                                <RowDefinition Height="27" />
                                 <RowDefinition Height="20" />
                                 <RowDefinition Height="20" />
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="0" Text="{Binding Track, UpdateSourceTrigger=PropertyChanged}"
-                                       Style="{ThemeResource BaseTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+                                           Style="{ThemeResource SubtitleTextBlockStyle}"
+                                           Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
                             <TextBlock Grid.Row="1" Text="{Binding Artist, UpdateSourceTrigger=PropertyChanged}"
-                                       Style="{ThemeResource BodyTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
+                                           Style="{ThemeResource BaseTextBlockStyle}"
+                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"/>
                             <TextBlock Grid.Row="2"
-                                       Style="{ThemeResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
-                                <Span>
-                                    <Run Text="{Binding StationPlayedOn, UpdateSourceTrigger=PropertyChanged}" />
-                                    <Run Text="·" />
-                                    <Run Text="{Binding RadioProgram, UpdateSourceTrigger=PropertyChanged}" />
-                                </Span>
+                                           Style="{ThemeResource CaptionTextBlockStyle}"
+                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumLowBrush}">
+                                    <Span>
+                                        <Run Text="{Binding StationPlayedOn, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Run Text="·" />
+                                        <Run Text="{Binding RadioProgram, UpdateSourceTrigger=PropertyChanged}" />
+                                    </Span>
                             </TextBlock>
                         </Grid>
 
                     </Grid>
                 </Button>
             </Grid>
-            <StackPanel Orientation="Horizontal" Grid.Column="1">
-                <AppBarButton Icon="Play" Name="PlayButton" Label="Play" Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="1">
+                <AppBarButton Icon="Play" Name="PlayButton" Label="Play" 
+                                  Command="{Binding ResumePlaybackCommand, UpdateSourceTrigger=PropertyChanged}" />
+                <AppBarButton Icon="OpenWith" ToolTipService.ToolTip="Handoff/Cast"
+                                  x:Name="HandoffButton"
+                                  Label="Cast"
+                                  Visibility="Collapsed"
+                                  Command="{Binding MediaCastingCommand}"
+                                  Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}">
+                </AppBarButton>
+                <AppBarButton x:Name="SleepTimerButton" Icon="Clock"
+                                  Label="Sleep Timer"
+                                  Margin="0 0 5 0"
+                                  Visibility="Collapsed"
+                                  Command="{Binding SleepTimerCommand}"
+                                  Foreground="{ThemeResource SystemControlForegroundChromeWhiteBrush}"
+                                  ToolTipService.ToolTip="Sleep Timer" />
+
+                <AppBarButton x:Name="MobileMoreMenuButton" Visibility="Visible" Icon="AllApps" Width="75" Label="More" Margin="0 0 5 0">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem ToolTipService.ToolTip="Handoff/Cast"
+                                                Text="Handoff/Cast"
+                                                Command="{Binding MediaCastingCommand}" />
+                            <MenuFlyoutItem ToolTipService.ToolTip="Sleep Timer"
+                                                Text="Sleep Timer"
+                                                Command="{Binding SleepTimerCommand}" />
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
             </StackPanel>
         </Grid>
+
+        <Grid x:Name="NowPlayingPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Grid.RowSpan="3"
+              IsHitTestVisible="False"
+              Opacity="0">
+            <Grid.ChildrenTransitions>
+                <TransitionCollection>
+                    <RepositionThemeTransition />
+                </TransitionCollection>
+            </Grid.ChildrenTransitions>
+
+            <local:NowPlayingPage DataContext="{Binding NowPlayingFragment}" />
+        </Grid>
+
 
         <Grid x:Name="OverlayPanel" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
               Grid.RowSpan="3"
@@ -332,21 +181,7 @@
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="RootSplitView.DisplayMode" Value="CompactInline" />
-                        <Setter Target="RootSplitView.IsPaneOpen" Value="True" />
-                        <Setter Target="RootSplitView.OpenPaneLength" Value="250" />
-                        <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
-
-
-                        <Setter Target="InlineFrame.(Grid.Row)" Value="0" />
-                        <Setter Target="InlineFrame.(Grid.RowSpan)" Value="2" />
-                        <Setter Target="snackBarGrid.(Grid.Row)" Value="0" />
-                        <Setter Target="snackBarGrid.(Grid.RowSpan)" Value="2" />
-                        <Setter Target="snackBarGrid.Margin" Value="0 20 20 0" />
-                        <Setter Target="snackBarGrid.HorizontalAlignment" Value="Right" />
-                        <Setter Target="snackBarGrid.VerticalAlignment" Value="Top" />
-
-                        <Setter Target="NowPlayingImage.Visibility" Value="Visible" />
+                        <Setter Target="NavView.PaneDisplayMode" Value="Left"/>
                     </VisualState.Setters>
                 </VisualState>
 
@@ -356,21 +191,11 @@
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="RootSplitView.DisplayMode" Value="CompactInline" />
-                        <Setter Target="RootSplitView.IsPaneOpen" Value="False" />
-                        <Setter Target="RootSplitView.OpenPaneLength" Value="250" />
-                        <Setter Target="RootSplitView.CompactPaneLength" Value="48" />
+                        <Setter Target="NavView.PaneDisplayMode" Value="LeftCompact"/>
 
-
-                        <Setter Target="InlineFrame.(Grid.Row)" Value="0" />
-                        <Setter Target="InlineFrame.(Grid.RowSpan)" Value="2" />
-                        <Setter Target="snackBarGrid.(Grid.Row)" Value="0" />
-                        <Setter Target="snackBarGrid.(Grid.RowSpan)" Value="2" />
-                        <Setter Target="snackBarGrid.Margin" Value="0 20 20 0" />
-                        <Setter Target="snackBarGrid.HorizontalAlignment" Value="Right" />
-                        <Setter Target="snackBarGrid.VerticalAlignment" Value="Top" />
-
-                        <Setter Target="NowPlayingImage.Visibility" Value="Visible" />
+                        <Setter Target="SleepTimerButton.Visibility" Value="Visible" />
+                        <Setter Target="HandoffButton.Visibility" Value="Visible" />
+                        <Setter Target="MobileMoreMenuButton.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -380,18 +205,11 @@
                     </VisualState.StateTriggers>
 
                     <VisualState.Setters>
-                        <Setter Target="RootSplitView.DisplayMode" Value="Overlay" />
-                        <Setter Target="RootSplitView.OpenPaneLength" Value="240" />
+                        <Setter Target="NavView.PaneDisplayMode" Value="LeftMinimal"/>
 
-                        <Setter Target="InlineFrame.(Grid.Row)" Value="1" />
-                        <Setter Target="InlineFrame.(Grid.RowSpan)" Value="1" />
-                        <Setter Target="snackBarGrid.(Grid.Row)" Value="0" />
-                        <Setter Target="snackBarGrid.(Grid.RowSpan)" Value="1" />
-                        <Setter Target="snackBarGrid.Margin" Value="0" />
-                        <Setter Target="snackBarGrid.HorizontalAlignment" Value="Stretch" />
-                        <Setter Target="snackBarGrid.VerticalAlignment" Value="Stretch" />
-
-                        <Setter Target="NowPlayingImage.Visibility" Value="Collapsed" />
+                        <Setter Target="SleepTimerButton.Visibility" Value="Collapsed" />
+                        <Setter Target="HandoffButton.Visibility" Value="Collapsed" />
+                        <Setter Target="MobileMoreMenuButton.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

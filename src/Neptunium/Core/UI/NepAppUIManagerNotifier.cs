@@ -1,20 +1,20 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
-using Windows.UI.Notifications;
 using Neptunium.Core.Media.Metadata;
-using System;
 using Neptunium.Core.Stations;
-using Windows.UI.StartScreen;
+using System;
 using System.Threading.Tasks;
-using Windows.UI;
 using Windows.Phone.Devices.Notification;
+using Windows.UI;
+using Windows.UI.Notifications;
+using Windows.UI.StartScreen;
 
 namespace Neptunium.Core.UI
 {
     public class NepAppUIManagerNotifier
     {
         private ToastNotifier toastNotifier = null;
-        private TileUpdater tileUpdater = null;
-        private VibrationDevice vibrationDevice = null;
+        private readonly TileUpdater tileUpdater = null;
+        private readonly VibrationDevice vibrationDevice = null;
         public const string SongNotificationTag = "song-notif";
 
         internal NepAppUIManagerNotifier()
@@ -22,8 +22,8 @@ namespace Neptunium.Core.UI
             toastNotifier = ToastNotificationManager.CreateToastNotifier();
             tileUpdater = TileUpdateManager.CreateTileUpdaterForApplication();
 
-            
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
+
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Mobile)
                 vibrationDevice = VibrationDevice.GetDefault();
         }
 
@@ -72,23 +72,7 @@ namespace Neptunium.Core.UI
 
         public void ShowSongToastNotification(ExtendedSongMetadata metaData)
         {
-            //try and find a nice image to set for the toast
-            string toastLogo = null;
-            if (!string.IsNullOrWhiteSpace(metaData.Album?.AlbumCoverUrl))
-            {
-                toastLogo = metaData.Album?.AlbumCoverUrl;
-            }
-            else
-            {
-                if (!string.IsNullOrWhiteSpace(metaData.ArtistInfo?.ArtistImage))
-                {
-                    toastLogo = metaData.ArtistInfo?.ArtistImage;
-                }
-                else
-                {
-                    toastLogo = metaData.StationLogo.ToString();
-                }
-            }
+            string toastLogo = FindToastLogo(metaData);
 
             ToastContent content = new ToastContent()
             {
@@ -135,7 +119,92 @@ namespace Neptunium.Core.UI
             toastNotifier.Show(notification);
         }
 
-        internal void ShowErrorToastNotification(StationStream stream, string title, string message)
+        internal void UpdateSongToastNotification(ExtendedSongMetadata metaData)
+        {
+            string toastLogo = FindToastLogo(metaData);
+
+            ToastContent content = new ToastContent()
+            {
+                Launch = "now-playing",
+                Audio = new ToastAudio()
+                {
+                    Silent = true,
+                },
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = metaData.Track,
+                                HintStyle = AdaptiveTextStyle.Title
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = metaData.Artist,
+                                HintStyle = AdaptiveTextStyle.Subtitle
+                            },
+
+                            new AdaptiveText()
+                            {
+                                Text = metaData.StationPlayedOn,
+                                HintStyle = AdaptiveTextStyle.Caption
+                            },
+                        },
+                        AppLogoOverride = new ToastGenericAppLogo()
+                        {
+                            Source = toastLogo
+                        }
+                    }
+                }
+            };
+
+            var notification = new ToastNotification(content.GetXml());
+            notification.Tag = SongNotificationTag;
+            notification.NotificationMirroring = NotificationMirroring.Disabled;
+            //
+            notification.SuppressPopup = true;
+            //
+            toastNotifier.Show(notification);
+        }
+
+        private static string FindToastLogo(ExtendedSongMetadata metaData)
+        {
+            //try and find a nice image to set for the toast
+            string toastLogo = null;
+            if (!string.IsNullOrWhiteSpace(metaData.Album?.AlbumCoverUrl))
+            {
+                toastLogo = metaData.Album?.AlbumCoverUrl;
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(metaData.ArtistInfo?.ArtistImage))
+                {
+                    toastLogo = metaData.ArtistInfo?.ArtistImage;
+                }
+                else
+                {
+                    if (metaData.JPopAsiaArtistInfo != null)
+                    {
+                        if (metaData.JPopAsiaArtistInfo.ArtistImageUrl != null)
+                            toastLogo = metaData.JPopAsiaArtistInfo.ArtistImageUrl.ToString();
+                    }
+
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(toastLogo))
+            {
+                toastLogo = metaData.StationLogo.ToString();
+            }
+
+            return toastLogo;
+        }
+
+        internal void ShowErrorToastNotification(StationItem currentStation, string title, string message)
         {
             ToastContent content = new ToastContent()
             {
@@ -156,14 +225,18 @@ namespace Neptunium.Core.UI
                                 Text = message,
                                 HintStyle = AdaptiveTextStyle.Subtitle
                             },
-                        },
-                        AppLogoOverride = new ToastGenericAppLogo()
-                        {
-                            Source = stream.ParentStation?.StationLogoUrl.ToString(),
                         }
                     }
                 }
             };
+
+            if (currentStation != null)
+            {
+                content.Visual.BindingGeneric.AppLogoOverride = new ToastGenericAppLogo()
+                {
+                    Source = currentStation.StationLogoUrl.ToString(),
+                };
+            }
 
             var notification = new ToastNotification(content.GetXml());
             notification.Tag = "error";
@@ -173,14 +246,14 @@ namespace Neptunium.Core.UI
 
         public bool CheckIfStationTilePinned(StationItem stationItem)
         {
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return false; //not supported
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return false; //not supported
 
             return SecondaryTile.Exists(GetStationItemTileId(stationItem));
         }
 
         public async Task<bool> PinStationAsTileAsync(StationItem stationItem)
         {
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return false; //not supported
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return false; //not supported
 
             if (!CheckIfStationTilePinned(stationItem))
             {
@@ -301,9 +374,9 @@ namespace Neptunium.Core.UI
             return stationItem.Name.GetHashCode().ToString();
         }
 
-        public void UpdateLiveTile(ExtendedSongMetadata nowPlaying)
+        public void UpdateLiveTile(SongMetadata nowPlaying)
         {
-            if (Crystal3.CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //not supported
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //not supported
 
             var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
 
@@ -311,7 +384,90 @@ namespace Neptunium.Core.UI
             {
                 PeekImage = new TilePeekImage()
                 {
-                    Source = nowPlaying.Album?.AlbumCoverUrl?.ToString() ?? nowPlaying.StationLogo.ToString(),
+                    Source = nowPlaying.StationLogo.ToString(),
+                    AlternateText = nowPlaying.StationPlayedOn,
+                    HintCrop = TilePeekImageCrop.None
+                },
+                Children =
+                    {
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Track,
+                            HintStyle = AdaptiveTextStyle.Body
+                        },
+
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Artist,
+                            HintWrap = true,
+                            HintStyle = AdaptiveTextStyle.CaptionSubtle
+                        }
+                    }
+            };
+
+            TileBindingContentAdaptive mediumBindingContent = new TileBindingContentAdaptive()
+            {
+                PeekImage = new TilePeekImage()
+                {
+                    Source = nowPlaying.StationLogo.ToString(),
+                    AlternateText = nowPlaying.StationPlayedOn,
+                    HintCrop = TilePeekImageCrop.None
+                },
+                Children =
+                    {
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Track,
+                            HintStyle = AdaptiveTextStyle.Body
+                        },
+
+                        new AdaptiveText()
+                        {
+                            Text = nowPlaying.Artist,
+                            HintWrap = true,
+                            HintStyle = AdaptiveTextStyle.CaptionSubtle
+                        }
+                    }
+            };
+
+            TileBindingContentAdaptive smallBindingContent = new TileBindingContentAdaptive()
+            {
+                BackgroundImage = new TileBackgroundImage()
+                {
+                    Source = nowPlaying.StationLogo.ToString(),
+                }
+            };
+
+            ShowNowPlayingTileUpdateBase(nowPlaying, tiler, largeBindingContent, mediumBindingContent, smallBindingContent);
+        }
+
+        public void UpdateExtendedMetadataLiveTile(SongMetadata nowPlaying)
+        {
+            if (Crystal3.DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox) return; //not supported
+            if (NepApp.SongManager.CurrentSong != nowPlaying) return;
+
+            var tiler = TileUpdateManager.CreateTileUpdaterForApplication();
+
+            string imgUrl = null;
+
+            if (NepApp.SongManager.ArtworkProcessor.SongMetadata == null) return;
+            if (!NepApp.SongManager.ArtworkProcessor.SongMetadata.Equals(nowPlaying)) return;
+
+            var albumArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Neptunium.Media.Songs.NepAppSongMetadataBackground.Album);
+            var artistArt = NepApp.SongManager.ArtworkProcessor.GetSongArtworkUri(Neptunium.Media.Songs.NepAppSongMetadataBackground.Artist);
+
+            imgUrl = albumArt?.ToString();
+
+            if (string.IsNullOrWhiteSpace(imgUrl))
+            {
+                imgUrl = artistArt?.ToString() ?? nowPlaying.StationLogo.ToString();
+            }
+
+            TileBindingContentAdaptive largeBindingContent = new TileBindingContentAdaptive()
+            {
+                PeekImage = new TilePeekImage()
+                {
+                    Source = imgUrl,
                     AlternateText = nowPlaying.StationPlayedOn,
                     HintCrop = TilePeekImageCrop.None
                 },
@@ -336,7 +492,7 @@ namespace Neptunium.Core.UI
             {
                 BackgroundImage = new TileBackgroundImage()
                 {
-                    Source = nowPlaying.Album?.AlbumCoverUrl?.ToString() ?? nowPlaying.StationLogo.ToString(),
+                    Source = imgUrl,
                 },
                 Children =
                     {
@@ -359,10 +515,15 @@ namespace Neptunium.Core.UI
             {
                 BackgroundImage = new TileBackgroundImage()
                 {
-                    Source = nowPlaying.Album?.AlbumCoverUrl?.ToString() ?? nowPlaying.StationLogo.ToString(),
+                    Source = imgUrl,
                 }
             };
 
+            ShowNowPlayingTileUpdateBase(nowPlaying, tiler, largeBindingContent, mediumBindingContent, smallBindingContent);
+        }
+
+        private static void ShowNowPlayingTileUpdateBase(SongMetadata nowPlaying, TileUpdater tiler, TileBindingContentAdaptive largeBindingContent, TileBindingContentAdaptive mediumBindingContent, TileBindingContentAdaptive smallBindingContent)
+        {
             Func<TileBindingContentAdaptive, TileBinding> createBinding = (TileBindingContentAdaptive con) =>
             {
                 return new TileBinding()
@@ -458,7 +619,7 @@ namespace Neptunium.Core.UI
 
                             new AdaptiveText()
                             {
-                                Text = program.Station.Name,
+                                Text = program.Name,
                                 HintStyle = AdaptiveTextStyle.Caption
                             },
                         },

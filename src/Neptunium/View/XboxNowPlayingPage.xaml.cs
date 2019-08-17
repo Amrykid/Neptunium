@@ -1,6 +1,7 @@
 ﻿using Crystal3.Messaging;
 using Neptunium.Glue;
 using Neptunium.ViewModel;
+using Neptunium.ViewModel.Fragment;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,13 +50,13 @@ namespace Neptunium.View
             {
                 playPauseButton.Label = "Pause";
                 playPauseButton.Icon = new SymbolIcon(Symbol.Pause);
-                playPauseButton.Command = ((NowPlayingPageViewModel)this.DataContext).PausePlaybackCommand;
+                playPauseButton.Command = ((NowPlayingViewModelFragment)this.DataContext).PausePlaybackCommand;
             }
             else
             {
                 playPauseButton.Label = "Play";
                 playPauseButton.Icon = new SymbolIcon(Symbol.Play);
-                playPauseButton.Command = ((NowPlayingPageViewModel)this.DataContext).ResumePlaybackCommand;
+                playPauseButton.Command = ((NowPlayingViewModelFragment)this.DataContext).ResumePlaybackCommand;
             }
         }
 
@@ -117,6 +118,17 @@ namespace Neptunium.View
         private void HandoffButton_Click(object sender, RoutedEventArgs e)
         {
             Messenger.SendMessageAsync("ShowHandoffFlyout", "");
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            NepApp.UI.ActivateNoChromeMode();
+            base.OnNavigatedTo(e);
+        }
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            NepApp.UI.DeactivateNoChromeMode();
+            base.OnNavigatingFrom(e);
         }
     }
 }

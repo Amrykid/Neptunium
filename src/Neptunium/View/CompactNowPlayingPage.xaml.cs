@@ -24,7 +24,9 @@ namespace Neptunium.View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    [Crystal3.Navigation.NavigationViewModel(typeof(CompactNowPlayingPageViewModel), Crystal3.Navigation.NavigationViewSupportedPlatform.Desktop | Crystal3.Navigation.NavigationViewSupportedPlatform.Mobile)]
+    [Crystal3.Navigation.NavigationViewModel(typeof(CompactNowPlayingPageViewModel), 
+        Crystal3.Navigation.NavigationViewSupportedPlatform.Desktop 
+        | Crystal3.Navigation.NavigationViewSupportedPlatform.Mobile)]
     [Neptunium.Core.UI.NepAppUINoChromePage()]
     public sealed partial class CompactNowPlayingPage : Page
     {
@@ -34,15 +36,20 @@ namespace Neptunium.View
         {
             this.InitializeComponent();
 
+            NepApp.UI.ActivateNoChromeMode();
+
             NepApp.MediaPlayer.IsPlayingChanged += Media_IsPlayingChanged;
 
-            inlineNavigationService = WindowManager.GetNavigationManagerForCurrentWindow().GetNavigationServiceFromFrameLevel(FrameLevel.Two) as FrameNavigationService;
+            inlineNavigationService = WindowManager.GetNavigationManagerForCurrentView()
+                .GetNavigationServiceFromFrameLevel(FrameLevel.Two) as FrameNavigationService;
         }
 
         private async void compactViewButton_Click(object sender, RoutedEventArgs e)
         {
             //switch back to regular mode
-            bool modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default, ViewModePreferences.CreateDefault(ApplicationViewMode.Default));
+            bool modeSwitched = await ApplicationView.GetForCurrentView()
+                .TryEnterViewModeAsync(ApplicationViewMode.Default, 
+                    ViewModePreferences.CreateDefault(ApplicationViewMode.Default));
             if (modeSwitched)
             {
                 inlineNavigationService.GoBack();
@@ -86,6 +93,8 @@ namespace Neptunium.View
             }
 
             NepApp.MediaPlayer.IsPlayingChanged -= Media_IsPlayingChanged;
+
+            NepApp.UI.DeactivateNoChromeMode();
 
             base.OnNavigatingFrom(e);
         }

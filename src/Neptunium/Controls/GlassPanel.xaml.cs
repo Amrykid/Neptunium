@@ -186,7 +186,7 @@ namespace Neptunium.Controls
             TurnOffGlassInternal();
         }
 
-        private async void TurnOffGlassInternal()
+        private void TurnOffGlassInternal()
         {
             if (glassVisual != null)
             {

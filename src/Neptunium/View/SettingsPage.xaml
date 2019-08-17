@@ -19,6 +19,7 @@
         </Style>
         <Style TargetType="MenuFlyoutSeparator">
             <Setter Property="Margin" Value="-10 10" />
+            <Setter Property="IsTabStop" Value="False" />
         </Style>
     </Page.Resources>
 
@@ -29,33 +30,27 @@
                     <StackPanel Margin="10 0">
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Notifications"/>
-                        <ToggleSwitch Header="Show song change notifications"
+                        <ToggleSwitch Header="Show song change notifications."
                                       x:Name="SongNotificationSwitch"
-                                      XYFocusDown="{Binding ElementName=HeadphonesAnnounceSongsSwitch}"
+                                      XYFocusDown="{Binding ElementName=HapticFeedbackSwitch}"
                                       IsOn="{Binding ShowSongNotification, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
-                        <ToggleSwitch Header="Announce song when the song playing&#x0a;changes when headphones are connected."
-                                      x:Name="HeadphonesAnnounceSongsSwitch"
-                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
-                                      XYFocusDown="{Binding ElementName=HapticFeedbackSwitch}"
-                                      IsOn="{Binding SaySongNotificationsWhenHeadphonesConnected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-
-                        <MenuFlyoutSeparator />
+                        <MenuFlyoutSeparator IsTabStop="False" />
 
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="UI"/>
 
-                        <ToggleSwitch Header="Use haptic feedback" 
+                        <ToggleSwitch Header="Use haptic feedback." 
                                       x:Name="HapticFeedbackSwitch"
-                                      XYFocusUp="{Binding ElementName=HeadphonesAnnounceSongsSwitch}"
+                                      XYFocusUp="{Binding ElementName=SongNotificationSwitch}"
                                       XYFocusDown="{Binding ElementName=MetadataSwitch}"
                                       IsOn="{Binding UseHapticFeedback, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
-                        <MenuFlyoutSeparator />
+                        <MenuFlyoutSeparator IsTabStop="False" />
                         
                         <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
                                Text="Metadata"/>
-                        <ToggleSwitch Header="Find song metadata when song changes" 
+                        <ToggleSwitch Header="Find song metadata when song changes." 
                                       x:Name="MetadataSwitch"
                                       XYFocusUp="{Binding ElementName=HapticFeedbackSwitch}"
                                       IsOn="{Binding FindSongMetadata, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
@@ -95,44 +90,6 @@
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
-            <PivotItem x:Name="bluetoothPivot" Header="Bluetooth" IsEnabled="False">
-                <StackPanel Margin="10 0">
-                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
-                               Text="Activation"/>
-
-                    <TextBlock Text="Activate Bluetooth features when connected to this device."
-                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                               TextWrapping="Wrap" Margin="0 0 0 5" />
-
-                    <TextBlock>
-                        <Run Text="Selected Bluetooth Device: " />
-                        <Run Text="{Binding SelectedBluetoothDeviceName, UpdateSourceTrigger=PropertyChanged}"
-                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
-                    </TextBlock>
-
-                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                        <Button x:Name="SelectBluetoothButton" Click="SelectBluetoothButton_Click" Content="Select Device" />
-                        <Button Content="Clear Device" Margin="5 0" Command="{Binding ClearBluetoothDeviceCommand}" />
-                    </StackPanel>
-                    
-                    <MenuFlyoutSeparator />
-
-                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
-                               Text="Options" />
-
-                    <ToggleSwitch Header="Announce song when the song playing&#x0a;changes when connected to Bluetooth."
-                                  IsOn="{Binding SaySongNotificationsInBluetoothMode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
-                </StackPanel>
-            </PivotItem>
-            <PivotItem Header="Experimental">
-                <StackPanel Margin="10 0">
-                    <TextBlock Style="{StaticResource GroupHeaderTextBlockStyle}"
-                               Text="Miscellaneous"/>
-                    <ToggleSwitch Header="Show Remote menu"
-                                      x:Name="ShowRemoteSwitch"
-                                      IsOn="{Binding ShowRemote, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                </StackPanel>
-            </PivotItem>
         </Pivot>
 
         <VisualStateManager.VisualStateGroups>
@@ -144,7 +101,6 @@
                     <VisualState.Setters>
                         <Setter Target="RootPivot.Margin" Value="48 0 48 0" />
                         <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
-                        <Setter Target="HapticFeedbackSwitch.IsEnabled" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="TabletOrHigherVisualState">
@@ -161,7 +117,6 @@
 
                     <VisualState.Setters>
                         <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="False" />
-                        <Setter Target="HapticFeedbackSwitch.IsEnabled" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -172,7 +127,6 @@
 
                     <VisualState.Setters>
                         <Setter Target="RootPivot.(Pivot.IsHeaderItemsCarouselEnabled)" Value="True" />
-                        <Setter Target="HapticFeedbackSwitch.IsEnabled" Value="True" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

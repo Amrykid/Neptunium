@@ -15,16 +15,14 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Neptunium.View
+namespace Neptunium.View.Dialog
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    [Crystal3.Navigation.NavigationViewModel(typeof(Neptunium.ViewModel.ServerRemotePageViewModel), 
-        Crystal3.Navigation.NavigationViewSupportedPlatform.Desktop | Crystal3.Navigation.NavigationViewSupportedPlatform.Mobile)]
-    public sealed partial class ServerRemotePage : Page
+    public sealed partial class SleepTimerDialog : Page
     {
-        public ServerRemotePage()
+        public SleepTimerDialog()
         {
             this.InitializeComponent();
         }

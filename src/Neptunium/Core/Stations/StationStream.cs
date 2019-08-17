@@ -9,8 +9,9 @@ namespace Neptunium.Core.Stations
             StreamUrl = url;
         }
 
-        public virtual string SpecificTitle { get { return ParentStation?.Name; } }
-        public StationItem ParentStation { get; internal set; }
+        //todo remove
+        public virtual string SpecificTitle { get { return ParentStation; } }
+        public string ParentStation { get; internal set; }
         public Uri StreamUrl { get; private set; }
         public StationStreamServerFormat ServerFormat { get; internal set; }
         public string ContentType { get; internal set; }

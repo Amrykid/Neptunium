@@ -28,13 +28,14 @@ namespace Neptunium.Core.Settings
                 ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.PreferUsingCrossFadeWhenChangingStations), true);
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.UseHapticFeedbackForNavigation)))
             {
-                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.UseHapticFeedbackForNavigation), CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Mobile);
+                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.UseHapticFeedbackForNavigation), 
+                    DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Mobile);
             }
             else
             {
                 //ensure that for Xbox, this is always false.
 
-                if (CrystalApplication.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
+                if (DeviceInformation.GetDevicePlatform() == Crystal3.Core.Platform.Xbox)
                 {
                     SetSetting(AppSettings.UseHapticFeedbackForNavigation, false);
                 }
@@ -47,21 +48,6 @@ namespace Neptunium.Core.Settings
                 ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.AutomaticallyConserveDataWhenOnMeteredConnections), true);
             if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection)))
                 ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.AutomaticallyDetermineAppropriateBitrateBasedOnConnection), true);
-
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.ShowRemoteMenu)))
-                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.ShowRemoteMenu), false);
-
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.SaySongNotificationsWhenHeadphonesAreConnected)))
-                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.SaySongNotificationsWhenHeadphonesAreConnected), false);
-
-
-            //bluetooth mode stuff
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.SaySongNotificationsInBluetoothMode)))
-                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.SaySongNotificationsInBluetoothMode), false);
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.SelectedBluetoothDevice)))
-                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.SelectedBluetoothDevice), null);
-            if (!ApplicationData.Current.LocalSettings.Values.ContainsKey(Enum.GetName(typeof(AppSettings), AppSettings.SelectedBluetoothDeviceName)))
-                ApplicationData.Current.LocalSettings.Values.Add(Enum.GetName(typeof(AppSettings), AppSettings.SelectedBluetoothDeviceName), "");
         }
 
         public IEnumerable<KeyValuePair<string, object>> GetAllSettings()

@@ -1,6 +1,5 @@
 ﻿using Neptunium.Core;
 using Neptunium.Core.Media.Audio;
-using Neptunium.Core.Media.Bluetooth;
 using Neptunium.Core.Media.History;
 using Neptunium.Core.Media.Metadata;
 using Neptunium.Core.Stations;
@@ -24,21 +23,20 @@ namespace Neptunium.Media
     public class NepAppMediaPlayerManager : INepAppFunctionManager, INotifyPropertyChanged
     {
         private SemaphoreSlim playLock = null;
-        private DispatcherTimer sleepTimer = new DispatcherTimer();
+        private double playerVolume = 1.0;
 
         public BasicNepAppMediaStreamer CurrentStreamer { get; private set; }
         internal StationStream CurrentStream { get; private set; }
-        public NepAppMediaBluetoothManager Bluetooth { get; private set; }
         public NepAppAudioManager Audio { get; private set; }
+        public NepAppMediaSleepTimer SleepTimer { get; private set; }
         private MediaPlayer CurrentPlayer { get; set; }
         public SystemMediaTransportControls MediaTransportControls { get; private set; }
         private MediaPlaybackSession CurrentPlayerSession { get; set; }
         public CastingConnection MediaCastingConnection { get; private set; }
-        internal bool IsSleepTimerRunning { get { return sleepTimer.IsEnabled; } }
         public event PropertyChangedEventHandler PropertyChanged;
         public double Volume
         {
-            get { return (double)CurrentPlayer?.Volume; }
+            get { return playerVolume; }
         }
         public bool IsPlaying { get; private set; }
         public bool IsCasting { get; private set; }
@@ -49,6 +47,7 @@ namespace Neptunium.Media
         public event EventHandler<NepAppMediaPlayerManagerIsPlayingEventArgs> IsPlayingChanged;
         public event EventHandler<EventArgs> IsCastingChanged;
         public event EventHandler MediaEngagementChanged;
+        public event EventHandler<MediaPlayerFailedEventArgs> FatalMediaErrorOccurred;
 
         public class NepAppMediaPlayerManagerIsPlayingEventArgs : EventArgs
         {
@@ -60,10 +59,18 @@ namespace Neptunium.Media
         internal NepAppMediaPlayerManager()
         {
             playLock = new SemaphoreSlim(1);
-            Bluetooth = new NepAppMediaBluetoothManager(this);
             Audio = new NepAppAudioManager(this);
+            SleepTimer = new NepAppMediaSleepTimer(this);
+        }
 
-            sleepTimer.Tick += SleepTimer_Tick;
+        internal void SetVolume(double value)
+        {
+            if (value > 1.0 || value < 0.0) throw new ArgumentOutOfRangeException(nameof(value));
+
+            playerVolume = value;
+
+            if (CurrentPlayer != null)
+                CurrentPlayer.Volume = playerVolume;
         }
 
         internal void Pause()
@@ -146,38 +153,6 @@ namespace Neptunium.Media
             return null;
         }
 
-        internal void SetSleepTimer(TimeSpan timeToWait)
-        {
-            if (sleepTimer.IsEnabled)
-            {
-                sleepTimer.Stop();
-            }
-
-            sleepTimer.Interval = timeToWait;
-
-            sleepTimer.Start();
-        }
-
-        internal void ClearSleepTimer()
-        {
-            if (sleepTimer.IsEnabled) sleepTimer.Stop();
-        }
-
-        private async void SleepTimer_Tick(object sender, object e)
-        {
-            if (IsPlaying)
-            {
-                Pause();
-
-                if (!await App.GetIfPrimaryWindowVisibleAsync())
-                {
-                    NepApp.UI.Notifier.ShowGenericToastNotification("Sleep Timer", "Media paused.", "sleep-timer");
-                }
-            }
-
-            sleepTimer.Stop();
-        }
-
         public async Task TryStreamStationAsync(StationStream stream)
         {
             if (!NepApp.Network.IsConnected) throw new NeptuniumNetworkConnectionRequiredException();
@@ -193,6 +168,7 @@ namespace Neptunium.Media
 
 
             timeoutTask = Task.Delay(10000);
+
             connectionTask = streamer.TryConnectAsync(stream); //a failure to connect is caught as a Neptunium.Core.NeptuniumStreamConnectionFailedException by AppShellViewModel
 
             Task result = await Task.WhenAny(connectionTask, timeoutTask);
@@ -222,9 +198,11 @@ namespace Neptunium.Media
             CurrentPlayer.AudioCategory = MediaPlayerAudioCategory.Media;
             CurrentPlayer.CommandManager.IsEnabled = true;
             CurrentPlayer.AudioDeviceType = MediaPlayerAudioDeviceType.Multimedia;
+            CurrentPlayer.Volume = playerVolume;
             CurrentPlayer.MediaFailed += CurrentPlayer_MediaFailed;
             CurrentPlayerSession = CurrentPlayer.PlaybackSession;
             CurrentPlayerSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+
             streamer.InitializePlayback(CurrentPlayer);
 
             await CurrentPlayer.WaitForMediaOpenAsync();
@@ -234,23 +212,16 @@ namespace Neptunium.Media
             CurrentStreamer = streamer;
             CurrentStream = stream;
 
-            NepApp.SongManager.SetCurrentStation(CurrentStream.ParentStation);
-
-            streamer.Play();
+            NepApp.SongManager.SetCurrentStation(await NepApp.Stations.GetStationByNameAsync(CurrentStream.ParentStation));
 
             SetMediaEngagement(true);
 
-            NepApp.Stations.SetLastPlayedStation(stream.ParentStation.Name, DateTime.Now);
+            NepApp.Stations.SetLastPlayedStation(stream.ParentStation, DateTime.Now);
             NepApp.SongManager.SetCurrentMetadataToUnknown();
 
-            if (streamer.SongMetadata != null)
-            {
-                NepApp.SongManager.HandleMetadata(streamer.SongMetadata, stream);
-            }
+            streamer.Play();
 
             ConnectingEnd?.Invoke(this, EventArgs.Empty);
-
-
             playLock.Release();
         }
 
@@ -286,17 +257,12 @@ namespace Neptunium.Media
             IsPlayingChanged?.Invoke(this, new NepAppMediaPlayerManagerIsPlayingEventArgs(IsPlaying));
         }
 
-        private async void CurrentPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
+        private void CurrentPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
         {
             var stream = CurrentStream;
             ShutdownPreviousPlaybackSession();
 
-            await NepApp.UI.ShowInfoDialogAsync("Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
-
-            if (!await App.GetIfPrimaryWindowVisibleAsync())
-            {
-                NepApp.UI.Notifier.ShowErrorToastNotification(stream, "Uh-Oh!", !NepApp.Network.IsConnected ? "Network connection lost!" : "An unknown error occurred.");
-            }
+            FatalMediaErrorOccurred?.Invoke(this, args);
         }
 
 
@@ -417,7 +383,8 @@ namespace Neptunium.Media
 
                 if (!await App.GetIfPrimaryWindowVisibleAsync())
                 {
-                    NepApp.UI.Notifier.ShowErrorToastNotification(CurrentStream, "Uh-Oh!", "An error occurred while casting: " + args.Message);
+                    var currentStation = await NepApp.Stations.GetStationByNameAsync(CurrentStream.ParentStation);
+                    NepApp.UI.Notifier.ShowErrorToastNotification(currentStation, "Uh-Oh!", "An error occurred while casting: " + args.Message);
                 }
             }
         }

@@ -89,6 +89,7 @@ namespace Neptunium
                             httpResponse.Dispose();
                         }
                     }
+                    //fileStream.Dispose();
                     //falls through below where it returns our cached copy.
                 }
             }

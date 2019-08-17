@@ -1,26 +1,18 @@
-﻿using Crystal3.Model;
-using Crystal3.UI.Commands;
+﻿using Crystal3.UI.Commands;
 using Neptunium.Core.UI;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml;
 
-namespace Neptunium.ViewModel.Fragments
+namespace Neptunium.ViewModel.Dialog
 {
-    public class SleepTimerContextFragment : ViewModelFragment
+    public class SleepTimerDialogFragment : NepAppUIDialogFragment
     {
-        public class SleepTimerFlyoutViewFragmentSleepItem
+        public SleepTimerDialogFragment()
         {
-            public string DisplayName { get; set; }
-            public TimeSpan TimeToWait { get; set; }
-        }
+            ResultTaskCompletionSource = new TaskCompletionSource<NepAppUIManagerDialogResult>();
 
-        public SleepTimerContextFragment()
-        {
             AvailableSleepItems = new ObservableCollection<SleepTimerFlyoutViewFragmentSleepItem>(
                 new SleepTimerFlyoutViewFragmentSleepItem[] {
                     new SleepTimerFlyoutViewFragmentSleepItem() {DisplayName = "Disabled/Cancel Timer", TimeToWait=TimeSpan.MinValue },
@@ -33,33 +25,24 @@ namespace Neptunium.ViewModel.Fragments
             });
 
             SelectedSleepItem = AvailableSleepItems.First(x => x.TimeToWait == TimeSpan.MinValue);
-            EstimatedTime = "None";
-
-            this.PropertyChanged += SleepTimerContextFragment_PropertyChanged;
-
+            EstimatedTime = NepApp.MediaPlayer.SleepTimer.IsSleepTimerRunning ? NepApp.MediaPlayer.SleepTimer.EstimateTimeToElapse.Value.ToString("t") : "None";
         }
 
-        private void SleepTimerContextFragment_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public override Task<NepAppUIManagerDialogResult> InvokeAsync(object parameter)
         {
-            if (e.PropertyName == nameof(SelectedSleepItem))
-            {
-                if (SelectedSleepItem != null)
-                {
-                    if (SelectedSleepItem.TimeToWait == TimeSpan.MinValue)
-                        NepApp.MediaPlayer.ClearSleepTimer();
-                    else
-                        NepApp.MediaPlayer.SetSleepTimer(SelectedSleepItem.TimeToWait);
-
-                    EstimatedTime = SelectedSleepItem.TimeToWait == TimeSpan.MinValue ? "None" : DateTime.Now.Add(SelectedSleepItem.TimeToWait).ToString("t");
-                }
-            }
+            return ResultTaskCompletionSource.Task;
         }
 
         public ObservableCollection<SleepTimerFlyoutViewFragmentSleepItem> AvailableSleepItems { get; set; }
         public SleepTimerFlyoutViewFragmentSleepItem SelectedSleepItem
         {
             get { return GetPropertyValue<SleepTimerFlyoutViewFragmentSleepItem>(); }
-            set { SetPropertyValue<SleepTimerFlyoutViewFragmentSleepItem>(value: value); }
+            set
+            {
+                SetPropertyValue<SleepTimerFlyoutViewFragmentSleepItem>(value: value);
+
+                EstimatedTime = value.TimeToWait == TimeSpan.MinValue ? "None" : DateTime.Now.Add(value.TimeToWait).ToString("t");
+            }
         }
 
         public string EstimatedTime
@@ -67,5 +50,25 @@ namespace Neptunium.ViewModel.Fragments
             get { return GetPropertyValue<string>(); }
             private set { SetPropertyValue<string>(value: value); }
         }
+
+        public RelayCommand CancelCommand => new RelayCommand(x => ResultTaskCompletionSource.SetResult(NepAppUIManagerDialogResult.Declined));
+        public RelayCommand OKCommand => new RelayCommand(x =>
+        {
+            ResultTaskCompletionSource.SetResult(new NepAppUIManagerDialogResult() { ResultType = NepAppUIManagerDialogResult.NepAppUIManagerDialogResultType.Positive });
+
+            if (SelectedSleepItem != null)
+            {
+                if (SelectedSleepItem.TimeToWait == TimeSpan.MinValue)
+                    NepApp.MediaPlayer.SleepTimer.ClearSleepTimer();
+                else
+                    NepApp.MediaPlayer.SleepTimer.SetSleepTimer(SelectedSleepItem.TimeToWait);
+            }
+        });
+    }
+
+    public class SleepTimerFlyoutViewFragmentSleepItem
+    {
+        public string DisplayName { get; set; }
+        public TimeSpan TimeToWait { get; set; }
     }
 }

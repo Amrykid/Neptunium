@@ -11,7 +11,7 @@
     <AssemblyName>Neptunium</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.17763.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
@@ -115,31 +115,32 @@
     <Compile Include="Core\Media\Audio\MobileHeadsetDetector.cs" />
     <Compile Include="Core\Media\Audio\NepAppAudioManager.cs" />
     <Compile Include="Core\Media\Audio\XboxHeadsetDetector.cs" />
-    <Compile Include="Core\Media\Bluetooth\NepAppMediaBluetoothDeviceCoordinator.cs" />
-    <Compile Include="Core\Media\Bluetooth\NepAppMediaBluetoothDeviceCoordinatorIsBluetoothConnectedChangedEventArgs.cs" />
-    <Compile Include="Core\Media\Bluetooth\NepAppMediaBluetoothManager.cs" />
     <Compile Include="Core\Media\DirectStationMediaStreamer.cs" />
     <Compile Include="Core\Media\History\SongHistorian.cs" />
+    <Compile Include="Core\Media\History\SongHistorianSongUpdatedEventArgs.cs" />
     <Compile Include="Core\Media\History\SongHistoryItem.cs" />
     <Compile Include="Core\Media\INepAppMediaStreamer.cs" />
     <Compile Include="Core\Media\Metadata\BaseSongMetadataSource.cs" />
     <Compile Include="Core\Media\Metadata\FanArtTVFetcher.cs" />
-    <Compile Include="Core\Media\Metadata\ArtistFetcher.cs" />
-    <Compile Include="Core\Media\Metadata\MetadataFinder.cs" />
+    <Compile Include="Core\Media\Metadata\JPopAsiaArtistFetcher.cs" />
     <Compile Include="Core\Media\Metadata\MusicBrainzMetadataSource.cs" />
+    <Compile Include="Core\Media\Metadata\NepAppMetadataManager.cs" />
     <Compile Include="Core\Media\Metadata\SongMetadata.cs" />
+    <Compile Include="Core\Media\NepAppMediaSleepTimer.cs" />
     <Compile Include="Core\Media\Songs\NepAppSongChangedEventArgs.cs" />
     <Compile Include="Core\Media\Songs\NepAppSongManager.cs" />
     <Compile Include="Core\Media\ShoutcastStationMediaStreamer.cs" />
+    <Compile Include="Core\Media\Songs\NepAppSongManagerArtworkProcessor.cs" />
+    <Compile Include="Core\Media\Songs\NepAppSongManagerMediaTransportUpdater.cs" />
     <Compile Include="Core\Media\Songs\NepAppSongMetadataArtworkEventArgs.cs" />
     <Compile Include="Core\Media\Songs\NepAppSongMetadataBackground.cs" />
+    <Compile Include="Core\Media\Songs\NepAppStationMessageReceivedEventArgs.cs" />
     <Compile Include="Core\Media\Songs\NepAppStationProgramStartedEventArgs.cs" />
     <Compile Include="Core\Media\VoiceUtility.cs" />
     <Compile Include="Core\NepAppDataCacheManager.cs" />
     <Compile Include="Core\NepAppHandoffManager.cs" />
     <Compile Include="Core\Media\NepAppMediaPlayerManager.cs" />
     <Compile Include="Core\NepAppNetworkManager.cs" />
-    <Compile Include="Core\NepAppServerFrontEndManager.cs" />
     <Compile Include="Core\Settings\NepAppSettingChangedEventArgs.cs" />
     <Compile Include="Core\Settings\NepAppSettingsManager.cs" />
     <Compile Include="ColorUtilities.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Core\Stations\StationProgram.cs" />
     <Compile Include="Core\Stations\StationSupplementaryDataManager.cs" />
     <Compile Include="Core\UI\NepAppUIDialogFragment.cs" />
+    <Compile Include="Core\UI\NepAppUILiveTileHandler.cs" />
     <Compile Include="Core\UI\NepAppUILockScreenManager.cs" />
     <Compile Include="Core\UI\NepAppUIManager.cs" />
     <Compile Include="Core\NeptuniumException.cs" />
@@ -161,9 +163,12 @@
     <Compile Include="Core\Stations\StationStreamServerFormat.cs" />
     <Compile Include="Core\UI\NepAppUIManagerDialogResult.cs" />
     <Compile Include="Core\UI\NepAppUIManagerDialogCoordinator.cs" />
+    <Compile Include="Core\UI\NepAppUIManagerNavigationRouteAddedEventArgs.cs" />
+    <Compile Include="Core\UI\NepAppUIManagerNoChromeStatusChangedEventArgs.cs" />
     <Compile Include="Core\UI\NepAppUIManagerNotifier.cs" />
     <Compile Include="Core\UI\NepAppUINavigationItem.cs" />
     <Compile Include="Core\UI\NepAppUINoChromePageAttribute.cs" />
+    <Compile Include="Core\UI\NepAppUIToastNotificationHandler.cs" />
     <Compile Include="Glue\IXboxInputPage.cs" />
     <Compile Include="JapaneseTextUtilities.cs" />
     <Compile Include="Core\NepApp.cs" />
@@ -180,12 +185,11 @@
     <Compile Include="ViewModel\AboutPageViewModel.cs" />
     <Compile Include="ViewModel\AppShellViewModel.cs" />
     <Compile Include="ViewModel\CompactNowPlayingPageViewModel.cs" />
-    <Compile Include="ViewModel\Fragments\HandoffContextFragment.cs" />
-    <Compile Include="ViewModel\Fragments\SleepTimerContextFragment.cs" />
+    <Compile Include="ViewModel\Dialog\SleepTimerDialogFragment.cs" />
+    <Compile Include="ViewModel\Dialog\StationHandoffDialogFragment.cs" />
     <Compile Include="ViewModel\Dialog\StationInfoDialogFragment.cs" />
+    <Compile Include="ViewModel\Fragment\NowPlayingViewModelFragment.cs" />
     <Compile Include="ViewModel\NowPlayingPageViewModel.cs" />
-    <Compile Include="ViewModel\ServerRemotePageViewModel.cs" />
-    <Compile Include="ViewModel\Server\ServerShellViewModel.cs" />
     <Compile Include="ViewModel\SettingsPageViewModel.cs" />
     <Compile Include="ViewModel\SongHistoryPageViewModel.cs" />
     <Compile Include="ViewModel\StationProgramsPageViewModel.cs" />
@@ -202,17 +206,20 @@
     <Compile Include="View\CompactNowPlayingPage.xaml.cs">
       <DependentUpon>CompactNowPlayingPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Dialog\SleepTimerDialog.xaml.cs">
+      <DependentUpon>SleepTimerDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dialog\StationHandoffDialog.xaml.cs">
+      <DependentUpon>StationHandoffDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dialog\XboxStationInfoDialog.xaml.cs">
+      <DependentUpon>XboxStationInfoDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Dialog\StationInfoDialog.xaml.cs">
       <DependentUpon>StationInfoDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\ServerShellView.xaml.cs">
-      <DependentUpon>ServerShellView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\NowPlayingPage.xaml.cs">
       <DependentUpon>NowPlayingPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\ServerRemotePage.xaml.cs">
-      <DependentUpon>ServerRemotePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
@@ -231,6 +238,9 @@
     </Compile>
     <Compile Include="View\XboxShellView.xaml.cs">
       <DependentUpon>XboxShellView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\XboxSongHistoryPage.xaml.cs">
+      <DependentUpon>XboxSongHistoryPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\XboxStationsPage.xaml.cs">
       <DependentUpon>XboxStationsPage.xaml</DependentUpon>
@@ -296,9 +306,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\WideLogo.scale-100.png" />
     <None Include="Package.StoreAssociation.xml" />
-    <Content Include="Data\BuiltinArtists.xml">
-      <SubType>Designer</SubType>
-    </Content>
+    <Content Include="Data\Artists\Neptunium-ArtistsDB\BuiltinArtists.xml" />
     <Content Include="Data\Stations\Data\Stations.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -338,10 +346,6 @@
       <Project>{99bf0efd-5f65-489a-b2f7-f11cc89b81b8}</Project>
       <Name>UWPShoutcastMSS</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\lib\winrtxamltoolkit\WinRTXamlToolkit\WinRTXamlToolkit.csproj">
-      <Project>{ffb67e2d-f098-48d9-8bf6-b4355c18cd80}</Project>
-      <Name>WinRTXamlToolkit</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\TransitioningColorGlassPanel.xaml">
@@ -376,19 +380,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Dialog\SleepTimerDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dialog\StationHandoffDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dialog\XboxStationInfoDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\Dialog\StationInfoDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\ServerShellView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\NowPlayingPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\ServerRemotePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -416,6 +424,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\XboxSongHistoryPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\XboxStationsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -428,14 +440,17 @@
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
       <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
     </SDKReference>
-    <SDKReference Include="WindowsDesktop, Version=10.0.16299.0">
+    <SDKReference Include="WindowsDesktop, Version=10.0.17763.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
-    <SDKReference Include="WindowsIoT, Version=10.0.16299.0">
+    <SDKReference Include="WindowsIoT, Version=10.0.17134.0">
       <Name>Windows IoT Extensions for the UWP</Name>
     </SDKReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.17134.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.17763.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
+    </SDKReference>
+    <SDKReference Include="WindowsTeam, Version=10.0.17763.0">
+      <Name>Windows Team Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
@@ -463,6 +478,9 @@
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>2.1.1</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.UI.Xaml">
+      <Version>2.0.181018004</Version>
+    </PackageReference>
     <PackageReference Include="System.Reactive">
       <Version>4.0.0</Version>
     </PackageReference>
@@ -471,6 +489,9 @@
     </PackageReference>
     <PackageReference Include="WindowsStateTriggers">
       <Version>1.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="WinRTXamlToolkit">
+      <Version>2.3.0</Version>
     </PackageReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

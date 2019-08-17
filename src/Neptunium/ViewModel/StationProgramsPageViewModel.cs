@@ -34,7 +34,7 @@ namespace Neptunium.ViewModel
 
                 try
                 {
-                    await LoadScheduleAsync();
+                    //await LoadScheduleAsync();
                 }
                 catch
                 {
@@ -74,7 +74,7 @@ namespace Neptunium.ViewModel
                     foreach (var listing in program.TimeListings)
                     {
                         ScheduleItem item = new ScheduleItem();
-                        item.Station = program.Station;
+                        item.Station = await NepApp.Stations.GetStationByNameAsync(program.Station);
                         item.Day = Enum.GetName(typeof(DayOfWeek), listing.Day);
                         item.TimeLocal = listing.Time;
                         item.Program = program;
