@@ -56,7 +56,7 @@
                 <!--for the time being, no stations have enough streams for IsFocusEngagementEnabled to be true-->
                 <ListView.HeaderTemplate>
                     <DataTemplate>
-                        <TextBlock Text="Available Streams" Style="{ThemeResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="Available Streams (Click or Tap)" Style="{ThemeResource BaseTextBlockStyle}"/>
                     </DataTemplate>
                 </ListView.HeaderTemplate>
                 <ListView.ItemTemplate>
@@ -124,7 +124,7 @@
                           XYFocusLeft="{Binding ElementName=WebsiteButton}"
                           XYFocusRight="{Binding ElementName=PlayButton}"/>
 
-            <AppBarButton Label="Play" Grid.Column="4" 
+            <AppBarButton Label="Play (Auto)" Grid.Column="4" 
                           Icon="Play"
                           Command="{Binding PlayCommand, UpdateSourceTrigger=PropertyChanged}"
                           x:Name="PlayButton"

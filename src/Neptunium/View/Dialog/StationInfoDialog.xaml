@@ -63,7 +63,7 @@
                   SelectionMode="None">
             <ListView.HeaderTemplate>
                 <DataTemplate>
-                    <TextBlock Text="Available Streams" Style="{ThemeResource BaseTextBlockStyle}" Margin="5, 0" />
+                    <TextBlock Text="Available Streams (Click or Tap)" Style="{ThemeResource BaseTextBlockStyle}" Margin="5, 0" />
                 </DataTemplate>
             </ListView.HeaderTemplate>
             <ListView.ItemTemplate>
@@ -94,15 +94,6 @@
                                 <Run Text="{Binding ContentType}" />
                             </Span>
                         </TextBlock>
-
-                        <Button Grid.Column="1"
-                                Grid.Row="0"
-                                Grid.RowSpan="2"
-                                Click="Button_Click"
-                                Background="{ThemeResource AccentButtonBackground}"
-                                CommandParameter="{Binding}">
-                            <SymbolIcon Symbol="Play" />
-                        </Button>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -127,20 +118,30 @@
                 <ColumnDefinition Width="90" />
             </Grid.ColumnDefinitions>
             <AppBarButton Label="Website" Icon="Globe" Grid.Column="0"
-                          Command="{Binding OpenStationWebsiteCommand}" />
+                          x:Name="WebsiteButton"
+                          Command="{Binding OpenStationWebsiteCommand}"
+                          XYFocusRight="{Binding ElementName=PinStationButton}"/>
             <AppBarButton Label="Pin" Icon="Pin" x:Name="PinStationButton" 
                           Grid.Column="1"
                           Visibility="Visible" 
                           Margin="0 0 10 0"
+                          XYFocusLeft="{Binding ElementName=WebsiteButton}"
+                          XYFocusRight="{Binding ElementName=CancelButton}"
                           Command="{Binding PinStationCommand}" />
 
-            <Button Content="Cancel" Grid.Column="3" 
-                    Command="{Binding CancelCommand, UpdateSourceTrigger=PropertyChanged}" 
-                    MinWidth="75" x:Name="CancelButton" />
+            <AppBarButton Label="Cancel" Grid.Column="3" 
+                          Icon="Cancel"
+                          Command="{Binding CancelCommand, UpdateSourceTrigger=PropertyChanged}" 
+                          x:Name="CancelButton"
+                          XYFocusLeft="{Binding ElementName=PinStationButton}"
+                          XYFocusRight="{Binding ElementName=PlayButton}"/>
 
-            <Button Content="Play" Grid.Column="4" 
-                    Command="{Binding PlayCommand, UpdateSourceTrigger=PropertyChanged}"
-                    Background="{ThemeResource AccentButtonBackground}" MinWidth="75" />
+            <AppBarButton Label="Play (Auto)" Grid.Column="4" 
+                          Icon="Play"
+                          Command="{Binding PlayCommand, UpdateSourceTrigger=PropertyChanged}"
+                          x:Name="PlayButton"
+                          XYFocusLeft="{Binding ElementName=CancelButton}"
+                          Background="{ThemeResource AccentButtonBackground}" MinWidth="75" />
         </Grid>
     </Grid>
 </Page>

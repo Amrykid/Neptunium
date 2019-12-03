@@ -130,5 +130,10 @@ namespace Neptunium.View
             NepApp.UI.DeactivateNoChromeMode();
             base.OnNavigatingFrom(e);
         }
+
+        public void FocusDefault()
+        {
+            playPauseButton.Focus(FocusState.Keyboard);
+        }
     }
 }
